@@ -122,7 +122,8 @@ print <<SCRIPTE;
   function kk_eintrag(name,plz,ort,strasse,ik) {
     // alert("gewählt"+name+plz+ort+strasse+ik);
     // in Parent Dokument übernehmen
-    // alert("parent"+opener.document.forms[0]);
+    alert("parent"+opener.document.forms[0].name);
+    var formular=opener.document.forms[0];
     opener.document.stammdaten.ik_krankenkasse.value=ik;
     opener.document.stammdaten.name_krankenkasse.value=name;
     opener.document.stammdaten.strasse_krankenkasse.value=strasse;
