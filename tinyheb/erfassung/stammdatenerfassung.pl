@@ -112,7 +112,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten</h1>';
+print '<h1>Stammdaten $Revision: 1.6 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
