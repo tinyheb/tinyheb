@@ -1,5 +1,5 @@
 #!/usr/bin/perl -wT
-#-w
+#-wT
 #-d:ptkdb
 #-d:DProf  
 
@@ -56,10 +56,10 @@ my $naechste_hebamme = $q->param('naechste_hebamme');
 my $begruendung_nicht_nae_heb = $q->param('nicht_naechste_heb') || '';
 my $datum = $q->param('datum') || '';
 my $speichern = $q->param('Speichern');
-my $frau_suchen = $q->param('frau_suchen');
 my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
 my $func = $q->param('func') || 0;
+#my $frau_suchen = $q->param('frau_suchen');
 
 hole_frau_daten() if ($func == 1 || $func == 2);
 
@@ -82,7 +82,6 @@ if ($ik_krankenkasse ne '') {
 
 print $q->header ( -type => "text/html", -expires => "-1d");
 
-suche_frau() if (defined($frau_suchen) );
 if (($auswahl eq 'Neu') && defined($abschicken)) {
   $frau_id = speichern();
   $auswahl = 'Anzeigen';
@@ -92,8 +91,9 @@ if (($auswahl eq 'Ändern') && defined($abschicken)) {
   $auswahl = 'Anzeigen';
 }
 print '<head>';
-print '<title>Stammdatenerfassung</title>';
+print '<title>Stammdaten</title>';
 print '<script language="javascript" src="stammdaten.js"></script>';
+print '<script language="javascript" src="../Heb.js"></script>';
 print '</head>';
 
 # style-sheet ausgeben
@@ -112,8 +112,8 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdatenerfassung</h1>';
-print '<hr width="100%">';
+print '<h1>Stammdaten</h1>';
+print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
 print '<form name="stammdaten" action="stammdatenerfassung.pl" method="get" target=_top bgcolor=white>';
@@ -167,11 +167,7 @@ print '</tr>';
 print "<tr>";
 print "<td><input type='text' name='plz' value='$plz' size='5' onBlur='return plz_check(this)'></td>";
 print "<td><input type='text' name='ort' value='$ort' size='40'></td>";
-# z3.2 s3
-print '<td>';
-print "<input type='text' name='strasse' value='$strasse' size='40'>";
-print '</td>';
-# z3.2 s4
+print "<td><input type='text' name='strasse' value='$strasse' size='40'></td>";
 print '<td>';
 print "<select name='bundesland' size=1>";
 my $j=0;
@@ -189,15 +185,11 @@ print '</table>';
 print "\n";
 
 print '<tr>';
-print '<td colspan=3>';
-print '<b>Entfernung:</b>';
-print '</td>';
+print '<td><b>Entfernung:</b></td>';
 print '</tr>';
 
 print '<tr>';
-print '<td colspan=3>';
-print "<input type='text' name='entfernung' value='$entfernung' size='10'>";
-print '</td>';
+print "<td><input type='text' name='entfernung' value='$entfernung' size='10'></td>";
 print '</tr>';
 print "\n";
 
@@ -205,37 +197,18 @@ print "\n";
 print '<tr><td>&nbsp;</td></tr>';
 # Zeile Krankenversicherungsnummer, Versichertenstatus, IK Krankenkasse
 print '<tr>';
-print '<td colspan=3>';
+print '<td>';
 print '<table border="0" align="left">';
-# z4.1 s1
-print '<tr>';
-print '<td>';
-print '<b>KV-Nummer:</b>';
-print '</td>';
-# z4.1 s2
-print '<td>';
-print '<b>Gültig bis:</b>';
-print '</td>';
-# z4.1 s3
-print '<td>';
-print '<b>Versichertenstatus:</b>';
-print '</td>';
-# z4.1 s4
-print '<td>';
-print '<b>IK Krankenkasse:</b>';
-print '</td>';
+print '<tr><td><b>KV-Nummer:</b></td>';
+print '<td><b>Gültig bis:</b></td>';
+print '<td><b>Versichertenstatus:</b></td>';
+print '<td><b>IK Krankenkasse:</b></td>';
 print '</tr>';
 print "\n";
 
-# z4.2 s1
 print '<tr>';
-print '<td>';
-print "<input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='15' onBlur='return kvnr_check(this)'>";
-print '</td>';
-# z4.2 s2
-print '<td>';
-print "<input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='10' onBlur='return datum_check(this)'>";
-print '</td>';
+print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='15' onBlur='return kvnr_check(this)'></td>";
+print "<td><input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='4' onBlur='return kvnr_gueltig_check(this)'></td>";
 # z4.2 s3
 print '<td>';
 print "<select name='versichertenstatus' size=1>";
@@ -249,44 +222,25 @@ while ($j <= $#verstatus) {
   $j++;
 }
 print "</td>\n";
-# z4.2 s4
-print '<td>';
-print "<input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='14'>";
-print '</td>';
-# z4.2 s5
-print '<td>';
-print "<input type='button' name='kasse_waehlen' value='Kasse auswählen' onClick='return kassen_auswahl();'>";
-print '</td>';
+print "<td><input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='14'></td>";
+print "<td><input type='button' name='kasse_waehlen' value='Kasse auswählen' onClick='return kassen_auswahl();'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
 
 # zeile mit Krankenkasseninfos ausgeben
 print '<tr>';
-print '<td colspan=3>';
+print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
-print '<td>';
-print "<b>Name Krankenkasse</b>";
-print '</td>';
-print '<td>';
-print '<b>Ort</b>';
-print '</td>';
-print '<td>';
-print '<b>Straße</b>';
-print '</td>';
+print '<td><b>Name Krankenkasse</b></td>';
+print '<td><b>Ort</b></td>';
+print '<td><b>Straße</b></td>';
 print '</tr>';
 print '<tr>';
-print "<td>";
-print "<input type='text' class=disabled disabled name='name_krankenkasse' value='$name_krankenkasse' size='28'>";
-print "</td>";
-print '<td>';
-#print '<input style="color: green" type="text" disabled name="hugo" value="hugo">';
-print "<input type='text' class=disabled disabled name='ort_krankenkasse' value='$plz_krankenkasse&nbsp;$ort_krankenkasse' size='30'>";
-print "</td>";
-print "<td>";
-print "<input type='text' class=disabled disabled name='strasse_krankenkasse' value='$strasse_krankenkasse' size='20'>";
-print "</td>";
+print "<td><input type='text' class=disabled disabled name='name_krankenkasse' value='$name_krankenkasse' size='28'></td>";
+print "<td><input type='text' class=disabled disabled name='ort_krankenkasse' value='$plz_krankenkasse&nbsp;$ort_krankenkasse' size='30'></td>";
+print "<td><input type='text' class=disabled disabled name='strasse_krankenkasse' value='$strasse_krankenkasse' size='20'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
@@ -296,20 +250,16 @@ print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
-print '<td>';
-print "<b>Geburtsdatum Kind</b>";
-print '</td>';
+print '<td><b>Geburtsdatum Kind</b></td>';
 print '</tr>';
-print '<td>';
-print "<input type='text' name='geburtsdatum_kind' value='$geb_kind' size='14' onBlur='return datum_check(this)'>";
-print '</td>';
+print "<td><input type='text' name='geburtsdatum_kind' value='$geb_kind' size='14' onBlur='return datum_check(this)'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
 
 # Zeile mit nächste Hebamme
 print '<tr>';
-print '<td colspan=3>';
+print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
 print '<td valign=top>';
@@ -343,11 +293,11 @@ print "\n";
 
 # Zeile mit Knöpfen für unterschiedliche Funktionen
 print '<tr>';
-print '<td colspan 3>';
+print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
 print '<td>';
-print "<select name='auswahl' size=1>";
+print "<select name='auswahl' size=1 onChange='auswahl_wechsel(document.stammdaten)'>";
 my $i=0;
 while ($i <= $#aus) {
   print '<option';
@@ -363,15 +313,9 @@ print '<td>';
 print '<input type="button" name="reset" value="Inhalt löschen"';
 print ' onClick="loeschen()">';
 print '</td>';
-print '<td>';
-print '<input type="submit" name="abschicken" value="Speichern"';
-print '</td>';
-print '<td>';
-print '<input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.stammdaten)"';
-print '</td>';
-print '<td>';
-print '<input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.stammdaten)"';
-print '</td>';
+print '<td><input type="submit" name="abschicken" value="Speichern"</td>';
+print '<td><input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.stammdaten)"></td>';
+print '<td><input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.stammdaten)"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
@@ -380,6 +324,7 @@ print '</table>';
 print <<SCRIPTE;
 <script>
   set_focus(document.stammdaten);
+  auswahl_wechsel(document.stammdaten);
 </script>
 SCRIPTE
 print "</body>'";
@@ -393,9 +338,6 @@ sub print_color {
   print '<font color=black>';
 }
 
-sub suche_frau {
-  print "hallo suche Frau $vorname,$nachname,$geb_frau\n";
-}
 
 sub speichern {
   # Speichert die Daten in der Stammdaten Datenbank
@@ -403,13 +345,15 @@ sub speichern {
   # Datümer konvertierten
   my $geb_f = $d->convert($geb_frau);
   my $geb_k = $d->convert($geb_kind);
-  my $kv_guelt = $d->convert($kv_gueltig);
+  # Entfernung koverieren
+  $entfernung =~ s/,/\./g;
   
   # jetzt speichern
   my $erg = $s->stammdaten_ins($vorname,$nachname,$geb_f,$strasse,$plz,$ort,$tel,
-			       $entfernung,$kv_nummer,$kv_guelt,$versichertenstatus,
+			       $entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
 			       $fk_krankenkasse,$bundesland,$geb_k,$naechste_hebamme,
 			       $begruendung_nicht_nae_heb,$TODAY);
+  $entfernung =~ s/\./,/g;
   return $erg;
 }
 
@@ -425,26 +369,29 @@ sub aendern {
   # Datümer konvertierten
   my $geb_f = $d->convert($geb_frau);
   my $geb_k = $d->convert($geb_kind);
-  my $kv_guelt = $d->convert($kv_gueltig);
+  $entfernung =~ s/,/\./g;
   
   # jetzt speichern
   my $erg = $s->stammdaten_update($vorname,$nachname,$geb_f,$strasse,$plz,$ort,$tel,
-			      $entfernung,$kv_nummer,$kv_guelt,$versichertenstatus,
+			      $entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
 			      $fk_krankenkasse,$bundesland,$geb_k,$naechste_hebamme,
 			      $begruendung_nicht_nae_heb,$TODAY,$frau_id);
+  $entfernung =~ s/\./,/g;
   return $erg;
 }
 
 sub hole_frau_daten {
   $frau_id = $s->max if ($frau_id > $s->max);
   $vorname='';
-  while ($vorname eq '') {
+  while (!defined($vorname) || $vorname eq '') {
     ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
      $bundesland,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
      $fk_krankenkasse,$naechste_hebamme,
      $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
+    $entfernung = '0.0' unless defined($entfernung);
+    $entfernung =~ s/\./,/g;
     
-    if ($fk_krankenkasse ne '') {
+    if (defined($fk_krankenkasse) && $fk_krankenkasse > 0) {
       ($ik_krankenkasse,
        $name_krankenkasse,
        $plz_krankenkasse,
