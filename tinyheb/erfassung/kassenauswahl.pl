@@ -65,7 +65,7 @@ print '<tr>';
 print "<td><input type='text' name='name' value='$name' size='20'></td>";
 print "<td><input type='text' name='ort' value='$ort' size='20'></td>";
 print "<td><input type='text' name='plz' value='$plz' size='7'></td>";
-print "<td><input type='text' name='ik' value='$ik' size='7'></td>";
+print "<td><input type='text' name='ik' value='$ik' size='10'></td>";
 print '</table>';
 print "\n";
 
@@ -98,7 +98,7 @@ if (defined($suchen)) {
   $ort = '%'.$ort.'%';
   $ik = '%'.$ik.'%';
   $k->krankenkasse_such($name,$plz,$ort,$ik);
-  while (my ($id,$k_name,$k_strasse,$k_plz,$k_ort,$k_ik) = $k->krankenkasse_such_next) {
+  while (my ($id,$k_name,$k_strasse,$k_plz,$k_ort,$k_ik,$k_tel) = $k->krankenkasse_such_next) {
     print '<tr>';
     print "<td>$k_name</td>";
     print "<td>$k_plz</td>";
@@ -106,7 +106,7 @@ if (defined($suchen)) {
     print "<td>$k_strasse</td>";
     print "<td>$k_ik</td>";
     print '<td><input type="button" name="waehlen" value="Auswählen"';
-    print "onclick=\"kk_eintrag('$k_name','$k_plz','$k_ort','$k_strasse','$k_ik');self.close()\"></td>";
+    print "onclick=\"kk_eintrag('$id','$k_name','$k_plz','$k_ort','$k_strasse','$k_ik','$k_tel');self.close()\"></td>";
     print "</tr>\n";
   }
 }
@@ -119,15 +119,22 @@ print <<SCRIPTE;
   function zurueck() {
     kassenauswahl.close();
   }
-  function kk_eintrag(name,plz,ort,strasse,ik) {
+  function kk_eintrag(krank_id,name,plz,ort,strasse,ik,tel) {
     // alert("gewählt"+name+plz+ort+strasse+ik);
     // in Parent Dokument übernehmen
-    alert("parent"+opener.document.forms[0].name);
-    var formular=opener.document.forms[0];
-    opener.document.stammdaten.ik_krankenkasse.value=ik;
-    opener.document.stammdaten.name_krankenkasse.value=name;
-    opener.document.stammdaten.strasse_krankenkasse.value=strasse;
-    opener.document.stammdaten.ort_krankenkasse.value=plz+' '+ort;
+    // alert("parent"+opener.window.document.forms[0].name);
+    var formular=opener.window.document.forms[0];
+    formular.ik_krankenkasse.value=ik;
+    formular.name_krankenkasse.value=name;
+    formular.strasse_krankenkasse.value=strasse;
+    if (formular.name == 'krankenkassen') {
+       formular.ort_krankenkasse.value = ort;
+       formular.plz_krankenkasse.value = plz;
+       formular.krank_id.value = krank_id;
+       formular.tel_krankenkasse.value = tel; 
+    } else {
+       formular.ort_krankenkasse.value=plz+' '+ort;
+    }
   }
 </script>
 SCRIPTE
