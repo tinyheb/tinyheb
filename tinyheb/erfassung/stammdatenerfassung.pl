@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -wT
 #-w
 #-d:ptkdb
 #-d:DProf  
@@ -96,6 +96,13 @@ print '<title>Stammdatenerfassung</title>';
 print '<script language="javascript" src="stammdaten.js"></script>';
 print '</head>';
 
+# style-sheet ausgeben
+print <<STYLE;
+  <style type="text/css">
+  .disabled { color:black; background-color:gainsboro}
+  </style>
+STYLE
+
 if (($auswahl eq 'Löschen') && defined($abschicken)) {
   loeschen();
   print '<script>loeschen();</script>';
@@ -114,54 +121,31 @@ print '<table border="0" width="700" align="left">';
 
 # Zeile Vorname, Nachname, Geburtsdatum
 # z1 s1
+print '<tr><td><table border="0" align="left">';
 print '<tr>';
-print '<td>';
-print '<table border="0" align="left">';
-print '<tr>';
-print '<td>';
-print_color('Vorname:',$vorname);
-print '</td>';
-# z1 s2
-print '<td>';
-print_color('Nachname:',$nachname);
-print '</td>';
-print '<td>';
-# z1 s3
-print_color('Geb.:',$geb_frau);
-print '</td>';
+print '<td><b>ID</b></td>';
+print '<td>';print_color('Vorname:',$vorname);print '</td>';
+print '<td>';print_color('Nachname:',$nachname);print '</td>';
+print '<td>';print_color('Geb.:',$geb_frau);print '</td>';
 print '</tr>';
 print "\n";
 
 # z2 s1
 print '<tr>';
-print '<td>';
-print "<input type='text' name='vorname' value='$vorname' size='40'>";
-print '</td>';
+print "<td><input type='text' name='frau_id' value='$frau_id' size='5'></td>";
+print "<td><input type='text' name='vorname' value='$vorname' size='40'></td>";
 # z2 s2
-print '<td>';
-print "<input type='text' name='nachname' value='$nachname' size='40'>";
-print '</td>';
+print "<td><input type='text' name='nachname' value='$nachname' size='40'></td>";
 # z2 s3
-print '<td>';
-print "<input type='text' name='geburtsdatum_frau' value='$geb_frau' size='10' onBlur='datum_check(this)'>";
-print '</td>';
-print '<td>';
-print "<input type='button' name='frau_suchen' value='Suchen' onClick='return frausuchen(stammdaten.vorname,stammdaten.nachname,stammdaten.geburtsdatum_frau,form);'>";
-print '</tr>';
+print "<td><input type='text' name='geburtsdatum_frau' value='$geb_frau' size='10' onBlur='datum_check(this)'></td>";
+print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='return frausuchen(stammdaten.vorname,stammdaten.nachname,stammdaten.geburtsdatum_frau,form);'></tr>";
 print '</table>';
 print "\n";
 
 # Zeile Telefonnumer
-print '<tr>';
-print '<td>';
-print '<b>Tel.:</b>';
-print '</td>';
-print '</tr>';
-print '<tr>';
-print '<td>';
-print "<input type='text' name='tel' value='$tel' size='40'>";
-print '</td>';
-print "<td><input type='text' name='frau_id' value='$frau_id' size='5'></td>";
+print '<tr><td><b>Tel.:</b></td></tr>';
+print "<tr><td><input type='text' name='tel' value='$tel' size='40'></td>";
+
 print '</tr>';
 print "\n";
 
@@ -169,38 +153,20 @@ print "\n";
 print '<tr><td>&nbsp;</td></tr>';
 
 # Zeile PLZ, Ort, Strasse, Entfernung
-# z3 s1
 print '<tr>';
-print '<td colspan=3>';
+print '<td>';
 print '<table border="0" align="left">';
-# z3.1 s1
 print '<tr>';
-print '<td>';
-print '<b>PLZ:</b>';
-print '</td>';
-# z3.1 s2
-print '<td>';
-print '<b>Ort:</b>';
-print '</td>';
-# z3.1 s3
-print '<td>';
-print '<b>Strasse:</b>';
-print '</td>';
-# z3.1 s4
-print '<td>';
-print '<b>Bundesland:</b>';
-print '</td>';
+print '<td><b>PLZ:</b></td>';
+print '<td><b>Ort:</b></td>';
+print '<td><b>Strasse:</b></td>';
+print '<td><b>Bundesland:</b></td>';
 print '</tr>';
 
-# z3.2 s1
-print '<tr>';
-print '<td>';
-print "<input type='text' name='plz' value='$plz' size='5' onBlur='return plz_check(this)'>";
-print '</td>';
-# z3.2 s2
-print '<td>';
-print "<input type='text' name='ort' value='$ort' size='40'>";
-print '</td>';
+# Eingabe Felder
+print "<tr>";
+print "<td><input type='text' name='plz' value='$plz' size='5' onBlur='return plz_check(this)'></td>";
+print "<td><input type='text' name='ort' value='$ort' size='40'></td>";
 # z3.2 s3
 print '<td>';
 print "<input type='text' name='strasse' value='$strasse' size='40'>";
@@ -312,14 +278,14 @@ print '</td>';
 print '</tr>';
 print '<tr>';
 print "<td>";
-print "<input type='text' disabled name='name_krankenkasse' value='$name_krankenkasse' size='28'>";
+print "<input type='text' class=disabled disabled name='name_krankenkasse' value='$name_krankenkasse' size='28'>";
 print "</td>";
 print '<td>';
 #print '<input style="color: green" type="text" disabled name="hugo" value="hugo">';
-print "<input style='bgcolor: black' type='text' disabled name='ort_krankenkasse' value='$plz_krankenkasse&nbsp;$ort_krankenkasse' size='30'>";
+print "<input type='text' class=disabled disabled name='ort_krankenkasse' value='$plz_krankenkasse&nbsp;$ort_krankenkasse' size='30'>";
 print "</td>";
 print "<td>";
-print "<input type='text' disabled name='strasse_krankenkasse' value='$strasse_krankenkasse' size='20'>";
+print "<input type='text' class=disabled disabled name='strasse_krankenkasse' value='$strasse_krankenkasse' size='20'>";
 print "</td>";
 print '</tr>';
 print '</table>';
@@ -327,7 +293,7 @@ print "\n";
 
 # Zeile mit Geburtsdatum Kind
 print '<tr>';
-print '<td colspan=3>';
+print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
 print '<td>';
@@ -492,8 +458,11 @@ sub hole_frau_daten {
        $ort_krankenkasse,
        $strasse_krankenkasse) = ('','','','','');
     }
-    if ($vorname eq '') {
-      return if ($frau_id == 0);
+    if (!defined($vorname)) {
+      if ($frau_id <= 0) {
+	$frau_id = 0;
+	return;
+      }
       $frau_id++ if ($func == 1);
       $frau_id-- if ($func == 2 && $frau_id > 1);
     }
