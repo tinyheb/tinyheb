@@ -1,0 +1,24 @@
+NULL;1;Beratung der Schwangeren, auch fernmündlich;A;5.11;n;NULL;0;1990-01-01;9999-01-01
+NULL;2;Vorsorgeuntersuchung der Schwangeren;A;20.45;n;0;0;1990-01-01;9999-01-01
+NULL;3;Entnahme von Körpermaterial zur Durchführung notwendiger Laboruntersuchungen, je Entnahme;A;5.11;n;0;0;1990-01-01;9999-01-01
+NULL;4;Hilfe bei Schwangerschaftsbeschwerden oder Wehen, jür jede angefangene halbe Stunde;A;12.78;j;1;5;1990-01-01;9999-01-01
+NULL;5;Hilfe bei Schwangerschaftsbeschwerden oder Wehen bei Nacht, an Samstagen ab 12 Uhr sowie an Sonn- und Feiertagen, für jede angefangene halbe Stunde;A;15.85;j;2;1990-01-01;9999-01-01
+NULL;6;Kardiotokographische Überwachung;A;5.62;n;0;0;1990-01-01;9999-01-01
+NULL;7;Geburtsvorbereitung bei Unterweisung in der Gruppe;A;5.11;n;0;0;1990-01-01;9999-01-01
+NULL;8;Geburtsvorbereitung bei Einzelunterweisung auf ärtzliche Anordnung;A;12.78;n;0;0;1990-01-01;9999-01-01
+NULL;9;Hilfe bei der Geburt eines Kindes in einem Krankenhaus;B;178.95;n;0;18;1990-01-01;9999-01-01
+NULL;10;Hilfe bei einer außerklinischen Geburt in einer Einrichtung unter ärztlicher Leitung;B;178.95;n;0;18;1990-01-01;9999-01-01
+NULL;11;Hilfe bei einer außerklinischen Geburt in einer von Hebammen geleiteten Einrichtung;B;319.16;n;0;18;1990-01-01;9999-01-01
+NULL;12;Hilfe bei einer Hausgeburt;B;383.47;n;0;18;1990-01-01;9999-01-01
+NULL;13;Hilfe bei einer Fehlgeburt;B;84.36;n;0;18;1990-01-01;9999-01-01
+NULL;14;Versorgung eines Dammschnitts oder eines Dammrisses I. oder II. Grades;B;22.5;n;0;0;1990-01-01;9999-01-01
+NULL;15;Zuschlag für die Hilfe bei der Geburt von Zwillingen und mehr Kindern, für das zweite und jedes weitere Kind, je Kind;B;51.13;n;0;18;1990-01-01;9999-01-01
+NULL;16;Hilfe bei einer nicht vollendeten Geburt in einem Krankenhaus oder in einer außerklinischen Einrichtung unter ärztlicher Leitung;B;92.03;n;0;18;1990-01-01;9999-01-01
+NULL;17;Hilfe bei einer nicht vollendeten Hausgeburt oder einer nicht vollendeten außerklinischen Geburt in einer von Hebammen geleiteten Einrichtung;B;127.82;n;0;18;1990-01-01;9999-01-01
+NULL;18;Zuschlag zu den Leistungen nach den Nummern 9 bis 13, 16 und 17 bei Hilfe bei Nacht, an Samstagen ab 12 Uhr sowie an Sonn-und Feiertagen;B;0.25;j;3;0;1990-01-01;9999-01-01
+NULL;19;Hilfe bei einer außerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, für jede angefangene halbe Stunde;B;12.78;j;1;20;1990-01-01;9999-01-01
+NULL;20;Hilfe bei einer außerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme bei Nacht, an Sonn- und Feiertagen, für jede angefangene halbe Stunde;B;15.85;j;2;0;1990-01-01;9999-01-01
+NULL;21;Perinatalerhebung bei einer außerklinischen Geburt nach vorgeschriebenem Formblatt einschließlich Versand- und Portokosten;B;5.11;n;0;0;1990-01-01;9999-01-01
+NULL;22;Hausbesuch nach der Geburt;C;23.01;j;4;23;1990-01-01;9999-01-01
+NULL;23;Hausbesuch nach der Geburt an einem Sonn- oder Feiertag;C;28.63;j;6;0;1990-01-01;9999-01-01
+NULL;24;Zuschlag zu der Gebühr nach Nummer 22 oder 23 für den ersten Hausbesuch nach der Geburt;C;5.11;n;0;0;1990-01-01;9999-01-01
