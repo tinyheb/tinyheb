@@ -13,7 +13,7 @@ sub BEGIN {
 
 use strict;
 use CGI;
-use Date::Calc qw(Today);
+use Date::Calc qw(Today Day_of_Week);
 
 use lib "../";
 use Heb_stammdaten;
@@ -27,11 +27,11 @@ my $l = new Heb_leistung;
 
 my $debug=1;
 
-my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
+my $TODAY = $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
 my @par;
 
-my $datum = $q->param('datum_leistung');
+my $datum = $q->param('datum_leistung') || $TODAY;
 my $uhrzeit = $q->param('uhrzeit_leistung');
 my $dauer = $q->param('dauer_leistung');
 my $frau_id = $q->param('frau_id');
@@ -39,6 +39,7 @@ my $frau_id = $q->param('frau_id');
 my $datum_tmj = $datum;
 $datum_tmj = sprintf "%2.2u.%2.2u.%4.4u",split('\.',$datum_tmj);
 $datum = $d->convert($datum) if ($datum ne '');
+my $day = Day_of_Week(split('-',$datum));
 my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
 my $gruppen_auswahl = $q->param('gruppen_auswahl') || 0;
@@ -49,7 +50,10 @@ my $z_art_samstag="n";
 my $z_art_nacht="n";
 my ($posnr,$preis,$prozent);
 my ($sonntag,$nacht,$samstag);
-my ($fuerzeit);
+my ($fuerzeit,$ausschluss);
+my @ar_ausschluss;
+my %disabled; # hash in dem abgelegt wird, welche PosNr nicht zu erfassen sind
+my %sasona; # hash in dem abgelegt wird, welche PosNr nur Samstag, Sonntag oder Nachts zur erfassen sind;
 
 my @type_ar = ('A','B','C','D','W');
 my $type = $type_ar[$gruppen_auswahl];
@@ -155,7 +159,7 @@ print "</html>";
 
 sub print_table {
   my ($type) = @_;
-  print "<h3>weitere Erfassung für $datum_tmj $uhrzeit</h3>";
+  print "<h3>weitere Erfassung für $datum_tmj $uhrzeit Wochentag $day</h3>";
   print '<table border="1" width="100%" align="center">';
   print '<tbody><tr>';
   print '<th align=left>Pos. Nr</th>';
@@ -169,17 +173,21 @@ sub print_table {
     $z_art_sonntag="n";
     ($posnr,$preis,$prozent) = ($werte[1],$werte[4],$werte[5]);
     ($sonntag,$nacht,$samstag) = ($werte[6],$werte[7],$werte[8]);
-    ($fuerzeit) = ($werte[9]);
+    ($fuerzeit,$ausschluss) = ($werte[9],$werte[21]);
+    $ausschluss = '' if (!defined($ausschluss));
+    @ar_ausschluss = split ',',$ausschluss;
     $z_art_sonntag = 'n';
-    if ($sonntag =~ /^\+/) {
-      $z_art_sonntag = '+';
-      $sonntag =~ s/\+//;
-    }
+    $disabled{$2}='true' if ($sonntag =~ /^(\+)(\d{1,3})/);
     $z_art_samstag = 'n';
     if ($samstag =~ /^\+/) {
       $z_art_samstag = '+';
       $samstag =~ s/\+//;
+      $disabled{$samstag}='true';
     }
+    # hash w/ Samstag, Sonntag, Nacht befüllen
+    $sasona{$1}=$sasona{$1}.'Samstag,' if ($samstag =~ /\+{0,1}(\d{1,3})/ && $samstag ne '0');
+    $sasona{$1}=$sasona{$1}.'Sonntag,' if ($sonntag =~ /\+{0,1}(\d{1,3})/ && $sonntag ne '0');
+
     print "<tr>";
     print "<td>$posnr</td>";
     print "<td>$werte[2]</td>";
@@ -200,6 +208,24 @@ sub print_table {
     print '}</script>';
     print "</tr>\n";
   }
+
+  # initialwerte setzen
+  print "<script>\n";
+  my $dis = '';
+  foreach $dis (sort keys %disabled) {
+    print "document.leistungen_f2.box_name_$dis.disabled=true;\n";
+  }
+  $dis='';
+  foreach $dis (sort keys %sasona) {
+    my $disabled = 1;
+    foreach my $ssn (split (',',$sasona{$dis})) {
+      $disabled = 0 if ($ssn =~ /Samstag/ && $day == 6);
+      $disabled = 0 if ($ssn =~ /Sonntag/ && $day == 7);
+    }
+    print "document.leistungen_f2.box_name_$dis.disabled=true;\n" if ($disabled);
+  }
+  print "</script>\n";
+
   print "</tbody><br></table>";
 }
 
@@ -231,47 +257,46 @@ sub print_table_erfasste {
 }
 
 sub print_allg {
-  print <<SCRIPT_ALLG;
+  print <<SCRIPT_ALLG_1;
   var preis=new Number('$preis');
   var wotag=wo_tag(parent.leistungserfassung_f1.document.leistungen_f1.datum_leistung.value,parent.leistungserfassung_f1.document.leistungen_f1.uhrzeit_leistung.value);
   //alert("wotag"+wotag);
+SCRIPT_ALLG_1
 
-  // prüfen ob Preis zeitabhängig ist
-  if('$fuerzeit' > '0') {
-    preis = zeit_preis($preis,parent.leistungserfassung_f1.document.leistungen_f1.dauer_leistung.value,$fuerzeit);
+  # prüfen ob Preis zeitabhängig ist
+  print "preis = zeit_preis($preis,parent.leistungserfassung_f1.document.leistungen_f1.dauer_leistung.value,$fuerzeit);\n" if ($fuerzeit > 0);
+
+  print "preis = round($prozent * betrag_ursp);\n" if ($prozent > 0);
+  # wert einsetzen
+  print "if (document.leistungen_f2.box_name_$posnr.checked) {\n";
+  print "document.leistungen_f2.box_name_preis_$posnr.value=preis;\n";
+  foreach my $a (@ar_ausschluss) {
+    print "document.leistungen_f2.box_name_$a.checked = false;\n";
+    print "process_$a(0);\n";
   }
-  // prüfen, ob Preis prozentual berechnet wird
-  if ('$prozent' != '0.00') {
-    preis = round($prozent * betrag_ursp);
-  }
-  // wert einsetzen
-  if (document.leistungen_f2.box_name_$posnr.checked) {
-    document.leistungen_f2.box_name_preis_$posnr.value=preis;
-  } else {
-    document.leistungen_f2.box_name_preis_$posnr.value="";
-  }
-SCRIPT_ALLG
+  print "} else {";
+  print "document.leistungen_f2.box_name_preis_$posnr.value='';";
+  print "}";
 }
 
+
 sub print_sonntag {
-  if ($sonntag ne '0' && $sonntag ne '' && $sonntag ne 'NULL') {
-    print <<SCRIPT_SONNTAG;
-    if (wotag==0 && document.leistungen_f2.box_name_$posnr.checked) {
-      alert("sonntags zuschlag"+'$sonntag');
-      document.leistungen_f2.box_name_$sonntag.checked=true;
-      process_$sonntag($preis); // Original Betrag mitgeben
-      if ('$z_art_sonntag' != '+') {
-	// es handelt sich nicht um Zuschlag, sondern andere Leistung
-	document.leistungen_f2.box_name_$posnr.checked=false;
-	document.leistungen_f2.box_name_preis_$posnr.value="";
-      }
-    } else {
-      if(wotag==0) {
-         process_$sonntag(0);
-         document.leistungen_f2.box_name_$sonntag.checked=false;
-      }
+  if ($day == 7 && $sonntag =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    print "// Sonntag\n";
+    print "if (document.leistungen_f2.box_name_$posnr.checked) {\n";
+    #print "  alert('sonntag zuschlag'+$2+'zu'+'$1');\n";
+    print "  document.leistungen_f2.box_name_$2.checked=true;\n";
+    print "  process_$2($preis); // Original Betrag mitgeben\n";
+
+    # Prüfen ob Zuschlag,
+    if ($1 ne '+') {
+      print "document.leistungen_f2.box_name_$posnr.checked=false;";
+      print "document.leistungen_f2.box_name_preis_$posnr.value='';";
     }
-SCRIPT_SONNTAG
+    print "} else {\n";
+    print "process_$2(0);\n";
+    print "document.leistungen_f2.box_name_$2.checked=false;\n";
+    print "}\n";
   }
 }
 
