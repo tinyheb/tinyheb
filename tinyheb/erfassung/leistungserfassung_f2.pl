@@ -35,7 +35,9 @@ my $datum = $q->param('datum_leistung');
 my $uhrzeit = $q->param('uhrzeit_leistung');
 my $dauer = $q->param('dauer_leistung');
 my $frau_id = $q->param('frau_id');
+
 my $datum_tmj = $datum;
+$datum_tmj = sprintf "%2.2u.%2.2u.%4.4u",split('\.',$datum_tmj);
 $datum = $d->convert($datum) if ($datum ne '');
 my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
@@ -48,6 +50,9 @@ my $z_art_nacht="n";
 my ($posnr,$preis,$prozent);
 my ($sonntag,$nacht,$samstag);
 my ($fuerzeit);
+
+my @type_ar = ('A','B','C','D','W');
+my $type = $type_ar[$gruppen_auswahl];
 
 print $q->header ( -type => "text/html", -expires => "-1d");
 
@@ -67,6 +72,7 @@ print '</head>';
 print <<STYLE;
   <style type="text/css">
   .disabled { color:black; background-color:gainsboro}
+  .betrag { color:black; background-color:white;text-align:right;border-style:none}
   .enabled { color:black; background-color:white}
   .invisible { color:white; background-color:white;border-style:none}
   .td { border-width: 1;border: solid; color:black}
@@ -76,16 +82,15 @@ STYLE
 # Alle Felder zur Eingabe ausgeben
 print '<body id="leistungen_window_2" bgcolor=white>';
 
-print '<form name="leistungen_f2" action="leistungserfassung_f2.pl" method="get" target=leistungserfassung_f2 bgcolor=white>';
+print '<form name="leistungen_f2" action="leistungserfassung_f2.pl" method="get" target=leistungserfassung_f2 onSubmit="leistung_speicher(document.leistungen_f2)" bgcolor=white>';
 
 # verborgende Werte für Zustand
 print "<input type='hidden' name='datum_leistung' value='$datum_tmj'>";
 print "<input type='hidden' name='uhrzeit_leistung' value='$uhrzeit'>";
 print "<input type='hidden' name='dauer_leistung' value='$dauer'>";
 print "<input type='hidden' name='frau_id' value='$frau_id'>";
+print "<input type='hidden' name='gruppen_auswahl' value='$gruppen_auswahl'>";
 
-my @type_ar = ('A','B','C','D','W');
-my $type = $type_ar[$gruppen_auswahl];
 print "&nbsp;";
 if ($type eq 'A') {
   print '<h2>A. Leistungen der Mutterschaftsvorsorge und Schwangerenbetreuung</h2>';
@@ -128,7 +133,7 @@ print '<td>';
 print '<input type="button" name="reset" value="Inhalt löschen"';
 print ' onClick="loeschen()">';
 print '</td>';
-print '<td><input type="submit" name="abschicken" value="Speichern"</td>';
+print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
 print '<td><input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.leistungen_f2)"></td
 >';
 print '<td><input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.leistungen_f2)"></td>';
@@ -179,27 +184,26 @@ sub print_table {
     print "<td>$posnr</td>";
     print "<td>$werte[2]</td>";
     print "<td>";
+    my ($p_datum,$p_zeit,$p_status,$p_preis) = ($l->leistungsdaten_such_posnr($datum,$uhrzeit.':00',$posnr,$frau_id));
     my $checked = '';
-    $checked = 'checked' if ($l->leistungsdaten_such_posnr($datum,$uhrzeit.':00',$posnr,$frau_id));
+    $checked = 'checked' if (defined($p_preis));
     $checked = 'checked' if (defined($q->param('box_name_'.$posnr)));
+    $p_preis = '' if(!defined($p_preis));
     print "<input type='checkbox' $checked name='box_name_$posnr' id='box_id_$posnr' value='$werte[0]' onClick='process_$posnr()'>";
     print '</td>';
+    print "<td><input type='text' class='betrag' disabled name='box_name_preis_$posnr' id='betrag' value='$p_preis' size=6></td>";
     print '<script>';
     print "function process_$posnr(betrag_ursp) {";
     print_allg();
     print_sonntag();
     print_samstag();
     print '}</script>';
-    print "<td align=right id='td_$posnr\_betrag'>&nbsp;</td>\n";
     print "</tr>\n";
   }
   print "</tbody><br></table>";
-  # initiale Befüllung berechnen
-  $l->leistungsart_such($datum,$type);
-  while (my @werte = $l->leistungsart_such_next() ) {
-    print "<script>process_$werte[1]();</script>";
-  }
 }
+
+
 
 sub print_table_erfasste {
   my ($type) = @_;
@@ -210,17 +214,18 @@ sub print_table_erfasste {
   print '<th align=left>Bezeichnung</th>';
   print '<th align=left>Datum</th>';
   print '<th align=left>Uhrzeit</th>';
+  print '<th align=right>Betrag</th>';
   print '</tr>';
 
   $l->leistungsdaten_such_posnr_datum($frau_id,$type);
   my $date = $datum_tmj;
   $date =~ s/-/\./g;
   while (my @werte = $l->leistungsdaten_such_posnr_datum_next() ) {  
-    my ($datum,$zeit,$status,$posnr,$bezeichnung) = 
-      ($werte[0],$werte[1],$werte[2],$werte[3],$werte[4]);
+    my ($datum,$zeit,$status,$posnr,$bezeichnung,$preis) = 
+      ($werte[0],$werte[1],$werte[2],$werte[3],$werte[4],$werte[5]);
     my ($h,$m,$s) = unpack('A2xA2xA2',$zeit);
     $zeit = "$h:$m";
-    print "<tr><td>$posnr</td><td>$bezeichnung</td><td>$datum</td><td>$zeit</td></tr>" if ($zeit ne $uhrzeit || $datum_tmj ne $datum);
+    print "<tr><td>$posnr</td><td>$bezeichnung</td><td>$datum</td><td>$zeit</td><td align=right>$preis</td></tr>" if ($zeit ne $uhrzeit || $datum_tmj ne $datum);
   }
   print "</tbody><br></table>";
 }
@@ -230,7 +235,6 @@ sub print_allg {
   var preis=new Number('$preis');
   var wotag=wo_tag(parent.leistungserfassung_f1.document.leistungen_f1.datum_leistung.value,parent.leistungserfassung_f1.document.leistungen_f1.uhrzeit_leistung.value);
   //alert("wotag"+wotag);
-  var tag=window.document.getElementById("td_$posnr\_betrag");
 
   // prüfen ob Preis zeitabhängig ist
   if('$fuerzeit' > '0') {
@@ -242,9 +246,9 @@ sub print_allg {
   }
   // wert einsetzen
   if (document.leistungen_f2.box_name_$posnr.checked) {
-    tag.firstChild.nodeValue=preis;
+    document.leistungen_f2.box_name_preis_$posnr.value=preis;
   } else {
-    tag.firstChild.nodeValue="0.00";
+    document.leistungen_f2.box_name_preis_$posnr.value="";
   }
 SCRIPT_ALLG
 }
@@ -259,7 +263,7 @@ sub print_sonntag {
       if ('$z_art_sonntag' != '+') {
 	// es handelt sich nicht um Zuschlag, sondern andere Leistung
 	document.leistungen_f2.box_name_$posnr.checked=false;
-	tag.firstChild.nodeValue="0.00";
+	document.leistungen_f2.box_name_preis_$posnr.value="";
       }
     } else {
       if(wotag==0) {
@@ -281,7 +285,7 @@ sub print_samstag {
       if ('$z_art_samstag' != '+') {
 	// es handelt sich nicht um Zuschlag, sondern andere Leistung
 	document.leistungen_f2.box_name_$posnr.checked=false;
-	tag.firstChild.nodeValue="0.00";
+	document.leistungen_f2.box_name_preis_$posnr="";
       }
     } else {
       if(wotag==6) {
@@ -296,13 +300,16 @@ SCRIPT_SAMSTAG
 # speichern von Daten
 sub speichern {
 # zunächst bisherige Daten löschen
-$l->leistungsdaten_delete($datum,$uhrzeit.':00',$frau_id);
+$l->leistungsdaten_delete($datum,$uhrzeit.':00',$frau_id,$type);
 my @parms = $q->param;
   for (my $i=0;$i <= $#parms;$i++) {
     if ($parms[$i] =~ /box_name_/g) {
-      my $fk_leistungsart = $q->param($parms[$i]);
-#      print "speichern $frau_id $datum $uhrzeit $dauer $fk_leistungsart 10";
-      $l->leistungsdaten_ins($fk_leistungsart,$frau_id,'',$datum,$uhrzeit.':00',$dauer.':00',0,10);
+      my $fk_leistungsart = $q->param($parms[$i]) || '';
+      my $box_name_preis = $parms[$i];
+      $box_name_preis =~ s/box_name_/box_name_preis_/g;
+      my $preis=$q->param($box_name_preis);
+#      print "speichern $frau_id $datum $uhrzeit $dauer $fk_leistungsart 10 $preis<br>\n" if(defined($preis));
+      $l->leistungsdaten_ins($fk_leistungsart,$frau_id,'',$datum,$uhrzeit.':00',$dauer.':00',0,10,$preis) if (defined($preis));
     }
   }
 }
