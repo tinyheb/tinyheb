@@ -12,7 +12,7 @@ use DBI;
 
 use Heb;
 
-my $debug = 1;
+my $debug = 0;
 our $dbh; # Verbindung zur Datenbank
 our $frau_such; # suchen von Frauen
 our $max_frau=0; # maximal vergebene id
@@ -26,7 +26,7 @@ sub new {
 			     "DATE_FORMAT(GEBURTSDATUM_KIND,'%d.%m.%Y'),".
 			     "PLZ,ORT,TEL,STRASSE,BUNDESLAND,ENTFERNUNG, ".
 			     "KRANKENVERSICHERUNGSNUMMER,".
-			     "DATE_FORMAT(KRANKENVERSICHERUNGSNUMMER_GUELTIG,'%d.%m.%Y'),".
+			     "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
 			     "VERSICHERTENSTATUS,".
 			     "FK_KRANKENKASSE,".
 			     "NAECHSTE_HEBAMME,".
@@ -179,7 +179,7 @@ sub stammdaten_frau_id {
 			      "DATE_FORMAT(GEBURTSDATUM_KIND,'%d.%m.%Y'),".
 			      "PLZ,ORT,TEL,STRASSE,BUNDESLAND,ENTFERNUNG, ".
 			      "KRANKENVERSICHERUNGSNUMMER,".
-			      "DATE_FORMAT(KRANKENVERSICHERUNGSNUMMER_GUELTIG,'%d.%m.%Y'),".
+			      "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
 			      "VERSICHERTENSTATUS,".
 			      "FK_KRANKENKASSE,".
 			      "NAECHSTE_HEBAMME,".
