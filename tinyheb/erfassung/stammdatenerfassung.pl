@@ -24,6 +24,7 @@ my $k = new Heb_krankenkassen;
 my $debug=1;
 
 my @aus = ('Anzeigen','ƒndern','Neu','Lˆschen');
+my @bund = ('NRW','Bayern','Rheinlandpfalz','Hessen');
 
 my $vorname = $q->param('vorname') || '';
 my $nachname = $q->param('nachname') || '';
@@ -71,19 +72,15 @@ print '<table border="0" width="700" align="left">';
 # z1 s1
 print '<tr>';
 print '<td>';
-print '<font color=red>' if ($vorname eq '');
-print '<b><label for="vname">Vorname:</label></b>';
-print '<font color=black>';
+print_color('Vorname:',$vorname);
 print '</td>';
 # z1 s2
 print '<td>';
-print '<font color=red>' if ($nachname eq '');
-print '<b>Nachname:</b>';
-print '<font color=black>';
+print_color('Nachname:',$nachname);
 print '</td>';
 print '<td>';
 # z1 s3
-print '<b>Geb.:</b>';
+print_color('Geb.:',$geb_frau);
 print '</td>';
 print '</tr>';
 print "\n";
@@ -91,7 +88,7 @@ print "\n";
 # z2 s1
 print '<tr>';
 print '<td>';
-print "<input type='text' name='vorname' id='vname' value='$vorname' size='40'>";
+print "<input type='text' name='vorname' value='$vorname' size='40'>";
 print '</td>';
 # z2 s2
 print '<td>';
@@ -159,7 +156,16 @@ print "<input type='text' name='strasse' value='$strasse' size='40'>";
 print '</td>';
 # z3.2 s4
 print '<td>';
-print "<input type='text' name='bundesland' value='$bundesland' size='14'>";
+print "<select name='bundesland' size=1>";
+my $j=0;
+while ($j <= $#bund) {
+  print '<option';
+  print ' selected' if ($bund[$j] eq $bundesland);
+  print '>';
+  print $bund[$j];
+  print '</option>';
+  $j++;
+}
 print '</td>';
 print '</tr>';
 print '</table>';
@@ -261,9 +267,15 @@ print '<b>Straﬂe</b>';
 print '</td>';
 print '</tr>';
 print '<tr>';
-print "<td>$name_krankenkasse</td>";
-print "<td>$plz_krankenkasse&nbsp;$ort_krankenkasse</td>";
-print "<td>$strasse_krankenkasse</td>";
+print "<td>";
+print "<input type='text' disabled value='$name_krankenkasse' size='28'>";
+print "</td>";
+print "<td>";
+print "<input type='text' disabled value='$plz_krankenkasse&nbsp;$ort_krankenkasse' size='30'>";
+print "</td>";
+print "<td>";
+print "<input type='text' disabled value='$strasse_krankenkasse' size='20'>";
+print "</td>";
 print '</tr>';
 print '</table>';
 print "\n";
@@ -338,3 +350,11 @@ print 'function loeschen() {open("stammdatenerfassung.pl","_top");}';
 print "</script>";
 print "</body>";
 print "</html>";
+
+sub print_color {
+  my ($bezeichnung,$variable) = @_;
+  
+  print '<font color=red>' if ($variable eq '');
+  print "<b>$bezeichnung</b>";
+  print '<font color=black>';
+}
