@@ -1,0 +1,60 @@
+Offen:
+
+Stammdaten Datenbank anlegen
+- Stammdaten
+-- Lfd. Nummer
+-- Name der Frau
+-- Geburtsdatum
+-- Anschrift, u.a. Bundesland
+-- Name der Krankenkasse
+-- Krankenversicherungs-Nr. 
+-- Krankenversicherungs-Nr. gültig bis
+-- Versichertenstatus
+-- Geburtsdatum Kind
+-- nächstgelegene Hebamme (j/n)
+-- Begründung für nicht nächstgelegene Hebamme
+
+Zugriffsmodule für Stammdatenbank
+Pflegedialog Stammdaten
+Änderungsdialog Stammdaten
+
+Leistungskatalog Datenbank anlegen
+- Leistungsart
+- Leistungspreis
+- Leistungstyp A,B,C,D,Wegegeld
+- gültig von bis
+Zugriffsmodule
+Änderungsdialog
+
+Leistunggsdatenbank anlegen
+- Ref. auf Lfd. Nummer der Frau
+- erbrachte Leistung Ref. auf Leistungskatalog
+- Begründung
+- Datum der Leistungserbringung
+- Uhrzeit der Leistungserbringung
+- Wegegeld ggf. Anteilig
+Erfassungsdialog Leistung
+Änderungsdialog Leistung
+
+
+
+
+Erledigt:
+Kalenderdatenbank anlegen
+- Feiertage
+- Bundesland
+
+Stammdaten Datenbank anlegen
+- Stammdaten
+-- Lfd. Nummer
+-- Name der Frau
+-- Geburtsdatum
+-- Anschrift, u.a. Bundesland
+-- Name der Krankenkasse
+-- Krankenversicherungs-Nr.
+-- Krankenversicherungs-Nr. gültig bis
+-- Versichertenstatus
+-- Geburtsdatum Kind
+-- nächstgelegene Hebamme (j/n)
+-- Begründung für nicht nächstgelegene Hebamme
+
