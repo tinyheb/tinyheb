@@ -16,23 +16,20 @@ my $debug = 0;
 our $dbh; # Verbindung zur Datenbank
 
 our $krank_such; # Suchen von Krankenkassen
-our $max_krank=0; # maximal vergebene id
 
 sub new {
   my($class) = @_;
   my $self = {};
   $dbh = Heb->connect;
-  $krank_such = $dbh->prepare("select ID,NAME,STRASSE,PLZ,ORT,IK,TEL ".
+  $krank_such = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
+			      "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL, ".
+			      "ZIK, BEMERKUNG ".
 			      "from Krankenkassen where ".
 			      "NAME LIKE ? and ".
-			      "PLZ LIKE ? and ".
+			      "PLZ_HAUS LIKE ? and ".
 			      "ORT LIKE ? and ".
 			      "IK LIKE ?;");
   bless $self, ref $class || $class;
-  my $max_id = $dbh->prepare("select max(id) from Krankenkassen;") or die $dbh->errstr();
-  $max_id->execute() or die $dbh->errstr();
-  $max_krank = $max_id->fetchrow_array();
-
   return $self;
 }
 
@@ -54,15 +51,15 @@ sub krankenkasse_sel {
   return @erg;
 }
 
-sub krankenkasse_id {
-  # Holt Informationen zu einer gegebenen ID aus der Datenbank
+sub krankenkasse_ik {
+  # Holt Informationen zu einer gegebenen IK aus der Datenbank
 
   shift; # package Namen vom stack nehmen
 
-  my ($werte,$id) = @_;
+  my ($werte,$ik) = @_;
 
   my $krankenkasse_get = $dbh->prepare("select $werte from Krankenkassen ".
-				       "where $id = ID;")
+				       "where $ik = IK;")
     or die $dbh->errstr();
   $krankenkasse_get->execute() or die $dbh->errstr();
   my @erg = $krankenkasse_get->fetchrow_array();
@@ -94,13 +91,16 @@ sub krankenkassen_ins {
   
   # insert an DB vorbereiten
   my $krankenkassen_ins = $dbh->prepare("insert into Krankenkassen ".
-					"(ID,NAME,STRASSE,PLZ,ORT,TEL,IK) ".
-					"values (?,?,?,?,?,?,?);")
+					"(IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
+					"PLZ_POST,ORT,POSTFACH, ".
+					"ASP_NAME,ASP_TEL,ZIK,BEMERKUNG) ".
+					"values (?,?,?,?,?,?,".
+					"?,?,?,".
+					"?,?,?,?);")
     or die $dbh->errstr();
-  my $erg = $krankenkassen_ins->execute('NULL',@_)
+  my $erg = $krankenkassen_ins->execute(@_)
     or die $dbh->errstr();
-  $max_krank = $krankenkassen_ins->{'mysql_insertid'};
-  return $max_krank;
+  return 1;
 }
 
 sub krankenkassen_update {
@@ -108,7 +108,10 @@ sub krankenkassen_update {
   shift;
   # updaten an DB vorbereiten
   my $krankenkassen_up = $dbh->prepare("update Krankenkassen set ".
-				       "NAME=?,STRASSE=?,PLZ=?,ORT=?,TEL=?,IK=? ".
+				       "KNAME=?,NAME=?,STRASSE=?,".
+				       "PLZ_HAUS=?,PLZ_POST=?,ORT=?,".
+				       "ASP_NAME=?,ASP_TEL=?,ZIK=? ".
+				       "BEMERKUNG=? ".
 				       "where ID=?;")
     or die $dbh->errstr();
   my $erg = $krankenkassen_up->execute(@_)
@@ -122,22 +125,50 @@ sub krankenkassen_delete {
   shift;
   # delete an DB vorbereiten
   my $krankenkasse_del = $dbh->prepare("delete from Krankenkassen ".
-				       "where ID=?;")
+				       "where IK=?;")
     or die $dbh->errstr();
   my $erg = $krankenkasse_del->execute(@_)
     or die $dbh->errstr();
   return $erg;
 }
 
-sub krankenkassen_krank_id {
+
+sub krankenkasse_next_ik {
+  # holt die zur angegebenen ik nächste ik
+  shift;
+  my ($ik) = @_;
+  my $krankenkasse_next_ik = 
+    $dbh->prepare("select IK from Krankenkassen where ".
+		  "ik > ? limit 1;")
+      or die $dbh->errstr();
+  $krankenkasse_next_ik->execute($ik) or die $dbh->errstr();
+  return $krankenkasse_next_ik->fetchrow_array();
+}
+
+sub krankenkasse_prev_ik {
+  # holt die zur angegebenen ik vorhergehende ik
+  shift;
+  my ($ik) = @_;
+  my $krankenkasse_prev_ik = 
+    $dbh->prepare("select IK from Krankenkassen where ".
+		  "ik < ? order by ik desc limit 1;")
+      or die $dbh->errstr();
+  $krankenkasse_prev_ik->execute($ik) or die $dbh->errstr();
+  return $krankenkasse_prev_ik->fetchrow_array();
+}
+
+
+sub krankenkassen_krank_ik {
   # holgt alle Daten zu einer Krankenkasse
   shift;
   
-  my $krank_id = $dbh->prepare("select NAME,PLZ,ORT,TEL,STRASSE,IK ".
-			       "from Krankenkassen where ID = ?;")
+  my $krank_ik = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
+			       "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL,".
+			       "ZIK,BEMERKUNG ".
+			       "from Krankenkassen where IK = ?;")
     or die $dbh->errstr();
-  $krank_id->execute(@_) or die $dbh->errstr();
-  my @erg = $krank_id->fetchrow_array();
+  $krank_ik->execute(@_) or die $dbh->errstr();
+  my @erg = $krank_ik->fetchrow_array();
   for (my $i=0;$i < $#erg;$i++) {
     if (!defined($erg[$i])) {
       $erg[$i]='';
@@ -146,8 +177,4 @@ sub krankenkassen_krank_id {
   return @erg;
 }
 
-sub max {
-  # gibt die höchste ID zurück
-  return $max_krank;
-}			      
 1;
