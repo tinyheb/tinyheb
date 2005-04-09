@@ -28,7 +28,7 @@ sub new {
 			     "KRANKENVERSICHERUNGSNUMMER,".
 			     "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
 			     "VERSICHERTENSTATUS,".
-			     "FK_KRANKENKASSE,".
+			     "IK,".
 			     "NAECHSTE_HEBAMME,".
 			     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME ".
 			     "from Stammdaten where ".
@@ -41,9 +41,8 @@ sub new {
 			     "STRASSE like ?;");
 
   bless $self, ref $class || $class;
-  my $max_id = $dbh->prepare("select max(id) from Stammdaten;") or die $dbh->errstr();
-  $max_id->execute() or die $dbh->errstr();
-  $max_frau = $max_id->fetchrow_array();
+  Heb->parm_such('STAMMDATEN_ID');
+  $max_frau = Heb->parm_such_next();
   return $self;
 }
 
@@ -84,20 +83,24 @@ sub stammdaten_ins {
      $krankenversicherungsnummer,
      $krankenversicherungsnummer_gueltig,
      $versichertenstatus,
-     $fk_krankenkasse,
+     $ik,
      $bundesland,
      $geburtsdatum_kind,
      $naechste_hebamme,
      $begruendung_nicht_naechste_hebamme,
      $datum) = @_;
 
+  # zunächst neue ID für Frau holen
+  Heb->parm_such('STAMMDATEN_ID');
+  my $id = Heb->parm_such_next;
+  $id++;
   # insert an Datenbank vorbereiten
   my $stammdaten_ins = $dbh->prepare("insert into Stammdaten ".
 				     "(ID,VORNAME,NACHNAME,GEBURTSDATUM_FRAU,".
 				     "STRASSE,PLZ,ORT,TEL,ENTFERNUNG,".
 				     "KRANKENVERSICHERUNGSNUMMER,".
 				     "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
-				     "VERSICHERTENSTATUS,FK_KRANKENKASSE,".
+				     "VERSICHERTENSTATUS,IK,".
 				     "BUNDESLAND,GEBURTSDATUM_KIND,".
 				     "NAECHSTE_HEBAMME,".
 				     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME,".
@@ -112,21 +115,20 @@ sub stammdaten_ins {
 				     "?,".
 				     "?);")
     or die $dbh->errstr();
-  my $erg = $stammdaten_ins->execute('NULL',$vorname,$nachname,$geburtsdatum_frau,
+  my $erg = $stammdaten_ins->execute($id,$vorname,$nachname,$geburtsdatum_frau,
 				     $strasse,$plz,$ort,$tel,$entfernung,
 				     $krankenversicherungsnummer,
 				     $krankenversicherungsnummer_gueltig,
-				     $versichertenstatus,$fk_krankenkasse,
+				     $versichertenstatus,$ik,
 				     $bundesland,$geburtsdatum_kind,
 				     $naechste_hebamme,
 				     $begruendung_nicht_naechste_hebamme,
 				     $datum)
     or die $dbh->errstr();
 
-    
-  my $ins_id = $stammdaten_ins->{'mysql_insertid'};
-  print "ergebnis $erg ins_id $ins_id<br>\n" if $debug;
-  return $ins_id;
+  Heb->parm_up('STAMMDATEN_ID',$id);
+  print "ergebnis ins_id $id<br>\n" if $debug;
+  return $id;
 }
 
 sub stammdaten_update {
@@ -138,7 +140,7 @@ sub stammdaten_update {
 				    "STRASSE=?,PLZ=?,ORT=?,TEL=?,ENTFERNUNG=?,".
 				    "KRANKENVERSICHERUNGSNUMMER=?,".
 				    "KRANKENVERSICHERUNGSNUMMER_GUELTIG=?,".
-				    "VERSICHERTENSTATUS=?,FK_KRANKENKASSE=?,".
+				    "VERSICHERTENSTATUS=?,IK=?,".
 				    "BUNDESLAND=?,GEBURTSDATUM_KIND=?,".
 				    "NAECHSTE_HEBAMME=?,".
 				     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME=?,".
@@ -181,7 +183,7 @@ sub stammdaten_frau_id {
 			      "KRANKENVERSICHERUNGSNUMMER,".
 			      "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
 			      "VERSICHERTENSTATUS,".
-			      "FK_KRANKENKASSE,".
+			      "IK,".
 			      "NAECHSTE_HEBAMME,".
 			      "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME ".
 			      "from Stammdaten where ".
