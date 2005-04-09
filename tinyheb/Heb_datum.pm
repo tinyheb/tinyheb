@@ -43,11 +43,35 @@ sub convert {
   shift; # package namen vom Stack nehmen
 
   my ($eingabe_datum) = @_;
+  return $eingabe_datum if ($eingabe_datum =~ /\d{4}-\d{2}-\d{2}/);
   my ($tag,$monat,$jahr) = split '\.',$eingabe_datum;
   return "error" if (!(defined($tag) && defined($monat) && defined($jahr)));
   return "error" if (!check_date($jahr,$monat,$tag));
   return sprintf "%4.4u-%2.2u-%2.2u",$jahr,$monat,$tag;
 }
+
+
+sub convert_tmj {
+  # konvertiert datum vom Format jjjj-mm-tt nach tt.mm.jjjj
+  # es wird "error" geliefert, falls Datum nicht gültig ust
+  shift;
+  my ($eingabe_datum) = @_;
+  return $eingabe_datum if ($eingabe_datum =~ /\d{2}\.\d{2}\.\d{4}/);
+  my ($jahr,$monat,$tag) = split '-',$eingabe_datum;
+  return "error" if (!(defined($tag) && defined($monat) && defined($jahr)));
+  return "error" if (!check_date($jahr,$monat,$tag));
+  return sprintf "%2.2u.%2.2u.%4.4u",$tag,$monat,$jahr;
+}
+
+
+sub zeit_h {
+  # holt die Stunden aus dem Paramter hh:mm
+  shift;
+  my ($zeit) = @_;
+  my ($h,$m) = split ':',$zeit;
+  return $h;
+}
+
 
 sub feiertag_ins {
   # fügt neuen Feiertag in Datenbank ein
