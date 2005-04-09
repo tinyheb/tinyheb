@@ -15,6 +15,7 @@ our $user='baum';
 our $pass='';
 
 my $debug = 1;
+my $parm_such = '';
 
 sub new {
   my($class) = @_;
@@ -32,6 +33,32 @@ sub connect {
   die $DBI::errstr unless $dbh;
   return $dbh;
 }
- 
+
+sub parm_such {
+  # parameter holen
+  shift; # package Namen vom Stack holen
+  $parm_such = $dbh->prepare("select VALUE from Parms ".
+				"where NAME=?;")
+    or die $dbh->errstr();
+  $parm_such->execute(@_) or die $dbh->errstr();
+}
+
+sub parm_such_next {
+  my ($erg) = $parm_such->fetchrow_array();
+  return $erg;
+}
+
+sub parm_up {
+  # update auf bestimmten Parameter
+  shift;
+  my ($name,$value) = @_;
+  my $parm_up = $dbh->prepare("update Parms set ".
+			      "VALUE=? where ".
+			      "NAME = ?;")
+    or die $dbh->errstr();
+  $parm_up->execute($value,$name)
+    or die $dbh->errstr();
+}
+
 
 1;
