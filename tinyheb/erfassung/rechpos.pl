@@ -76,6 +76,7 @@ print <<STYLE;
   <style type="text/css">
   .disabled { color:black; background-color:gainsboro}
   .invisible { color:white; background-color:white;border-style:none}
+  .enabled { color:black; background-color:white}
   </style>
 STYLE
 
@@ -96,15 +97,17 @@ print '<tr>';
 print '<td><b>Datum:</b></td>';
 print '<td><b>Posnr:</b></td>';
 print '<td><b>E. Preis:</b></td>';
+print '<td><b>Wochentag:</b></td>';
 print '</tr>';
 print "\n";
 
 print '<tr>';
-print "<td><input type='text' name='datum' value='$datum' size='10'></td>";
+print "<td><input type='text' name='datum' value='$datum' size='10' onblur='datum_check(this);wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);'></td>";
 # Auswahlbox für Positionsnummern
 printauswahlboxposnr();
 
 print "<td><input type='text' class='disabled' disabled name='preis' value='' size='6'></td>";
+print "<td><input type='text' class='disabled' disabled name='wotag' value='' size='17'></td>";
 
 print '</tr>';
 print '</table>';
@@ -115,17 +118,17 @@ print '<td><b>Uhrzeit von</b></td>';
 print '<td><b>Uhrzeit bis</b></td>';
 print '<td><b>Dauer</b></td>';
 print '<td><b>Begründung</b></td>';
-print '<td><b>ID Leistung</b></td>';
-print '<td><b>ID Frau</b></td>';
+#print '<td><b>ID Leistung</b></td>';
+#print '<td><b>ID Frau</b></td>';
 print '<tr>';
 
 print '<tr>';
-print "<td><input type='text' name='zeit_von' value='$zeit_von' size='5'></td>";
-print "<td><input type='text' name='zeit_bis' value='$zeit_bis' size='5'></td>";
+print "<td><input type='text' disabled class='disabled' name='zeit_von' value='$zeit_von' size='5' onblur='uhrzeit_check(this);wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);'></td>";
+print "<td><input type='text' disabled class='disabled' name='zeit_bis' value='$zeit_bis' size='5' onblur='uhrzeit_check(this)'></td>";
 print "<td><input type='text' class='disabled' disabled name='dauer' value='' size='5'></td>";
 printauswahlboxbegr();
-print "<td><input type='text' name='leist_id' value='$leist_id' size='5'></td>";
-print "<td><input type='text' name='frau_id' value='$frau_id' size='5'></td>";
+print "<td><input type='hidden' name='leist_id' value='$leist_id' size='5'></td>";
+print "<td><input type='hidden' name='frau_id' value='$frau_id' size='5'></td>";
 print '</tr>';
 
 print '<tr>';
@@ -169,7 +172,7 @@ print '</select>';
 print '</td>';
 
 print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
-print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="hauptmenue()"></td>';
+print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
@@ -181,6 +184,8 @@ print <<SCRIPTE;
 //  set_focus(document.krankenkassen);
   open("list_posnr.pl?frau_id=$frau_id","list_posnr");
   posnr_wechsel(document.rechpos); // funktion wurde dynamisch generiert.
+  wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);
+  document.rechpos.datum.focus();
 </script>
 SCRIPTE
 print "</body>";
@@ -215,6 +220,7 @@ sub printauswahlboxposnr {
   printbox('B');
   printbox('C');
   printbox('D');
+  printbox('M');
   $script .= "}\n</script>";
   print "</select>";
   print $script;
@@ -226,11 +232,29 @@ sub printbox {
   #  print "WAHL $wahl\n";
   $l->leistungsart_such($TODAY_jmt,$wahl);
   while (my @werte = $l->leistungsart_such_next() ) {  
-    my ($l_posnr,$l_bez,$l_preis)=($werte[1],substr($werte[2],0,80),$werte[4]);
+    my ($l_posnr,$l_bez,$l_preis,$l_fuerzeit)=($werte[1],$werte[21],$werte[4],$werte[9]);
     print "<option value='$l_posnr' ";
     print ' selected' if ($posnr eq $l_posnr);
     print " >";
-    $script .= "if(formular.posnr.value == $l_posnr) {formular.preis.value=$l_preis;}\n";
+    $script .= "if(formular.posnr.value == '$l_posnr') {formular.preis.value=$l_preis;\n";
+    if ($l_fuerzeit > 0) {
+      $script .= "formular.zeit_von.disabled=false;\n";
+      $script .= "formular.zeit_bis.disabled=false;\n";
+      $script .= "var zl_tag = document.getElementsByName('zeit_von');\n";
+      $script .= "zl_tag[0].className='enabled';\n";
+      $script .= "var zl_tag = document.getElementsByName('zeit_bis');\n";
+      $script .= "zl_tag[0].className='enabled';\n";
+      $script .= "formular.zeit_von.focus();\n";
+    } else {
+      $script .= "formular.zeit_von.disabled=true;\n";
+      $script .= "formular.zeit_bis.disabled=true;\n";
+      $script .= "var zl_tag = document.getElementsByName('zeit_von');\n";
+      $script .= "zl_tag[0].className='disabled';\n";
+      $script .= "var zl_tag = document.getElementsByName('zeit_bis');\n";
+      $script .= "zl_tag[0].className='disabled';\n";
+      $script .= "formular.begruendung.focus();\n";
+    }
+    $script.="}\n";
     print "$l_posnr&nbsp;$l_bez";
     print '</option>';
   }
@@ -254,7 +278,7 @@ sub speichern {
     $entfernung_tag /= $anzahl_frauen;
     $entfernung_nacht /= $anzahl_frauen;
   }
-  # hier muss noch der Preis berechnet werden
+  # hier muss noch der Preis berechnet werden in Abhängigkeit der Dauer
   my $preis=0;
   my ($l_epreis,$l_fuerzeit) = $l->leistungsart_such_posnr('EINZELPREIS,FUERZEIT',$posnr,$datum_l);
   if ($l_fuerzeit > 0) {
@@ -267,10 +291,12 @@ sub speichern {
   }
   
   # Wenn Sonntag angegeben ist, prüfen ob Sonntag und richtige PosNr
-  # Wenn für Dauer angegeben ist, muss Dauer berechnet werden
 
   # einfügen in Datenbank
   $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
+  $entfernung_tag*=$anzahl_frauen;
+  $entfernung_nacht*=$anzahl_frauen;
+  $strecke='gesamt';
 }
 
 
@@ -282,21 +308,9 @@ sub loeschen {
 
 sub aendern {
   return if ($frau_id==0 || $leist_id ==0);
-  my $datum_l = $d->convert($datum);
-  # Entfernung konvertieren
-  $entfernung_tag =~ s/,/\./g;
-  $entfernung_nacht =~ s/,/\./g;
-  # entfernung berechnen
-  $anzahl_frauen++ if($anzahl_frauen eq '' || $anzahl_frauen == 0);
-  if ($strecke eq 'gesamt') {
-    $entfernung_tag /= $anzahl_frauen;
-    $entfernung_nacht /= $anzahl_frauen;
-  }
-  # hier muss noch der Preis berechnet werden
-  my $preis=0;
-  # Wenn Sonntag angegeben ist, prüfen ob Sonntag und richtige PosNr
-  # Wenn für Dauer angegeben ist, muss Dauer berechnet werden
-  $l->leistungsdaten_up($leist_id,$posnr,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
+  loeschen();
+  speichern();
+
 }
 
 
@@ -311,6 +325,8 @@ sub hole_daten {
   $zeit_bis = $erg[6] || '';
   $anzahl_frauen = $erg[9] || '1';
   $entfernung_tag = $erg[7]*$anzahl_frauen || 0;
+  $entfernung_tag = sprintf "%.2f",$entfernung_tag;
   $entfernung_nacht = $erg[8]*$anzahl_frauen || 0;
+  $entfernung_nacht = sprintf "%.2f",$entfernung_nacht;
   $strecke = 'gesamt';
 }
