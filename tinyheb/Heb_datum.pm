@@ -9,7 +9,7 @@ package Heb_datum;
 
 use strict;
 use DBI;
-use Date::Calc qw(check_date);
+use Date::Calc qw(check_date Add_Delta_DHMS);
 
 use Heb;
 
@@ -43,7 +43,7 @@ sub convert {
   shift; # package namen vom Stack nehmen
 
   my ($eingabe_datum) = @_;
-  return $eingabe_datum if ($eingabe_datum =~ /\d{4}-\d{2}-\d{2}/);
+  return $eingabe_datum if ($eingabe_datum =~ /\d{1,4}-\d{1,2}-\d{1,2}/);
   my ($tag,$monat,$jahr) = split '\.',$eingabe_datum;
   return "error" if (!(defined($tag) && defined($monat) && defined($jahr)));
   return "error" if (!check_date($jahr,$monat,$tag));
@@ -56,13 +56,20 @@ sub convert_tmj {
   # es wird "error" geliefert, falls Datum nicht gültig ust
   shift;
   my ($eingabe_datum) = @_;
-  return $eingabe_datum if ($eingabe_datum =~ /\d{2}\.\d{2}\.\d{4}/);
+  return $eingabe_datum if ($eingabe_datum =~ /\d{1,2}\.\d{1,2}\.\d{1,4}/);
   my ($jahr,$monat,$tag) = split '-',$eingabe_datum;
   return "error" if (!(defined($tag) && defined($monat) && defined($jahr)));
   return "error" if (!check_date($jahr,$monat,$tag));
   return sprintf "%2.2u.%2.2u.%4.4u",$tag,$monat,$jahr;
 }
 
+sub jmt {
+  # liefert Tripel jahr,monat,tag
+  shift;
+  my ($datum) = @_;
+  $datum=Heb_datum->convert($datum);
+  return split '-',$datum;
+}
 
 sub zeit_h {
   # holt die Stunden aus dem Paramter hh:mm
@@ -70,6 +77,19 @@ sub zeit_h {
   my ($zeit) = @_;
   my ($h,$m) = split ':',$zeit;
   return $h;
+}
+
+sub dauer_m {
+  # eingabe 2 zeiten im Format hh:mm es wird die Dauer in Minuten berechnet
+  shift;
+  my ($z1,$z2)= @_;
+  my ($h1,$m1) = split ':',$z1;
+  my ($h2,$m2) = split ':',$z2;
+  $h2 *=-1;
+  $m2 *=-1;
+  my ($y,$m,$d,$H,$M,$S)=Add_Delta_DHMS(1900,1,1,$h1,$m1,0,0,$h2,$m2,0);
+  my $erg = $H*60+$M;
+  return $erg;
 }
 
 
