@@ -3,10 +3,6 @@
 #-d:ptkdb
 #-d:DProf  
 
-sub BEGIN {
-  $ENV{DISPLAY} = "schloesser:0.0";
-}
-
 # author: Thomas Baum
 # 24.03.2004
 # Krankenkassen erfassen, ändern, löschen
@@ -29,13 +25,18 @@ my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
 my @bund = ('NRW','Bayern','Rheinlandpfalz','Hessen');
 
-my $krank_id = $q->param('krank_id') || '0';
 my $name = $q->param('name_krankenkasse') || '';
-my $tel = $q->param('tel_krankenkasse') || '';
+my $kname = $q->param('kname_krankenkasse') || '';
+my $asp_tel = $q->param('asp_tel_krankenkasse') || '';
+my $asp_name = $q->param('asp_name_krankenkasse') || '';
 my $strasse = $q->param('strasse_krankenkasse') || '';
-my $plz = $q->param('plz_krankenkasse') || '';
+my $plz_haus = $q->param('plz_haus_krankenkasse') || '';
+my $plz_post = $q->param('plz_post_krankenkasse') || '';
 my $ort = $q->param('ort_krankenkasse') || '';
-my $ik = $q->param('ik_krankenkasse') || '';
+my $ik = $q->param('ik_krankenkasse') || 0;
+my $zik = $q->param('zik_krankenkasse') || '';
+my $postfach = $q->param('postfach_krankenkasse') || '';
+my $bemerkung = $q->param('bemerkung_krankenkasse') || '';
 
 my $speichern = $q->param('Speichern');
 
@@ -49,7 +50,7 @@ if (($auswahl eq 'Ändern') && defined($abschicken)) {
   $auswahl = 'Anzeigen';
 }
 if (($auswahl eq 'Neu') && defined($abschicken)) {
-  $krank_id = speichern();
+  $ik = speichern();
   $auswahl = 'Anzeigen';
 }
 
@@ -59,6 +60,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 print '<head>';
 print '<title>Krankenkassen</title>';
 print '<script language="javascript" src="krankenkassen.js"></script>';
+print '<script language="javascript" src="../Heb.js"></script>';
 print '</head>';
 
 # style-sheet ausgeben
@@ -84,52 +86,98 @@ print '</div><br>';
 print '<form name="krankenkassen" action="krankenkassenerfassung.pl" method="get" target=_top bgcolor=white>';
 print '<table border="0" width="700" align="left">';
 
-# Zeile ID, Name
+# Zeile IK, Name, KNAME
 # z1 s1
 print '<tr><td><table border="0" align="left">';
 print '<tr>';
-print '<td><b>ID</b></td>';
-print '<td>';
-print_color('Name:',$name);
-print '</td>';
 print '<td><b>IK</b></td>';
+print '<td>';print_color('Name:',$name);print '</td>';
+print '<td><b>KName</b></td>';
 print '</tr>';
 print "\n";
 
 print '<tr>';
-print "<td><input type='text' class=disabled name='krank_id' value='$krank_id' size='6'></td>";
+print "<td><input type='text' name='ik_krankenkasse' value='$ik' size='9'></td>";
 print "<td><input type='text' name='name_krankenkasse' value='$name' size='40'></td>";
-print "<td><input type='text' name='ik_krankenkasse' value='$ik' size='14'></td>";
+print "<td><input type='text' name='kname_krankenkasse' value='$kname' size='40'></td>";
 print "<td><input type='button' name='kasse_suchen' value='Suchen' onClick='return kassesuchen(name_krankenkasse,ik_krankenkasse,form);'></tr>";
 print '</table>';
 print "\n";
 
 # Zeile Telefonnumer
-print '<tr><td><b>Tel.:</b></td></tr>';
-print "<tr><td><input type='text' name='tel_krankenkasse' value='$tel' size='40'></td></tr>";
+print '<tr><td>';
+print '<table border="0" align="left">';
+print '<tr><td><b>Tel.:</b></td>';
+print '<td><b>Ansprechpartner:</b></td></tr>';
+print "<tr><td><input type='text' name='asp_tel_krankenkasse' value='$asp_tel' size='40'></td>";
+print "<td><input type='text' name='asp_name_krankenkasse' value='$asp_name' size='40'></td></tr>";
+print '</table>';
 print "\n";
 
 # leere Zeile
 print '<tr><td>&nbsp;</td></tr>';
 
-# Zeile PLZ, Ort, Strasse, Entfernung
+# Zeile PLZ, Ort, Strasse für Hausanschrift
 print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
+print '<tr><td><b>Hausanschrift</b><td></tr>';
 print '<tr>';
-print '<td><b>PLZ:</b></td>';
+print '<td><b>PLZ</b></td>';
 print '<td><b>Ort:</b></td>';
 print '<td><b>Strasse:</b></td>';
 print '</tr>';
-
 # Eingabe Felder
 print "<tr>";
-print "<td><input type='text' name='plz_krankenkasse' value='$plz' size='5' onBlur='return plz_check(this)'></td>";
+print "<td><input type='text' name='plz_haus_krankenkasse' value='$plz_haus' size='5' onBlur='return plz_check(this)'></td>";
 print "<td><input type='text' name='ort_krankenkasse' value='$ort' size='40'></td>";
 print "<td><input type='text' name='strasse_krankenkasse' value='$strasse' size='40'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
+
+# Zeile PLZ, Ort, Postfach für Postanschrift
+print '<tr>';
+print '<td>';
+print '<table border="0" align="left">';
+print '<tr><td><b>Postanschrift</b><td></tr>';
+print '<tr>';
+print '<td><b>PLZ</b></td>';
+print '<td><b>Ort:</b></td>';
+print '<td><b>Postfach:</b></td>';
+print '</tr>';
+# Eingabe Felder
+print "<tr>";
+print "<td><input type='text' name='plz_post_krankenkasse' value='$plz_post' size='5' onBlur='return plz_check(this)'></td>";
+print "<td><input type='text' disabled class=disabled name='ort2_krankenkasse' value='$ort' size='40'></td>";
+print "<td><input type='text' name='postfach_krankenkasse' value='$postfach' size='5'></td>";
+print '</tr>';
+print '</table>';
+print "\n";
+
+# leere Zeile
+print '<tr><td>&nbsp;</td></tr>';
+
+
+# Zeile der ZIK und Bemerkung
+print '<tr>';
+print '<td>';
+print '<table border="0" align="left">';
+print '<tr>';
+print '<td><b>ZIK:</b></td>';
+print '<td><b>Bemerkung:</b></td>';
+print '</tr>';
+
+# Eingabe Felder
+print "<tr>";
+print "<td><input type='text' name='zik_krankenkasse' value='$zik' size='9'></td>";
+print "<td><input type='text' name='bemerkung_krankenkasse' value='$bemerkung' size='60'></td>";
+print '</tr>';
+print '</table>';
+print "\n";
+
+
+
 
 # Zeile mit Knöpfen für unterschiedliche Funktionen
 print '<tr>';
@@ -173,7 +221,7 @@ print <<SCRIPTE;
   auswahl_wechsel(document.krankenkassen);
 </script>
 SCRIPTE
-print "</body>'";
+print "</body>";
 print "</html>";
 
 sub print_color {
@@ -186,35 +234,28 @@ sub print_color {
 
 sub speichern {
   # Speichert die Daten in der Krankenkassen Datenbank
-  my $erg = $k->krankenkassen_ins($name,$strasse,$plz,$ort,$tel,$ik);
+  my $erg = $k->krankenkassen_ins($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung);
   return $erg;
 }
 
 sub loeschen {
   # löscht Datensatz aus der Stammdaten Datenbank
-  my $erg = $k->krankenkassen_delete($krank_id);
+  my $erg = $k->krankenkassen_delete($ik);
   return $erg;
 }
 
 sub aendern {
   # Ändert die Daten zur angegebenen Krankenkassen in der Datenbank
-  my $erg = $k->krankenkassen_update($name,$strasse,$plz,$ort,$tel,$ik,$krank_id);
+  my $erg = $k->krankenkassen_update($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung);
   return $erg;
 }
 
 sub hole_krank_daten {
-  $krank_id = $k->max if ($krank_id > $k->max);
   $name='';
-  while ($name eq '') {
-    ($name,$plz,$ort,$tel,$strasse,$ik)= $k->krankenkassen_krank_id($krank_id);
-    if (!defined($name)) {
-      if ($krank_id <= 0) {
-	$krank_id = 0;
-	return;
-      }
-      $krank_id++ if ($func == 1);
-      $krank_id-- if ($func == 2 && $krank_id > 1);
-    }
-  }
+  my $ik_alt=$ik;
+  $ik = $k->krankenkasse_next_ik($ik) if ($func==1);
+  $ik = $k->krankenkasse_prev_ik($ik) if ($func==2);
+  $ik=$ik_alt if (!defined($ik));
+  ($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung)= $k->krankenkassen_krank_ik($ik);
   return;
 }
