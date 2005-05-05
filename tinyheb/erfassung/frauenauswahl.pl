@@ -1,11 +1,7 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -wT
 #-w
 #-d:ptkdb
 #-d:DProf  
-
-sub BEGIN {
-  $ENV{DISPLAY} = "schloesser:0.0";
-}
 
 # author: Thomas Baum
 # 29.02.2004
@@ -48,6 +44,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 # Alle Felder zur Eingabe ausgeben
 print '<head>';
 print '<title>Frau suchen</title>';
+print '<script language="javascript" src="../Heb.js"></script>';
 print '<script language="javascript" src="stammdaten.js"></script>';
 print '</head>';
 print '<body bgcolor=white>';
@@ -143,9 +140,9 @@ if (defined($suchen)) {
 	     $f_begr_nicht_nae_heb) = $s->stammdaten_suchfrau_next) {
     
     # Krankenkassen Infos holen
-    if ($f_fk_krankenkasse ne '') {
+    if ($f_fk_krankenkasse != 0) {
       ($kk_ik,$kk_name,$kk_plz,$kk_ort,$kk_strasse) =
-	 $k->krankenkasse_id('IK,NAME,PLZ,ORT,STRASSE',$f_fk_krankenkasse);
+	 $k->krankenkasse_ik('IK,NAME,PLZ_HAUS,ORT,STRASSE',$f_fk_krankenkasse);
     } else {
       ($kk_ik,$kk_name,$kk_plz,$kk_ort,$kk_strasse) = ('','','','','');
     }
@@ -158,7 +155,8 @@ if (defined($suchen)) {
     print "<td>$f_ort</td>";
     print "<td>$f_strasse</td>";
     print '<td><input type="button" name="waehlen" value="Auswählen"';
-    print "onclick=\"frau_eintrag('$f_id','$f_vorname','$f_nachname','$f_geb_f','$f_geb_k','$f_plz','$f_ort','$f_tel','$f_strasse','$f_bundesland','$f_entfernung','$f_krankennr','$f_krankennrguelt','$f_verstatus','$f_nae_heb','$f_begr_nicht_nae_heb');kk_eintrag('$kk_ik','$kk_name','$kk_plz','$kk_ort','$kk_strasse');self.close()\"></td>";
+    print "onclick=\"frau_eintrag('$f_id','$f_vorname','$f_nachname','$f_geb_f','$f_geb_k','$f_plz','$f_ort','$f_tel','$f_strasse','$f_bundesland','$f_entfernung','$f_krankennr','$f_krankennrguelt','$f_verstatus','$f_nae_heb','$f_begr_nicht_nae_heb');";
+    print "if (opener.document.forms[0].name != 'rechnungen_gen') { kk_eintrag('$kk_name','$kk_plz','$kk_ort','$kk_strasse','$kk_ik');}self.close()\"></td>";
     print "</tr>\n";
   }
 }
