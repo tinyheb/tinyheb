@@ -1,11 +1,7 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -wT
 #-w
 #-d:ptkdb
 #-d:DProf  
-
-sub BEGIN {
-  $ENV{DISPLAY} = "schloesser:0.0";
-}
 
 # author: Thomas Baum
 # 28.02.2004
@@ -24,8 +20,10 @@ my $k = new Heb_krankenkassen;
 my $debug=1;
 
 my $name = $q->param('name') || '';
+my $kname = $q->param('kname') || '';
 my $ort = $q->param('ort') || '';
-my $plz = $q->param('plz') || '';
+my $plz_haus = $q->param('plz_haus') || '';
+my $plz_post = $q->param('plz_post') || '';
 my $ik = $q->param('ik') || '';
 my $fk_krankenkasse = -1;
 
@@ -54,18 +52,22 @@ print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
-print "<td><b>Name</b></td>\n";
-print "<td><b>Ort</b></td>\n";
-print "<td><b>PLZ</b></td>\n";
 print "<td><b>IK</b></td>\n";
+print "<td><b>Name</b></td>\n";
+print "<td><b>KName</b></td>\n";
+print "<td><b>Ort</b></td>\n";
+print "<td><b>PLZ Hausanschrift</b></td>\n";
+print "<td><b>PLZ Postfach</b></td>\n";
 print '</tr>';
 print "\n";
 
 print '<tr>';
-print "<td><input type='text' name='name' value='$name' size='20'></td>";
-print "<td><input type='text' name='ort' value='$ort' size='20'></td>";
-print "<td><input type='text' name='plz' value='$plz' size='7'></td>";
 print "<td><input type='text' name='ik' value='$ik' size='10'></td>";
+print "<td><input type='text' name='name' value='$name' size='20'></td>";
+print "<td><input type='text' name='kname' value='$kname' size='20'></td>";
+print "<td><input type='text' name='ort' value='$ort' size='20'></td>";
+print "<td><input type='text' name='plz_haus' value='$plz_haus' size='7'></td>";
+print "<td><input type='text' name='plz_post' value='$plz_post' size='7'></td>";
 print '</table>';
 print "\n";
 
@@ -87,26 +89,33 @@ if (defined($suchen)) {
   print '<td>';
   print '<table border="1" align="left">';
   print '<tr>';
+  print "<td><b>IK</b></td>\n";
   print "<td><b>Name</b></td>\n";
-  print "<td><b>PLZ</b></td>\n";
+  print "<td><b>KName</b></td>\n";
+  print "<td><b>PLZ Hausanschrift</b></td>\n";
+  print "<td><b>PLZ Postfach</b></td>\n";
   print "<td><b>Ort</b></td>\n";
   print "<td><b>Strasse</b></td>\n";
-  print "<td><b>IK</b></td>\n";
   print '</tr>';
   $name = '%'.$name.'%';
-  $plz = $plz.'%';
+  $kname = '%'.$kname.'%';
+  $plz_haus = $plz_haus.'%';
+  $plz_post = $plz_post.'%';
   $ort = '%'.$ort.'%';
   $ik = '%'.$ik.'%';
-  $k->krankenkasse_such($name,$plz,$ort,$ik);
-  while (my ($id,$k_name,$k_strasse,$k_plz,$k_ort,$k_ik,$k_tel) = $k->krankenkasse_such_next) {
+  $k->krankenkasse_such($name,$plz_haus,$ort,$ik);
+  while (my ($k_ik,$k_kname,$k_name,$k_strasse,$k_plz_haus,$k_plz_post,$k_ort,$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung) = $k->krankenkasse_such_next) {
     print '<tr>';
+    print "<td>$k_ik</td>";
     print "<td>$k_name</td>";
-    print "<td>$k_plz</td>";
+    print "<td>$k_kname</td>";
+    print "<td>$k_plz_haus</td>";
+    print "<td>$k_plz_post</td>";
     print "<td>$k_ort</td>";
     print "<td>$k_strasse</td>";
-    print "<td>$k_ik</td>";
+#    print "<td>$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung</td>";
     print '<td><input type="button" name="waehlen" value="Auswählen"';
-    print "onclick=\"kk_eintrag('$id','$k_name','$k_plz','$k_ort','$k_strasse','$k_ik','$k_tel');self.close()\"></td>";
+    print "onclick=\"kk_eintrag('$k_ik','$k_kname','$k_name','$k_plz_haus','$k_plz_post','$k_ort','$k_strasse','$k_zik','$k_asp_tel','$k_bemerkung','$k_postfach');self.close()\"></td>";
     print "</tr>\n";
   }
 }
@@ -119,24 +128,29 @@ print <<SCRIPTE;
   function zurueck() {
     kassenauswahl.close();
   }
-  function kk_eintrag(krank_id,name,plz,ort,strasse,ik,tel) {
+  function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse,zik,asp_tel,bemerkung,postfach) {
     // alert("gewählt"+name+plz+ort+strasse+ik);
     // in Parent Dokument übernehmen
     // alert("parent"+opener.window.document.forms[0].name);
     var formular=opener.window.document.forms[0];
-    formular.ik_krankenkasse.value=ik;
+    formular.ik_krankenkasse.value=k_ik;
     formular.name_krankenkasse.value=name;
     formular.strasse_krankenkasse.value=strasse;
     if (formular.name == 'krankenkassen') {
+       formular.kname_krankenkasse.value=kname;
        formular.ort_krankenkasse.value = ort;
-       formular.plz_krankenkasse.value = plz;
-       formular.krank_id.value = krank_id;
-       formular.tel_krankenkasse.value = tel; 
+       formular.ort2_krankenkasse.value = ort;
+       formular.plz_haus_krankenkasse.value = plz_haus;
+       formular.plz_post_krankenkasse.value = plz_post;
+       formular.zik_krankenkasse.value = zik;
+       formular.asp_tel_krankenkasse.value = asp_tel;
+       formular.bemerkung_krankenkasse.value = bemerkung;
+       formular.postfach_krankenkasse.value = postfach;
     } else {
-       formular.ort_krankenkasse.value=plz+' '+ort;
+       formular.ort_krankenkasse.value=plz_haus+' '+ort;
     }
   }
 </script>
 SCRIPTE
-print "</body>'";
+print "</body>";
 print "</html>";
