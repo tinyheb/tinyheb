@@ -3,10 +3,6 @@
 #-d:ptkdb
 #-d:DProf  
 
-sub BEGIN {
-  $ENV{DISPLAY} = "schloesser:0.0";
-}
-
 # author: Thomas Baum
 # 07.02.2004
 # Stammdaten erfassen
@@ -30,7 +26,7 @@ my $debug=1;
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
 my @bund = ('NRW','Bayern','Rheinlandpfalz','Hessen');
-my @verstatus = ('freiwillig','gesetzlich','privat');
+my @verstatus = ('1 1','3 1');
 
 my $frau_id = $q->param('frau_id') || '0';
 my $vorname = $q->param('vorname') || '';
@@ -46,7 +42,6 @@ my $kv_gueltig = $q->param('krankenversicherungsnummer_gueltig') || '';
 my $versichertenstatus = $q->param('versichertenstatus') || '';
 my $ik_krankenkasse = $q->param('ik_krankenkasse') || '';
 my $bundesland = $q->param('bundesland') || '';
-my $fk_krankenkasse = -1;
 my $name_krankenkasse = '';
 my $plz_krankenkasse = '';
 my $ort_krankenkasse = '';
@@ -65,16 +60,14 @@ hole_frau_daten() if ($func == 1 || $func == 2);
 
 # Infos zur Krankenkasse holen
 if ($ik_krankenkasse ne '') {
-  ($fk_krankenkasse,
-   $name_krankenkasse,
+  ($name_krankenkasse,
    $plz_krankenkasse,
    $ort_krankenkasse,
-   $strasse_krankenkasse) = $k->krankenkasse_sel('ID,NAME,PLZ,ORT,STRASSE',$ik_krankenkasse);
+   $strasse_krankenkasse) = $k->krankenkasse_sel('NAME,PLZ_HAUS,ORT,STRASSE',$ik_krankenkasse);
   $name_krankenkasse = 'nicht bekannte IK angegeben' unless defined ($name_krankenkasse);
   $ort_krankenkasse = '' unless defined ($ort_krankenkasse);
   $plz_krankenkasse = '' unless defined ($plz_krankenkasse);
   $strasse_krankenkasse = '' unless defined ($strasse_krankenkasse);
-  $fk_krankenkasse = -1 unless defined ($name_krankenkasse);
 
 } else {
   $name_krankenkasse = 'noch keine gültige Krankenkasse gewählt';
@@ -112,7 +105,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten $Revision: 1.6 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.7 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -207,7 +200,7 @@ print '</tr>';
 print "\n";
 
 print '<tr>';
-print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='15' onBlur='return kvnr_check(this)'></td>";
+print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='15' onBlur='kvnr_check(this);'></td>";
 print "<td><input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='4' onBlur='return kvnr_gueltig_check(this)'></td>";
 # z4.2 s3
 print '<td>';
@@ -316,6 +309,7 @@ print '</td>';
 print '<td><input type="submit" name="abschicken" value="Speichern"</td>';
 print '<td><input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.stammdaten)"></td>';
 print '<td><input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.stammdaten)"></td>';
+print '<td><input type="button" name="rechnung" value="Rechnung" onclick="rechnung_erfassen(document.stammdaten)"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
@@ -327,7 +321,7 @@ print <<SCRIPTE;
   auswahl_wechsel(document.stammdaten);
 </script>
 SCRIPTE
-print "</body>'";
+print "</body>";
 print "</html>";
 
 sub print_color {
@@ -351,7 +345,7 @@ sub speichern {
   # jetzt speichern
   my $erg = $s->stammdaten_ins($vorname,$nachname,$geb_f,$strasse,$plz,$ort,$tel,
 			       $entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
-			       $fk_krankenkasse,$bundesland,$geb_k,$naechste_hebamme,
+			       $ik_krankenkasse,$bundesland,$geb_k,$naechste_hebamme,
 			       $begruendung_nicht_nae_heb,$TODAY);
   $entfernung =~ s/\./,/g;
   return $erg;
@@ -374,7 +368,7 @@ sub aendern {
   # jetzt speichern
   my $erg = $s->stammdaten_update($vorname,$nachname,$geb_f,$strasse,$plz,$ort,$tel,
 			      $entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
-			      $fk_krankenkasse,$bundesland,$geb_k,$naechste_hebamme,
+			      $ik_krankenkasse,$bundesland,$geb_k,$naechste_hebamme,
 			      $begruendung_nicht_nae_heb,$TODAY,$frau_id);
   $entfernung =~ s/\./,/g;
   return $erg;
@@ -386,18 +380,18 @@ sub hole_frau_daten {
   while (!defined($vorname) || $vorname eq '') {
     ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
      $bundesland,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
-     $fk_krankenkasse,$naechste_hebamme,
+     $ik_krankenkasse,$naechste_hebamme,
      $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
     $entfernung = '0.0' unless defined($entfernung);
     $entfernung =~ s/\./,/g;
     
-    if (defined($fk_krankenkasse) && $fk_krankenkasse > 0) {
+    if (defined($ik_krankenkasse) && $ik_krankenkasse > 0) {
       ($ik_krankenkasse,
        $name_krankenkasse,
        $plz_krankenkasse,
        $ort_krankenkasse,
        $strasse_krankenkasse) =
-         $k->krankenkasse_id('IK,NAME,PLZ,ORT,STRASSE',$fk_krankenkasse);
+         $k->krankenkasse_ik('IK,NAME,PLZ_HAUS,ORT,STRASSE',$ik_krankenkasse);
     } else {
       ($ik_krankenkasse,
        $name_krankenkasse,
