@@ -2,6 +2,15 @@ function loeschen() {
   open("stammdatenerfassung.pl","_top");
 };
 
+function rechnung_erfassen(formular) {
+  // öffnet Fenster in dem Rechnungspositionen erfasst werden können
+  if (formular.auswahl.value == 'Anzeigen' && formular.frau_id.value > 0) {
+    open("rechnungserfassung.pl?frau_id="+formular.frau_id.value,"_top");
+  } else {
+    alert('Bitte Menuepunkt Anzeigen und Frau wählen');
+  }
+}
+
 function frausuchen(vorname,nachname,geb,formular) {
   // öffnet Fenster in dem eine Frau ausgewählt werden kann
   open("frauenauswahl.pl?vorname="+vorname.value+"&nachname="+nachname.value+"&geb_f="+geb.value+"&suchen=Suchen","frauenwahl","scrollbars=yes,width=700,height=400");
@@ -27,8 +36,8 @@ function kvnr_gueltig_check(kvnr_gueltig) {
 }
 
   function kassen_auswahl() {
-  // öffnet Fenster in dem eine Krankenkasse ausgewählt werden kann
-  open("kassenauswahl.pl","kassenwahl","scrollbars=yes,width=600,height=400");
+    // öffnet Fenster in dem eine Krankenkasse ausgewählt werden kann
+    open("kassenauswahl.pl","kassenwahl","scrollbars=yes,width=750,height=400");
   }
 
 
@@ -36,39 +45,46 @@ function kvnr_gueltig_check(kvnr_gueltig) {
   // übertragt Daten in die Stammdatenmaske
 
     // in Parent Dokument übernehmen
-    // alert("parent"+opener.document.forms[0]);
-    opener.document.stammdaten.frau_id.value=frau_id;
-    opener.document.stammdaten.vorname.value=vorname;
-    opener.document.stammdaten.nachname.value=nachname;
-    opener.document.stammdaten.geburtsdatum_frau.value=geb_f;
-    opener.document.stammdaten.plz.value=plz;
-    opener.document.stammdaten.ort.value=ort;
-    opener.document.stammdaten.strasse.value=strasse;
-    opener.document.stammdaten.geburtsdatum_kind.value=geb_k;
-    var bund=['NRW','Bayern','Rheinlandpfalz','Hessen'];
-    for (var i=0; i<4;i++) {
-       if (bund[i] == bundesland) {
-         opener.document.stammdaten.bundesland.selectedIndex=i;
-       }
+    formular = opener.document.forms[0];
+    //alert("frau"+formular.name);
+    formular.frau_id.value=frau_id;
+    formular.vorname.value=vorname;
+    formular.nachname.value=nachname;
+    formular.geburtsdatum_frau.value=geb_f;
+    formular.geburtsdatum_kind.value=geb_k;
+    if (formular.name == 'rechnungen_gen') {
+      // postscript rechnung neu laden
+      open("../rechnung/ps2html.pl?frau_id="+frau_id,"rechnung");
+    } else {
+      formular.plz.value=plz;
+      formular.ort.value=ort;
+      formular.strasse.value=strasse;
+      
+      var bund=['NRW','Bayern','Rheinlandpfalz','Hessen'];
+      for (var i=0; i<4;i++) {
+	if (bund[i] == bundesland) {
+	  formular.bundesland.selectedIndex=i;
+	}
+      }
+      formular.entfernung.value=entfernung;
+      formular.krankenversicherungsnummer.value=kranknr;
+      formular.krankenversicherungsnummer_gueltig.value=kranknrguelt;
+      formular.tel.value=tel;
+      
+      for (i=0;i<formular.versichertenstatus.options.length;i++) {
+	if ( formular.versichertenstatus.options[i].text == verstatus) {
+	  formular.versichertenstatus.selectedIndex=i;
+	}
+      }
+      formular.naechste_hebamme.checked = false;      
+      formular.nicht_naechste_heb.disabled=false;
+      if (nae_heb=='j') {
+	formular.naechste_hebamme.checked = true;
+	formular.nicht_naechste_heb.disabled=true;
+      }
+      formular.nicht_naechste_heb.value=begr_nicht_nae_heb;
     }
-    opener.document.stammdaten.entfernung.value=entfernung;
-    opener.document.stammdaten.krankenversicherungsnummer.value=kranknr;
-    opener.document.stammdaten.krankenversicherungsnummer_gueltig.value=kranknrguelt;
-    opener.document.stammdaten.tel.value=tel;
-
-    for (i=0;i<opener.document.stammdaten.versichertenstatus.options.length;i++) {
-       if ( opener.document.stammdaten.versichertenstatus.options[i].text == verstatus) {
-         opener.document.stammdaten.versichertenstatus.selectedIndex=i;
-       }
-    }
-    opener.document.stammdaten.naechste_hebamme.checked = false;      
-    opener.document.stammdaten.nicht_naechste_heb.disabled=false;
-    if (nae_heb=='j') {
-      opener.document.stammdaten.naechste_hebamme.checked = true;
-      opener.document.stammdaten.nicht_naechste_heb.disabled=true;
-    }
-    opener.document.stammdaten.nicht_naechste_heb.value=begr_nicht_nae_heb;
-}
+  }
     
 
 function check_begr(wert,formular) {
