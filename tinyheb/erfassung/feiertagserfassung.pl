@@ -126,7 +126,7 @@ print '<tr>';
 print '<td><b>Datum</b></td>';
 print '</tr>';
 print '<tr>';
-print "<td><input type='text' name='datum_feiertag' value='$datum' size='10'></td>";
+print "<td><input type='text' name='datum_feiertag' value='$datum' size='10' onblur='datum_check(this);'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
@@ -173,7 +173,7 @@ print <<SCRIPTE;
   auswahl_wechsel(document.feiertage);
 </script>
 SCRIPTE
-print "</body>'";
+print "</body>";
 print "</html>";
 
 sub print_color {
