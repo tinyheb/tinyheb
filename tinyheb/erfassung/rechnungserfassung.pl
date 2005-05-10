@@ -65,11 +65,6 @@ print <<STYLE;
   </style>
 STYLE
 
-#if (($auswahl eq 'Löschen') && defined($abschicken)) {
-#  loeschen();
-#  print '<script>loeschen();</script>';
-#}
-
 # Alle Felder zur Eingabe ausgeben
 print '<body id="rechnung_window" bgcolor=white>';
 print '<div align="center">';
@@ -96,8 +91,9 @@ print '<tr>';
 print "<td><input type='text' class='disabled' disabled name='frau_id' value='$frau_id' size='3'></td>";
 print "<td><input type='text' class='disabled' disabled name='vorname' value='$vorname' size='40'></td>";
 print "<td><input type='text' class='disabled' disabled name='nachname' value='$nachname' size='40'></td>";
-print "<td><input type='text' class='disabled' disabled name='geb_frau' value='$geb_frau' size='10'></td>";
-print "<td><input type='text' class='disabled' disabled name='geb_kind' value='$geb_kind' size='10'></td>";
+print "<td><input type='text' class='disabled' disabled name='geburtsdatum_frau' value='$geb_frau' size='10'></td>";
+print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind' value='$geb_kind' size='10'></td>";
+print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl\",\"frauenauswahl\",\"scrollbar=yes,innerwidth=700,innerheight=400\");'></td>";
 print "</tr>";
 print '</table>';
 print "\n";
