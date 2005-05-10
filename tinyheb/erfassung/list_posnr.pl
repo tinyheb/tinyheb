@@ -56,9 +56,9 @@ while (my @erg=$l->leistungsdaten_such_next()) {
   $i++;
   print '<tr>';
   print "<td style='width:1cm;margin-left:0em'>";
-  print "<input style='font-size:8pt' type='button' name='aendern$i' value='Ändern' onclick='aend($frau_id,$erg[0]);'></td>\n";
+  print "<input style='font-size:8pt' type='button' name='aendern$i' value='Ändern' onclick='aend($frau_id,$erg[0],$erg[11]);'></td>\n";
 
-  print "<td style='width:1cm'><input style='padding:0;margin:0;font-size:8pt' type='button' name='loeschen1' value='Löschen' onclick='loe_leistdat($frau_id,$erg[0]);'></td>";
+  print "<td style='width:1cm'><input style='padding:0;margin:0;font-size:8pt' type='button' name='loeschen1' value='Löschen' onclick='loe_leistdat($frau_id,$erg[0],$erg[11]);'></td>";
   print "<td style='width:1.3cm;text-align:left'>$erg[4]</td>"; # datum
   print "<td style='width:0.4cm;text-align:center'>$erg[1]</td>"; # posnr
   # Aus DB Gebührentext und E. Preis holen
