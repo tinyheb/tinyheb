@@ -109,13 +109,7 @@ print '</form>';
 print '</td>';
 print '</tr>';
 print '</table>';
-# leere Zeile
-#print '<tr><td>&nbsp;</td></tr>';
-#system("rm -f ./tmp/file.ps");
-#sleep(2);
-#system("./rech_druck.pl $frau_id Nummer") if ($frau_id > 0);
-#sleep(1);
-# die wirklichen Infos kommen aus einem Programm
+
 print "<iframe src='ps2html.pl?frau_id=$frau_id' name='rechnung' width='860' height='900' scrolling='auto' frameborder='1'>" if ($frau_id > 0);
 print "<iframe src='../blank.html' name='rechnung' width='840' height='860' scrolling='yes' frameborder='1'>" if ($frau_id == 0);
 print "</iframe>";
@@ -124,7 +118,6 @@ print "</iframe>";
 
 print <<SCRIPTE;
 <script>
-//  set_focus(document.krankenkassen);
 //  auswahl_wechsel(document.rechnungsdaten);
 </script>
 SCRIPTE
