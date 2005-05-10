@@ -55,6 +55,11 @@ function kvnr_gueltig_check(kvnr_gueltig) {
     if (formular.name == 'rechnungen_gen') {
       // postscript rechnung neu laden
       open("../rechnung/ps2html.pl?frau_id="+frau_id,"rechnung");
+      return true;
+    }
+    if(formular.name == 'rechnung') {
+      open("rechpos.pl?frau_id="+frau_id,"rechpos");
+      return true;
     } else {
       formular.plz.value=plz;
       formular.ort.value=ort;
