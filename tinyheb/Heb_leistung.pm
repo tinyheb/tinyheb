@@ -51,10 +51,10 @@ sub new {
 		    "DATE_FORMAT(DATUM,'%d.%m.%Y'),".
 		    "TIME_FORMAT(ZEIT_VON,'%H:%i'),".
 		    "TIME_FORMAT(ZEIT_BIS,'%H:%i'),ENTFERNUNG_T,ENTFERNUNG_N,".
-		    "ANZAHL_FRAUEN,PREIS,STATUS ".
+		    "ANZAHL_FRAUEN,PREIS,STATUS,cast(POSNR as unsigned) as sort ".
 		    "from Leistungsdaten ".
 		    "where FK_STAMMDATEN=? ".
-		    "order by DATUM,POSNR, ZEIT_VON;")
+		    "order by DATUM,sort, ZEIT_VON;")
       or die $dbh->errstr();
   return $self;
 }
@@ -159,6 +159,20 @@ sub leistungsdaten_such_id {
 }
 
 
+
+sub leistungsart_pruef_zus {
+  # prüft ob Positionsnummer zuschlagspflichtig ist
+  shift;
+  my $posnr=shift;
+  my $wert=shift;
+  my $pruef_zus = $dbh->prepare("select distinct $wert from Leistungsart ".
+				"where $posnr=$wert;")
+    or die $dbh->errstr();
+  my $erg = $pruef_zus->execute() or die $dbh->errstr();
+  return $erg if ($erg>0);
+  return 0;
+}
+
 sub leistungsart_such {
   # Sucht gültige Leistungsarten in der Datenbank
   
@@ -194,7 +208,7 @@ sub leistungsdaten_offen {
   shift;
   my ($frau_id,$where,$order) = @_;
 
-  $order = 'POSNR,DATUM' if (!defined($order) || $order eq '');
+  $order = 'sort,DATUM' if (!defined($order) || $order eq '');
 
   if (defined($where) && $where ne '') {
     $where =~ s/,/ and /g;
@@ -204,7 +218,8 @@ sub leistungsdaten_offen {
   }
 
   $leistungsdaten_offen =
-    $dbh->prepare("select Leistungsdaten.*, Leistungsart.LEISTUNGSTYP from ".
+    $dbh->prepare("select Leistungsdaten.*, Leistungsart.LEISTUNGSTYP, ".
+		  "cast(Leistungsdaten.POSNR as unsigned) as sort from ".
 		  "Leistungsdaten, Leistungsart where ".
 		  "FK_Stammdaten=? and ".
 		  "Leistungsdaten.POSNR=Leistungsart.POSNR and ".
