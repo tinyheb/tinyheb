@@ -28,10 +28,7 @@ sub new {
 				 "NAME LIKE ? and ".
 				 "BUNDESLAND LIKE ? and ".
 				 "DATUM LIKE ?;");
-  my $max_id = $dbh->prepare("select max(id) from Kalender;") or die $dbh->errstr();
-  $max_id->execute() or die $dbh->errstr();
-  $max_feiertag = $max_id->fetchrow_array();
-
+  $max_feiertag = Heb->parm_unique('KALENDER_ID');
   bless $self, ref $class || $class;
   return $self;
 }
@@ -95,17 +92,20 @@ sub dauer_m {
 
 sub feiertag_ins {
   # fügt neuen Feiertag in Datenbank ein
-
   shift;
 
+  # zunächst neue ID für Kalender Eintrag holen
+  my $id = Heb->parm_unique('KALENDER_ID');
+  $id++;
   # insert an DB vorbereiten
   my $feiertag_ins = $dbh->prepare("insert into Kalender ".
                                         "(ID,NAME,BUNDESLAND,DATUM) ".
                                         "values (?,?,?,?);")
     or die $dbh->errstr();
-  my $erg = $feiertag_ins->execute('NULL',@_)
+  my $erg = $feiertag_ins->execute($id,@_)
     or die $dbh->errstr();
-  $max_feiertag = $feiertag_ins->{'mysql_insertid'};
+  Heb->parm_up('KALENDER_ID',$id);
+  $max_feiertag = $id;
   return $max_feiertag;
 }
 
@@ -138,8 +138,6 @@ sub feiertag_delete {
 
 
 sub feiertag_such {
-  # Sucht nach Krankenkassen in der Datenbank
-
   shift; # package Namen vom stack nehmen
   $feiertag_such->execute(@_) or die $dbh->errstr();
 }
@@ -149,7 +147,6 @@ sub feiertag_such_next {
 }
 
 sub feiertag_feier_id {
-  # holgt alle Daten zu einer Krankenkasse
   shift;
 
   my $feier_id = $dbh->prepare("select NAME,BUNDESLAND,".
@@ -164,6 +161,21 @@ sub feiertag_feier_id {
     }
   }
   return @erg;
+}
+
+
+sub feiertag_datum {
+  # prüft ob Datum ein Feiertag ist
+  shift;
+  my $datum=shift;
+
+  my $feier_datum = $dbh->prepare("select * from Kalender where ".
+				  "DATUM = ?;")
+    or die $dbh->errstr();
+  $datum=Heb_datum->convert($datum);
+  my $erg = $feier_datum->execute($datum) or die $dbh->errstr();
+  return $erg if ($erg > 0);
+  return 0;
 }
 
 sub max {
