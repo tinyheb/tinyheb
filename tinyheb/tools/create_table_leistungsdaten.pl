@@ -1,31 +1,37 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -wT
 
 # legt neue Tabelle Leistungsdaten an
 
+use lib "../";
 use strict;
 use DBI;
 
-my $user = 'baum';
-my $pass = '';
+use Heb;
 
-my @dsn = ("DBI:mysql:database=Hebamme;host=localhost",$user,$pass);
+my $h = new Heb;
 
 # mit Datenbank verbinden
-my $dbh = DBI->connect(@dsn,{ RaiseError => 1, AutoCommit => 1 });
+my $dbh = $h->connect;
 
 # fehler beim verbinden abfangen
 die $DBI::errstr unless $dbh;
 
 # neue Tabelle anlegen
 $dbh->do("CREATE TABLE Leistungsdaten (" .  
-	 "FK_LEISTUNGSART SMALLINT UNSIGNED NOT NULL," .
+	 "ID INT UNSIGNED NOT NULL," .
+	 "POSNR VARCHAR(5) NOT NULL," .
 	 "FK_STAMMDATEN SMALLINT UNSIGNED NOT NULL," .
 	 "BEGRUENDUNG TEXT," .
 	 "DATUM DATE NOT NULL," .
-	 "ZEIT TIME NOT NULL," .
-	 "DAUER TIME," .
-	 "ENTFERNUNG DECIMAL(5,2)," .
-	 "FOREIGN KEY (FK_LEISTUNGSART) REFERENCES Leistungsart(ID) MATCH FULL,".
+	 "ZEIT_VON TIME," .
+	 "ZEIT_BIS TIME," .
+	 "ENTFERNUNG_T FLOAT DEFAULT 0," .
+	 "ENTFERNUNG_N FLOAT DEFAULT 0," .
+	 "ANZAHL_FRAUEN SMALLINT UNSIGNED NOT NULL DEFAULT 1," .
+	 "PREIS FLOAT DEFAULT 0," .
+	 "RECHNUNGSNR CHAR(20), ".
+	 "STATUS SMALLINT UNSIGNED,".
+	 "PRIMARY KEY (ID),".
 	 "FOREIGN KEY (FK_STAMMDATEN) REFERENCES Stammdaten(ID) MATCH FULL);") or die $dbh->errstr();
 
 $dbh->disconnect();
