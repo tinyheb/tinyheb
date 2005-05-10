@@ -2,16 +2,15 @@
 
 # legt neue Tabelle Krankenkassen an
 
+
+use lib "../";
 use strict;
 use DBI;
 
-my $user = 'baum';
-my $pass = '';
+use Heb;
 
-my @dsn = ("DBI:mysql:database=Hebamme;host=localhost",$user,$pass);
-
-# mit Datenbank verbinden
-my $dbh = DBI->connect(@dsn,{ RaiseError => 1, AutoCommit => 1 });
+my $h = new Heb;
+my $dbh = Heb->connect;
 
 # fehler beim verbinden abfangen
 die $DBI::errstr unless $dbh;
