@@ -6,16 +6,16 @@
 # T. Baum
 # 16.12.03
 
+use lib "../";
 use strict;
 use DBI;
 
-my $user = 'baum';
-my $pass = '';
+use Heb;
 
-my @dsn = ("DBI:mysql:database=Hebamme;host=localhost",$user,$pass);
+my $h = new Heb;
 
 # mit Datenbank verbinden
-my $dbh = DBI->connect(@dsn,{ RaiseError => 1, AutoCommit => 1 });
+my $dbh = $h->connect;
 
 # fehler beim verbinden abfangen
 die $DBI::errstr unless $dbh;
