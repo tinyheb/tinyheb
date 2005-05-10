@@ -9,7 +9,7 @@
 
 use strict;
 use CGI;
-use Date::Calc qw(Today);
+use Date::Calc qw(Today Day_of_Week);
 
 use lib "../";
 use Heb_stammdaten;
@@ -25,6 +25,7 @@ my $h = new Heb;
 
 my $debug=1;
 my $script='';
+my $hint='';
 
 my $TODAY = $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
 my $TODAY_jmt = sprintf "%4.4u%2.2u%2.2u",Today();
@@ -173,6 +174,7 @@ print '</td>';
 
 print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
+print '<td><input type="button" name="Drucken" value="Drucken" onClick="druck(document.rechpos);"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
@@ -185,9 +187,13 @@ print <<SCRIPTE;
   open("list_posnr.pl?frau_id=$frau_id","list_posnr");
   posnr_wechsel(document.rechpos); // funktion wurde dynamisch generiert.
   wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);
+  document.rechpos.datum.select();
   document.rechpos.datum.focus();
 </script>
 SCRIPTE
+if ($hint ne '') {
+  print "<script>alert('$hint');</script>";
+}
 print "</body>";
 print "</html>";
 
@@ -265,9 +271,13 @@ sub printbox {
 #---------------------------------------------------
 # Routinen zum Speichern und Ändern
 sub speichern {
-#  print "speichern";
-#  print "speichern $frau_id $datum $zeit_von 10 <br>\n";
+
+  my $zuschlag='';
   # Datum konvertieren
+  if ($frau_id == 0) {
+    $hint = "Bitte Frau auswählen";
+    return;
+  }
   my $datum_l = $d->convert($datum);
   # Entfernung konvertieren
   $entfernung_tag =~ s/,/\./g;
@@ -278,6 +288,47 @@ sub speichern {
     $entfernung_tag /= $anzahl_frauen;
     $entfernung_nacht /= $anzahl_frauen;
   }
+
+  # Wenn Sonntag angegeben ist, prüfen ob Sonntag und richtige PosNr
+  my $dow=Day_of_Week($d->jmt($datum));
+  # 1 == Montag 2 == Dienstag, ..., 7 == Sonntag
+  my ($l_samstag,$l_sonntag) = $l->leistungsart_such_posnr('SAMSTAG,SONNTAG',$posnr,$datum_l);
+  if ($dow == 6 && $l_samstag =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($zeit_von) >= 12) {
+    # print "Samstag erkannt\n";
+    # prüfen ob es sich um andere Positionsnummer handelt
+    if ($1 ne '+')  {
+      $hint .= "Positionsnummer $posnr w/ Samstag ersetzt durch $2";
+      $posnr = $2;
+    } else {
+      $zuschlag = $2;
+    }
+  }
+
+  # prüfen auf Sonntag oder Feiertag
+  if (($dow == 7 || ($d->feiertag_datum($datum)>0)) && $l_sonntag =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    # print "Sonntag erkannt\n";
+    # prüfen ob es sich um andere Positionsnummer handelt
+    if ($1 ne '+')  {
+      $hint .= "Positionsnummer $posnr w/ Sonntag oder Feiertag ersetzt durch $2";
+      $posnr = $2;
+    } else {
+      $zuschlag = $2;
+    }
+  }    
+  
+  if ($l->leistungsart_pruef_zus($posnr,'SONNTAG') && $dow==7) {
+    # alles ok
+  } elsif ($l->leistungsart_pruef_zus($posnr,'SAMSTAG') && $dow==6 && $d->zeit_h($zeit_von) >= 12) {
+    # alles ok
+  } elsif ($l->leistungsart_pruef_zus($posnr,'NACHT') && ($d->zeit_h($zeit_von) <= 8 || $d->zeit_h($zeit_von) >= 22)) {
+    # alles ok
+  } elsif (($l->leistungsart_pruef_zus($posnr,'SONNTAG') || $l->leistungsart_pruef_zus($posnr,'SAMSTAG') || $l->leistungsart_pruef_zus($posnr,'NACHT')) && ($dow < 6 || $dow==6 && $d->zeit_h($zeit_von) < 12) || $d->zeit_h($zeit_von)>8 && $d->zeit_h($zeit_von) > 22) {
+    $hint .= "Positionsnummer nur an bestimmten Tagen, es wurde nichts gespeichert";
+    return;
+  }
+
+
+
   # hier muss noch der Preis berechnet werden in Abhängigkeit der Dauer
   my $preis=0;
   my ($l_epreis,$l_fuerzeit) = $l->leistungsart_such_posnr('EINZELPREIS,FUERZEIT',$posnr,$datum_l);
@@ -290,13 +341,23 @@ sub speichern {
     $preis = $l_epreis;
   }
   
-  # Wenn Sonntag angegeben ist, prüfen ob Sonntag und richtige PosNr
+
 
   # einfügen in Datenbank
   $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
+
+  # prüfen ob Zuschlag gespeichert werden muss
+  if ($zuschlag > 0) {
+    my ($prozent) = $l->leistungsart_such_posnr('PROZENT',$zuschlag,$datum_l);
+    my $preis_neu = $preis * $prozent;
+    $leist_id=$l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis_neu,'',10);
+    $hint .= "Zuschlag prozentual wurde zusätzlich gespeichert";
+  }
+
   $entfernung_tag*=$anzahl_frauen;
   $entfernung_nacht*=$anzahl_frauen;
   $strecke='gesamt';
+
 }
 
 
