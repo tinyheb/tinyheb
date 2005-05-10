@@ -48,6 +48,13 @@ sub parm_such_next {
   return $erg;
 }
 
+sub parm_unique {
+  # holt einzelnen Parameter aus Datenbank
+  shift;
+  Heb->parm_such(@_);
+  return Heb->parm_such_next();
+}
+
 sub parm_up {
   # update auf bestimmten Parameter
   shift;
