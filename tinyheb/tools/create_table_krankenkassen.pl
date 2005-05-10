@@ -18,13 +18,20 @@ die $DBI::errstr unless $dbh;
 
 # neue Tabelle anlegen
 $dbh->do("CREATE TABLE Krankenkassen (" .  
-	 "ID SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT," .
-	 "NAME TEXT," .
+	 "IK INT UNSIGNED NOT NULL DEFAULT 0," .
+	 "KNAME CHAR(100)," .
+	 "NAME CHAR(100) NOT NULL,".
 	 "STRASSE TEXT," .
-	 "PLZ MEDIUMINT UNSIGNED NOT NULL," .
+	 "PLZ_HAUS MEDIUMINT UNSIGNED NOT NULL," .
+	 "PLZ_POST MEDIUMINT UNSIGNED NOT NULL," .
 	 "ORT TEXT," .
-	 "TEL DECIMAL(20,0)," .
-	 "IK INT UNSIGNED," .
-	 "PRIMARY KEY (ID) );") or die $dbh->errstr();
+	 "POSTFACH CHAR(10),".
+	 "ASP_NAME CHAR(100),".
+	 "ASP_TEL CHAR(30)," .
+	 "ZIK INT UNSIGNED NOT NULL DEFAULT 0," .
+	 "BEMERKUNG TEXT," .
+	 "UNIQUE INDEX IK_INDEX(IK),".
+	 "INDEX NAME_INDEX (NAME),".
+	 "PRIMARY KEY (IK) );") or die $dbh->errstr();
 
 $dbh->disconnect();
