@@ -1,77 +1,29 @@
 //alert("leistung.js wird geladen");
 
-function leistungenbearbeiten(formular) {
-  // öffnet einen Frame, in dem die Leistungen erfasst werden können
-  // zunächst Plausi Prüfungen durchführen
-  var error='';
-  var ok = true;
-  if (formular.frau_id.value > 0) {
-    ok = ok || true;
-  } else {
-    alert("Bitte Frau über Knopf Suchen auswählen");
-    formular.frau_suchen.focus();
-    return false;
-  }
-  if (formular.datum_leistung.value != '') {
-    ok = ok || true;
-  } else {
-    alert("Bitte Datum der Leistungserbringung erfassen");
-    formular.datum_leistung.focus();
-    formular.datum_leistung.select();
-    return false;
-  }
-  if (formular.uhrzeit_leistung.value != '') {
-    ok = ok || true;
-  } else {
-    alert("Bitte Uhrzeit der Leistungserbringung erfassen");
-    formular.uhrzeit_leistung.focus();
-    formular.uhrzeit_leistung.select();
-    return false;
-  }
-  if (formular.dauer_leistung.value != '') {
-    ok = ok || true;
-  } else {
-    alert("Bitte Dauer der Leistungserbringung erfassen");
-    formular.dauer_leistung.focus();
-    formular.dauer_leistung.select();
-    return false;
-  }
-  // wenn alles ok ist, dürfen Werte nicht mehr geändert werden
-  formular.datum_leistung.disabled = true;
-  var dl_tag = document.getElementsByName('datum_leistung');
-  dl_tag = dl_tag[0].className='disabled';
-  formular.uhrzeit_leistung.disabled = true;
-  dl_tag = document.getElementsByName('uhrzeit_leistung');
-  dl_tag = dl_tag[0].className='disabled';
-  formular.dauer_leistung.disabled = true;
-  dl_tag = document.getElementsByName('dauer_leistung');
-  dl_tag = dl_tag[0].className='disabled';
-  var parms=formular.gruppen_auswahl.selectedIndex;
-  parms = "?gruppen_auswahl="+parms;
-  parms = parms+"&datum_leistung="+formular.datum_leistung.value;
-  parms = parms+"&dauer_leistung="+formular.dauer_leistung.value;
-  parms = parms+"&uhrzeit_leistung="+formular.uhrzeit_leistung.value;
-  parms = parms+"&frau_id="+formular.frau_id.value;
-  //  alert("parm:"+parms);
-  open("leistungserfassung_f2.pl"+parms,"leistungserfassung_f2");
-}
-
 function druck (form) {
   //  alert("druck"+form.frau_id.value);
   open("../rechnung/rechnung_generierung.pl?frau_id="+form.frau_id.value,"_top");
 }
 
-function aend (fr_id,ls_id) {
+function aend (fr_id,ls_id,status) {
   // Leistungsposition zum ändern aufrufen
   //  alert("Hallo aendern"+fr_id+"leist_id"+ls_id);
-  open("rechpos.pl?frau_id="+fr_id+"&leist_id="+ls_id+"&func=2","rechpos");
+  if (status == 10) {
+    open("rechpos.pl?frau_id="+fr_id+"&leist_id="+ls_id+"&func=2","rechpos");
+  } else {
+    alert("Rechnung wurde gespeichert, ändern nicht möglich");
+  }
 }
 //alert("nach function aendern");
 
-function loe_leistdat (fr_id,ls_id) {
+function loe_leistdat (fr_id,ls_id,status) {
   // leistungsposition zum Löschen aufrufen
   // alert("Hallo loeschen"+fr_id+"leist_id"+ls_id);
-  open("rechpos.pl?frau_id="+fr_id+"&leist_id="+ls_id+"&func=3","rechpos");
+  if (status == 10) {
+    open("rechpos.pl?frau_id="+fr_id+"&leist_id="+ls_id+"&func=3","rechpos");
+  } else {
+    alert("Rechnung wurde gedruckt, Löschen nicht möglich");
+  }
 }
 
 function datum_uhrzeit_neu (doc) {
