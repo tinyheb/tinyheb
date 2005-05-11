@@ -84,9 +84,9 @@ while (my @erg=$l->leistungsdaten_such_next()) {
   my $beg='';
   $beg='ja' if (defined($erg[3]) && $erg[3] ne '');
   print "<td style='width:0.7cm;text-align:center'>$beg</td>"; # Begründung
-  my $tag = sprintf "%.2f",$erg[7];$tag =~ s/\./,/g;$tag =~ s/0,00//g;
+  my $tag = sprintf "%.2f",$erg[7];$tag =~ s/\./,/g;$tag =~ s/^0,00//g;
   print "<td style='width:0.8cm;text-align:right'>$tag</td>"; # Entfernung Tag
-  my $nacht = sprintf "%.2f",$erg[8];$nacht =~ s/\./,/g;$nacht =~ s/0,00//g;
+  my $nacht = sprintf "%.2f",$erg[8];$nacht =~ s/\./,/g;$nacht =~ s/^0,00//g;
   print "<td style='width:0.8cm;text-align:right'>$nacht</td>"; # Entfernung Nacht
   $erg[9]='' if ($tag eq '' && $nacht eq '');
   print "<td style='width:0.5cm;text-align:right'>$erg[9]</td>"; # Anzahl Frauen
