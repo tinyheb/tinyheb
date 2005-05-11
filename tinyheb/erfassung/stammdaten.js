@@ -100,9 +100,7 @@ function check_begr(wert,formular) {
 }
 
 function next_satz(formular) {
-	var id = 0;
-	id = new Number(formular.frau_id.value);	
-	id++;
+	id = formular.frau_id.value;	
 //	alert("naechster Satz"+formular+id);
 	if (formular.auswahl.value == 'Anzeigen') {
 		open("stammdatenerfassung.pl?func=1&frau_id="+id,"_top");
@@ -112,9 +110,7 @@ function next_satz(formular) {
 }
 
 function prev_satz(formular) {
-	var id = 0;
-	id = new Number(formular.frau_id.value);	
-	id--;
+	id = formular.frau_id.value;	
 //	alert("naechster Satz"+formular+id);
 	if (formular.auswahl.value == 'Anzeigen') {
 		open("stammdatenerfassung.pl?func=2&frau_id="+id,"_top");

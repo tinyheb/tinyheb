@@ -105,7 +105,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.8 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.9 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -376,38 +376,30 @@ sub aendern {
 }
 
 sub hole_frau_daten {
-  $frau_id = $s->max if ($frau_id > $s->max);
-  $vorname='';
-  while (!defined($vorname) || $vorname eq '') {
-    ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
-     $bundesland,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
-     $ik_krankenkasse,$naechste_hebamme,
-     $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
-    $entfernung = '0.0' unless defined($entfernung);
-    $entfernung =~ s/\./,/g;
-    
-    if (defined($ik_krankenkasse) && $ik_krankenkasse > 0) {
-      ($ik_krankenkasse,
-       $name_krankenkasse,
-       $plz_krankenkasse,
-       $ort_krankenkasse,
-       $strasse_krankenkasse) =
-         $k->krankenkasse_ik('IK,NAME,PLZ_HAUS,ORT,STRASSE',$ik_krankenkasse);
-    } else {
-      ($ik_krankenkasse,
-       $name_krankenkasse,
-       $plz_krankenkasse,
-       $ort_krankenkasse,
-       $strasse_krankenkasse) = ('','','','','');
-    }
-    if (!defined($vorname)) {
-      if ($frau_id <= 0) {
-	$frau_id = 0;
-	return;
-      }
-      $frau_id++ if ($func == 1);
-      $frau_id-- if ($func == 2 && $frau_id > 1);
-    }
+  my $frau_id_alt = $frau_id;
+  $frau_id = $s->stammdaten_next_id($frau_id) if ($func==1);
+  $frau_id = $s->stammdaten_prev_id($frau_id) if ($func==2);
+  $frau_id = $frau_id_alt if (!defined($frau_id));
+  ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
+   $bundesland,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
+   $ik_krankenkasse,$naechste_hebamme,
+   $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
+  $entfernung = '0.0' unless defined($entfernung);
+  $entfernung =~ s/\./,/g;
+  
+  if (defined($ik_krankenkasse) && $ik_krankenkasse > 0) {
+    ($ik_krankenkasse,
+     $name_krankenkasse,
+     $plz_krankenkasse,
+     $ort_krankenkasse,
+     $strasse_krankenkasse) =
+       $k->krankenkasse_ik('IK,NAME,PLZ_HAUS,ORT,STRASSE',$ik_krankenkasse);
+  } else {
+    ($ik_krankenkasse,
+     $name_krankenkasse,
+     $plz_krankenkasse,
+     $ort_krankenkasse,
+     $strasse_krankenkasse) = ('','','','','');
   }
   return;
 }

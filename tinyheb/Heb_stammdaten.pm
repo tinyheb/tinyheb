@@ -199,6 +199,29 @@ sub stammdaten_frau_id {
   return @erg;
 }
 
+sub stammdaten_next_id {
+  # holt zur gegebenen Frau die nächste Frau
+  shift;
+  my ($id) = @_;
+  my $stammdaten_next_id =
+    $dbh->prepare("select ID from Stammdaten where ".
+		  "ID > ? limit 1;")
+      or die $dbh->errstr();
+  $stammdaten_next_id->execute($id) or die $dbh->errstr();
+  return $stammdaten_next_id->fetchrow_array();
+}
+
+sub stammdaten_prev_id {
+  # holt zur gegebenen Frau die vorhergehende Frau
+  shift;
+  my ($id) = @_;
+  my $stammdaten_prev_id =
+    $dbh->prepare("select ID from Stammdaten where ".
+		  "ID < ? order by ID desc limit 1;")
+      or die $dbh->errstr();
+  $stammdaten_prev_id->execute($id) or die $dbh->errstr();
+  return $stammdaten_prev_id->fetchrow_array();
+}
 
 sub max {
   # gibt die höchste ID zurück
