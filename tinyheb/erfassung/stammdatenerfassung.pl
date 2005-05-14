@@ -14,12 +14,14 @@ use Date::Calc qw(Today);
 use lib "../";
 use Heb_stammdaten;
 use Heb_krankenkassen;
+use Heb_leistung;
 use Heb_datum;
 
 my $q = new CGI;
 my $s = new Heb_stammdaten;
 my $k = new Heb_krankenkassen;
 my $d = new Heb_datum;
+my $l = new Heb_leistung;
 
 my $debug=1;
 
@@ -27,6 +29,8 @@ my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
 my @bund = ('NRW','Bayern','Rheinlandpfalz','Hessen');
 my @verstatus = ('1 1','3 1');
+
+my $hint = '';
 
 my $frau_id = $q->param('frau_id') || '0';
 my $vorname = $q->param('vorname') || '';
@@ -56,7 +60,7 @@ my $abschicken = $q->param('abschicken');
 my $func = $q->param('func') || 0;
 #my $frau_suchen = $q->param('frau_suchen');
 
-hole_frau_daten() if ($func == 1 || $func == 2);
+hole_frau_daten() if ($func == 1 || $func == 2 || $func==3);
 
 # Infos zur Krankenkasse holen
 if ($ik_krankenkasse ne '') {
@@ -86,6 +90,7 @@ if (($auswahl eq 'Ändern') && defined($abschicken)) {
 print '<head>';
 print '<title>Stammdaten</title>';
 print '<script language="javascript" src="stammdaten.js"></script>';
+print '<script language="javascript" src="leistungen.js"></script>';
 print '<script language="javascript" src="../Heb.js"></script>';
 print '</head>';
 
@@ -98,14 +103,19 @@ STYLE
 
 if (($auswahl eq 'Löschen') && defined($abschicken)) {
   loeschen();
-  print '<script>loeschen();</script>';
+  if ($hint eq '') {
+    print '<script>loeschen();</script>';
+  } else {
+    print "<script>alert('$hint');</script>";
+    $auswahl='Anzeigen';
+  }
 }
 
 
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.9 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.10 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -310,7 +320,13 @@ print '</td>';
 print '<td><input type="submit" name="abschicken" value="Speichern"</td>';
 print '<td><input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.stammdaten)"></td>';
 print '<td><input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.stammdaten)"></td>';
+print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '<td><input type="button" name="rechnung" value="Rechnung" onclick="rechnung_erfassen(document.stammdaten)"></td>';
+# nächste Zeile
+print '<tr><td>&nbsp;</td>';
+print '<td><input type="button" name="drucken" value="Rech. Druck" onclick="druck(document.stammdaten)"></td>';
+print '</tr>';
+
 print '</tr>';
 print '</table>';
 print '</form>';
@@ -354,6 +370,10 @@ sub speichern {
 
 sub loeschen {
   # löscht Datensatz aus der Stammdaten Datenbank
+  if ($l->leistungsdaten_such($frau_id)) {
+    $hint = "Löschen nicht möglich, es sind schon Leistungen erfasst";
+    return;
+  }
   my $erg = $s->stammdaten_delete($frau_id);
   return $erg;
 }
