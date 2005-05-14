@@ -1,4 +1,5 @@
 #!/usr/bin/perl -wT
+# -wT
 
 use PostScript::Simple;
 use Date::Calc qw(Today);
@@ -226,7 +227,7 @@ if ($speichern eq 'save') {
   # setzt alle Daten in der Datenbank auf Rechnung und speichert die Rechnung
   $datum = $d->convert($datum);
   $gsumme =~ s/,/\./g;
-  $l->rechnung_ins($rechnungsnr,$datum,$gsumme,$all_rech);
+  $l->rechnung_ins($rechnungsnr,$datum,$gsumme,$frau_id,$ik_krankenkasse,$all_rech);
   rech_up('A');
   rech_up('B');
   rech_up('C');
