@@ -21,6 +21,7 @@ our $leistung_such; # Suchen von Leistunsarten
 our $leistungsdaten_ins; # Speichern von Leistungsdaten
 our $leistungsdaten_such; # suchen von Leistungsdaten nach Frau
 our $leistungsdaten_offen; # suchen nach (Status 10) Leistungsdaten bei Frau
+our $rech_such; # sucht nach Rechnungen in der Datenbank
 
 my $debug = 1;
 our $dbh; # Verbindung zur Datenbank
@@ -79,15 +80,36 @@ sub leistungsdaten_ins {
 sub rechnung_ins {
   # fügt neue Rechnung in Datenbank ein
   shift;
-  my ($rechnr,$rech_datum,$gsumme,$text) = @_;
+  my ($rechnr,$rech_datum,$gsumme,$fk_st,$ik,$text) = @_;
   my $rechnung_ins = $dbh->prepare("insert into Rechnung " .
 				   "(RECHNUNGSNR,RECH_DATUM,MAHN_DATUM,".
-				   "ZAHL_DATUM,BETRAG,STATUS,RECH) ".
-				   "values (?,?,?,?,?,?,?);")
+				   "ZAHL_DATUM,BETRAG,STATUS,BETRAGGEZ,".
+				   "FK_STAMMDATEN,IK,RECH) ".
+				   "values (?,?,?,?,?,?,?,?,?,?);")
     or die $dbh->errstr();
-  $rechnung_ins->execute($rechnr,$rech_datum,'','',$gsumme,20,$text) or die $dbh->errstr();
+  $rechnung_ins->execute($rechnr,$rech_datum,'','',$gsumme,20,0,$fk_st,$ik,$text) or die $dbh->errstr();
   Heb->parm_up('RECHNR',$_[0]);
 }
+
+sub rechnung_such {
+  # sucht nach Rechnungen in der Datenbank
+  shift;
+  my $werte = shift;
+  my $sel = shift;
+  if (!defined($sel)) {
+    $sel ='';
+  } else {
+    $sel = "where $sel";
+  }
+  $rech_such = $dbh->prepare("select $werte from Rechnung ".
+			     "$sel;") 
+    or die $dbh->errstr();
+  return $rech_such->execute() or die $dbh->errstr();
+}
+
+sub rechnung_such_next {
+  return $rech_such->fetchrow_array() or die $dbh->errstr();
+} 
   
 
 
