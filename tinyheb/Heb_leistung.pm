@@ -130,8 +130,10 @@ sub leistungsdaten_such {
   # sucht nach allen Rechnungspositionen, die zu einer Frau existieren
   shift;
   my ($frau_id) = @_;
-  $leistungsdaten_such->execute($frau_id)
+  my $erg=$leistungsdaten_such->execute($frau_id)
     or die $dbh->errstr();
+  return $erg if ($erg > 0);
+  return 0;
 }
 
 sub leistungsdaten_such_next {
