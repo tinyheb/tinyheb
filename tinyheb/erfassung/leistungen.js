@@ -2,7 +2,11 @@
 
 function druck (form) {
   //  alert("druck"+form.frau_id.value);
-  open("../rechnung/rechnung_generierung.pl?frau_id="+form.frau_id.value,"_top");
+  if (form.frau_id.value > 0) {
+    open("../rechnung/rechnung_generierung.pl?frau_id="+form.frau_id.value,"_top");
+  } else {
+    alert ("Bitte erst Frau auswählen");
+  }
 }
 
 function aend (fr_id,ls_id,status) {
@@ -111,24 +115,6 @@ function leistung_speicher(formular) {
     i--;
   }
   return true;
-}
-
-function next_satz(formular) {
-  // Datensatz mit dem nächst größeren Datum/Uhrzeit ausgeben
-  alert("nächster Satz");
-  if (formular.auswahl.value == 'Anzeigen') {
-    var parms=formular.gruppen_auswahl.selectedIndex;
-    parms = "?gruppen_auswahl="+parms;
-    parms = parms+"&datum_leistung="+formular.datum_leistung.value;
-    parms = parms+"&dauer_leistung="+formular.dauer_leistung.value;
-    parms = parms+"&uhrzeit_leistung="+formular.uhrzeit_leistung.value;
-    parms = parms+"&frau_id="+formular.frau_id.value;
-    parms = parms+"&func=2";
-    alert("parm:"+parms);
-    open("leistungserfassung_f2.pl"+parms,"leistungserfassung_f2");
-  } else {
-    alert("Bitte Menuepunkt Anzeigen wählen");
-  }
 }
 
 function round(wert) {
