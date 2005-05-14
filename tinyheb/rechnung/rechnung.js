@@ -2,8 +2,9 @@
 
 function druck_fertig(frau_id) {
   // schreibt Rechnung in Fenster und macht update auf Datenbank
+  //alert("Drucken Frau"+frau_id);
   if (frau_id > 0) {
-    open("ps2html.pl?name="+frau_id+"&speichern=save","rechnung");
+    open("ps2html.pl?frau_id="+frau_id+"&speichern=save","rechnung");
     alert("Rechnung wurde gespeichert\nBitte Rechnung über 'Print All' drucken");
   } else {
     alert("Bitte zunächst Frau auswählen");
