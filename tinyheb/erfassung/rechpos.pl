@@ -174,6 +174,7 @@ print '</td>';
 
 print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
+print '<td><input type="button" name="stammdaten" value="Stammdaten" onClick="stamm(frau_id.value,document.rechpos);"></td>';
 print '<td><input type="button" name="Drucken" value="Drucken" onClick="druck(document.rechpos);"></td>';
 print '</tr>';
 print '</table>';
@@ -273,11 +274,16 @@ sub printbox {
 sub speichern {
 
   my $zuschlag='';
-  # Datum konvertieren
+
   if ($frau_id == 0) {
-    $hint = "Bitte Frau auswählen";
+    $hint .= "Bitte Frau auswählen";
     return;
   }
+  if ($posnr eq '') {
+    $hint .= "Keine PosNr. gewählt, nichts gespeichert";
+    return;
+  }
+  # Datum konvertieren
   my $datum_l = $d->convert($datum);
   # Entfernung konvertieren
   $entfernung_tag =~ s/,/\./g;
