@@ -100,6 +100,7 @@ print '<tr>';
 print "<td><input type='button' name='pdruck' value='entgültig Drucken' onclick='druck_fertig(frau_id.value);'</td>";
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '<td><input type="button" name="echnungerf" value="Rechnungserfassung" onClick="recherf(frau_id.value);"></td>';
+print '<td><input type="button" name="stammdaten" value="Stammdaten" onClick="stamm(frau_id.value,document.rechnungen_gen);"></td>';
 print '</tr>';
 print '</table>';
 
