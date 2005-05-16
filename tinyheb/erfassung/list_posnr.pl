@@ -91,10 +91,7 @@ while (my @erg=$l->leistungsdaten_such_next()) {
   $erg[9]='' if ($tag eq '' && $nacht eq '');
   print "<td style='width:0.5cm;text-align:right'>$erg[9]</td>"; # Anzahl Frauen
 
-  my $status ='';
-  $status = 'in bearb.' if ($erg[11]==10);
-  $status = 'Rechnung' if ($erg[11]==20);
-  $status = 'abgeschl.' if ($erg[11]==30);
+  my $status = $l->status_text($erg[11]);
   print "<td style='width:1.5cm;text-align:right'>$status</td>"; # Status der Position
   print '</tr>';
   print "\n";
