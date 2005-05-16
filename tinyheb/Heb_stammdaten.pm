@@ -58,7 +58,7 @@ sub stammdaten_suchfrau {
 
 sub stammdaten_suchfrau_next {
   my @erg = $frau_such->fetchrow_array();
-  for (my $i=0;$i < $#erg;$i++) {
+  for (my $i=0;$i < 17;$i++) {
     if (!defined($erg[$i])) {
       $erg[$i]='';
     }
@@ -191,7 +191,7 @@ sub stammdaten_frau_id {
     or die $dbh->errstr();
   $frau_id->execute() or die $dbh->errstr();
   my @erg = $frau_id->fetchrow_array();
-  for (my $i=0;$i < $#erg;$i++) {
+  for (my $i=0;$i < 16;$i++) {
     if (!defined($erg[$i])) {
       $erg[$i]='';
     }
