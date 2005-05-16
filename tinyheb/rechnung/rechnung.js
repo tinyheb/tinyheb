@@ -11,6 +11,15 @@ function druck_fertig(frau_id) {
   }
 };
 
+function bearb_rech(rechnr,status) {
+  // Bearbeitungsmaske Rechnung mit Daten füllen
+  if (status < 30) {
+    open("rechposbear.pl?rechnungsnr="+rechnr,"rechposbear");
+  } else {
+    alert("Rechnung ist schon gezahlt, keine weitere Bearbeitung");
+  }
+}
+
 function recherf(frau_id) {
   // springt in Maske zur Rechnungserfassung
   open("../erfassung/rechnungserfassung.pl?frau_id="+frau_id,"_top");
