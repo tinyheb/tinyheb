@@ -22,6 +22,7 @@ our $leistungsdaten_ins; # Speichern von Leistungsdaten
 our $leistungsdaten_such; # suchen von Leistungsdaten nach Frau
 our $leistungsdaten_offen; # suchen nach (Status 10) Leistungsdaten bei Frau
 our $rech_such; # sucht nach Rechnungen in der Datenbank
+our $leistungsdaten_such_rechnr; # Sucht Leistungsdaten einer bestimmten Rechnung
 
 my $debug = 1;
 our $dbh; # Verbindung zur Datenbank
@@ -91,6 +92,25 @@ sub rechnung_ins {
   Heb->parm_up('RECHNR',$_[0]);
 }
 
+
+sub rechnung_up {
+  # update auf einzelne Rechnung
+  shift;
+  my ($rechnr,$zahl_datum,$betraggez,$status) = @_;
+  $zahl_datum = $d->convert($zahl_datum);
+  my $rechnung_up = $dbh->prepare("update Rechnung ".
+				  "set ZAHL_DATUM=?,BETRAGGEZ=?,STATUS=? ".
+				  "where RECHNUNGSNR = ?;")
+    or die $dbh->errstr();
+  $rechnung_up->execute($zahl_datum,$betraggez,$status,$rechnr)
+    or die $dbh->errstr();
+}
+
+
+
+
+
+
 sub rechnung_such {
   # sucht nach Rechnungen in der Datenbank
   shift;
@@ -102,7 +122,7 @@ sub rechnung_such {
     $sel = "where $sel";
   }
   $rech_such = $dbh->prepare("select $werte from Rechnung ".
-			     "$sel;") 
+			     "$sel order by RECHNUNGSNR;") 
     or die $dbh->errstr();
   return $rech_such->execute() or die $dbh->errstr();
 }
@@ -110,8 +130,26 @@ sub rechnung_such {
 sub rechnung_such_next {
   return $rech_such->fetchrow_array() or die $dbh->errstr();
 } 
-  
 
+
+
+sub leistungsdaten_such_rechnr {
+  # sucht Leistungsdaten zu gegebener Rechnungsnr
+  shift;
+  my $werte=shift;
+  my $rechnr=shift;
+
+  $leistungsdaten_such_rechnr 
+    = $dbh->prepare("select $werte from Leistungsdaten ".
+		    "where RECHNUNGSNR = $rechnr;")
+      or die $dbh->errstr();
+  return $leistungsdaten_such_rechnr->execute() or die $dbh->errstr();
+}
+
+
+sub leistungsdaten_such_rechnr_next {
+  return $leistungsdaten_such_rechnr->fetchrow_array() or die $dbh->errstr();
+}
 
 sub leistungsdaten_up {
   # ändert Leistungsdaten in der Datenbank;
@@ -258,6 +296,17 @@ sub leistungsdaten_offen {
 sub leistungsdaten_offen_next {
   my @erg=$leistungsdaten_offen->fetchrow_array();
   return @erg;
+}
+
+sub status_text {
+  # ermittelt zu gegebenem Status den Text
+  shift;
+  my $status=shift;
+  return 'in bearb.' if($status==10);
+  return 'Rechnung' if($status==20);
+  return 'Teilzahl.' if($status==24);
+  return 'erl.' if($status==30);
+  return '';
 }
 
 1;
