@@ -322,7 +322,7 @@ sub speichern {
     }
   }    
   
-  if ($l->leistungsart_pruef_zus($posnr,'SONNTAG') && $dow==7) {
+  if ($l->leistungsart_pruef_zus($posnr,'SONNTAG') && ($dow==7 || ($d->feiertag_datum($datum)))) {
     # alles ok
   } elsif ($l->leistungsart_pruef_zus($posnr,'SAMSTAG') && $dow==6 && $d->zeit_h($zeit_von) >= 12) {
     # alles ok
@@ -353,7 +353,7 @@ sub speichern {
   $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
 
   # prüfen ob Zuschlag gespeichert werden muss
-  if ($zuschlag > 0) {
+  if ($zuschlag ne '' && $zuschlag > 0) {
     my ($prozent) = $l->leistungsart_such_posnr('PROZENT',$zuschlag,$datum_l);
     my $preis_neu = $preis * $prozent;
     $leist_id=$l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis_neu,'',10);
