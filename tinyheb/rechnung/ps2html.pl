@@ -333,24 +333,29 @@ sub print_wegegeld {
   my $text='';
   my $preis=0;
   my $summe=0;
-  if($tn eq 'N') {
-    $text ='Wegegeld bei Nacht';
-    $preis = '0,75';
-  }
-  if ($tn eq 'T') {
-    $text ='Wegegeld bei Tag';
-    $preis = '0,55';
-  }
-  if ($tn eq 'TK') {
-    $text ='Wegegeld bei Tag Entfernung nicht mehr als 2 KM';
-    $preis = '1,55';
-  }
-  if ($tn eq 'NK') {
-    $text ='Wegegeld bei Nacht Entfernung nicht mehr als 2 KM';
-    $preis = '2,20';
-  }
+
   $p->text($x1,$y1,$text);$y1-=$y_font;
   while (my @erg=$l->leistungsdaten_offen_next()) {
+    if($tn eq 'N') {
+      ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'94',$erg[4]);
+      $text ='Wegegeld bei Nacht';
+      $preis =~ s/\./,/g;
+    }
+    if ($tn eq 'T') {
+      ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'93',$erg[4]);
+      $text ='Wegegeld bei Tag';
+      $preis =~ s/\./,/g;
+    }
+    if ($tn eq 'TK') {
+      ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'91',$erg[4]);
+      $text ='Wegegeld bei Tag Entfernung nicht mehr als 2 KM';
+      $preis =~ s/\./,/g;
+    }
+    if ($tn eq 'NK') {
+      ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'92',$erg[4]);
+      $text ='Wegegeld bei Nacht Entfernung nicht mehr als 2 KM';
+      $preis =~ s/\./,/g;
+    }
     my $datum = $d->convert_tmj($erg[4]);
     $p->text({align => 'right'},4,$y1,$datum); # Datum andrucken
     my $entf=0;
