@@ -326,9 +326,9 @@ sub speichern {
     # alles ok
   } elsif ($l->leistungsart_pruef_zus($posnr,'SAMSTAG') && $dow==6 && $d->zeit_h($zeit_von) >= 12) {
     # alles ok
-  } elsif ($l->leistungsart_pruef_zus($posnr,'NACHT') && ($d->zeit_h($zeit_von) <= 8 || $d->zeit_h($zeit_von) >= 22)) {
+  } elsif ($l->leistungsart_pruef_zus($posnr,'NACHT') && ($d->zeit_h($zeit_von) <= 8 || $d->zeit_h($zeit_von) >= 20)) {
     # alles ok
-  } elsif (($l->leistungsart_pruef_zus($posnr,'SONNTAG') || $l->leistungsart_pruef_zus($posnr,'SAMSTAG') || $l->leistungsart_pruef_zus($posnr,'NACHT')) && ($dow < 6 || $dow==6 && $d->zeit_h($zeit_von) < 12) || $d->zeit_h($zeit_von)>8 && $d->zeit_h($zeit_von) > 22) {
+  } elsif (($l->leistungsart_pruef_zus($posnr,'SONNTAG') || $l->leistungsart_pruef_zus($posnr,'SAMSTAG') || $l->leistungsart_pruef_zus($posnr,'NACHT')) && ($dow < 6 || $dow==6 && $d->zeit_h($zeit_von) < 12) || $d->zeit_h($zeit_von)>8 && $d->zeit_h($zeit_von) > 20) {
     $hint .= "Positionsnummer nur an bestimmten Tagen, es wurde nichts gespeichert";
     return;
   }
