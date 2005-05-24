@@ -51,10 +51,15 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 
 if ($auswahl eq 'Neu' && defined($abschicken)) {
   speichern();
+  $entfernung_tag=0;
+  $entfernung_nacht=0;
 }
 
 if ($auswahl eq 'Ändern' && defined($abschicken)) {
   aendern();
+  $entfernung_tag=0;
+  $entfernung_nacht=0; 
+  $auswahl='Neu';
 }
 
 if ($func == 3) {
@@ -398,7 +403,9 @@ sub hole_daten {
   $anzahl_frauen = $erg[9] || '1';
   $entfernung_tag = $erg[7]*$anzahl_frauen || 0;
   $entfernung_tag = sprintf "%.2f",$entfernung_tag;
+  $entfernung_tag =~ s/\./,/g;
   $entfernung_nacht = $erg[8]*$anzahl_frauen || 0;
   $entfernung_nacht = sprintf "%.2f",$entfernung_nacht;
+  $entfernung_nacht =~ s/\./,/g;
   $strecke = 'gesamt';
 }
