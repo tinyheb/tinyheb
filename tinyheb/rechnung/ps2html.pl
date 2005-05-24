@@ -283,11 +283,19 @@ sub neue_seite {
   $text = 'B. Geburt' if ($teil eq 'B');
   $text = 'C. Wochenbett' if ($teil eq 'C');
   $text = 'D. sonstige Leistungen' if ($teil eq 'D');
+  $text ='Wegegeld bei Nacht' if ($teil eq 'N');
+  $text ='Wegegeld bei Tag' if ($teil eq 'T');
+  $text ='Wegegeld bei Tag Entfernung nicht mehr als 2 KM' if ($teil eq 'TK');
+  $text ='Wegegeld bei Nacht Entfernung nicht mehr als 2 KM' if ($teil eq 'NK');
   $text = 'Materialpauschalen' if ($teil eq 'M');
-  if ($teil eq 'A' or $teil eq 'B' or $teil eq 'C' or $teil eq 'D') {
+  if ($teil eq 'A' or $teil eq 'B' or $teil eq 'C' or $teil eq 'D' or $teil eq 'M') {
     $p->setfont($font_b,10);
     $p->text($x1,$y1,$text);$y1-=$y_font;$y1-=$y_font;
     $p->setfont($font,10);
+  }
+  if ($teil eq 'N' || $teil eq 'T' || $teil eq 'TK' || $teil eq 'NK') {
+    $p->setfont($font,10);
+    $p->text($x1,$y1,$text);$y1-=$y_font;
   }
 }    
 
@@ -333,27 +341,26 @@ sub print_wegegeld {
   my $text='';
   my $preis=0;
   my $summe=0;
-
+  $text ='Wegegeld bei Nacht' if ($tn eq 'N');
+  $text ='Wegegeld bei Tag' if ($tn eq 'T');
+  $text ='Wegegeld bei Tag Entfernung nicht mehr als 2 KM' if ($tn eq 'TK');
+  $text ='Wegegeld bei Nacht Entfernung nicht mehr als 2 KM' if ($tn eq 'NK');
   $p->text($x1,$y1,$text);$y1-=$y_font;
   while (my @erg=$l->leistungsdaten_offen_next()) {
     if($tn eq 'N') {
       ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'94',$erg[4]);
-      $text ='Wegegeld bei Nacht';
       $preis =~ s/\./,/g;
     }
     if ($tn eq 'T') {
       ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'93',$erg[4]);
-      $text ='Wegegeld bei Tag';
       $preis =~ s/\./,/g;
     }
     if ($tn eq 'TK') {
       ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'91',$erg[4]);
-      $text ='Wegegeld bei Tag Entfernung nicht mehr als 2 KM';
       $preis =~ s/\./,/g;
     }
     if ($tn eq 'NK') {
       ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'92',$erg[4]);
-      $text ='Wegegeld bei Nacht Entfernung nicht mehr als 2 KM';
       $preis =~ s/\./,/g;
     }
     my $datum = $d->convert_tmj($erg[4]);
@@ -361,8 +368,10 @@ sub print_wegegeld {
     my $entf=0;
     $entf = sprintf "%.1f",$erg[7] if ($tn eq 'T');
     $entf = sprintf "%.1f",$erg[8] if ($tn eq 'N');
+    my $entfp = $entf;
+    $entfp =~ s/\./,/g;
     $preis =~s/\./,/g;
-    $p->text({align => 'right'},7,$y1,"$entf km") if ($entf>=2);
+    $p->text({align => 'right'},7,$y1,"$entfp km") if ($entf>=2);
     $p->text(8,$y1,"(Anteil $erg[9] Besuche)") if ($erg[9]>1); # Anzahl Frauen
     $p->text({align => 'right'},12.5,$y1,"á $preis");
     $preis =~ s/,/\./g;
