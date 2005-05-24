@@ -43,6 +43,8 @@ sub convert {
   return $eingabe_datum if ($eingabe_datum =~ /\d{1,4}-\d{1,2}-\d{1,2}/);
   my ($tag,$monat,$jahr) = split '\.',$eingabe_datum;
   return "error" if (!(defined($tag) && defined($monat) && defined($jahr)));
+  $jahr += 1900 if ($jahr > 49 && $jahr < 100);
+  $jahr += 2000 if ($jahr < 50); # siehe auch Heb.js
   return "error" if (!check_date($jahr,$monat,$tag));
   return sprintf "%4.4u-%2.2u-%2.2u",$jahr,$monat,$tag;
 }
@@ -56,6 +58,8 @@ sub convert_tmj {
   return $eingabe_datum if ($eingabe_datum =~ /\d{1,2}\.\d{1,2}\.\d{1,4}/);
   my ($jahr,$monat,$tag) = split '-',$eingabe_datum;
   return "error" if (!(defined($tag) && defined($monat) && defined($jahr)));
+  $jahr += 1900 if ($jahr > 49 && $jahr < 100);
+  $jahr += 2000 if ($jahr < 50); # siehe auch Heb.js
   return "error" if (!check_date($jahr,$monat,$tag));
   return sprintf "%2.2u.%2.2u.%4.4u",$tag,$monat,$jahr;
 }
@@ -73,6 +77,7 @@ sub zeit_h {
   shift;
   my ($zeit) = @_;
   my ($h,$m) = split ':',$zeit;
+  return 0 if (!(defined($h)));
   return $h;
 }
 
