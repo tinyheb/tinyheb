@@ -1,60 +1,47 @@
 Offen:
 
-Stammdaten Datenbank anlegen
-- Stammdaten
--- Lfd. Nummer
--- Name der Frau
--- Geburtsdatum
--- Anschrift, u.a. Bundesland
--- Name der Krankenkasse
--- Krankenversicherungs-Nr. 
--- Krankenversicherungs-Nr. gültig bis
--- Versichertenstatus
--- Geburtsdatum Kind
--- nächstgelegene Hebamme (j/n)
--- Begründung für nicht nächstgelegene Hebamme
-
 Zugriffsmodule für Stammdatenbank
 Pflegedialog Stammdaten
 Änderungsdialog Stammdaten
 
-Leistungskatalog Datenbank anlegen
-- Leistungsart
-- Leistungspreis
-- Leistungstyp A,B,C,D,Wegegeld
-- gültig von bis
-Zugriffsmodule
-Änderungsdialog
+Zugriffsmodule Leistungsdatenbank
+Änderungsdialog Leistungsdatenbank
+
+Zugriffsmodule Leistungsart
+Erfassungsdialog Leistungsart
+Änderungsdialog Leistungsart
+
+In Rechnung drucken:
+entgültig Drucken darf nur gedrückt werden, wenn rechnung noch nicht gedruckt wurde.
+D.h. Knopf entgültig Drucken auf disabled stellen, wenn gerade Rechnung gedruckt wurde.
+
+In Rechnungsposten Erfassung (rechpos.pl):
+- es soll nur dann KM erfassbar sein, wenn wirklich KM erfasst werden müssen.
+- wenn erster Wert Beratung erfasst wurde, automatisch Zuschlag erste Beratung setzen.
+- Wenn DAUER bei Leistungsart angegeben ist, prüfen, ob Begründung notwendig.
+- wenn Positionsnummer mit Zuschlag gelöscht wird, Zuschlag auch löschen
+
+
+Tabelle Leistungsart:
+Umstellen von auto_increment auf "manuelles" increment.
+
+----------------------------------------------------------------
+Erledigt:
 
 Leistunggsdatenbank anlegen
-- Ref. auf Lfd. Nummer der Frau
-- erbrachte Leistung Ref. auf Leistungskatalog
-- Begründung
-- Datum der Leistungserbringung
-- Uhrzeit der Leistungserbringung
-- Wegegeld ggf. Anteilig
-Erfassungsdialog Leistung
-Änderungsdialog Leistung
+Kalenderroutine
+Tabelle mit Krankenkassen
+Zugriffsmodule Leistungsdaten
+Erfassungsdialog Leistungsdaten
+Änderungsdialog Leistungsdaten
 
+Kalenderroutine
+diese muss berechnen, ob es sich bei einem Tag um
+einen Wochentag
+einen Samstag
+einen Sonntag
+einen Feiertag handelt
 
-
-
-Erledigt:
-Kalenderdatenbank anlegen
-- Feiertage
-- Bundesland
-
-Stammdaten Datenbank anlegen
-- Stammdaten
--- Lfd. Nummer
--- Name der Frau
--- Geburtsdatum
--- Anschrift, u.a. Bundesland
--- Name der Krankenkasse
--- Krankenversicherungs-Nr.
--- Krankenversicherungs-Nr. gültig bis
--- Versichertenstatus
--- Geburtsdatum Kind
--- nächstgelegene Hebamme (j/n)
--- Begründung für nicht nächstgelegene Hebamme
+Preisberechnung: ist Teil von rechpos.pl
+Routine, die Preis einer Leistung an einem Datum zu einer Uhrzeit berechnet
 
