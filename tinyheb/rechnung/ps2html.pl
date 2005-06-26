@@ -128,7 +128,7 @@ $p->setfont($font,10);
 $x1=2; $y1=27.8;
 $p->text($x1,$y1,"Marlies Goldmann");
 $y1 -= $y_font;
-$p->text($x1,$y1,"Deller Str. 115");
+$p->text($x1,$y1,"Rubensstr. 3");
 $y1 -= $y_font;
 $p->text($x1,$y1,"42719 Solingen");
 $y1 -= $y_font;
@@ -139,7 +139,7 @@ $p->text($x1,$y1,"IK: 450953376");
 # Absender 
 $p->line($x1,24.6,$x1+9,24.6);
 $p->setfont($font,8);
-$p->text($x1,24.7,"Marlies Goldmann, Deller Str. 115, 42719 Solingen");
+$p->text($x1,24.7,"Marlies Goldmann, Rubensstr. 3, 42719 Solingen");
 
 # Empfänger
 $p->setfont($font,10);
