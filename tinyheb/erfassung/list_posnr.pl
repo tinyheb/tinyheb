@@ -66,7 +66,8 @@ while (my @erg=$l->leistungsdaten_such_next()) {
   print "<td style='width:5.0cm;text-align:left'>$l_bezeichnung</td>";
   $l_preis =~ s/\./,/g;
   print "<td style='width:1.0cm;text-align:right'>$l_preis</td>"; # e preis
-  my $g_preis = sprintf "%.2f",$erg[10];$g_preis =~ s/\./,/g;
+  my $g_preis = sprintf "%.2f",$erg[10];
+  $g_preis =~ s/\./,/g;
   print "<td style='width:1.0cm;text-align:right'>$g_preis</td>"; # g preis
   my ($h1,$m1)= unpack('A2xA2',$erg[5]);
   $erg[5] =~ s/00:00//g;
