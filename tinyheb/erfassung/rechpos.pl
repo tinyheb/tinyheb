@@ -345,7 +345,7 @@ sub speichern {
 
 
 
-  # hier muss noch der Preis berechnet werden in Abhängigkeit der Dauer
+  # Preis berechnen in Abhängigkeit der Dauer
   my $preis=0;
   my ($l_epreis,$l_fuerzeit) = $l->leistungsart_such_posnr('EINZELPREIS,FUERZEIT',$posnr,$datum_l);
   if ($l_fuerzeit > 0) {
@@ -362,12 +362,28 @@ sub speichern {
   # einfügen in Datenbank
   $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
 
+  # prüfen ob einamliger Zuschlag gerechnet werden muss
+  # wird genau dann gemacht, wenn die Positionsnummer 
+  # noch nicht erfasst ist
+  my ($einmal_zus) = $l->leistungsart_such_posnr('EINMALIG',$posnr,$datum_l);
+  if ($einmal_zus =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    $zuschlag=$2;
+    $zuschlag=0 if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$zuschlag"));
+  }
+
+
   # prüfen ob Zuschlag gespeichert werden muss
   if ($zuschlag ne '' && $zuschlag > 0) {
-    my ($prozent) = $l->leistungsart_such_posnr('PROZENT',$zuschlag,$datum_l);
-    my $preis_neu = $preis * $prozent;
+    my ($prozent,$ze_preis) = $l->leistungsart_such_posnr('PROZENT,EINZELPREIS',$zuschlag,$datum_l);
+    my $preis_neu = 0;
+    $preis_neu = $preis * $prozent if ($prozent > 0);
+    $preis_neu = $ze_preis if ($ze_preis > 0);
+    # Entfernung darf nicht 2mal gerechnet werden
+    $entfernung_nacht=0;
+    $entfernung_tag=0;
     $leist_id=$l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis_neu,'',10);
-    $hint .= "Zuschlag prozentual wurde zusätzlich gespeichert";
+    $hint .= " Zuschlag prozentual wurde zusätzlich gespeichert" if ($prozent > 0);
+    $hint .= " Zuschlag wurde zusätzlich gespeichert" if ($ze_preis > 0);
   }
 
   $entfernung_tag*=$anzahl_frauen;
