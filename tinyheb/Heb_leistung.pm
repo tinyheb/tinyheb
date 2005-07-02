@@ -23,6 +23,8 @@ our $leistungsdaten_such; # suchen von Leistungsdaten nach Frau
 our $leistungsdaten_offen; # suchen nach (Status 10) Leistungsdaten bei Frau
 our $rech_such; # sucht nach Rechnungen in der Datenbank
 our $leistungsdaten_such_rechnr; # Sucht Leistungsdaten einer bestimmten Rechnung
+our $leistungsdaten_werte; # sucht werte für Frau
+our $pruef_zus; # zuschlagspflichtige Posnr
 
 my $debug = 1;
 our $dbh; # Verbindung zur Datenbank
@@ -227,13 +229,20 @@ sub leistungsart_pruef_zus {
   shift;
   my $posnr=shift;
   my $wert=shift;
-  my $pruef_zus = $dbh->prepare("select distinct $wert from Leistungsart ".
+  $pruef_zus = $dbh->prepare("select distinct $wert from Leistungsart ".
 				"where $posnr=$wert;")
     or die $dbh->errstr();
   my $erg = $pruef_zus->execute() or die $dbh->errstr();
   return $erg if ($erg>0);
   return 0;
 }
+
+
+sub leistungsart_pruef_zus_next {
+  # holt die Positionsnummern bei denen zuschläge erforderlich sind
+  return $pruef_zus->fetchrow_array();
+}
+
 
 sub leistungsart_such {
   # Sucht gültige Leistungsarten in der Datenbank
@@ -262,6 +271,75 @@ sub leistungsart_such_posnr {
   my @erg=$leistungsart_such_posnr->fetchrow_array();
   return @erg;
 }
+
+
+
+sub leistungsart_next_id {
+  # holt zur gegebenen ID die nächste Leistungsart
+  shift;
+  my ($id)=@_;
+  my $leistungsart_next_id =
+    $dbh->prepare("select ID from Leistungsart where ".
+		  "ID > ? limit 1;")
+      or die $dbh->errstr();
+  $leistungsart_next_id->execute($id) or die $dbh->errstr();
+  return $leistungsart_next_id->fetchrow_array();
+}
+
+
+
+sub leistungsart_prev_id {
+  # holt zur gegebenen ID die vorhergehende Leistungsart
+  shift;
+  my ($id)=@_;
+  my $leistungsart_prev_id =
+    $dbh->prepare("select ID from Leistungsart where ".
+		  "ID < ? order by ID desc limit 1;")
+      or die $dbh->errstr();
+  $leistungsart_prev_id->execute($id) or die $dbh->errstr();
+  return $leistungsart_prev_id->fetchrow_array();
+}
+
+
+sub leistungsart_id {
+  # holt zur gegebenen ID die Daten
+  shift;
+  my ($id) = @_;
+  my $leistungsart_id =
+    $dbh->prepare("select * from Leistungsart where ID = ?;")
+      or die $dbh->errstr();
+  $leistungsart_id->execute($id) or die $dbh->errstr();
+  return $leistungsart_id->fetchrow_array();
+}
+  
+
+
+sub leistungsdaten_werte {
+  # sucht nach Positionen für eine Frau
+  # liefert werte
+  # für bestimmtes Kriterium: where
+  shift;
+  my ($frau_id,$werte,$where) = @_;
+  if (defined($where) && $where ne '') {
+    $where =~ s/,/ and /g;
+    $where = ' and '.$where;
+  } else {
+    $where = '';
+  }
+  $leistungsdaten_werte = $dbh->prepare("select $werte from Leistungsdaten ".
+					"where FK_Stammdaten=? $where;")
+      or die $dbh->errstr();
+  my $erg=$leistungsdaten_werte->execute($frau_id) or die $dbh->errstr();
+  return $erg if($erg > 0);
+  return 0;
+}
+
+
+sub leistungsdaten_werte_next {
+  my @erg=$leistungsdaten_werte->fetchrow_array();
+  return @erg;
+}
+
 
 
 sub leistungsdaten_offen {
