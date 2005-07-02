@@ -126,4 +126,25 @@ function round(wert) {
   return RegExp.$1;
 }
 
+
+function next_satz_leistart(formular) {
+  //  alert("next"+formular.leist_id);
+  id = formular.leist_id.value;
+  if(formular.auswahl.value == 'Anzeigen') {
+    open("leistungsarterfassung.pl?func=1&leist_id="+id,"_top");
+  } else {
+    alert("Bitte Menuepunkt Anzeigen wählen");
+  }
+}
+
+
+function prev_satz_leistart(formular) {
+  id = formular.leist_id.value;
+  if(formular.auswahl.value == 'Anzeigen') {
+    open("leistungsarterfassung.pl?func=2&leist_id="+id,"_top");
+  } else {
+    alert("Bitte Menuepunkt Anzeigen wählen");
+  }
+}
+
 //alert("leistungen.js ist geladen");
