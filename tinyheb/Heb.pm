@@ -16,6 +16,7 @@ our $pass='';
 
 my $debug = 1;
 my $parm_such = '';
+my $parm_such_werte = '';
 
 sub new {
   my($class) = @_;
@@ -67,5 +68,105 @@ sub parm_up {
     or die $dbh->errstr();
 }
 
+
+sub parm_ins {
+  # fügt neuen Parameter in Parms Tabelle ein
+  shift;
+  
+  # zunächst neue ID für Parameter holen
+  my $id=Heb->parm_unique('PARM_ID');
+  $id++;
+
+  my $parm_ins = $dbh->prepare("insert into Parms ".
+			       "(ID,NAME,VALUE,BESCHREIBUNG) ".
+			       "values (?,?,?,?);")
+    or die $dbh->errstr();
+  my $erg = $parm_ins->execute($id,@_)
+    or die $dbh->errstr();
+  Heb->parm_up('PARM_ID',$id);
+  return $id;
+}
+
+
+sub parm_delete {
+  # löscht Datensatz aus Parms Tabelle
+  shift;
+  my $parm_delete = $dbh->prepare("delete from Parms ".
+				  "where ID=?;")
+    or die $dbh->errstr();
+
+  my $erg = $parm_delete->execute(@_)
+    or die $dbh->errstr();
+  return $erg;
+}
+
+
+sub parm_update {
+  # speichert geänderte Parameter ab
+ shift;
+ my $id = shift;
+ my $parm_update = $dbh->prepare("update Parms set ".
+				 "NAME=?,VALUE=?,BESCHREIBUNG=? ".
+				 "where ID=?;")
+   or die $dbh->errstr();
+ my $erg=$parm_update->execute(@_,$id) or die $dbh->errstr();
+ return $erg;
+}
+
+
+sub parm_next_id {
+  # holt den nächsten Parameter nach dem gegebenen
+  shift;
+  my ($id) = @_;
+
+  my $parm_next_id = $dbh->prepare("select ID from Parms where ".
+				   "ID > ? order by ID limit 1;")
+    or die $dbh->errstr();
+  $parm_next_id->execute($id) or die $dbh->errstr();
+  return $parm_next_id->fetchrow_array();
+}
+
+
+sub parm_prev_id {
+  # holt den vorhergehenden Parameter zu dem gegebenen
+  shift;
+  my ($id) = @_;
+
+  my $parm_prev_id = $dbh->prepare("select ID from Parms where ".
+				   "ID < ? order by ID desc limit 1;")
+    or die $dbh->errstr();
+  $parm_prev_id->execute($id) or die $dbh->errstr();
+  return $parm_prev_id->fetchrow_array();
+}
+
+
+sub parm_get_id {
+  # holt alle werte zur gegebenen ID
+  shift;
+  my ($id) = @_;
+  my $parm_get_id = $dbh->prepare("select * from Parms where ".
+				  "ID = ?;")
+    or die $dbh->errstr();
+  $parm_get_id->execute($id) or die $dbh->errstr();
+  my @erg = $parm_get_id->fetchrow_array();
+  return @erg;
+}
+
+
+sub parm_such_werte {
+  # sucht nach kriterien Parameter
+  shift;
+  
+  $parm_such_werte = $dbh->prepare("select * from Parms ".
+				   "where name like ? and ".
+				   "value like ? and ".
+				   "beschreibung like ?;")
+    or die $dbh->errstr();
+  $parm_such_werte->execute(@_) or die $dbh->errstr();
+}
+
+sub parm_such_werte_next {
+  return $parm_such_werte->fetchrow_array();
+}
 
 1;
