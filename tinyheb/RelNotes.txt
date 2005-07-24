@@ -1,0 +1,5 @@
+Rel myHeb-0-1-0:
+erstes Release, wesentliche Funktionalitäten sind vorhanden,
+siehe Doku in concept/doku.tex.
+Installation bzgl. Datenbank noch nicht wie in Doku beschrieben,
+Initialisierung funktioniert nicht.
