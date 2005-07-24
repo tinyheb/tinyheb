@@ -3,6 +3,8 @@ Offen:
 
 24.07.05
 generelles stylesheet Heb.css einführen, um die Textgröße auf die optimale Größe zu setzen.
+- in der Parameterpflege muss ein Button für Sprung in Hauptmenue hin
+- im Menue Leistungsarten muss noch Suchen, sowie Ändern und Löschen Implementiert werden.
 
 23.07.05
 Plausiprüfung bei der Kilometer Erfassung, wann Tag und wann Nacht und nur eins von beiden.
