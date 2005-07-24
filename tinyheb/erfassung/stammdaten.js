@@ -25,6 +25,16 @@ function kvnr_check(kvnummer) {
   }
 }
 
+function ik_gueltig_check(ik_nummer) {
+  // prüfung auf gültige ik nummer
+  re =/^\d{9}$/;
+  if (ik_nummer.value != '' && !re.test(ik_nummer.value)) {
+    alert("Bitte IK-Nummer 9 stellig numerisch erfasseb");
+    ik_nummer.focus();
+    ik_nummer.select();
+  }
+}
+
 function kvnr_gueltig_check(kvnr_gueltig) {
 //  alert("gueltig"+kvnr_gueltig.value);
   re=/^[0-1][0-9]\d{2}$/;
