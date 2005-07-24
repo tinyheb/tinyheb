@@ -115,7 +115,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.10 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.11 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -226,7 +226,7 @@ while ($j <= $#verstatus) {
   $j++;
 }
 print "</td>\n";
-print "<td><input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='14'></td>";
+print "<td><input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='10' onBlur='ik_gueltig_check(this)'></td>";
 print "<td><input type='button' name='kasse_waehlen' value='Kasse auswählen' onClick='return kassen_auswahl();'></td>";
 print '</tr>';
 print '</table>';
