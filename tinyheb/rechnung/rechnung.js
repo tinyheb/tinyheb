@@ -25,4 +25,13 @@ function recherf(frau_id) {
   open("../erfassung/rechnungserfassung.pl?frau_id="+frau_id,"_top");
 }
 
+function anseh_rech(rech_id) {
+  // neues Fenster mit Rechnung öffnen
+  if (rech_id > 0) {
+    open("druck_alt_rech.pl?rech_id="+rech_id,"rech_alt","scrollbars=yes,width=950,heigth=1100");
+  } else {
+    alert("Bitte Rechnung anwählen");
+  }
+}
+
 //alert("rechnung.js ist geladen");
