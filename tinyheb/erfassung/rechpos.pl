@@ -362,7 +362,7 @@ sub speichern {
   # einfügen in Datenbank
   $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
 
-  # prüfen ob einamliger Zuschlag gerechnet werden muss
+  # prüfen ob einmaliger Zuschlag gerechnet werden muss
   # wird genau dann gemacht, wenn die Positionsnummer 
   # noch nicht erfasst ist
   my ($einmal_zus) = $l->leistungsart_such_posnr('EINMALIG',$posnr,$datum_l);
