@@ -111,8 +111,8 @@ print '</td>';
 print '</tr>';
 print '</table>';
 
-print "<iframe src='ps2html.pl?frau_id=$frau_id' name='rechnung' width='860' height='900' scrolling='auto' frameborder='1'>" if ($frau_id > 0);
-print "<iframe src='../blank.html' name='rechnung' width='840' height='860' scrolling='yes' frameborder='1'>" if ($frau_id == 0);
+print "<iframe src='ps2html.pl?frau_id=$frau_id' name='rechnung' width='880' height='550' scrolling='auto' frameborder='1'>" if ($frau_id > 0);
+print "<iframe src='../blank.html' name='rechnung' width='880' height='550' scrolling='yes' frameborder='1'>" if ($frau_id == 0);
 print "</iframe>";
 
 
