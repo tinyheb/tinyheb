@@ -22,7 +22,7 @@ my $q = new CGI;
 
 
 #print "Content-Type: application/postscript\n";
-my $frau_id = $q->param('frau_id') || 6;
+my $frau_id = $q->param('frau_id') || -1;
 #my $frau_id = $ARGV[0] || 6;
 my $seite=1;
 my $rechnungsnr = 1+($h->parm_unique('RECHNR'));
@@ -44,10 +44,6 @@ my  ($name_krankenkasse,
      $postfach_krankenkasse) = $k->krankenkasse_sel('NAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$ik_krankenkasse);
 
 
-#my @okfonts = PostScript::Metrics->listFonts();
-#print "fonts @okfonts\n";
-#my @enc = PostScript::StandardEncoding->array;
-#print "Encodings: @enc\n";
 my $p = new PostScript::Simple(papersize => "A4",
 #			       color => 1,
 			       eps => 0,
@@ -61,8 +57,8 @@ my $x1=12.6; # x werte für kisten
 my $x2=19.4;
 
 my $y_font = 0.410;
-my $font ="Arial-iso";
-my $font_b = "Arial-Bold-iso";
+my $font ="Helvetica-iso";
+my $font_b = "Helvetica-Bold-iso";
 
 $p->setfont($font, 10);
 $p->box($x1,27.2,$x2,28.2);# Kiste für Rechnung y1=28.2 y2=27.2
@@ -126,20 +122,21 @@ $p->text(15.1,$y1-$y_font,$geb_kind);
 # Anschrift der Hebamme
 $p->setfont($font,10);
 $x1=2; $y1=27.8;
-$p->text($x1,$y1,"Marlies Goldmann");
+$p->text($x1,$y1,$h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME'));
 $y1 -= $y_font;
-$p->text($x1,$y1,"Rubensstr. 3");
+$p->text($x1,$y1,$h->parm_unique('HEB_STRASSE'));
 $y1 -= $y_font;
-$p->text($x1,$y1,"42719 Solingen");
+$p->text($x1,$y1,$h->parm_unique('HEB_PLZ').' '.$h->parm_unique('HEB_ORT'));
 $y1 -= $y_font;
-$p->text($x1,$y1,"0212/3809290");
+$p->text($x1,$y1,$h->parm_unique('HEB_TEL'));
 $y1 -= $y_font;
-$p->text($x1,$y1,"IK: 450953376");
+$p->text($x1,$y1,'IK: '.$h->parm_unique('HEB_IK'));
 
 # Absender 
 $p->line($x1,24.6,$x1+9,24.6);
 $p->setfont($font,8);
-$p->text($x1,24.7,"Marlies Goldmann, Rubensstr. 3, 42719 Solingen");
+my $absender=$h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME').', '.$h->parm_unique('HEB_STRASSE').', '.$h->parm_unique('HEB_PLZ').' '.$h->parm_unique('HEB_ORT');
+$p->text($x1,24.7,$absender);
 
 # Empfänger
 $p->setfont($font,10);
@@ -248,7 +245,8 @@ sub rech_up {
 
 sub fussnote {
   $p->setfont($font, 10);
-$p->text(2,1.6, "Bankverbindung: Kto-Nr. 280727 Sparkasse Herrieden BLZ 765 500 00");
+#$p->text(2,1.6, "Bankverbindung: Kto-Nr. 280727 Sparkasse Herrieden BLZ 765 500 00");
+$p->text(2,1.6, "Bankverbindung: Kto-Nr. ".$h->parm_unique('HEB_Konto').' '.$h->parm_unique('HEB_NAMEBANK').' BLZ '.$h->parm_unique('HEB_BLZ'));
 }
 
 
@@ -257,7 +255,7 @@ sub kopfzeile {
   $y1=27.8;
   $p->newpage;
   $p->setfont($font_b,10);
-  $p->text(2,$y1,"Marlies Goldmann");
+  $p->text(2,$y1,$h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME'));
   $p->text(12.7,$y1,"Rechnung");
   $p->setfont($font,10);
   $p->text(15,$y1,"/Seite $seite");
