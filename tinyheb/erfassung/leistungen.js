@@ -1,5 +1,10 @@
 //alert("leistung.js wird geladen");
 
+function leistartsuchen (posnr) {
+  open("leistungsartauswahl.pl?suchen=Suchen&posnr="+posnr,"leistungsartauswahl","scrollbars=yes,width=700,height=400");
+}
+
+
 function druck (form) {
   //  alert("druck"+form.frau_id.value);
   if (form.frau_id.value > 0) {
