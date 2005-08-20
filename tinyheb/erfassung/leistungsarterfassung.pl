@@ -48,8 +48,8 @@ my $zusatz1 = $q->param('zusatz1') || '';
 my $zusatz2 = $q->param('zusatz2') || '';
 my $zusatz3 = $q->param('zusatz3') || '';
 my $zusatz4 = $q->param('zusatz4') || '';
-my $guelt_von = $q->param('datum_von') || $TODAY_tmj;
-my $guelt_bis = $q->param('datum_bis') || '31.12.9999';
+my $guelt_von = $q->param('guelt_von') || $TODAY_tmj;
+my $guelt_bis = $q->param('guelt_bis') || '31.12.9999';
 my $speichern = $q->param('Speichern');
 my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
@@ -85,7 +85,7 @@ STYLE
 if (($auswahl eq 'Löschen') && defined($abschicken)) {
   loeschen();
   if ($hint eq '') {
-    print '<script>loeschen();</script>';
+    print '<script>window.location="leistungsarterfassung.pl";</script>';
   } else {
     print "<script>alert('$hint');</script>";
     $auswahl='Anzeigen';
@@ -94,9 +94,9 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 
 
 # Alle Felder zur Eingabe ausgeben
-print '<body bgcolor=white>';
+print '<body id="leistungsarterfassung" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Leistungsarten<br> $Revision: 1.1 $</h1>';
+print '<h1>Leistungsarten<br> $Revision: 1.2 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -109,6 +109,7 @@ print '<tr><td><table border="0" align="left">';
 print '<tr>';
 print '<td><b>ID</b></td>';
 print '<td><b>PosNr</b></td>';
+print '<td><b>Leistungstyp</b></td>';
 print '<td><b>Kurzbezeichnung</b></td>';
 print '</tr>';
 print "\n";
@@ -117,8 +118,9 @@ print "\n";
 print '<tr>';
 print "<td><input type='text' name='leist_id' value='$leist_id' size='5'></td>";
 print "<td><input type='text' name='posnr' value='$posnr' size='5'></td>";
+print "<td><input type='text' name='leistungstyp' value='$leistungstyp' size='1'></td>";
 print "<td><input type='text' name='kbez' value='$kbez' size='50'></td>";
-print "<td><input type='button' name='leistart_suchen' value='Suchen' onClick='return leistart_suchen(form);'></tr>";
+print "<td><input type='button' name='leistart_suchen' value='Suchen' onClick='leistartsuchen(posnr.value);'></tr>";
 print '</table>';
 print "\n";
 
@@ -271,14 +273,22 @@ sub speichern {
   # Speichert die Daten in der Stammdaten Datenbank
   # print "Speichern in DB\n";
   # Datümer konvertierten
+  my $g_von = $d->convert($guelt_von);
+  my $g_bis = $d->convert($guelt_bis);
+  $leist_id=$l->leistungsart_ins($posnr,$bezeichnung,$leistungstyp,$einzelpreis,$prozent,$sonntag,$nacht,$samstag,$fuerzeit,$dauer,$zwillinge,$zweitesmal,$einmalig,$begruendungspflicht,$zusatz1,$zusatz2,$zusatz3,$zusatz4,$g_von,$g_bis,$kbez);
 }
 
 sub loeschen {
   # löscht Datensatz aus der Leistungsarten Datenbank
+  $l->leistungsart_delete($leist_id);
+  $leist_id=0;
 }
 
 sub aendern {
   # Ändert die Daten zu einer Leistungsart in der Datenbank
+  return if ($leist_id==0);
+  loeschen();
+  speichern();
 }
 
 sub hole_leistart_daten {
