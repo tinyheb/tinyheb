@@ -15,7 +15,7 @@ die $DBI::errstr unless $dbh;
 
 # neue Tabelle anlegen
 $dbh->do("CREATE TABLE Leistungsart (" .  
-	 "ID SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT," .
+	 "ID SMALLINT UNSIGNED NOT NULL," .
 	 "POSNR CHAR(5) NOT NULL," .
 	 "BEZEICHNUNG TEXT NOT NULL," .
 	 "LEISTUNGSTYP ENUM ('A','B','C','D','M','W') NOT NULL," .
