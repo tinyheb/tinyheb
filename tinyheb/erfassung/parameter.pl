@@ -80,7 +80,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body bgcolor=white>';
 print '<div align="center">';
-print '<h1>Parameter $Revision: 1.1 $ <br>$Date: 2005-07-13 17:42:06 $</h1>';
+print '<h1>Parameter $Revision: 1.2 $ <br>$Date: 2005-08-20 16:04:40 $</h1>';
 print '<hr width="100%">';
 print '</div><br>';
 # Formular ausgeben
@@ -163,6 +163,7 @@ print '</td>';
 print '<td>';
 print '<input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz_parms(document.parameter)"';
 print '</td>';
+print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
