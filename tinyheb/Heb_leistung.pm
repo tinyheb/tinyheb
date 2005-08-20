@@ -25,6 +25,7 @@ our $rech_such; # sucht nach Rechnungen in der Datenbank
 our $leistungsdaten_such_rechnr; # Sucht Leistungsdaten einer bestimmten Rechnung
 our $leistungsdaten_werte; # sucht werte für Frau
 our $pruef_zus; # zuschlagspflichtige Posnr
+our $leistungsart_such_werte; # suchen nach mehreren Leistungsarten
 
 my $debug = 1;
 our $dbh; # Verbindung zur Datenbank
@@ -34,9 +35,11 @@ sub new {
   my $self = {};
   $dbh = Heb->connect;
   bless $self, ref $class || $class;
-  $leistung_such = $dbh->prepare("select * from Leistungsart ".
+  $leistung_such = $dbh->prepare("select *,cast(POSNR as unsigned) as sort ".
+				 "from Leistungsart ".
 				 "where ? >= GUELT_VON and ".
-				 "? <= GUELT_BIS and LEISTUNGSTYP = ?;")
+				 "? <= GUELT_BIS and LEISTUNGSTYP = ? ".
+				 "order by sort;")
     or die $dbh->errstr();
   $leistungsdaten_ins = $dbh->prepare("insert into Leistungsdaten " .
 				      "(ID,POSNR,FK_STAMMDATEN, " .
@@ -107,9 +110,6 @@ sub rechnung_up {
   $rechnung_up->execute($zahl_datum,$betraggez,$status,$rechnr)
     or die $dbh->errstr();
 }
-
-
-
 
 
 
@@ -375,6 +375,77 @@ sub leistungsdaten_offen_next {
   my @erg=$leistungsdaten_offen->fetchrow_array();
   return @erg;
 }
+
+
+sub leistungsart_such_werte {
+  # sucht nach leistungsarten
+  shift;
+  my ($posnr,$ltyp,$kbez,$guelt) = @_;
+ 
+  my $where='';
+  $where = "POSNR = $posnr and " if ($posnr ne '');
+  $where = $where."GUELT_VON <= '$guelt' and GUELT_BIS >= '$guelt' and" if ($guelt ne '');
+  $leistungsart_such_werte =
+    $dbh->prepare("select ID,POSNR,LEISTUNGSTYP,KBEZ,".
+		  "DATE_FORMAT(GUELT_VON,'%d.%m.%Y'),".
+		  "DATE_FORMAT(GUELT_BIS,'%d.%m.%Y'),".
+		  "cast(POSNR as unsigned) as sort ".
+		  "from Leistungsart where ".
+		  "$where LEISTUNGSTYP LIKE ? and ".
+		  "KBEZ LIKE ? order by sort;")
+      or die $dbh->errstr();
+  my $erg = $leistungsart_such_werte->execute($ltyp,$kbez)
+    or die $dbh->errstr();
+  return $erg;
+}
+
+
+sub leistungsart_such_werte_next {
+  my @erg=$leistungsart_such_werte->fetchrow_array();
+  return @erg;
+}
+
+
+sub leistungsart_ins {
+  # fügt neue Leistungsart in Datenbank ein
+  shift;
+  my $id=1+Heb->parm_unique('LEISTUNGSART_ID');
+  my ($posnr,$bez,$ltyp,$epreis,$proz,
+      $sonn,$nacht,$sam,$fuerz,$dau,$zwill,
+      $zweites,$einm,$begrue,$zus1,
+      $zus2,$zus3,$zus4,$g_v,$g_b,$kbez)=@_;
+
+  my $leistungsart_ins=
+    $dbh->prepare("insert into Leistungsart ".
+		  "(ID,POSNR,BEZEICHNUNG,LEISTUNGSTYP,EINZELPREIS, ".
+		  "PROZENT,SONNTAG,NACHT,SAMSTAG, ".
+		  "FUERZEIT,DAUER,ZWILLINGE, ".
+		  "ZWEITESMAL,EINMALIG,BEGRUENDUNGSPFLICHT,ZUSATZGEBUEHREN1,".
+		  "ZUSATZGEBUEHREN2,ZUSATZGEBUEHREN3,ZUSATZGEBUEHREN4,".
+		  "GUELT_VON,GUELT_BIS,KBEZ) ".		  
+		  "values (?,?,?,?,?,".
+		  "?,?,?,?,".
+		  "?,?,?,".
+		  "?,?,?,?,".
+		  "?,?,?,".
+		  "?,?,?);")
+      or die $dbh->errstr();
+  $leistungsart_ins->execute($id,$posnr,$bez,$ltyp,$epreis,$proz,$sonn,$nacht,$sam,$fuerz,$dau,$zwill,$zweites,$einm,$begrue,$zus1,$zus2,$zus3,$zus4,$g_v,$g_b,$kbez) or die $dbh->errstr();
+  Heb->parm_up('LEISTUNGSART_ID',$id);
+  return $id;
+}
+
+
+sub leistungsart_delete {
+  # löscht Leistungsart aus Tabelle
+  shift;
+  my $id=shift;
+  my $leistungsart_delete = $dbh->prepare("delete from Leistungsart where ".
+					 "ID = ?;")
+    or die $dbh->errstr();
+  $leistungsart_delete->execute($id) or die $dbh->errstr();
+}
+
 
 sub status_text {
   # ermittelt zu gegebenem Status den Text
