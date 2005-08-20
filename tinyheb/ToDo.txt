@@ -1,22 +1,16 @@
 Offen:
 
+20.08.05
+Summen für Rechnungen ausgeben, offene Rechnungen, erl. Rechnungen
 
 24.07.05
 generelles stylesheet Heb.css einführen, um die Textgröße auf die optimale Größe zu setzen.
-- in der Parameterpflege muss ein Button für Sprung in Hauptmenue hin
-- im Menue Leistungsarten muss noch Suchen, sowie Ändern und Löschen Implementiert werden.
+
 
 23.07.05
 Plausiprüfung bei der Kilometer Erfassung, wann Tag und wann Nacht und nur eins von beiden.
 
 09.07.05 Dokumentation erstellen.
-
-Zugriffsmodule Leistungsdatenbank
-Änderungsdialog Leistungsdatenbank
-
-Zugriffsmodule Leistungsart
-Erfassungsdialog Leistungsart
-Änderungsdialog Leistungsart
 
 In Rechnung drucken:
 entgültig Drucken darf nur gedrückt werden, wenn rechnung noch nicht gedruckt wurde.
@@ -28,17 +22,26 @@ In Rechnungsposten Erfassung (rechpos.pl):
 - wenn Positionsnummer mit Zuschlag gelöscht wird, Zuschlag auch löschen
 
 
-Tabelle Leistungsart:
-Umstellen von auto_increment auf "manuelles" increment.
 
 ----------------------------------------------------------------
 Erledigt:
+20.08.05
+Ansehen alter Rechnung muss möglich sein
+
+13.08.05
+Tabelle Leistungsart:
+Umstellen von auto_increment auf "manuelles" increment.
+- im Menue Leistungsarten muss noch Suchen, sowie Ändern und Löschen Implementiert werden.
+
+Zugriffsmodule Leistungsart
+Erfassungsdialog Leistungsart
+Änderungsdialog Leistungsart
 
 24.07.05
 Plausiprüfung für IK der Krankenkasse in der Stammdatenerfassung
 Plausiprüfung in Stammdatenerfassung auf gültig bis, funktioniert nicht richtig. Bei Plausi auf KV-Nummer abschreiben
 ---> Fehler konnte nicht nachgestellt werden
-
+- in der Parameterpflege muss ein Button für Sprung in Hauptmenue hin
 
 
 früher:
