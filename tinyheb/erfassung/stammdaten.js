@@ -63,8 +63,8 @@ function kvnr_gueltig_check(kvnr_gueltig) {
     formular.geburtsdatum_frau.value=geb_f;
     formular.geburtsdatum_kind.value=geb_k;
     if (formular.name == 'rechnungen_gen') {
-      // postscript rechnung neu laden
-      open("../rechnung/ps2html.pl?frau_id="+frau_id,"rechnung");
+      // rechnungsformular erneut laden
+      opener.window.location="../rechnung/rechnung_generierung.pl?frau_id="+frau_id;
       return true;
     }
     if(formular.name == 'rechnung') {
