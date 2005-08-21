@@ -162,6 +162,7 @@ print '</td>';
 print '<td>';
 print '<input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.feiertage)"';
 print '</td>';
+print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
