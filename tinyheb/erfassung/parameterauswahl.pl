@@ -116,5 +116,5 @@ print <<SCRIPTE;
   }
 </script>
 SCRIPTE
-print "</body>'";
+print "</body>";
 print "</html>";
