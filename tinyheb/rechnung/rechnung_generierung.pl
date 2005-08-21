@@ -14,10 +14,12 @@ use Date::Calc qw(Today);
 use lib "../";
 use Heb_stammdaten;
 use Heb_datum;
+use Heb_leistung;
 
 my $q = new CGI;
 my $s = new Heb_stammdaten;
 my $d = new Heb_datum;
+my $l = new Heb_leistung;
 
 my $debug=1;
 
@@ -97,7 +99,13 @@ print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
-print "<td><input type='button' name='pdruck' value='entgültig Drucken' onclick='druck_fertig(frau_id.value);'</td>";
+# entgültig drucken nur dann einschalten, wenn Rechnung wirklich Daten enthält
+# damit keine Rechnung ohne Gegenwert gespeichert wird
+if ($l->leistungsdaten_offen($frau_id,'')) {
+  print "<td><input type='button' name='pdruck' value='entgültig Drucken' onclick='druck_fertig(frau_id.value,rechnungen_gen);'</td>";
+} else {
+  print "<td><input type='button' disabled name='pdruck' value='entgültig Drucken' onclick='druck_fertig(frau_id.value);'</td>";
+}
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '<td><input type="button" name="echnungerf" value="Rechnungserfassung" onClick="recherf(frau_id.value);"></td>';
 print '<td><input type="button" name="stammdaten" value="Stammdaten" onClick="stamm(frau_id.value,document.rechnungen_gen);"></td>';
