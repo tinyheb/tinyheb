@@ -9,7 +9,7 @@
 
 use strict;
 use CGI;
-use Date::Calc qw(Today Day_of_Week);
+use Date::Calc qw(Today Day_of_Week Delta_Days);
 
 use lib "../";
 use Heb_stammdaten;
@@ -371,7 +371,6 @@ sub speichern {
     $zuschlag=0 if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$zuschlag"));
   }
 
-
   # prüfen ob Zuschlag gespeichert werden muss
   if ($zuschlag ne '' && $zuschlag > 0) {
     my ($prozent,$ze_preis) = $l->leistungsart_such_posnr('PROZENT,EINZELPREIS',$zuschlag,$datum_l);
@@ -386,10 +385,69 @@ sub speichern {
     $hint .= " Zuschlag wurde zusätzlich gespeichert" if ($ze_preis > 0);
   }
 
+  # prüfen, ob Materialpauschale gerechnet werden muss
+  # wird genau dann gemacht, wenn Zusatzgebühr1 auf Material verweisst.
+  # und keine Abhängigkeit zur Zeit besteht
+  my ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN1,ZUSATZGEBUEHREN2',$posnr,$datum_l);
+  if ($mat_zus2 eq '' && $mat_zus =~ /(\+M)(\d{1,3})/ && $2 > 0) {
+    my $m_zus='M'.$2;
+    # Entfernung nicht 2mal rechnen
+    $entfernung_nacht=0;
+    $entfernung_tag=0;
+    my ($ze_preis) = $l->leistungsart_such_posnr('EINZELPREIS',$m_zus,$datum_l);
+    $leist_id=$l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
+    $hint .= " Materialpauschale wurde zusätzlich gespeichert";
+  }
+
+
+  # prüfen, ob Materialpauschale für Zuschlag gerechnet werden muss
+  # hier mit Vergleichswerten
+  my ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN1,ZUSATZGEBUEHREN2',$zuschlag,$datum_l);
+  matpausch($mat_zus,$mat_zus2,$datum_l);
+  ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN3,ZUSATZGEBUEHREN4',$zuschlag,$datum_l);
+  matpausch($mat_zus,$mat_zus2,$datum_l);
+  
+
   $entfernung_tag*=$anzahl_frauen;
   $entfernung_nacht*=$anzahl_frauen;
   $strecke='gesamt';
 
+}
+
+
+sub matpausch {
+  # prüfen, ob Materialpauschale für Zuschlag gerechnet werden muss
+  # wird genau dann gemacht, wenn Zusatzgebühr bei Zuschlag 
+  # auf Material verweisst und Abhängigkeit zur Zeit besteht
+  # der Vergleichswert wird aus Zusatzvermerk ermittelt
+  my ($mat_zus,$mat_zus2,$datum_l) = @_;
+  if ($mat_zus2 ne '' && $mat_zus =~ /(\+M)(\d{1,3})/ && $2 > 0) {
+    my $m_zus='M'.$2;
+    my $comp=0; # Flag ob gespeichert werden muss oder nicht
+    # operator für Vergleich ermitteln
+    my ($op,$op_wert,$op_vgltyp) = 
+      $mat_zus2 =~ /([>,<,=]{1})(\d{1,3})(\D{1,2})/;
+    if ($op_vgltyp eq 'GK') { # Geburtsdatum Kind
+      # geburtsdatum kind ermitteln
+      my @dat_frau = $s->stammdaten_frau_id($frau_id);
+      my $geb_kind = $dat_frau[3];
+      $geb_kind = $d->convert($geb_kind);
+      # Wieviele Tage liegen zwischen $datum_l und Geburtsdatum Kind?
+      my $days = Delta_Days(unpack('A4xA2xA2',$datum_l),unpack('A4xA2xA2',$geb_kind));
+      $comp = 1 if (abs($days)<$op_wert && $op eq '<');
+      $comp = 1 if (abs($days)==$op_wert && $op eq '=');
+      $comp = 1 if (abs($days)>$op_wert && $op eq '>');
+    }
+    
+    if ($comp) { # es muss gespeichert werden
+      # Entfernung nicht 2mal rechnen
+      $entfernung_nacht=0;
+      $entfernung_tag=0;
+      my ($ze_preis) = $l->leistungsart_such_posnr('EINZELPREIS',$m_zus,$datum_l);
+      $leist_id=$l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
+      $hint .= " Abhängige Materialpauschale wurde zusätzlich gespeichert";
+    }
+  }
 }
 
 
