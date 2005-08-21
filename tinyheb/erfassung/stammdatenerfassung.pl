@@ -115,7 +115,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.11 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.12 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -126,10 +126,10 @@ print '<table border="0" width="700" align="left">';
 # z1 s1
 print '<tr><td><table border="0" align="left">';
 print '<tr>';
-print '<td><b>ID</b></td>';
-print '<td>';print_color('Vorname:',$vorname);print '</td>';
-print '<td>';print_color('Nachname:',$nachname);print '</td>';
-print '<td>';print_color('Geb.:',$geb_frau);print '</td>';
+print '<td><b>ID:</b></td>';
+print '<td><b>Vorname:</b></td>';
+print '<td><b>Nachname:</b></td>';
+print '<td><b>Geb.:</b></td>';
 print '</tr>';
 print "\n";
 
