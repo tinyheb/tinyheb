@@ -366,9 +366,10 @@ sub leistungsdaten_offen {
 		  "DATUM >= guelt_von and DATUM <= guelt_bis and ".
 		  "STATUS = 10 $where order by $order;")
       or die $dbh->errstr();
-  my $hugo=$leistungsdaten_offen->execute($frau_id)
+  my $erg=$leistungsdaten_offen->execute($frau_id)
     or die $dbh->errstr();
-  return $hugo;
+  return $erg if ($erg > 0);
+  return 0;
 }
 
 sub leistungsdaten_offen_next {
