@@ -402,7 +402,7 @@ sub speichern {
 
   # prüfen, ob Materialpauschale für Zuschlag gerechnet werden muss
   # hier mit Vergleichswerten
-  my ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN1,ZUSATZGEBUEHREN2',$zuschlag,$datum_l);
+  ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN1,ZUSATZGEBUEHREN2',$zuschlag,$datum_l);
   matpausch($mat_zus,$mat_zus2,$datum_l);
   ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN3,ZUSATZGEBUEHREN4',$zuschlag,$datum_l);
   matpausch($mat_zus,$mat_zus2,$datum_l);
