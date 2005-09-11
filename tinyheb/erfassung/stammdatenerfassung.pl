@@ -63,19 +63,19 @@ my $func = $q->param('func') || 0;
 hole_frau_daten() if ($func == 1 || $func == 2 || $func==3);
 
 # Infos zur Krankenkasse holen
-if ($ik_krankenkasse ne '') {
+if ($ik_krankenkasse ne '' && $ik_krankenkasse > 0) {
   ($name_krankenkasse,
    $plz_krankenkasse,
    $ort_krankenkasse,
    $strasse_krankenkasse) = $k->krankenkasse_sel('NAME,PLZ_HAUS,ORT,STRASSE',$ik_krankenkasse);
   $name_krankenkasse = 'nicht bekannte IK angegeben' unless defined ($name_krankenkasse);
-  $ort_krankenkasse = '' unless defined ($ort_krankenkasse);
-  $plz_krankenkasse = '' unless defined ($plz_krankenkasse);
-  $strasse_krankenkasse = '' unless defined ($strasse_krankenkasse);
-
 } else {
   $name_krankenkasse = 'noch keine gültige Krankenkasse gewählt';
 }
+
+$ort_krankenkasse = '' unless defined ($ort_krankenkasse);
+$plz_krankenkasse = '' unless defined ($plz_krankenkasse);
+$strasse_krankenkasse = '' unless defined ($strasse_krankenkasse);
 
 print $q->header ( -type => "text/html", -expires => "-1d");
 
@@ -115,7 +115,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.12 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.13 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -140,7 +140,7 @@ print "<td><input type='text' name='vorname' value='$vorname' size='40'></td>";
 # z2 s2
 print "<td><input type='text' name='nachname' value='$nachname' size='40'></td>";
 # z2 s3
-print "<td><input type='text' name='geburtsdatum_frau' value='$geb_frau' size='10' onBlur='datum_check(this)'></td>";
+print "<td><input type='text' name='geburtsdatum_frau' value='$geb_frau' size='10' maxlength='10' onBlur='datum_check(this)'></td>";
 print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='return frausuchen(stammdaten.vorname,stammdaten.nachname,stammdaten.geburtsdatum_frau,form);'></tr>";
 print '</table>';
 print "\n";
@@ -168,7 +168,7 @@ print '</tr>';
 
 # Eingabe Felder
 print "<tr>";
-print "<td><input type='text' name='plz' value='$plz' size='5' onBlur='return plz_check(this)'></td>";
+print "<td><input type='text' name='plz' value='$plz' size='5' maxlength='5' onBlur='return plz_check(this)'></td>";
 print "<td><input type='text' name='ort' value='$ort' size='40'></td>";
 print "<td><input type='text' name='strasse' value='$strasse' size='40'></td>";
 print '<td>';
@@ -211,8 +211,8 @@ print '</tr>';
 print "\n";
 
 print '<tr>';
-print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='15' onBlur='kvnr_check(this);'></td>";
-print "<td><input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='4' onBlur='return kvnr_gueltig_check(this)'></td>";
+print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='10' maxlength='10' onBlur='kvnr_check(this);'></td>";
+print "<td><input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='4' maxlength='4' onBlur='return kvnr_gueltig_check(this)'></td>";
 # z4.2 s3
 print '<td>';
 print "<select name='versichertenstatus' size=1>";
@@ -226,7 +226,7 @@ while ($j <= $#verstatus) {
   $j++;
 }
 print "</td>\n";
-print "<td><input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='10' onBlur='ik_gueltig_check(this)'></td>";
+print "<td><input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='10' maxlength='9' onBlur='ik_gueltig_check(this)'></td>";
 print "<td><input type='button' name='kasse_waehlen' value='Kasse auswählen' onClick='return kassen_auswahl();'></td>";
 print '</tr>';
 print '</table>';
@@ -256,7 +256,7 @@ print '<table border="0" align="left">';
 print '<tr>';
 print '<td><b>Geburtsdatum Kind</b></td>';
 print '</tr>';
-print "<td><input type='text' name='geburtsdatum_kind' value='$geb_kind' size='14' onBlur='return datum_check(this)'></td>";
+print "<td><input type='text' name='geburtsdatum_kind' value='$geb_kind' size='10' maxlength='10' onBlur='return datum_check(this)'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
@@ -406,20 +406,22 @@ sub hole_frau_daten {
    $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
   $entfernung = '0.0' unless defined($entfernung);
   $entfernung =~ s/\./,/g;
+  $plz = sprintf "%5.5u",$plz if ($plz > 0);
+  $ik_krankenkasse='' if (!defined($ik_krankenkasse));
   
-  if (defined($ik_krankenkasse) && $ik_krankenkasse > 0) {
-    ($ik_krankenkasse,
-     $name_krankenkasse,
-     $plz_krankenkasse,
-     $ort_krankenkasse,
-     $strasse_krankenkasse) =
-       $k->krankenkasse_ik('IK,NAME,PLZ_HAUS,ORT,STRASSE',$ik_krankenkasse);
-  } else {
-    ($ik_krankenkasse,
-     $name_krankenkasse,
-     $plz_krankenkasse,
-     $ort_krankenkasse,
-     $strasse_krankenkasse) = ('','','','','');
-  }
+#  if ($ik_krankenkasse ne '' && $ik_krankenkasse > 0) {
+#    ($ik_krankenkasse,
+#     $name_krankenkasse,
+#     $plz_krankenkasse,
+#     $ort_krankenkasse,
+#     $strasse_krankenkasse) =
+#       $k->krankenkasse_ik('IK,NAME,PLZ_HAUS,ORT,STRASSE',$ik_krankenkasse);
+#  } else {
+#    ($ik_krankenkasse,
+#     $name_krankenkasse,
+#     $plz_krankenkasse,
+#     $ort_krankenkasse,
+#     $strasse_krankenkasse) = ('','','','','');
+#  }
   return;
 }
