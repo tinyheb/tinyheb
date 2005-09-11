@@ -21,7 +21,7 @@ function stamm(id,formular) {
 
 function plz_check(plz) {
   // prüft ob die erfasste PLZ einen gültigen Wert hat
-  re=/\d{5}/;
+  re=/^\d{5}$/;
   if (plz.value != '' && !re.test(plz.value)) {
     alert("Bitte PLZ 5 stellig numerisch erfassen");
     plz.focus();
