@@ -116,7 +116,14 @@ $p->setfont($font,8);
 $y1=21.35;
 $p->text(12.7,$y1,"Kind:");
 $p->setfont($font,10);
-$p->text(12.7,$y1-$y_font,"geboren am");
+# prüfen ob ET oder Geburtsdatum
+my $geb_kind_et=$d->convert($geb_kind);$geb_kind_et =~ s/-//g;
+my $datum_jmt=$d->convert($datum);$datum_jmt =~ s/-//g;
+if ($datum_jmt >= $geb_kind_et) {
+  $p->text(12.7,$y1-$y_font,"geboren am");
+} else {
+  $p->text(12.7,$y1-$y_font,"ET");
+}
 $p->text(15.1,$y1-$y_font,$geb_kind);
 
 # Anschrift der Hebamme
