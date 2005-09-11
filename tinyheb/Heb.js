@@ -32,9 +32,13 @@ function plz_check(plz) {
 
 function datum_check(datum) {
 // prüft ob Datum im Format tt.mm.jjjj erfasst wurde, oder leer ist
+  //  alert("datum value"+datum.value);
   if (datum.value == '') { return true; }
-  re=/^(\d{1,2}\.\d{1,2}\.)(\d{1,4})$/;
+  re=/^(\d{1,2})\.(\d{1,2})\.(\d{1,4})$/;
   var ret = re.exec(datum.value);
+  var j = Number (RegExp.$3);
+  var m = Number (RegExp.$2);
+  var t = Number (RegExp.$1);
   //alert("datum_check"+datum);
   if (!ret) {
     alert("Bitte Datum im Format tt.mm.jjjj erfassen");
@@ -42,7 +46,7 @@ function datum_check(datum) {
     datum.focus();
     return false;
   } else {
-    var j = Number (RegExp.$2);
+
     if (j>99 && j<1900) {
       alert("Bitte gültiges Datum erfassen");
       datum.select();
@@ -51,34 +55,47 @@ function datum_check(datum) {
     }
     if (j<50 && j<100) {j += 2000;}
     if (j>49 && j<100) {j += 1900;}
-    datum.value=RegExp.$1+j;
+    // prüfen ob Datum existiert, z.B. 31.2.05
+    if (t > 31 || m > 12 ||
+	m == 0 || t == 0 ||
+	(m == 2 && t > 29) ||  // Februar
+	(m == 2 && t > 28 && (!(j % 4)==0)) || // Februar ohne Schaltjahr
+       	((m==4 || m==6 || m==9 || m==11) && t > 30) // Monate mit 30 Tagen
+	) {
+      alert("Bitte gültiges Datum erfassen");
+      datum.select();
+      datum.focus();
+      return false;
+    }
+    datum.value=RegExp.$1+"."+RegExp.$2+"."+j;
   }
+  return true;
 }
 
 
 function uhrzeit_check(uhrzeit) {
   if (uhrzeit.value != '') {
-    //   alert ("uhrzeit"+uhrzeit.value);
+    //             alert ("Uhrzeit"+Event.type);
     // prüft ob Uhrzeit im Format hh:mm oder hhmm erfasst wurde, oder leer ist
     re=/^(\d{1,2}):(\d{1,2})$/;
       if (re.test(uhrzeit.value) && (RegExp.$1 < 24 && RegExp.$2 < 60)) {
 	return true;
       } else {
 	//	alert("noch nicht korrekt 2");
-	re2=/(\d{1,2})(\d{2})$/;
+	re2=/^(\d{1,2})(\d{2})$/;
 	if (re2.test(uhrzeit.value) && RegExp.$1 < 24 && RegExp.$2 < 60) {
 	  uhrzeit.value=RegExp.$1+':'+RegExp.$2;
 	  return true;
 	} else {
 	  alert("Bitte gültige Uhrzeit im Format hh:mm erfassen");
-	  uhrzeit.focus();
 	  uhrzeit.select();
+	  uhrzeit.focus();
 	  return false;
 	}
       }
   }
+  return true;
 }
-
 
 function set_focus(formular) {
 // setzt den Focus auf das erste Formularfeld das leer ist
