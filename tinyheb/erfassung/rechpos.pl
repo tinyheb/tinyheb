@@ -26,6 +26,7 @@ my $h = new Heb;
 my $debug=1;
 my $script='';
 my $hint='';
+my $hscript='';
 
 my $TODAY = $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
 my $TODAY_jmt = sprintf "%4.4u%2.2u%2.2u",Today();
@@ -35,9 +36,11 @@ my $frau_id = $q->param('frau_id') || 0;
 my $posnr = $q->param('posnr') || '';
 my $begruendung = $q->param('begruendung') || '';
 my $datum = $q->param('datum') || $TODAY;
-$datum = $d->convert_tmj($datum);
+#$datum = $d->convert_tmj($datum);
 my $zeit_von = $q->param('zeit_von') || '';
+$zeit_von = $d->convert_zeit($zeit_von);
 my $zeit_bis = $q->param('zeit_bis') || '';
+$zeit_bis = $d->convert_zeit($zeit_bis);
 my $entfernung_tag = $q->param('entfernung_tag') || 0;
 my $entfernung_nacht = $q->param('entfernung_nacht') || 0;
 my $leist_id = $q->param('leist_id') || 0;
@@ -90,7 +93,7 @@ STYLE
 print '<body id="rechpos_window" bgcolor=white>';
 
 # Formular für eigentliche Erfassung ausgeben
-print '<form name="rechpos" action="rechpos.pl" method="get" target=rechpos bgcolor=white>';
+print '<form name="rechpos" action="rechpos.pl" method="get" target=rechpos onsubmit="return leistung_speicher(this);" bgcolor=white>';
 print '<table border="0" width="100%" align="left">';
 
 # Leistungspositionen 
@@ -108,7 +111,7 @@ print '</tr>';
 print "\n";
 
 print '<tr>';
-print "<td><input type='text' name='datum' value='$datum' size='10' onblur='datum_check(this);wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);'></td>";
+print "<td><input type='text' name='datum' value='$datum' size='10' maxlength='10' onchange='datum_check(this);wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);'></td>";
 # Auswahlbox für Positionsnummern
 printauswahlboxposnr();
 
@@ -129,8 +132,8 @@ print '<td><b>Begründung</b></td>';
 print '<tr>';
 
 print '<tr>';
-print "<td><input type='text' disabled class='disabled' name='zeit_von' value='$zeit_von' size='5' onblur='uhrzeit_check(this);wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);'></td>";
-print "<td><input type='text' disabled class='disabled' name='zeit_bis' value='$zeit_bis' size='5' onblur='uhrzeit_check(this)'></td>";
+print "<td><input type='text' disabled class='disabled' name='zeit_von' value='$zeit_von' size='5' maxlength='5' onchange='uhrzeit_check(this);wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);'></td>";
+print "<td><input type='text' disabled class='disabled' name='zeit_bis' value='$zeit_bis' size='5' maxlength='5' onchange='uhrzeit_check(this)'></td>";
 print "<td><input type='text' class='disabled' disabled name='dauer' value='' size='5'></td>";
 printauswahlboxbegr();
 print "<td><input type='hidden' name='leist_id' value='$leist_id' size='5'></td>";
@@ -195,10 +198,11 @@ print <<SCRIPTE;
   wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);
   document.rechpos.datum.select();
   document.rechpos.datum.focus();
-</script>
+ </script>
 SCRIPTE
 if ($hint ne '') {
   print "<script>alert('$hint');</script>";
+  print "<script>$hscript</script>";
 }
 print "</body>";
 print "</html>";
@@ -264,7 +268,7 @@ sub printbox {
       $script .= "zl_tag[0].className='disabled';\n";
       $script .= "var zl_tag = document.getElementsByName('zeit_bis');\n";
       $script .= "zl_tag[0].className='disabled';\n";
-      $script .= "formular.begruendung.focus();\n";
+      $script .= "formular.entfernung_tag.focus();\n";
     }
     $script.="}\n";
     print "$l_posnr&nbsp;$l_bez";
@@ -290,6 +294,11 @@ sub speichern {
   }
   # Datum konvertieren
   my $datum_l = $d->convert($datum);
+  if ($datum_l eq 'error') {
+    $hint .= 'ungültiges Datum erfasst, nichts gespeichert';
+    $hscript = 'document.rechpos.datum.focus()';
+    return;
+  }
   # Entfernung konvertieren
   $entfernung_tag =~ s/,/\./g;
   $entfernung_nacht =~ s/,/\./g;
@@ -338,7 +347,8 @@ sub speichern {
     } elsif ($l->leistungsart_pruef_zus($posnr,'NACHT') && ($d->zeit_h($zeit_von) <= 8 || $d->zeit_h($zeit_von) >= 20)) {
       # alles ok
     } elsif (($l->leistungsart_pruef_zus($posnr,'SONNTAG') || $l->leistungsart_pruef_zus($posnr,'SAMSTAG') || $l->leistungsart_pruef_zus($posnr,'NACHT')) && ($dow < 6 || $dow==6 && $d->zeit_h($zeit_von) < 12) || $d->zeit_h($zeit_von)>8 && $d->zeit_h($zeit_von) > 20) {
-      $hint .= "Positionsnummer nur an bestimmten Tagen, es wurde nichts gespeichert";
+      $hint .= "Positionsnummer nur zu bestimmten Tagen und Zeiten, es wurde nichts gespeichert";
+      $hscript = 'document.rechpos.datum.select();document.rechpos.datum.focus()';
       return;
     }
   }
@@ -349,7 +359,23 @@ sub speichern {
   my $preis=0;
   my ($l_epreis,$l_fuerzeit) = $l->leistungsart_such_posnr('EINZELPREIS,FUERZEIT',$posnr,$datum_l);
   if ($l_fuerzeit > 0) {
+    # prüfen ob gültige Zeiten erfasst sind
+    if (!($d->check_zeit($zeit_von))) {
+      $hint .= '\nkeine gültige Uhrzeit von erfasst, nichts gespeichert';
+      $hscript = 'document.rechpos.zeit_von.focus();';
+      return;
+    }
+    if (!($d->check_zeit($zeit_bis))) {
+      $hint .= '\nkeine gültige Uhrzeit bis erfasst, nichts gespeichert';
+      $hscript = 'document.rechpos.zeit_bis.focus();';
+      return;
+    }
     my $dauer = $d->dauer_m($zeit_bis,$zeit_von);
+    if ($zeit_von eq '' || $zeit_bis eq '' || $dauer == 0) {
+      $hint .= '\nBitte Zeit von, Zeit bis erfassen, nichts gespeichert';
+      $hscript = 'document.rechpos.zeit_von.focus();';
+      return;
+    }
     $preis = sprintf "%3.3u",($dauer / $l_fuerzeit);
     $preis++ if ($preis*$l_fuerzeit < $dauer);
     $preis = $preis*$l_epreis;
@@ -421,6 +447,8 @@ sub matpausch {
   # auf Material verweisst und Abhängigkeit zur Zeit besteht
   # der Vergleichswert wird aus Zusatzvermerk ermittelt
   my ($mat_zus,$mat_zus2,$datum_l) = @_;
+  # keine Prüfung, wenn Werte nicht definiert
+  return if (!defined($mat_zus2));
   if ($mat_zus2 ne '' && $mat_zus =~ /(\+M)(\d{1,3})/ && $2 > 0) {
     my $m_zus='M'.$2;
     my $comp=0; # Flag ob gespeichert werden muss oder nicht
