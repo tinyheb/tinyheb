@@ -179,6 +179,10 @@ sub speichern {
     $hint .= "Rechnung ist schon gezahlt, nichts gespeichert";
     return;
   }
+  if ($betraggez_s+$r_betraggez > $r_betrag) {
+    $hint .= "gez. Betrag zu groß, nichts gespeichert";
+    return;
+  }
   
   my $status=0;
   if ($betraggez_s+$r_betraggez < $r_betrag) {
