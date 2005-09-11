@@ -319,15 +319,20 @@ sub leistungsdaten_werte {
   # liefert werte
   # für bestimmtes Kriterium: where
   shift;
-  my ($frau_id,$werte,$where) = @_;
+  my ($frau_id,$werte,$where,$order) = @_;
   if (defined($where) && $where ne '') {
     $where =~ s/,/ and /g;
     $where = ' and '.$where;
   } else {
     $where = '';
   }
+  if (defined($order) && $order ne '') {
+    $order = ' order by '.$order;
+  } else {
+    $order = '';
+  }
   $leistungsdaten_werte = $dbh->prepare("select $werte from Leistungsdaten ".
-					"where FK_Stammdaten=? $where;")
+					"where FK_Stammdaten=? $where $order;")
       or die $dbh->errstr();
   my $erg=$leistungsdaten_werte->execute($frau_id) or die $dbh->errstr();
   return $erg if($erg > 0);
