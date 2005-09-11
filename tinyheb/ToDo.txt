@@ -1,4 +1,7 @@
 Offen:
+21.08.05
+Auwertung, für welche Frauen existieren noch Positionen in Bearbeitung
+
 20.08.05
 Summen für Rechnungen ausgeben, offene Rechnungen, erl. Rechnungen
 
@@ -20,6 +23,16 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+11.09.05
+Wenn PLZ nur 4-stellig in Datenbank gespeichert ist, muss der Wert trotzdem 5-stellig angezeigt werden.
+Feld Gültig bis, hier muss Plausibilisiert werden, das gültiger Monat und Jahr erfasst werden.
+In der Rechnungsbearbeitung ist es möglich einen Betrag gez. zu erfassen, der höher ist, als der ursprüngliche Rechnungsbetrag. Das darf nicht sein.
+
+
+
+04.09.05
+Plausiprüfung auf Datumsfelder: es muss geprüft werden, ob das Datum wirklich gültig ist, z.B. 12.13.05
+
 21.08.05
 Wenn Materialpauschale nötig, soll diese automatisch kommen,
 z.B. bei Vorsorgeuntersuchung
