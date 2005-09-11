@@ -14,11 +14,13 @@ use lib "../";
 use Heb_stammdaten;
 use Heb_datum;
 use Heb_krankenkassen;
+use Heb_leistung;
 
 my $q = new CGI;
 my $s = new Heb_stammdaten;
 my $d = new Heb_datum;
 my $k = new Heb_krankenkassen;
+my $l = new Heb_leistung;
 
 my $debug=1;
 
@@ -109,6 +111,7 @@ if (defined($suchen)) {
   print "<td><b>PLZ</b></td>\n";
   print "<td><b>Ort</b></td>\n";
   print "<td><b>Strasse</b></td>\n";
+  print "<td><b>Status Bearb.</b></td>\n";
   print '</tr>';
   # suchkriterien erweitern
   $vorname='%'.$vorname.'%';
@@ -143,20 +146,28 @@ if (defined($suchen)) {
     if ($f_fk_krankenkasse != 0) {
       ($kk_ik,$kk_name,$kk_plz,$kk_ort,$kk_strasse) =
 	 $k->krankenkasse_ik('IK,NAME,PLZ_HAUS,ORT,STRASSE',$f_fk_krankenkasse);
+      $kk_strasse = '' if (!defined($kk_strasse));
     } else {
       ($kk_ik,$kk_name,$kk_plz,$kk_ort,$kk_strasse) = ('','','','','');
     }
+    # Status zu Erfassung ermitteln
+    my $status=$l->status_text(10);
+    if($l->leistungsdaten_werte($f_id,'distinct status','','status')) {
+      ($status)=$l->leistungsdaten_werte_next();
+      $status=$l->status_text($status);
+    } 
     print '<tr>';
-    print "<td>$f_vorname</td>";
-    print "<td>$f_nachname</td>";
+    $f_vorname=' ' if (!defined($f_vorname));print "<td>$f_vorname</td>";
+    $f_nachname=' ' if (!defined($f_nachname));print "<td>$f_nachname</td>";
     print "<td>$f_geb_f</td>";
     print "<td>$f_geb_k</td>";
     print "<td>$f_plz</td>";
-    print "<td>$f_ort</td>";
-    print "<td>$f_strasse</td>";
+    $f_ort=' ' if (!defined($f_ort));print "<td>$f_ort</td>";
+    $f_strasse=' ' if (!defined($f_strasse));print "<td>$f_strasse</td>";
+    print "<td>$status</td>";
     print '<td><input type="button" name="waehlen" value="Auswählen"';
-    print "onclick=\"frau_eintrag('$f_id','$f_vorname','$f_nachname','$f_geb_f','$f_geb_k','$f_plz','$f_ort','$f_tel','$f_strasse','$f_bundesland','$f_entfernung','$f_krankennr','$f_krankennrguelt','$f_verstatus','$f_nae_heb','$f_begr_nicht_nae_heb');";
-    print "if (opener.document.forms[0].name != 'rechnungen_gen' && opener.document.forms[0].name != 'rechnung') { kk_eintrag('$kk_name','$kk_plz','$kk_ort','$kk_strasse','$kk_ik');}self.close()\"></td>";
+    print "onclick=\"frau_eintrag('$f_id');self.close();\">";
+    print "</td>";
     print "</tr>\n";
   }
 }
@@ -166,6 +177,7 @@ print '</table>';
 
 print <<SCRIPTE;
 <script>
+window.focus();
 </script>
 SCRIPTE
 print "</body>\n";
