@@ -9,7 +9,7 @@ package Heb_datum;
 
 use strict;
 use DBI;
-use Date::Calc qw(check_date Add_Delta_DHMS);
+use Date::Calc qw(check_date Add_Delta_DHMS check_time);
 
 use Heb;
 
@@ -79,6 +79,26 @@ sub zeit_h {
   my ($h,$m) = split ':',$zeit;
   return 0 if (!(defined($h)));
   return $h;
+}
+
+sub convert_zeit {
+  shift;
+  my ($time) = @_;
+  return '' if (!defined($time) || $time eq '');
+  return $time if($time =~ /^\d{1,2}:\d{2}$/);
+  if ($time =~ /^(\d{1,2})(\d{2})$/) {
+    return $1.':'.$2;
+  }
+  return $time;
+}
+
+sub check_zeit {
+  # prüft, ob die zeit eine gültige ist
+  shift;
+  my ($z1) = @_;
+  my ($h1,$m1) = split ':',$z1;
+  return 0 if (!defined($h1) || !defined($m1));
+  return check_time($h1,$m1,0);
 }
 
 sub dauer_m {
