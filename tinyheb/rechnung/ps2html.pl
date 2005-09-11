@@ -319,7 +319,7 @@ sub print_begruendung {
 sub print_material {
   my ($typ) = @_;
   my $summe=0;
-  neue_seite(6,'M');
+  neue_seite(6);
   $p->setfont($font_b,10);
   $p->text($x1,$y1,'Materialpauschalen');$y1-=$y_font;$y1-=$y_font;
   $p->setfont($font,10);
