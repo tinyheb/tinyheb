@@ -37,11 +37,14 @@ function ik_gueltig_check(ik_nummer) {
 
 function kvnr_gueltig_check(kvnr_gueltig) {
 //  alert("gueltig"+kvnr_gueltig.value);
-  re=/^[0-1][0-9]\d{2}$/;
-  if (kvnr_gueltig.value != '' && !re.test(kvnr_gueltig.value)) {
-    alert("Bitte Gültigkeit im Format mmjj erfassen");
-    kvnr_gueltig.focus();
-    kvnr_gueltig.select();
+  if (kvnr_gueltig.value != '') {
+    re=/^([0-1][0-9])\d{2}$/;
+    var ret=re.test(kvnr_gueltig.value);
+    if (kvnr_gueltig.value != '' && !ret || RegExp.$1 > 12 || RegExp.$1 < 1) {
+      alert("Bitte Gültigkeit im Format mmjj erfassen");
+      kvnr_gueltig.focus();
+      kvnr_gueltig.select();
+    }
   }
 }
 
