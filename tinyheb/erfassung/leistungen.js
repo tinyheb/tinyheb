@@ -35,22 +35,6 @@ function loe_leistdat (fr_id,ls_id,status) {
   }
 }
 
-function datum_uhrzeit_neu (doc) {
-  var formular=doc.leistungen_f1;
-  formular.datum_leistung.disabled = false;
-  var dl_tag = doc.getElementsByName('datum_leistung');
-  dl_tag = dl_tag[0].className='enabled';
-  formular.uhrzeit_leistung.disabled = false;
-  dl_tag = doc.getElementsByName('uhrzeit_leistung');
-  dl_tag = dl_tag[0].className='enabled';
-  formular.dauer_leistung.disabled = false;
-  dl_tag = doc.getElementsByName('dauer_leistung');
-  dl_tag = dl_tag[0].className='enabled';
-  open("../blank.html","leistungserfassung_f2");
-  formular.datum_leistung.focus();
-  formular.datum_leistung.select();
-}
-
 function wo_tag(datum,uhrzeit,form) {
   // liefert den Wochentag zu dem angegebenen Datum und Uhrzeit
   // datum ist im format tt.mm.jjjj
@@ -109,15 +93,19 @@ function zeit_preis(preis,zeit,mass) {
 }
 
 function leistung_speicher(formular) {
-  alert("hallo leistung_speicher");
-  // alle disabled Knöpfe auf enabled stellen, damit Werte übergeben werden
-  var i=formular.length-1;
-  while (i >= 1) {
-        alert("leistungspeicher"+i+formular.elements[i]);
-    if (undefined != formular.elements[i]) {
-      formular.elements[i].disabled=false;
-    }
-    i--;
+  //  alert("speichern");
+  //  Plausiprüfungen, bevor Formular abgeschickt wird.
+  if(!uhrzeit_check(formular.zeit_von)) {
+    //    alert("Zeit von nicht korrekt erfasst");
+    return false;
+  }
+  if(!uhrzeit_check(formular.zeit_bis)) {
+    //    alert("Zeit bis nicht korrekt erfasst");
+    return false;
+  }
+  if(!datum_check(formular.datum)) {
+    //    alert("Datum nicht korrekt erfasst");
+    return false;
   }
   return true;
 }
