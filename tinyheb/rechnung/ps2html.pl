@@ -403,7 +403,7 @@ sub print_teil {
 
   my $text='';
   my $summe=0;
-  neue_seite(6,$teil);
+  neue_seite(6);
   $text = 'A. Mutterschaftsvorsorge' if ($teil eq 'A');
   $text = 'B. Geburt' if ($teil eq 'B');
   $text = 'C. Wochenbett' if ($teil eq 'C');
