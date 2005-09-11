@@ -51,53 +51,21 @@ function kvnr_gueltig_check(kvnr_gueltig) {
   }
 
 
-  function frau_eintrag(frau_id,vorname,nachname,geb_f,geb_k,plz,ort,tel,strasse,bundesland,entfernung,kranknr,kranknrguelt,verstatus,nae_heb,begr_nicht_nae_heb) {
-  // übertragt Daten in die Stammdatenmaske
-
+  function frau_eintrag(frau_id) {
     // in Parent Dokument übernehmen
     formular = opener.document.forms[0];
     //alert("frau"+formular.name);
-    formular.frau_id.value=frau_id;
-    formular.vorname.value=vorname;
-    formular.nachname.value=nachname;
-    formular.geburtsdatum_frau.value=geb_f;
-    formular.geburtsdatum_kind.value=geb_k;
     if (formular.name == 'rechnungen_gen') {
       // rechnungsformular erneut laden
       opener.window.location="../rechnung/rechnung_generierung.pl?frau_id="+frau_id;
       return true;
     }
     if(formular.name == 'rechnung') {
-      open("rechpos.pl?frau_id="+frau_id,"rechpos");
+      opener.window.location="rechnungserfassung.pl?frau_id="+frau_id;
       return true;
     } else {
-      formular.plz.value=plz;
-      formular.ort.value=ort;
-      formular.strasse.value=strasse;
-      
-      var bund=['NRW','Bayern','Rheinlandpfalz','Hessen'];
-      for (var i=0; i<4;i++) {
-	if (bund[i] == bundesland) {
-	  formular.bundesland.selectedIndex=i;
-	}
-      }
-      formular.entfernung.value=entfernung;
-      formular.krankenversicherungsnummer.value=kranknr;
-      formular.krankenversicherungsnummer_gueltig.value=kranknrguelt;
-      formular.tel.value=tel;
-      
-      for (i=0;i<formular.versichertenstatus.options.length;i++) {
-	if ( formular.versichertenstatus.options[i].text == verstatus) {
-	  formular.versichertenstatus.selectedIndex=i;
-	}
-      }
-      formular.naechste_hebamme.checked = false;      
-      formular.nicht_naechste_heb.disabled=false;
-      if (nae_heb=='j') {
-	formular.naechste_hebamme.checked = true;
-	formular.nicht_naechste_heb.disabled=true;
-      }
-      formular.nicht_naechste_heb.value=begr_nicht_nae_heb;
+      opener.window.location="stammdatenerfassung.pl?func=3&frau_id="+frau_id;
+      return true;
     }
   }
     
