@@ -1,4 +1,5 @@
 Offen:
+
 21.08.05
 Auwertung, für welche Frauen existieren noch Positionen in Bearbeitung
 
@@ -23,6 +24,12 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+25.09.05
+Plausiprüfung bei "entgültig Drucken"
+harte Prüfung: IK muss gültig sein
+weiche Prüfung: Vorname, Nachname, PLZ, Ort, Strasse,geb_frau, geb_kind,
+kvnr, kvnr_gueltig.
+
 11.09.05
 Wenn PLZ nur 4-stellig in Datenbank gespeichert ist, muss der Wert trotzdem 5-stellig angezeigt werden.
 Feld Gültig bis, hier muss Plausibilisiert werden, das gültiger Monat und Jahr erfasst werden.
