@@ -47,7 +47,6 @@ print <<STYLE;
 STYLE
 
 
-
 # Alle Felder zur Eingabe ausgeben 
 print '<table rules=rows style="margin-left:0" border="2" width="100%" align="left">';
 
