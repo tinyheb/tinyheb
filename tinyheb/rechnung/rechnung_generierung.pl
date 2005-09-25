@@ -15,11 +15,13 @@ use lib "../";
 use Heb_stammdaten;
 use Heb_datum;
 use Heb_leistung;
+use Heb_krankenkassen;
 
 my $q = new CGI;
 my $s = new Heb_stammdaten;
 my $d = new Heb_datum;
 my $l = new Heb_leistung;
+my $k = new Heb_krankenkassen;
 
 my $debug=1;
 
@@ -39,6 +41,9 @@ my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
     $ik_krankenkasse,$naechste_hebamme,
     $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
 
+# krankenkassendaten ermitteln w/ existensprüfung krankenkasse
+my  ($name_krankenkasse) = $k->krankenkasse_sel('NAME',$ik_krankenkasse);
+$name_krankenkasse = '' unless (defined($name_krankenkasse));
 
 print $q->header ( -type => "text/html", -expires => "-1d");
 
@@ -81,7 +86,8 @@ print '</tr>';
 print "\n";
 
 print '<tr>';
-print "<td><input type='text' class='disabled' disabled name='frau_id' value='$frau_id' size='3' onchange='open(\"ps2html?frau_id=\"+frau_id.value,\"rechnung\");'></td>";
+#print "<td><input type='text' class='disabled' disabled name='frau_id' value='$frau_id' size='3' onchange='open(\"ps2html?frau_id=\"+frau_id.value,\"rechnung\");'></td>";
+print "<td><input type='text' size='3' class='disabled' disabled name='frau_id' value='$frau_id'></td>";
 $vorname = '' unless (defined($vorname));
 $nachname = '' unless (defined($nachname));
 $geb_frau = '' unless (defined($geb_frau));
@@ -102,9 +108,9 @@ print '<tr>';
 # entgültig drucken nur dann einschalten, wenn Rechnung wirklich Daten enthält
 # damit keine Rechnung ohne Gegenwert gespeichert wird
 if ($l->leistungsdaten_offen($frau_id,'')) {
-  print "<td><input type='button' name='pdruck' value='entgültig Drucken' onclick='druck_fertig(frau_id.value,rechnungen_gen);'</td>";
+  print "<td><input type='button' name='pdruck' value='entgültig Drucken' onclick='druck_fertig(\"$frau_id\",\"$vorname\",\"$nachname\",\"$geb_frau\",\"$geb_kind\",\"$plz\",\"$ort\",\"$strasse\",\"$kv_nummer\",\"$kv_gueltig\",\"$versichertenstatus\",\"$name_krankenkasse\",rechnungen_gen);'</td>";
 } else {
-  print "<td><input type='button' disabled name='pdruck' value='entgültig Drucken' onclick='druck_fertig(frau_id.value);'</td>";
+  print "<td><input type='button' disabled name='pdruck' value='entgültig Drucken'></td>";
 }
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '<td><input type="button" name="echnungerf" value="Rechnungserfassung" onClick="recherf(frau_id.value);"></td>';
