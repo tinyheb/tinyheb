@@ -1,8 +1,53 @@
 //alert("rechnung.js wird geladen");
 
-function druck_fertig(frau_id,form) {
+function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse,kv_nummer,kv_gueltig,versichertenstatus,name_kk,form) {
   // schreibt Rechnung in Fenster und macht update auf Datenbank
-  //alert("Drucken Frau"+frau_id);
+  //alert("Drucken Frau"+frau_id+"form"+form+"kk"+name_kk+"plz"+plz);
+  // zunächst harte Plausiprüfungen
+  if (name_kk == '') {
+    alert("Es wurde keine gültige Krankenkasse erfasst,\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert.");
+    return false;
+  }
+  var error_text = '';
+  if (vorname == '') {
+    error_text=error_text+"Vorname Frau  wurde nicht erfasst\n";
+  }
+  if (nachname == '') {
+    error_text=error_text+"Nachname Frau  wurde nicht erfasst\n";
+  }
+  if (geb_kind == '00.00.0000' || geb_kind == '') {
+    error_text=error_text+"Geburtsdatum Kind wurde nicht erfasst\n";
+  }
+  if (geb_frau == '00.00.0000' || geb_frau == '') {
+    error_text=error_text+"Geburtsdatum Frau wurde nicht erfasst\n";
+  }
+  if (plz == 0 || plz == '') {
+    error_text=error_text+"PLZ wurde nicht erfasst\n";
+  }
+  if (ort == '') {
+    error_text=error_text+"Ort wurde nicht erfasst\n";
+  }
+  if (strasse == '') {
+    error_text=error_text+"Strasse wurde nicht erfasst\n";
+  }
+  if (kv_nummer == 0 || kv_nummer == '') {
+    error_text=error_text+"Krankenversicherungsnummer wurde nicht erfasst\n";
+  }
+  if (kv_gueltig == 0 || kv_gueltig == '') {
+    error_text=error_text+"Gültigkeitsdatum Krankenversicherungsnummer wurde nicht erfasst\n";
+  }
+  if (versichertenstatus == 0 || versichertenstatus == '') {
+    error_text=error_text+"Versichertenstatus wurde nicht erfasst\n";
+  }
+
+  // prüfen liegen Fehler vor
+  if (error_text != '') {
+    var erg = confirm("Stammdatenerfassung nicht komplett\n"+error_text+"trotzdem fortfahren?");
+    if (!erg) {
+      return false;
+    }
+  }
+  
   if (frau_id > 0) {
     open("ps2html.pl?frau_id="+frau_id+"&speichern=save","rechnung");
     // Knopf entgültig Drucken auf disabled stellen
