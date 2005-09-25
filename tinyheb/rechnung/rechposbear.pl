@@ -143,9 +143,9 @@ print '<td><input type="button" name="mahnung" value="Mahnung generieren"></td>'
 print '</tr>';
 print '</table>';
 
-
 print '</td></tr>';
 print '</table>';
+print_summen();
 print '</form>';
 
 print <<SCRIPTE;
@@ -164,6 +164,32 @@ print "</html>";
 
 
 #---------------------------------------------------------------------
+sub print_summen {
+#--- neue Tabelle für Summen
+# summe der offenen und erledigten Rechnungen berechnen
+  $l->rechnung_such('sum(betraggez)','betraggez>0');
+  my $summe_gez = $l->rechnung_such_next();
+  $summe_gez = sprintf "%.2f",$summe_gez;
+  $l->rechnung_such('sum(betrag)');
+  my $summe_offen = $l->rechnung_such_next()-$summe_gez;
+  $summe_offen = sprintf "%.2f",$summe_offen;
+  print '<table border="0">';
+  print '<tr>';
+  print '<td><h3>Rechnungssummen</h3></td>';
+  print '</tr>';
+  print '<tr>';
+  print '<td><b>erl.</b></td>';
+  print "<td align='right'>$summe_gez</td>";
+  print '</tr>';
+  print '<tr>';
+  print '<td><b>offene</b></td>';
+  print "<td align='right'>$summe_offen</td>";
+  print '</tr>';
+  print '</table>';
+  #--- Tabelle Summen ende
+}
+
+
 # Routinen zum Speichern und Ändern
 
 sub speichern {
