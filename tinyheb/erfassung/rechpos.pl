@@ -248,7 +248,9 @@ sub printbox {
   #  print "WAHL $wahl\n";
   $l->leistungsart_such($TODAY_jmt,$wahl);
   while (my @werte = $l->leistungsart_such_next() ) {  
+    my $fuerzeit_flag='';
     my ($l_posnr,$l_bez,$l_preis,$l_fuerzeit)=($werte[1],$werte[21],$werte[4],$werte[9]);
+    ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
     print "<option value='$l_posnr' ";
     print ' selected' if ($posnr eq $l_posnr);
     print " >";
@@ -357,7 +359,9 @@ sub speichern {
 
   # Preis berechnen in Abhängigkeit der Dauer
   my $preis=0;
+  my $fuerzeit_flag='';
   my ($l_epreis,$l_fuerzeit) = $l->leistungsart_such_posnr('EINZELPREIS,FUERZEIT',$posnr,$datum_l);
+  ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
   if ($l_fuerzeit > 0) {
     # prüfen ob gültige Zeiten erfasst sind
     if (!($d->check_zeit($zeit_von))) {
@@ -376,8 +380,9 @@ sub speichern {
       $hscript = 'document.rechpos.zeit_von.focus();';
       return;
     }
-    $preis = sprintf "%3.3u",($dauer / $l_fuerzeit);
-    $preis++ if ($preis*$l_fuerzeit < $dauer);
+    $preis = sprintf "%3.3u",($dauer / $l_fuerzeit) if ($fuerzeit_flag ne 'E');
+    $preis = sprintf "%3.2f",($dauer / $l_fuerzeit) if ($fuerzeit_flag eq 'E');
+    $preis++ if ($preis*$l_fuerzeit < $dauer && $fuerzeit_flag ne 'E');
     $preis = $preis*$l_epreis;
   } else {
     $preis = $l_epreis;
