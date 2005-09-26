@@ -419,6 +419,8 @@ sub print_teil {
   while (my @erg=$l->leistungsdaten_offen_next()) {
     my @erg2=$l->leistungsdaten_such_id($erg[0]);
     my ($bez,$fuerzeit,$epreis)=$l->leistungsart_such_posnr("KBEZ,FUERZEIT,EINZELPREIS ",$erg[1],$erg[4]);
+    my $fuerzeit_flag='';
+    ($fuerzeit_flag,$fuerzeit)=$d->fuerzeit_check($fuerzeit);
     $bez = substr($bez,0,50);
     my $laenge_bez = length($bez)*0.2/2;
     if ($posnr != $erg[1]) {
@@ -439,12 +441,23 @@ sub print_teil {
     if (defined($fuerzeit) && $fuerzeit > 0) {
       # fuerzeit ausgeben
       $p->text($x1+2,$y1,$erg2[5].'-'.$erg2[6]); # Zeit von bis
-      my $dauer = $d->dauer_m($erg2[6],$erg2[5]);
-      my $vk = sprintf "%3.1u",($dauer / $fuerzeit);
-      $vk++ if ($vk*$fuerzeit < $dauer);
-      $vk = sprintf "%1.1u",$vk;
-      $epreis =~ s/\./,/g;
-      $p->text($x1+5.5,$y1,$vk." x ".$fuerzeit." min á ".$epreis." EUR");
+      # prüfen, ob Minuten genau abgerechnet werden muss
+      if ($fuerzeit_flag ne 'E') { # nein
+
+	my $dauer = $d->dauer_m($erg2[6],$erg2[5]);
+	my $vk = sprintf "%3.1u",($dauer / $fuerzeit);
+	$vk++ if ($vk*$fuerzeit < $dauer);
+	$vk = sprintf "%1.1u",$vk;
+	$epreis =~ s/\./,/g;
+	$p->text($x1+5.5,$y1,$vk." x ".$fuerzeit." min á ".$epreis." EUR");
+      }
+      if ($fuerzeit_flag eq 'E') { # ja
+	my $dauer = $d->dauer_m($erg2[6],$erg2[5]);
+	my $vk = sprintf "%3.2f",($dauer / $fuerzeit);
+	$epreis =~ s/\./,/g;
+	$vk =~ s/\./,/g;
+	$p->text($x1+5.5,$y1,$dauer." min = ".$vk." h á ".$epreis." EUR");
+      }
     }
 
     # datum 4
