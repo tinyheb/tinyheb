@@ -115,6 +115,16 @@ sub dauer_m {
 }
 
 
+sub fuerzeit_check {
+  # ermittelt aus Fuerzeit, ob Flag auf komma Werte rechnen gesetzt ist
+  shift;
+  my ($fz) = @_;
+  $fz = 0 unless(defined($fz));
+  $fz =~ /(E{0,1})(\d{1,3})/;
+  return ($1,$2);
+}
+
+
 sub feiertag_ins {
   # fügt neuen Feiertag in Datenbank ein
   shift;
