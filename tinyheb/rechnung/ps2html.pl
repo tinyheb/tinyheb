@@ -20,8 +20,7 @@ my $h = new Heb;
 
 my $q = new CGI;
 
-
-#print "Content-Type: application/postscript\n";
+my @kinder = ('Einlinge','Zwillinge','Drillinge','Vierlinge');
 my $frau_id = $q->param('frau_id') || -1;
 #my $frau_id = $ARGV[0] || 6;
 my $seite=1;
@@ -31,7 +30,7 @@ my $posnr=-1;
 
 # zunächst daten der Frau holen
 my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
-    $bundesland,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
+    $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
     $ik_krankenkasse,$naechste_hebamme,
     $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
 $entfernung_frau =~ s/\./,/g;
@@ -124,12 +123,19 @@ $p->setfont($font,10);
 # prüfen ob ET oder Geburtsdatum
 my $geb_kind_et=$d->convert($geb_kind);$geb_kind_et =~ s/-//g;
 my $datum_jmt=$d->convert($datum);$datum_jmt =~ s/-//g;
-if ($datum_jmt >= $geb_kind_et) {
-  $p->text(12.7,$y1-$y_font,"geboren am");
+# zeilen nur ausgeben, wenn geb Kind gültig ist
+if ($geb_kind_et ne 'error') {
+  if ($datum_jmt >= $geb_kind_et) {
+    $p->text(12.7,$y1-$y_font,"geboren am");
+  } else {
+    $p->text(12.7,$y1-$y_font,"ET");
+  }
+  
+  $p->text(15.1,$y1-$y_font,$geb_kind) if($anz_kinder < 2);
+  $p->text(15.1,$y1-$y_font,$geb_kind. ' ('.$kinder[$anz_kinder-1].')') if($anz_kinder > 1);
 } else {
-  $p->text(12.7,$y1-$y_font,"ET");
+    $p->text(12.7,$y1-$y_font,"unbekannt");
 }
-$p->text(15.1,$y1-$y_font,$geb_kind);
 
 # Anschrift der Hebamme
 $p->setfont($font,10);
