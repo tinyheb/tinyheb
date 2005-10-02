@@ -40,6 +40,7 @@ sub krankenkasse_sel {
 
   my($werte,$ik) = @_;
 
+  return undef if($ik eq '');
   # lesen aus Datenbank vorbereiten
   my $krankenkasse_get = $dbh->prepare("select $werte from Krankenkassen ".
 				       "where $ik = IK;")
