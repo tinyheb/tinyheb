@@ -115,7 +115,9 @@ if (defined($suchen)) {
     print "<td>$k_strasse</td>";
 #    print "<td>$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung</td>";
     print '<td><input type="button" name="waehlen" value="Auswählen"';
-    print "onclick=\"kk_eintrag('$k_ik','$k_kname','$k_name','$k_plz_haus','$k_plz_post','$k_ort','$k_strasse','$k_zik','$k_asp_tel','$k_bemerkung','$k_postfach');self.close()\"></td>";
+    print "\n";
+    $k_bemerkung = ' ' if($k_bemerkung eq '');
+    print "onclick=\"kk_eintrag('$k_ik','$k_kname','$k_name','$k_plz_haus','$k_plz_post','$k_ort','$k_strasse');self.close()\"></td>";
     print "</tr>\n";
   }
 }
@@ -128,25 +130,17 @@ print <<SCRIPTE;
   function zurueck() {
     kassenauswahl.close();
   }
-  function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse,zik,asp_tel,bemerkung,postfach) {
+  function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse) {
     // alert("gewählt"+name+plz+ort+strasse+ik);
     // in Parent Dokument übernehmen
     // alert("parent"+opener.window.document.forms[0].name);
     var formular=opener.window.document.forms[0];
-    formular.ik_krankenkasse.value=k_ik;
-    formular.name_krankenkasse.value=name;
-    formular.strasse_krankenkasse.value=strasse;
     if (formular.name == 'krankenkassen') {
-       formular.kname_krankenkasse.value=kname;
-       formular.ort_krankenkasse.value = ort;
-       formular.ort2_krankenkasse.value = ort;
-       formular.plz_haus_krankenkasse.value = plz_haus;
-       formular.plz_post_krankenkasse.value = plz_post;
-       formular.zik_krankenkasse.value = zik;
-       formular.asp_tel_krankenkasse.value = asp_tel;
-       formular.bemerkung_krankenkasse.value = bemerkung;
-       formular.postfach_krankenkasse.value = postfach;
+      opener.window.location="krankenkassenerfassung.pl?func=3&ik_krankenkasse="+k_ik;
     } else {
+       formular.ik_krankenkasse.value=k_ik;
+       formular.name_krankenkasse.value=name;
+       formular.strasse_krankenkasse.value=strasse;
        formular.ort_krankenkasse.value=plz_haus+' '+ort;
     }
   }
