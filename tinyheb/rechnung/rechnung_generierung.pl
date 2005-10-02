@@ -37,7 +37,7 @@ my $func = $q->param('func') || 0;
 
 # zunächst daten der Frau holen
 my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
-    $bundesland,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
+    $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
     $ik_krankenkasse,$naechste_hebamme,
     $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
 
