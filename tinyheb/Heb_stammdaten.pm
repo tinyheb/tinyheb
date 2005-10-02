@@ -24,7 +24,7 @@ sub new {
   $frau_such = $dbh->prepare("select ID,VORNAME,NACHNAME,".
 			     "DATE_FORMAT(GEBURTSDATUM_FRAU,'%d.%m.%Y'),".
 			     "DATE_FORMAT(GEBURTSDATUM_KIND,'%d.%m.%Y'),".
-			     "PLZ,ORT,TEL,STRASSE,BUNDESLAND,ENTFERNUNG, ".
+			     "PLZ,ORT,TEL,STRASSE,ANZ_KINDER,ENTFERNUNG, ".
 			     "KRANKENVERSICHERUNGSNUMMER,".
 			     "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
 			     "VERSICHERTENSTATUS,".
@@ -84,7 +84,7 @@ sub stammdaten_ins {
      $krankenversicherungsnummer_gueltig,
      $versichertenstatus,
      $ik,
-     $bundesland,
+     $anz_kinder,
      $geburtsdatum_kind,
      $naechste_hebamme,
      $begruendung_nicht_naechste_hebamme,
@@ -101,7 +101,7 @@ sub stammdaten_ins {
 				     "KRANKENVERSICHERUNGSNUMMER,".
 				     "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
 				     "VERSICHERTENSTATUS,IK,".
-				     "BUNDESLAND,GEBURTSDATUM_KIND,".
+				     "ANZ_KINDER,GEBURTSDATUM_KIND,".
 				     "NAECHSTE_HEBAMME,".
 				     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME,".
 				     "DATUM)".
@@ -120,7 +120,7 @@ sub stammdaten_ins {
 				     $krankenversicherungsnummer,
 				     $krankenversicherungsnummer_gueltig,
 				     $versichertenstatus,$ik,
-				     $bundesland,$geburtsdatum_kind,
+				     $anz_kinder,$geburtsdatum_kind,
 				     $naechste_hebamme,
 				     $begruendung_nicht_naechste_hebamme,
 				     $datum)
@@ -141,7 +141,7 @@ sub stammdaten_update {
 				    "KRANKENVERSICHERUNGSNUMMER=?,".
 				    "KRANKENVERSICHERUNGSNUMMER_GUELTIG=?,".
 				    "VERSICHERTENSTATUS=?,IK=?,".
-				    "BUNDESLAND=?,GEBURTSDATUM_KIND=?,".
+				    "ANZ_KINDER=?,GEBURTSDATUM_KIND=?,".
 				    "NAECHSTE_HEBAMME=?,".
 				     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME=?,".
 				    "DATUM=? ".
@@ -179,7 +179,7 @@ sub stammdaten_frau_id {
   my $frau_id = $dbh->prepare("select VORNAME,NACHNAME,".
 			      "DATE_FORMAT(GEBURTSDATUM_FRAU,'%d.%m.%Y'),".
 			      "DATE_FORMAT(GEBURTSDATUM_KIND,'%d.%m.%Y'),".
-			      "PLZ,ORT,TEL,STRASSE,BUNDESLAND,ENTFERNUNG, ".
+			      "PLZ,ORT,TEL,STRASSE,ANZ_KINDER,ENTFERNUNG, ".
 			      "KRANKENVERSICHERUNGSNUMMER,".
 			      "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
 			      "VERSICHERTENSTATUS,".
