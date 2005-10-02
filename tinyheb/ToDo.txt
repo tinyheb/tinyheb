@@ -1,4 +1,11 @@
 Offen:
+02.10.05
+In Stammdatenmaske und Datenbank wird Feld für Anzahl der Kinder benötigt.
+
+Für privat Versicherte muss Rechnung erstellt werden können.
+
+01.10.05
+Krankenkassen Menue auf neue Plausi überarbeiten.
 
 21.08.05
 Auwertung, für welche Frauen existieren noch Positionen in Bearbeitung
