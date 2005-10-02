@@ -95,7 +95,7 @@ sub krankenkassen_ins {
 					"PLZ_POST,ORT,POSTFACH, ".
 					"ASP_NAME,ASP_TEL,ZIK,BEMERKUNG) ".
 					"values (?,?,?,?,?,?,".
-					"?,?,?,".
+					"?,?,".
 					"?,?,?,?);")
     or die $dbh->errstr();
   my $erg = $krankenkassen_ins->execute(@_)
@@ -110,9 +110,10 @@ sub krankenkassen_update {
   my $krankenkassen_up = $dbh->prepare("update Krankenkassen set ".
 				       "KNAME=?,NAME=?,STRASSE=?,".
 				       "PLZ_HAUS=?,PLZ_POST=?,ORT=?,".
-				       "ASP_NAME=?,ASP_TEL=?,ZIK=? ".
+				       "POSTFACH=?,".
+				       "ASP_NAME=?,ASP_TEL=?,ZIK=?, ".
 				       "BEMERKUNG=? ".
-				       "where ID=?;")
+				       "where IK=?;")
     or die $dbh->errstr();
   my $erg = $krankenkassen_up->execute(@_)
     or die $dbh->errstr();
