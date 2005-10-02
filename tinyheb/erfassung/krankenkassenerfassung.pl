@@ -44,7 +44,7 @@ my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
 my $func = $q->param('func') || 0;
 
-hole_krank_daten() if ($func == 1 || $func == 2);
+hole_krank_daten() if ($func == 1 || $func == 2 || $func == 3);
 if (($auswahl eq 'Ändern') && defined($abschicken)) {
   aendern();
   $auswahl = 'Anzeigen';
