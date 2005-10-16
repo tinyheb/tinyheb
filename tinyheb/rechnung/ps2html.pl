@@ -406,6 +406,7 @@ sub print_wegegeld {
   $p->text({align => 'right'},17.3,$y1,$psumme." EUR"); # Gesamt Summe andrucken
   $p->text({align => 'right'},19.5,$y1,$psumme." EUR"); # Gesamt erneut Summe andrucken
   $y1-=$y_font;$y1-=$y_font;
+  $summe = sprintf "%.2f",$summe; # w/ Rundungsfehler-
   return $summe;
 }
 
