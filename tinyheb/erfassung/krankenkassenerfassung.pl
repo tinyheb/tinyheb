@@ -172,6 +172,9 @@ print '</tr>';
 print "<tr>";
 print "<td><input type='text' name='zik_krankenkasse' value='$zik' size='9'></td>";
 print "<td><input type='text' name='bemerkung_krankenkasse' value='$bemerkung' size='60'></td>";
+if ($zik ne '' && $zik > 0) {
+  print "<td><input type='button' name='kasse_aufrufen' value='Aufrufen' onClick='window.location=\"krankenkassenerfassung.pl?func=3&ik_krankenkasse=$zik\";'></td>";
+}
 print '</tr>';
 print '</table>';
 print "\n";
