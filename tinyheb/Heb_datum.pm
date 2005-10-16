@@ -9,7 +9,7 @@ package Heb_datum;
 
 use strict;
 use DBI;
-use Date::Calc qw(check_date Add_Delta_DHMS check_time);
+use Date::Calc qw(check_date Add_Delta_DHMS check_time Today);
 
 use Heb;
 
@@ -114,6 +114,13 @@ sub dauer_m {
   return $erg;
 }
 
+
+sub monat {
+  # liefert den aktuellen Monat
+  my ($y,$m,$d)=Today();
+  $m=sprintf "%2.2u",$m;
+  return $m;
+}
 
 sub fuerzeit_check {
   # ermittelt aus Fuerzeit, ob Flag auf komma Werte rechnen gesetzt ist
