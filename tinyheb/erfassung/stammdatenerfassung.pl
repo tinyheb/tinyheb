@@ -115,7 +115,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.16 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.17 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -136,9 +136,9 @@ print "\n";
 # z2 s1
 print '<tr>';
 print "<td><input type='text' name='frau_id' value='$frau_id' size='5'></td>";
-print "<td><input type='text' name='vorname' value='$vorname' size='40'></td>";
+print "<td><input type='text' name='vorname' value='$vorname' size='30' maxlength='30'></td>";
 # z2 s2
-print "<td><input type='text' name='nachname' value='$nachname' size='40'></td>";
+print "<td><input type='text' name='nachname' value='$nachname' size='47' maxlength='47'></td>";
 # z2 s3
 print "<td><input type='text' name='geburtsdatum_frau' value='$geb_frau' size='10' maxlength='10' onBlur='datum_check(this)'></td>";
 print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='return frausuchen(stammdaten.vorname,stammdaten.nachname,stammdaten.geburtsdatum_frau,form);'></tr>";
@@ -168,8 +168,8 @@ print '</tr>';
 # Eingabe Felder
 print "<tr>";
 print "<td><input type='text' name='plz' value='$plz' size='5' maxlength='5' onBlur='return plz_check(this)'></td>";
-print "<td><input type='text' name='ort' value='$ort' size='40'></td>";
-print "<td><input type='text' name='strasse' value='$strasse' size='40'></td>";
+print "<td><input type='text' name='ort' value='$ort' size='25' maxlength='25'></td>";
+print "<td><input type='text' name='strasse' value='$strasse' size='30' maxlength='30'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
