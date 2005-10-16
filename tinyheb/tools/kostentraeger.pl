@@ -112,18 +112,27 @@ LINE:while ($zeile=<FILE>) {
       }
       if ($zeile =~ /\AVKG/) {
 	my @erg = split '\+',$zeile;
-#	print "Verweis für Hebammen an IK $erg[2] Leistungserbringergruppe $erg[3] Standort des Leistungserbringers Bundesland $erg[7] Standort nach KV Bezirk $erg[8] Abrechnungscode $erg[9]\n" if ($erg[1]==9 && $erg[9]==50);
-
-#	print "Verweis Zentralstelle an IK $erg[2] Leistungserbringergruppe $erg[3] Abrechnungscode $erg[9]\n" if ($erg[1]==3 && $erg[5]==7);
-
+	# Art der Verknüpfung ist 3 = Verweis auf Dateiannahmestelle oder
+	# Art der Verknüpfung ist 9 = Verweis auf Papierannahmestelle
+	# Verweis ist nicht auf sich selbst
+	# Art der Anlieferung ist 7 = digitalisiert
+	# oder Papierannahmestelle (9) und Abrechnungscode 50 = Hebamme
+	$erg[9]=-1 unless(defined($erg[9]));
 	if (($erg[1]==3 && $erg[5]==7 && $erg[2]!=$idk ) || ($erg[1]==9 && $erg[9]==50) && $erg[2] != $idk) {
 	  $zentral_idk=$erg[2];
 	  $bemerkung = "Zentral IK ohne Kommentar $zeile" if ($erg[1]==3 && $erg[5]==7);
 	  $bemerkung = "Papierannahmestelle für Hebammen wegen Abrechnungscode $erg[9] und $zeile" if ($erg[1]==9 && $erg[9]==50);
-#	  print "$zentral_idk Zentral IK oder Hebamme\n";
+	}
+	# Art der Verknüpfung = 1 Verweis auf Kostenträger
+	# Abrechnungscode = 00 alle Leistungsarten oder 50 Hebammen
+	# Verweis ist nicht auf sich selbst
+	if (($erg[1]==1 && ($erg[9]==00 || $erg[9]==50) && $erg[2]!=$idk)) {
+	  $zentral_idk=$erg[2];
+	  $bemerkung = "Verweis auf zentralen Kostenträger w/ $zeile";
 	}
 #	print "--> @erg\n";
       }
+      $bemerkung =~ s/'//g;
 
       if ($zeile =~ /\ANAM\+/) {
 	$zeile =~ s/\?\+/ und /g;
@@ -190,7 +199,7 @@ LINE:while ($zeile=<FILE>) {
     $kasse .= "$asp_tel\t";
     $kasse .= "$zentral_idk\t";
     $kasse .= "$bemerkung\n";
-    $alle_kassen{$idk}=$kasse;
+
     print $kasse if($ausgabe);
     print "--------------KRANKENKASSE ENDE\n" if $debug;
     my ($k_ik,$k_kname,$k_name,$k_strasse,$k_plz_haus,$k_plz_post,$k_ort,$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung)= $k->krankenkassen_krank_ik($idk);
@@ -229,17 +238,18 @@ LINE:while ($zeile=<FILE>) {
 	    print "$k_plz_haus\t\t$plz_haus_n\n" if(!($k_plz_haus == $plz_haus_n));
 	    print "$k_plz_post\t\t$plz_post_n\n" if(!($k_plz_post == $plz_post_n));
 	    print "$k_ort\t\t$ort_n\n" if(!($k_ort eq $ort_n));
-	    print "$k_postfach\t\t$postfach_n\n" ;
-	    print "$k_asp_name\t\t$asp_name_n\n";
-	    print "$k_asp_tel\t\t$asp_tel_n\n";
-	    print "$k_zik\t\t$zik_n\n";
-	    print "$k_bemerkung\t\t$bemerkung_n\n";
+	    print "$k_postfach\t\t$postfach_n\n" if(!($k_postfach eq $postfach_n));
+	    print "$k_asp_name\t\t$asp_name_n\n" if(!($k_asp_name eq $asp_name_n));
+	    print "$k_asp_tel\t\t$asp_tel_n\n" if(!($k_asp_tel eq $asp_tel_n));
+	    print "$k_zik\t\t$zik_n\n" if(!($k_zik eq $zik_n));
+	    print "$k_bemerkung\t\t$bemerkung_n\n" if(!($k_bemerkung eq $bemerkung_n));
 	  }
 	  # update auf Datenbank
 	  $k->krankenkassen_update($kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$k_ik) if ($update);
 	}
       }
     }
+    $alle_kassen{$idk}=$kasse;
   }
 }
 close FILE;
