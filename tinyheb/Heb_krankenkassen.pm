@@ -122,6 +122,19 @@ sub krankenkassen_update {
 }
 
 
+sub krankenkassen_up_pubkey {
+  # ändert public key in Tabelle Krankenkassen
+  shift;
+  my ($key,$ik)=@_;
+  my $krankenkassen_up_pubkey = $dbh->prepare("update Krankenkassen set ".
+					     "PUBKEY=? where IK=?;")
+    or die $dbh->errstr();
+  my $erg=$krankenkassen_up_pubkey->execute($key,$ik)
+    or die $dbh->errstr();
+  return $erg;
+}
+					     
+
 sub krankenkassen_delete {
   # löscht Krankenkasse aus der Datenbank
   shift;
