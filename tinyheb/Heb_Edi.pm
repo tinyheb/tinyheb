@@ -10,6 +10,7 @@ package Heb_Edi;
 use strict;
 use Date::Calc qw(Today_and_Now);
 use File::stat;
+use MIME::QuotedPrint qw(encode_qp);
 
 use Heb;
 use Heb_leistung;
@@ -66,7 +67,7 @@ sub gen_auf {
   } else {
     substr($st,20,5) = 'TSOL0'; # Test (siehe 3.2.3)
   }
-  substr($st,25,3) = sprintf "%3.3u",$transfer_nr; # Transfernummer
+  substr($st,25,3) = sprintf "%3.3u",substr((sprintf "%5.5u",$transfer_nr),2,3); # Transfernummer
   substr($st,28,5) = '     '; # Verfahrenkennung Spezifikation (optional)
   substr($st,33,15) = sprintf "%15s", $h->parm_unique('HEB_IK'); #Absender Eigner der Daten
   substr($st,48,15) = sprintf "%15s", $h->parm_unique('HEB_IK'); #Absender physikalisch
@@ -75,7 +76,7 @@ sub gen_auf {
   substr($st,93,6) = '000000'; # Fehlernr bei Rücksendung von Dateien
   substr($st,99,6) = '000000'; # Maßnahme laut Fehlerkatalog
 
-  substr($st,105,11) = "SL".substr($h->parm_unique('HEB_IK'),3,6).'S'.$d->monat(); # Dateiname
+  substr($st,105,11) = "SL".substr($h->parm_unique('HEB_IK'),2,6).'S'.$d->monat(); # Dateiname
   
   my $erstelldatum = sprintf "%4.4u%2.2u%2.2u%2.2u%2.2u%2.2u",Today_and_Now(); # Datum Erstellung der Datei
   substr($st,116,14) = $erstelldatum;
@@ -132,7 +133,7 @@ sub UNB {
   $erg .= $erstelldatum.'+';
   $erg .= sprintf "%5.5u+",$datenaustauschref; # Datenaustauschreferenz, vortlaufende Nummer zwischen Absender und Empfänger
   $erg .= '+'; # Freifeld
-  $erg .= "SL".substr($h->parm_unique('HEB_IK'),3,6).'S'.$d->monat().'+'; # Anwendungsreferenz, entspricht dem logischen Dateinamen
+  $erg .= "SL".substr($h->parm_unique('HEB_IK'),2,6).'S'.$d->monat().'+'; # Anwendungsreferenz, entspricht dem logischen Dateinamen
   $erg .=  sprintf "%1.1u",$test_ind; # Indikator, ob Test, Erprobungs- oder Echtdatei
   $erg .= $delim;
 
@@ -326,7 +327,7 @@ sub SLLA_ENF {
   $erg .= $datum.'+';
   $erg .= '+'; # Schlüssel-KZ bei Hilfsmittel muss eigentlich angegeben werden
   $erg .= '+'; # Inventarnummer für Hilfsmittel noch nicht belegt
-  $erg .= '+'; # Betrag Zuzahlung entfällt
+  # Betrag Zuzahlung entfällt
   $erg .= $delim;
 
 
@@ -463,7 +464,8 @@ sub SLLA {
   shift;
 
   my ($rechnr,$zik) = @_;
-  my $lfdnr = 0;
+  my $lfdnr = 1; # muss mit 1 beginnen sonst keine korrekte Zählung
+  #                laut Herr Birk AOK Rheinland
   my $gesamtsumme = 0.00; # summe aller Rechnungsbeträge
   my $ref=2; # Nachrichtenreferenznummer, fortlaufende Nummer der UNH
   ;;;;;;;;;;;# Segemente zw. UNB und UNZ, d.h.hier immer 2 weil nach SLGA
@@ -666,12 +668,63 @@ sub edi_rechnung {
     print KWRITE "-----END CERTIFICATE-----\n";
     close(KWRITE);
     # verschlüsselung durchführen
-    system("openssl smime -encrypt -in $dateiname -des3 -out $dateiname.enc zik.pem");
+    open NUTZ, "openssl smime -encrypt -in $dateiname -des3 zik.pem |";
+    open AUS, ">$dateiname.enc_b64";
+    
+  LINE: while (my $zeile=<NUTZ>) {
+      next LINE if($zeile =~ /MIME/);
+      next LINE if($zeile =~ /^\n$/);
+      next LINE if($zeile =~ /Content/);
+      chop ($zeile);
+      print AUS $zeile.$crlf;
+    }
+    close NUTZ;close AUS;
+
+    # Die Datei ist jetzt base64 encoded, wieder in binary zerlegen,
+    # um laenge zu ermitteln
+    open NUTZ, "mimencode -u $dateiname.enc_b64 |" or die "Konnte base64 schlüssel nicht dekodieren\n";
+    open AUS, ">$dateiname.enc";
+    while (my $zeile=<NUTZ>) {
+      print AUS $zeile;
+    }
+    close NUTZ;close AUS;
+
     # Länge der Datei ermitteln
     my $st=stat($dateiname.'.enc') or die "Datei $dateiname.enc nicht vorhanden:$!\n";
     $laenge_nutz=$st->size;
   }
   
+  # signieren
+  my $ext=''; # Datei extension
+  $ext = '.enc' if ($h->parm_unique('SCHL'.$zik) == 3);
+  if ($h->parm_unique('SIG'.$zik) == 3) {
+    # pkcs#7 Verschlüsselung durchführen
+    # schlüssel der Hebamme besorgen
+    open NUTZ, "openssl smime -sign -in $dateiname$ext -nodetach -signer /home/baum/entwicklung/TESTS/crypt/baumis/newcert.pem -inkey /home/baum/entwicklung/TESTS/crypt/baumis/privkey.pem |";
+    open AUS, ">$dateiname.sig_b64";
+    
+  LINE: while (my $zeile=<NUTZ>) {
+      next LINE if($zeile =~ /MIME/);
+      next LINE if($zeile =~ /Content/);
+      next LINE if($zeile =~ /^\n$/);
+      chop($zeile);
+      print AUS $zeile.$crlf;
+    }
+    close NUTZ;
+    close AUS;
+
+    # um laenge zu ermitteln
+    open NUTZ, "mimencode -u $dateiname.sig_b64 |" or die "Konnte base64 bei Signatur nicht dekodieren\n";
+    open AUS, ">$dateiname.sig";
+    while (my $zeile=<NUTZ>) {
+      print AUS $zeile;
+    }
+    close NUTZ;close AUS;
+
+    # Länge der Datei ermitteln
+    my $st=stat($dateiname.'.sig') or die "Datei $dateiname.sig nicht vorhanden:$!\n";
+    $laenge_nutz=$st->size;
+  }
 
   ($erg_auf,$erstell_auf)  = 
     Heb_Edi->gen_auf($test_ind,$datenaustauschref,$zik,length($erg_nutz),
@@ -689,7 +742,7 @@ sub edi_rechnung {
 
   # wenn alles gelaufen ist, Datenaustauschreferenz erhöhen
   $datenaustauschref++;
-  $datenaustauschref=0 if($datenaustauschref > 999);
+  $datenaustauschref=0 if($datenaustauschref > 99999);
   $h->parm_up('DTAUS'.$zik,$datenaustauschref);
   return ($dateiname,$erstell_auf,$erstell_nutz);
 }
@@ -734,19 +787,19 @@ sub mail {
   $erg .= '--'.$boundary.$crlf;
   $erg .= 'Content-Type: text/plain;'.$crlf;
   $erg .= '  charset="iso-8859-1"'.$crlf;
-  $erg .= 'Content-Transfer-Encoding: 7bit'.$crlf;
+  $erg .= 'Content-Transfer-Encoding: quoted-printable'.$crlf;
   $erg .= 'Content-Disposition: inline'.$crlf;
   $erg .= $crlf;
   
-  $erg .= $dateiname.'.AUF,348,'.$erstell_auf.$crlf;
+  $erg .= encode_qp($dateiname.'.AUF,348,'.$erstell_auf,$crlf).$crlf;
   # Länge der Nutzdatendatei ermitteln
   my $st=stat($dateiname_ext) or die "Datei $dateiname_ext nicht vorhanden:$!\n";
   my $laenge_nutz=$st->size;
-  $erg .= $dateiname.','.$laenge_nutz.','.$erstell_nutz.$crlf;
-  $erg .= $h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME').$crlf; # Absender Firmenname
-  $erg .= $h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME').$crlf; # Absender Ansprechpartner
-  $erg .= $h->parm_unique('HEB_EMAIL').$crlf;
-  $erg .= $h->parm_unique('HEB_TEL').$crlf;
+  $erg .= encode_qp($dateiname.','.$laenge_nutz.','.$erstell_nutz,$crlf).$crlf;
+  $erg .= encode_qp($h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME'),$crlf).$crlf; # Absender Firmenname
+  $erg .= encode_qp($h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME'),$crlf).$crlf; # Absender Ansprechpartner
+  $erg .= encode_qp($h->parm_unique('HEB_EMAIL'),$crlf).$crlf;
+  $erg .= encode_qp($h->parm_unique('HEB_TEL'),$crlf).$crlf;
   $erg .= $crlf;
 
   # Attachment 1 Datei mit Auftragssatz
@@ -764,10 +817,13 @@ sub mail {
 
   # Attachment 2 Datei mit Nutzdaten
   $erg .= '--'.$boundary.$crlf;
-  if ($h->parm_unique('SCHL'.$zik) == 3) {
+  if ($h->parm_unique('SCHL'.$zik) == 3 || $h->parm_unique('SIG'.$zik)==3) {
+    # Dateinamen extension muss jetzt erweitert werden
+    $dateiname_ext .= '_b64';
     $erg .= 'Content-Disposition: attachment; filename="'.$dateiname.'"'.$crlf;
     $erg .= 'Content-Type: application/pkcs7-mime; name="'.$dateiname.'"'.$crlf;
     $erg .= 'Content-Transfer-Encoding: base64'.$crlf;
+    $erg .= $crlf;
   }
 
   if ($h->parm_unique('SCHL'.$zik) == 0 && $h->parm_unique('SIG'.$zik) == 0) {
@@ -775,19 +831,23 @@ sub mail {
     $erg .= 'Content-Type: text/plain;'.$crlf;
     $erg .= '  charset="iso-8859-1"'.$crlf;
     $erg .= '  name="'.$dateiname.'"'.$crlf;
-    $erg .= 'Content-Transfer-Encoding: 7bit'.$crlf;
+    $erg .= 'Content-Transfer-Encoding: quoted-printable'.$crlf;
     $erg .= $crlf;
   }
 
   # Nutzdatendatei lesen
-  open NUTZ, "$dateiname_ext";
-
+  open NUTZ, "$dateiname_ext" or die "Konnte Nutzdatendatei nicht öffnen $!";
  LINE: while (my $zeile=<NUTZ>) {
-    next LINE if($zeile =~ /MIME/);
-    next LINE if($zeile =~ /Content/);
+    if ($h->parm_unique('SCHL'.$zik) == 0 && $h->parm_unique('SIG'.$zik) == 0) {
+      # Datei wird quoted printable ausgegeben
+      $zeile =~ s/$crlf$//; # vorher crlf entfernen
+      $zeile = encode_qp($zeile,$crlf).$crlf;
+    }
     $erg .= $zeile;
   }
   close NUTZ;
+
+  $erg .= $crlf;
   
   return $erg;
     
