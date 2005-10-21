@@ -28,6 +28,7 @@ my $d = new Heb_datum;
 my $delim = "'\r\n"; # Trennzeichen
 my $crlf = "\r\n";
 
+our $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
 our $dbh;
 
 sub new {
@@ -615,6 +616,87 @@ sub gen_nutz {
 }
 
 
+sub sig {
+  # signieren Nutzdatendatei
+
+  shift;
+
+  my ($dateiname,$sig_flag)=@_;
+
+  if ($sig_flag == 0) {
+    # PEM verschlüsseln
+    open NUTZ, "cat $path/tmp/$dateiname |" or
+      die "konnte Datei nicht NICHT signieren\n";
+  }
+  if ($sig_flag == 2) {
+    # PEM signieren
+    open NUTZ, "openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform PEM -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
+      die "konnte Datei nicht PEM signieren\n";
+  }
+  if ($sig_flag == 3) {
+    # DER signieren um später base64 encoden zu können
+    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER zik.pem |" or
+      die "konnte Datei nicht DER verschlüsseln\n";
+  }
+
+  open AUS, ">$path/tmp/$dateiname.sig";
+    
+ LINE: while (my $zeile=<NUTZ>) {
+  #  next LINE if($zeile =~ /MIME/);
+  #  next LINE if($zeile =~ /^\n$/);
+  #  next LINE if($zeile =~ /Content/);
+    print AUS $zeile;
+  }
+  close NUTZ;close AUS;
+  
+  # Länge der Datei ermitteln
+  my $st=stat($path."/tmp/$dateiname.sig") or die "Datei $dateiname.sig nicht vorhanden:$!\n";
+  return ("$dateiname.sig",$st->size);
+}
+
+
+sub enc {
+  # verschlüsselt Nutzdatendatei
+
+  shift;
+
+  my ($dateiname,$schl_flag)=@_;
+
+  if ($schl_flag == 0) {
+    # PEM verschlüsseln
+    open NUTZ, "cat $path/tmp/$dateiname |" or
+      die "konnte Datei nicht NICHT verschlüsseln\n";
+  }
+  if ($schl_flag == 2) {
+    # PEM verschlüsseln
+    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform PEM $path/tmp/zik.pem |" or
+      die "konnte Datei nicht PEM verschlüsseln\n";
+  }
+  if ($schl_flag == 3) {
+    # DER verschlüsseln um später base64 encoden zu können
+    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform SMIME zik.pem |" or
+      die "konnte Datei nicht DER verschlüsseln\n";
+  }
+
+  $dateiname =~ s/\.sig//g;
+  open AUS, ">$path/tmp/$dateiname.enc";
+    
+ LINE: while (my $zeile=<NUTZ>) {
+  #  next LINE if($zeile =~ /MIME/);
+  #  next LINE if($zeile =~ /^\n$/);
+  #  next LINE if($zeile =~ /Content/);
+    print AUS $zeile;
+  }
+  close NUTZ;
+  close AUS;
+  
+  # Länge der Datei ermitteln
+  my $st=stat($path."/tmp/$dateiname.enc") or die "Datei $dateiname.enc nicht vorhanden:$!\n";
+  return ("$dateiname.enc",$st->size);
+}
+
+
+
 sub edi_rechnung {
   # generiert komplette elektronische Rechnung 
   # Auftrags- und Nutzdatendatei
@@ -628,6 +710,7 @@ sub edi_rechnung {
   my $erstell_nutz = ''; # Erstelldatum Nutzdatedatei
   my $erstell_auf = '';  # Erstelldatum Auftragsdatei
 
+
   # Rahmendaten für Rechnung aus Datenbank holen
   $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
   my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
@@ -636,6 +719,8 @@ sub edi_rechnung {
   my $test_ind = $h->parm_unique('IK'.$zik);
   return undef if (!defined($test_ind)); # ZIK nicht als Annahmestelle vorhanden
   my $datenaustauschref = $h->parm_unique('DTAUS'.$zik);
+  my $schl_flag = $h->parm_unique('SCHL'.$zik);
+  my $sig_flag = $h->parm_unique('SIG'.$zik);
 
   ($erg_nutz,$erstell_nutz) = Heb_Edi->gen_nutz($rechnr,$zik,$datenaustauschref);
 
@@ -646,12 +731,11 @@ sub edi_rechnung {
   } else {
     $dateiname .= 'TSOL0'; # Test (siehe 3.2.3)
   }
-  $dateiname .= sprintf "%3.3u",$datenaustauschref; # Transfernummer
+  $dateiname .= sprintf "%3.3u",substr((sprintf "%5.5u",$datenaustauschref),2,3); # Transfernummer
+  my $dateiname_orig = $dateiname;
 
-
-  # nutzdatendatei schreiben
   # Nutzdatendatei schreiben
-  open NUTZ, ">$dateiname"
+  open NUTZ, ">$path/tmp/$dateiname"
     or die "Konnte Nutzdatei nicht zum Schreiben öffnen $!\n";
   print NUTZ $erg_nutz;
   close NUTZ;
@@ -659,72 +743,19 @@ sub edi_rechnung {
   my $laenge_nutz=length($erg_nutz);
 
   # hier muss noch verschlüsselt und signiert werden
-  if ($h->parm_unique('SCHL'.$zik) == 3) {
-    # pkcs#7 Verschlüsselung durchführen
-    my ($pubkey) = $k->krankenkasse_sel("PUBKEY",$zik);
-    open KWRITE,">zik.pem" or die "Kann key zu $zik nicht schreiben\n";
-    print KWRITE "-----BEGIN CERTIFICATE-----\n";
-    print KWRITE $pubkey;
-    print KWRITE "-----END CERTIFICATE-----\n";
-    close(KWRITE);
-    # verschlüsselung durchführen
-    open NUTZ, "openssl smime -encrypt -in $dateiname -des3 zik.pem |";
-    open AUS, ">$dateiname.enc_b64";
-    
-  LINE: while (my $zeile=<NUTZ>) {
-      next LINE if($zeile =~ /MIME/);
-      next LINE if($zeile =~ /^\n$/);
-      next LINE if($zeile =~ /Content/);
-      chop ($zeile);
-      print AUS $zeile.$crlf;
-    }
-    close NUTZ;close AUS;
+  # Public key der Krankenkasse schreiben
+  my ($pubkey) = $k->krankenkasse_sel("PUBKEY",$zik);
+  open KWRITE,">$path/tmp/zik.pem" or die "Kann key zu $zik nicht schreiben\n";
+  print KWRITE "-----BEGIN CERTIFICATE-----\n";
+  print KWRITE $pubkey;
+  print KWRITE "-----END CERTIFICATE-----\n";
+  close(KWRITE);
 
-    # Die Datei ist jetzt base64 encoded, wieder in binary zerlegen,
-    # um laenge zu ermitteln
-    open NUTZ, "mimencode -u $dateiname.enc_b64 |" or die "Konnte base64 schlüssel nicht dekodieren\n";
-    open AUS, ">$dateiname.enc";
-    while (my $zeile=<NUTZ>) {
-      print AUS $zeile;
-    }
-    close NUTZ;close AUS;
-
-    # Länge der Datei ermitteln
-    my $st=stat($dateiname.'.enc') or die "Datei $dateiname.enc nicht vorhanden:$!\n";
-    $laenge_nutz=$st->size;
-  }
-  
   # signieren
-  my $ext=''; # Datei extension
-  $ext = '.enc' if ($h->parm_unique('SCHL'.$zik) == 3);
-  if ($h->parm_unique('SIG'.$zik) == 3) {
-    # pkcs#7 Verschlüsselung durchführen
-    # schlüssel der Hebamme besorgen
-    open NUTZ, "openssl smime -sign -in $dateiname$ext -nodetach -signer /home/baum/entwicklung/TESTS/crypt/baumis/newcert.pem -inkey /home/baum/entwicklung/TESTS/crypt/baumis/privkey.pem |";
-    open AUS, ">$dateiname.sig_b64";
-    
-  LINE: while (my $zeile=<NUTZ>) {
-      next LINE if($zeile =~ /MIME/);
-      next LINE if($zeile =~ /Content/);
-      next LINE if($zeile =~ /^\n$/);
-      chop($zeile);
-      print AUS $zeile.$crlf;
-    }
-    close NUTZ;
-    close AUS;
+  ($dateiname,$laenge_nutz)=Heb_Edi->sig($dateiname,$sig_flag);
+  # verschlüsseln
+  ($dateiname,$laenge_nutz)=Heb_Edi->enc($dateiname,$schl_flag);
 
-    # um laenge zu ermitteln
-    open NUTZ, "mimencode -u $dateiname.sig_b64 |" or die "Konnte base64 bei Signatur nicht dekodieren\n";
-    open AUS, ">$dateiname.sig";
-    while (my $zeile=<NUTZ>) {
-      print AUS $zeile;
-    }
-    close NUTZ;close AUS;
-
-    # Länge der Datei ermitteln
-    my $st=stat($dateiname.'.sig') or die "Datei $dateiname.sig nicht vorhanden:$!\n";
-    $laenge_nutz=$st->size;
-  }
 
   ($erg_auf,$erstell_auf)  = 
     Heb_Edi->gen_auf($test_ind,$datenaustauschref,$zik,length($erg_nutz),
@@ -735,7 +766,7 @@ sub edi_rechnung {
   # jetzt Dateien schreiben mit physikalischen Namen
 
   # Auftragsdatei schreiben
-  open AUF, ">$dateiname.AUF"
+  open AUF, ">$path/tmp/$dateiname_orig.AUF"
     or die "Konnte Auftragsdatei nicht zum Schreiben öffnen $!\n";
   print AUF $erg_auf;
   close (AUF);
@@ -744,7 +775,7 @@ sub edi_rechnung {
   $datenaustauschref++;
   $datenaustauschref=0 if($datenaustauschref > 99999);
   $h->parm_up('DTAUS'.$zik,$datenaustauschref);
-  return ($dateiname,$erstell_auf,$erstell_nutz);
+  return ($dateiname_orig,$erstell_auf,$erstell_nutz);
 }
 
 
@@ -771,8 +802,8 @@ sub mail {
   my $boundary='Boundary-00='.$rechnr;
 
   my $dateiname_ext=$dateiname; # Dateiendung der Nutzdatendatei
-  $dateiname_ext = $dateiname.'.enc' if ($h->parm_unique('SCHL'.$zik) == 3);
-  $dateiname_ext = $dateiname.'.sig' if ($h->parm_unique('SIG'.$zik) == 3);
+  $dateiname_ext = $dateiname.'.sig' if ($h->parm_unique('SIG'.$zik) > 0);
+  $dateiname_ext = $dateiname.'.enc' if ($h->parm_unique('SCHL'.$zik) > 0);
 
   # Header
   my $erg .= 'From: '.$h->parm_unique('HEB_IK').' <'.$h->parm_unique('HEB_EMAIL').'>'.$crlf;
@@ -793,7 +824,7 @@ sub mail {
   
   $erg .= encode_qp($dateiname.'.AUF,348,'.$erstell_auf,$crlf).$crlf;
   # Länge der Nutzdatendatei ermitteln
-  my $st=stat($dateiname_ext) or die "Datei $dateiname_ext nicht vorhanden:$!\n";
+  my $st=stat("$path/tmp/$dateiname_ext") or die "Datei $dateiname_ext für Message Body nicht vorhanden:$!\n";
   my $laenge_nutz=$st->size;
   $erg .= encode_qp($dateiname.','.$laenge_nutz.','.$erstell_nutz,$crlf).$crlf;
   $erg .= encode_qp($h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME'),$crlf).$crlf; # Absender Firmenname
@@ -810,19 +841,20 @@ sub mail {
   $erg .= 'Content-Disposition: attachment; filename="'.$dateiname.'.AUF"'.$crlf;
   $erg .= $crlf;
   # Auftragsdatei lesen
-  open AUF, "$dateiname.AUF";
+  open AUF, "$path/tmp/$dateiname.AUF"
+    or die "Konnte Auftragsdatei nicht öffnen\n";
   my $auf = <AUF>;
   $erg .= $auf.$crlf;
   close AUF;
 
   # Attachment 2 Datei mit Nutzdaten
   $erg .= '--'.$boundary.$crlf;
-  if ($h->parm_unique('SCHL'.$zik) == 3 || $h->parm_unique('SIG'.$zik)==3) {
+  if ($h->parm_unique('SCHL'.$zik) > 0 || $h->parm_unique('SIG'.$zik) > 0) {
     # Dateinamen extension muss jetzt erweitert werden
-    $dateiname_ext .= '_b64';
+    $erg .= 'Content-Type: text/plain;'.$crlf;
+    $erg .= '  charset="iso-8859-1"'.$crlf;
+    $erg .= 'Content-Transfer-Encoding: 7bit'.$crlf;
     $erg .= 'Content-Disposition: attachment; filename="'.$dateiname.'"'.$crlf;
-    $erg .= 'Content-Type: application/pkcs7-mime; name="'.$dateiname.'"'.$crlf;
-    $erg .= 'Content-Transfer-Encoding: base64'.$crlf;
     $erg .= $crlf;
   }
 
@@ -836,12 +868,15 @@ sub mail {
   }
 
   # Nutzdatendatei lesen
-  open NUTZ, "$dateiname_ext" or die "Konnte Nutzdatendatei nicht öffnen $!";
+  open NUTZ, "$path/tmp/$dateiname_ext" or die "Konnte Nutzdatendatei nicht öffnen $!";
  LINE: while (my $zeile=<NUTZ>) {
     if ($h->parm_unique('SCHL'.$zik) == 0 && $h->parm_unique('SIG'.$zik) == 0) {
       # Datei wird quoted printable ausgegeben
       $zeile =~ s/$crlf$//; # vorher crlf entfernen
       $zeile = encode_qp($zeile,$crlf).$crlf;
+    } else {
+      chop($zeile);
+      $zeile .= $crlf;
     }
     $erg .= $zeile;
   }
