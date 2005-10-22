@@ -186,10 +186,10 @@ if ($l->leistungsdaten_offen($frau_id,'(ENTFERNUNG_T > 0 or ENTFERNUNG_N > 0)')>
   neue_seite(7,'');
   $p->text($x1,$y1,"Wegegeld");$y1-=$y_font;
   $p->setfont($font,10);
-  $gsumme += print_wegegeld('N') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_N >0,ENTFERNUNG_N >= 2','DATUM')>0);
-  $gsumme += print_wegegeld('T') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_T >0, ENTFERNUNG_T >= 2','DATUM')>0);
-$gsumme += print_wegegeld('NK') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_N >0, ENTFERNUNG_N < 2','DATUM')>0);
-$gsumme += print_wegegeld('TK') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_T >0, ENTFERNUNG_T < 2','DATUM')>0);
+  $gsumme += print_wegegeld('N') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_N >0,ENTFERNUNG_N > 2','DATUM')>0);
+  $gsumme += print_wegegeld('T') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_T >0, ENTFERNUNG_T > 2','DATUM')>0);
+$gsumme += print_wegegeld('NK') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_N >0, ENTFERNUNG_N <= 2','DATUM')>0);
+$gsumme += print_wegegeld('TK') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_T >0, ENTFERNUNG_T <= 2','DATUM')>0);
 }
 
 $gsumme += print_material('M') if ($l->leistungsdaten_offen($frau_id,'Leistungstyp="M"')>0);
