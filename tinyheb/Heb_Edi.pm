@@ -642,7 +642,7 @@ sub sig {
   open AUS, ">$path/tmp/$dateiname.sig";
     
  LINE: while (my $zeile=<NUTZ>) {
-  #  next LINE if($zeile =~ /MIME/);
+    next LINE if($zeile =~ /PKCS7/); # macht mozilla auch nicht
   #  next LINE if($zeile =~ /^\n$/);
   #  next LINE if($zeile =~ /Content/);
     print AUS $zeile;
@@ -682,7 +682,7 @@ sub enc {
   open AUS, ">$path/tmp/$dateiname.enc";
     
  LINE: while (my $zeile=<NUTZ>) {
-  #  next LINE if($zeile =~ /MIME/);
+    next LINE if($zeile =~ /PKCS7/);
   #  next LINE if($zeile =~ /^\n$/);
   #  next LINE if($zeile =~ /Content/);
     print AUS $zeile;
@@ -714,6 +714,8 @@ sub edi_rechnung {
   # Rahmendaten für Rechnung aus Datenbank holen
   $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
   my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
+  die "Rechnung nicht vorhanden Abbruch\n" if (!defined($rechdatum));
+
   # prüfen ob zu ik Zentral IK vorhanden ist
   my ($zik)=$k->krankenkasse_sel("ZIK",$ik);
   my $test_ind = $h->parm_unique('IK'.$zik);
