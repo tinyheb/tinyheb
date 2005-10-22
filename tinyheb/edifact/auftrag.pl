@@ -5,6 +5,7 @@
 # gestzlichen Krankenkassen
 
 use strict;
+use Getopt::Long;
 use lib '../';
 
 use Heb_Edi;
@@ -12,30 +13,43 @@ use Heb_Edi;
 my $debug=1;
 my $e = new Heb_Edi;
 
-#my $st=$e->gen_auf(0,0,104212516,100,120,12);
-#print "st: $st\n";
-#print "SLLA_FKT ",$e->SLLA_FKT(123456789,987654321);
-#print "SLLA_REC ",$e->SLLA_REC('20050030','20051008');
-#print "SLLA_INV ",$e->SLLA_INV('0308691059','3 1','20050030');
-#print "SLLA_NAD ",$e->SLLA_NAD('Goldmann',"D+Angelo",19710319,'Rubensstr. 3',42719,'Solingen');
-#print "SLLA_ENF ",$e->SLLA_ENF('4',20051008,13.6,3);
-#print "SLLA_SUT ",$e->SLLA_SUT('10:00','11:00',60);
-#print "SLLA_TXT ",$e->SLLA_TXT('Wehen');
-#print "SLLA_BES ",$e->SLLA_BES(1023.32);
+my $help=0;
+my $update=0;
+my $sendmail=0;
 
-#print "UNH ",$e->UNH(2,'SLLA');
-#print "UNT ",$e->UNT(4,2);
-#my $summe=0;
-#my $erg=$e->SLGA(20050056);
-#if (defined($erg)) {
-#  print $erg;
-#}
-#($erg,$summe)=$e->SLLA(20050056);
-#if (defined($erg)) {
-#  print $erg,"Summe: $summe\n";
-#}
+my $result = GetOptions('help!' => \$help,
+			'mail!' => \$sendmail,
+			'update!' => \$update);
 
-#print $e->gen_nutz(20050056);
-#print length($e->gen_nutz(20050056)),"\n";
-my ($dateiname,$erstell_auf,$erstell_nutz)=$e->edi_rechnung(20050056);
-print $e->mail($dateiname,20050056,$erstell_auf,$erstell_nutz);
+if ($help) {
+  print "
+usage $0 options rechnr
+--help <-> help
+--update <-> kein update/insert der elektronischen Rechnung in Datenbank
+--mail <-> automatischen Senden der Rechnung per Email
+";
+  exit;
+}
+
+my $rechnr = pop @ARGV;
+
+if (!($rechnr =~ /\d{8}/)) {
+  die "keine gültige Rechnungsnummer angegeben\n";
+}
+
+my ($dateiname,$erstell_auf,$erstell_nutz)=$e->edi_rechnung($rechnr);
+
+die "Zentral IK ist keine Datenannahmestelle oder nicht Parametrisiert keine elektronische Rechnung erstellt \n" unless(defined($dateiname));
+
+my $erg=$e->mail($dateiname,$rechnr,$erstell_auf,$erstell_nutz);
+if ($sendmail) {
+  # ergebnis nach sendmail pipen
+  open SEND, "| /usr/sbin/sendmail -t"
+    or die "konnte sendmail nicht öffnen $!\n";
+  print SEND $erg;
+  close SEND;
+} else {
+  print $erg;
+}
+
+	    
