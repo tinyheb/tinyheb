@@ -443,7 +443,11 @@ sub SLGA {
   # zunächst Rechnungsbetrag ermittelen
   my ($hilf,$betrag_slla)=Heb_Edi->SLLA($rechnr,$zik);
   if ($betrag_slla != $betrag) {
-    die "Betragsermittlung zu Papierrechnung unterschiedlich !!!\n";
+    if ($rechdatum > 20051006) {
+      die "Betragsermittlung zu Papierrechnung unterschiedlich Edi:$betrag_slla, Papier: $betrag!!!\n";
+    } else {
+      print "ACHTUNG Papier zu Edi Rechnung unterschiedlich, da Rechnung vor dem 06.10.2005 erstellt wurde wird weiter gearbeitet,\nEdi:$betrag_slla, Papier: $betrag!!!\n";
+    }
   }
   $erg .= Heb_Edi->SLGA_GES($betrag_slla,'00');$lfdnr++;
   $erg .= Heb_Edi->SLGA_GES($betrag_slla,'11');$lfdnr++;
@@ -572,7 +576,7 @@ sub SLLA {
 	$lfdnr++;
 	my $km_preis = sprintf "%.2f",$leistdat[7]*$epreis;
 	$summe_km+=$km_preis;
-	print "Wegegeld summe: $summe_km, $km_preis\n" if ($debug > 1000);
+	print "Wegegeld summe: $summe_km, $km_preis,km: $leistdat[7]\n" if ($debug > 1000);
       } elsif ($posnr_wegegeld eq '94') {
 	$erg .= Heb_Edi->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[8]);
 	$lfdnr++;
