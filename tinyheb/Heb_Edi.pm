@@ -70,10 +70,11 @@ sub gen_auf {
   }
   substr($st,25,3) = sprintf "%3.3u",substr((sprintf "%5.5u",$transfer_nr),2,3); # Transfernummer
   substr($st,28,5) = '     '; # Verfahrenkennung Spezifikation (optional)
-  substr($st,33,15) = sprintf "%15s", $h->parm_unique('HEB_IK'); #Absender Eigner der Daten
-  substr($st,48,15) = sprintf "%15s", $h->parm_unique('HEB_IK'); #Absender physikalisch
-  substr($st,63,15) = sprintf "%15s", $ik_empfaenger; # Empfänger, der die Daten nutzen soll und im Besitz des Schlüssels ist, um verschlüsselte Infos zu entschlüsseln
-  substr($st,78,15) = sprintf "%15s", $ik_empfaenger; # Empfänger, der die Daten physikalisch empfangen soll
+#  substr($st,28,5) = '12345'; # Verfahrenkennung Spezifikation (optional)
+  substr($st,33,15) = sprintf "%-15u", $h->parm_unique('HEB_IK'); #Absender Eigner der Daten
+  substr($st,48,15) = sprintf "%-15u", $h->parm_unique('HEB_IK'); #Absender physikalisch
+  substr($st,63,15) = sprintf "%-15u", $ik_empfaenger; # Empfänger, der die Daten nutzen soll und im Besitz des Schlüssels ist, um verschlüsselte Infos zu entschlüsseln
+  substr($st,78,15) = sprintf "%-15u", $ik_empfaenger; # Empfänger, der die Daten physikalisch empfangen soll
   substr($st,93,6) = '000000'; # Fehlernr bei Rücksendung von Dateien
   substr($st,99,6) = '000000'; # Maßnahme laut Fehlerkatalog
 
@@ -843,14 +844,14 @@ sub mail {
   $erg .= '--'.$boundary.$crlf;
   $erg .= 'Content-Type: text/plain;'.$crlf;
   $erg .= '  charset="iso-8859-1"'.$crlf;
-  $erg .= 'Content-Transfer-Encoding: 7bit'.$crlf;
-  $erg .= 'Content-Disposition: attachment; filename="'.$dateiname.'.AUF"'.$crlf;
+  $erg .= 'Content-Transfer-Encoding: quoted-printable'.$crlf;
+  $erg .= 'Content-Disposition: attachment; filename="'.$dateiname.'.auf"'.$crlf;
   $erg .= $crlf;
   # Auftragsdatei lesen
   open AUF, "$path/tmp/$dateiname.AUF"
     or die "Konnte Auftragsdatei nicht öffnen\n";
   my $auf = <AUF>;
-  $erg .= $auf.$crlf;
+  $erg .= encode_qp($auf,$crlf).$crlf;
   close AUF;
 
   # Attachment 2 Datei mit Nutzdaten
@@ -859,7 +860,8 @@ sub mail {
     # Dateinamen extension muss jetzt erweitert werden
     $erg .= 'Content-Type: text/plain;'.$crlf;
     $erg .= '  charset="iso-8859-1"'.$crlf;
-    $erg .= 'Content-Transfer-Encoding: 7bit'.$crlf;
+    $erg .= '  name="'.$dateiname.'"'.$crlf;
+    $erg .= 'Content-Transfer-Encoding: quoted-printable'.$crlf;
     $erg .= 'Content-Disposition: attachment; filename="'.$dateiname.'"'.$crlf;
     $erg .= $crlf;
   }
@@ -882,7 +884,7 @@ sub mail {
       $zeile = encode_qp($zeile,$crlf).$crlf;
     } else {
       chop($zeile);
-      $zeile .= $crlf;
+      $zeile = encode_qp($zeile,$crlf).$crlf;
     }
     $erg .= $zeile;
   }
