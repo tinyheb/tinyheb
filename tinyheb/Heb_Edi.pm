@@ -650,7 +650,8 @@ sub sig {
     next LINE if($zeile =~ /PKCS7/); # macht mozilla auch nicht
   #  next LINE if($zeile =~ /^\n$/);
   #  next LINE if($zeile =~ /Content/);
-    print AUS $zeile;
+    chop($zeile);
+    print AUS $zeile.$crlf;
   }
   close NUTZ;close AUS;
   
@@ -690,7 +691,8 @@ sub enc {
     next LINE if($zeile =~ /PKCS7/);
   #  next LINE if($zeile =~ /^\n$/);
   #  next LINE if($zeile =~ /Content/);
-    print AUS $zeile;
+    chop($zeile);
+    print AUS $zeile.$crlf;
   }
   close NUTZ;
   close AUS;
@@ -815,6 +817,7 @@ sub mail {
   # Header
   my $erg .= 'From: '.$h->parm_unique('HEB_IK').' <'.$h->parm_unique('HEB_EMAIL').'>'.$crlf;
   $erg .= 'To: '.$h->parm_unique('MAIL'.$zik).$crlf;
+  $erg .= 'Bcc: '.$h->parm_unique('HEB_IK').' <'.$h->parm_unique('HEB_EMAIL').'>'.$crlf;
   $erg .= 'Subject: '.$h->parm_unique('HEB_IK').$crlf;
   $erg .= 'MIME-Version: 1.0'.$crlf;
   $erg .= 'Content-Type: Multipart/Mixed;'.$crlf;
@@ -884,6 +887,7 @@ sub mail {
       $zeile = encode_qp($zeile,$crlf).$crlf;
     } else {
       $zeile =~ s/$crlf$//; # vorher crlf entfernen
+      chop($zeile);
       $zeile = encode_qp($zeile,$crlf).$crlf;
     }
     $erg .= $zeile;
