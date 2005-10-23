@@ -894,7 +894,7 @@ sub mail {
   }
   close NUTZ;
 
-  $erg .= $crlf;
+#  $erg .= $crlf;
   
   return $erg;
     
