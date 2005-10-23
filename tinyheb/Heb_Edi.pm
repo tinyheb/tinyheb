@@ -883,7 +883,7 @@ sub mail {
       $zeile =~ s/$crlf$//; # vorher crlf entfernen
       $zeile = encode_qp($zeile,$crlf).$crlf;
     } else {
-      chop($zeile);
+      $zeile =~ s/$crlf$//; # vorher crlf entfernen
       $zeile = encode_qp($zeile,$crlf).$crlf;
     }
     $erg .= $zeile;
