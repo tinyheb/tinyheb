@@ -691,8 +691,8 @@ sub enc {
     next LINE if($zeile =~ /PKCS7/);
   #  next LINE if($zeile =~ /^\n$/);
   #  next LINE if($zeile =~ /Content/);
-    chop($zeile);
-    print AUS $zeile.$crlf;
+  #  chop($zeile); 
+    print AUS $zeile;
   }
   close NUTZ;
   close AUS;
