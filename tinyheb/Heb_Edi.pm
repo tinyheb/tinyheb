@@ -689,10 +689,11 @@ sub enc {
     
  LINE: while (my $zeile=<NUTZ>) {
     next LINE if($zeile =~ /PKCS7/);
-  #  next LINE if($zeile =~ /^\n$/);
+    next LINE if($zeile =~ /^\n$/);
   #  next LINE if($zeile =~ /Content/);
   #  chop($zeile); 
-    print AUS $zeile;
+    $zeile =~ s/\n$//;
+    print AUS $zeile.$crlf;
   }
   close NUTZ;
   close AUS;
@@ -887,14 +888,13 @@ sub mail {
       $zeile = encode_qp($zeile,$crlf).$crlf;
     } else {
       $zeile =~ s/$crlf$//; # vorher crlf entfernen
-      chop($zeile);
       $zeile = encode_qp($zeile,$crlf).$crlf;
     }
     $erg .= $zeile;
   }
   close NUTZ;
 
-#  $erg .= $crlf;
+  $erg .= $crlf;
   
   return $erg;
     
