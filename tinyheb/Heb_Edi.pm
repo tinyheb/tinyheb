@@ -680,7 +680,7 @@ sub enc {
   }
   if ($schl_flag == 3) {
     # DER verschlüsseln um später base64 encoden zu können
-    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform SMIME zik.pem |" or
+    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform PEM $path/tmp/zik.pem |" or
       die "konnte Datei nicht DER verschlüsseln\n";
   }
 
@@ -688,7 +688,7 @@ sub enc {
   open AUS, ">$path/tmp/$dateiname.enc";
     
  LINE: while (my $zeile=<NUTZ>) {
-    next LINE if($zeile =~ /PKCS7/);
+  #  next LINE if($zeile =~ /PKCS7/);
     next LINE if($zeile =~ /^\n$/);
   #  next LINE if($zeile =~ /Content/);
   #  chop($zeile); 
