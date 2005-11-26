@@ -62,13 +62,14 @@ foreach my $file (@dateien) {
  LINE:while ($zeile=<FILE>) {
     my $ent = chomp($zeile);
 #    $zeile =~ s/\r\n//g;
-    print "laenge:",length($zeile),"z$zeile\n" if $debug;
+#    print "laenge:",length($zeile),"z$zeile\n" if $debug;
     if (length($zeile)>1) {
       print SCHREIB $zeile."\n";
       $erg .= $zeile."\n";
     } else {
       print SCHREIB "-----END CERTIFICATE-----\n";
       close(SCHREIB);
+      system("openssl x509 -in $o_pfad/datei$file_counter.pem -dates -subject -noout") if $debug;
       system("openssl x509 -in $o_pfad/datei$file_counter.pem -subject -noout > /tmp/key_temp.txt");
       open LESNAME, "/tmp/key_temp.txt";
       my $name=<LESNAME>;
@@ -84,6 +85,7 @@ foreach my $file (@dateien) {
       open SCHREIB, ">$o_pfad/datei$file_counter.pem"
 	or die "Konnte Datei nicht zum schreiben öffnen $!\n";
       print SCHREIB "-----BEGIN CERTIFICATE-----\n";
+      print "------------------------------\n" if $debug;
 
       if ($option{u} && $k->krankenkasse_sel('NAME',$ik)) {
 	# kasse existiert update machen
