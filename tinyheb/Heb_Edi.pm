@@ -635,26 +635,30 @@ sub sig {
   }
   if ($sig_flag == 2) {
     # PEM signieren
+    die "PEM Signierung  ist nicht implementiert, bitte nutzen sie pkcs7\n";
     open NUTZ, "openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform PEM -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
       die "konnte Datei nicht PEM signieren\n";
   }
   if ($sig_flag == 3) {
     # DER signieren um später base64 encoden zu können
-    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER zik.pem |" or
+    open NUTZ, "openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
       die "konnte Datei nicht DER verschlüsseln\n";
   }
 
   open AUS, ">$path/tmp/$dateiname.sig";
     
+ 
  LINE: while (my $zeile=<NUTZ>) {
-    next LINE if($zeile =~ /PKCS7/); # macht mozilla auch nicht
-  #  next LINE if($zeile =~ /^\n$/);
-  #  next LINE if($zeile =~ /Content/);
-    chop($zeile);
-    print AUS $zeile.$crlf;
+    next LINE if($zeile =~ /^\n$/ && $sig_flag != 3);
+    if ($sig_flag != 3) {
+      $zeile =~ s/\n$//;
+      $zeile .= $crlf;
+    }
+    print AUS $zeile;
   }
-  close NUTZ;close AUS;
-  
+  close NUTZ;
+  close AUS;
+ 
   # Länge der Datei ermitteln
   my $st=stat($path."/tmp/$dateiname.sig") or die "Datei $dateiname.sig nicht vorhanden:$!\n";
   return ("$dateiname.sig",$st->size);
@@ -675,12 +679,13 @@ sub enc {
   }
   if ($schl_flag == 2) {
     # PEM verschlüsseln
+    die "PEM Verschlüsselung ist nicht implementiert, bitte nutzen sie pkcs7\n";
     open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform PEM $path/tmp/zik.pem |" or
       die "konnte Datei nicht PEM verschlüsseln\n";
   }
   if ($schl_flag == 3) {
     # DER verschlüsseln um später base64 encoden zu können
-    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform PEM $path/tmp/zik.pem |" or
+    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER $path/tmp/zik.pem |" or
       die "konnte Datei nicht DER verschlüsseln\n";
   }
 
@@ -688,12 +693,12 @@ sub enc {
   open AUS, ">$path/tmp/$dateiname.enc";
     
  LINE: while (my $zeile=<NUTZ>) {
-  #  next LINE if($zeile =~ /PKCS7/);
-    next LINE if($zeile =~ /^\n$/);
-  #  next LINE if($zeile =~ /Content/);
-  #  chop($zeile); 
-    $zeile =~ s/\n$//;
-    print AUS $zeile.$crlf;
+    next LINE if($zeile =~ /^\n$/ && $schl_flag != 3);
+    if ($schl_flag != 3) {
+      $zeile =~ s/\n$//;
+      $zeile .= $crlf;
+    }
+    print AUS $zeile;
   }
   close NUTZ;
   close AUS;
@@ -794,8 +799,6 @@ sub mail {
   # als Ergebniss wird ein String geliefert, der ggf. nach sendmail
   # gepiped werden kann.
 
-  # Funktioniert nur für Verschlüsselte oder Signierte Mails
-
   shift;
 
   my ($dateiname,$rechnr,$erstell_auf,$erstell_nutz) = @_;
@@ -865,7 +868,7 @@ sub mail {
     $erg .= 'Content-Type: text/plain;'.$crlf;
     $erg .= '  charset="iso-8859-1"'.$crlf;
     $erg .= '  name="'.$dateiname.'"'.$crlf;
-    $erg .= 'Content-Transfer-Encoding: quoted-printable'.$crlf;
+    $erg .= 'Content-Transfer-Encoding: base64'.$crlf;
     $erg .= 'Content-Disposition: attachment; filename="'.$dateiname.'"'.$crlf;
     $erg .= $crlf;
   }
@@ -879,6 +882,19 @@ sub mail {
     $erg .= $crlf;
   }
 
+  # prüfen ob Nutzdatendatei noch base64 codiert werden muss
+  if ($h->parm_unique('SCHL'.$zik) == 3) {
+    open NUTZ, "mimencode $path/tmp/$dateiname_ext |" or die 
+      "Konnte Nutzdatendatei nicht base64 codieren $!";
+    open AUS, ">$path/tmp/$dateiname.base64" or die
+      "konnte Nutzdatendatei nicht base64 schreiben $!";
+    while (my $zeile=<NUTZ>) {
+      print AUS $zeile;
+    }
+    close NUTZ; close AUS;
+    $dateiname_ext=$dateiname.'.base64';
+  }
+
   # Nutzdatendatei lesen
   open NUTZ, "$path/tmp/$dateiname_ext" or die "Konnte Nutzdatendatei nicht öffnen $!";
  LINE: while (my $zeile=<NUTZ>) {
@@ -887,8 +903,6 @@ sub mail {
       $zeile =~ s/$crlf$//; # vorher crlf entfernen
       $zeile = encode_qp($zeile,$crlf).$crlf;
     } else {
-      $zeile =~ s/$crlf$//; # vorher crlf entfernen
-      $zeile = encode_qp($zeile,$crlf).$crlf;
     }
     $erg .= $zeile;
   }
@@ -898,5 +912,28 @@ sub mail {
   
   return $erg;
     
+}
+
+sub edi_update {
+  # macht update auf Tabelle 
+  # Rechnung und Leistungsdaten und hinterlegt da den neuen
+  # Rechnungsstatus
+  shift;
+  my ($rechnr,$ignore) = @_;
+
+  # Rahmendaten für Rechnung aus Datenbank holen
+  $l->rechnung_such("ZAHL_DATUM,BETRAGGEZ,BETRAG,STATUS","RECHNUNGSNR=$rechnr");
+  my ($zahl_datum,$betraggez,$betrag,$status)=$l->rechnung_such_next();
+  if ($status > 20 && !($ignore) ) {
+    die "Rechnung wurde schon elektronisch gestellt oder ist schon (Teil-)bezahlt Rechnungsstatus ist:$status\n";
+  }
+  $status=22;
+  $l->rechnung_up($rechnr,$zahl_datum,$betraggez,$status);
+  # update auf einzelne Leistungspositionen muss noch erfolgen
+  $l->leistungsdaten_such_rechnr("ID",$rechnr);
+  while (my ($id)=$l->leistungsdaten_such_rechnr_next()) {
+    $l->leistungsdaten_up_werte($id,"STATUS=$status");
+  }
+  return 1;
 }
 1;
