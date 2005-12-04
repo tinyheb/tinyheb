@@ -459,9 +459,10 @@ sub status_text {
   my $status=shift;
   return 'in bearb.' if($status==10);
   return 'Rechnung' if($status==20);
+  return 'Edi Rech.' if($status==22);
   return 'Teilzahl.' if($status==24);
   return 'erl.' if($status==30);
-  return '';
+  return "$status unbekannt";
 }
 
 1;
