@@ -201,7 +201,7 @@ print <<SCRIPTE;
  </script>
 SCRIPTE
 if ($hint ne '') {
-  print "<script>alert('$hint');</script>";
+  print "<script>alert(\"$hint\");</script>";
   print "<script>$hscript</script>";
 }
 print "</body>";
@@ -255,7 +255,7 @@ sub printbox {
     print ' selected' if ($posnr eq $l_posnr);
     print " >";
     $script .= "if(formular.posnr.value == '$l_posnr') {formular.preis.value=$l_preis;\n";
-    if ($l_fuerzeit > 0) {
+    if ($l_fuerzeit > 0 || $wahl eq 'B') {
       $script .= "formular.zeit_von.disabled=false;\n";
       $script .= "formular.zeit_bis.disabled=false;\n";
       $script .= "var zl_tag = document.getElementsByName('zeit_von');\n";
@@ -294,10 +294,25 @@ sub speichern {
     $hint .= "Keine PosNr. gewählt, nichts gespeichert";
     return;
   }
+
+  # prüfen ob Uhrzeit erfasst wurde, wenn ja, muss es gültige Zeit sein
+  if ($zeit_von ne '' || $zeit_bis ne '') {
+    if (!($d->check_zeit($zeit_von))) {
+      $hint .= '\nkeine gültige Uhrzeit von erfasst, nichts gespeichert';
+      $hscript = 'document.rechpos.zeit_von.focus();';
+      return;
+    }
+    if (!($d->check_zeit($zeit_bis))) {
+      $hint .= '\nkeine gültige Uhrzeit bis erfasst, nichts gespeichert';
+      $hscript = 'document.rechpos.zeit_bis.focus();';
+      return;
+    }
+  }
+  
   # Datum konvertieren
   my $datum_l = $d->convert($datum);
   if ($datum_l eq 'error') {
-    $hint .= 'ungültiges Datum erfasst, nichts gespeichert';
+    $hint .= "ungültiges Datum erfasst, nichts gespeichert";
     $hscript = 'document.rechpos.datum.focus()';
     return;
   }
@@ -311,10 +326,22 @@ sub speichern {
     $entfernung_nacht /= $anzahl_frauen;
   }
 
+  # prüfen ob andere Positionsnummer w/ Zweitesmal genutzt werden muss
+  # wird genau dann gemacht, wenn die Positionsnummer am gleichen Tag
+  # schon erfasst ist
+  my ($zweitesmal) = $l->leistungsart_such_posnr('ZWEITESMAL',$posnr,$datum_l);
+  if ($zweitesmal =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr AND DATUM='$datum_l'")>0) {
+      $hint .= "Positionsnummer $posnr w/ Zweitesmal ersetzt durch $2";
+      $posnr=$2;
+    }
+  }
+
+
   # Wenn Sonntag angegeben ist, prüfen ob Sonntag und richtige PosNr
   my $dow=Day_of_Week($d->jmt($datum));
   # 1 == Montag 2 == Dienstag, ..., 7 == Sonntag
-  my ($l_samstag,$l_sonntag) = $l->leistungsart_such_posnr('SAMSTAG,SONNTAG',$posnr,$datum_l);
+  my ($l_samstag,$l_sonntag,$l_nacht) = $l->leistungsart_such_posnr('SAMSTAG,SONNTAG,NACHT',$posnr,$datum_l);
   if ($dow == 6 && $l_samstag =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($zeit_von) >= 12) {
     # print "Samstag erkannt\n";
     # prüfen ob es sich um andere Positionsnummer handelt
@@ -337,6 +364,25 @@ sub speichern {
       $zuschlag = $2;
     }
   }    
+
+  # prüfen auf Nacht
+  if ($zeit_von ne '' && ($d->zeit_h($zeit_von) <= 8 || $d->zeit_h($zeit_von)>=20) && $l_nacht =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    # print "Sonntag erkannt\n";
+    # prüfen ob es sich um andere Positionsnummer handelt
+    if ($1 ne '+')  {
+      $hint .= "Positionsnummer $posnr w/ Nacht ersetzt durch $2";
+      $posnr = $2;
+      # dann sind es auch Nachtkilometer
+      $entfernung_nacht = $entfernung_tag;
+      $entfernung_tag = 0;
+    } else {
+      $zuschlag = $2;
+      # dann sind es auch Nachtkilometer
+      $entfernung_nacht = $entfernung_tag;
+      $entfernung_tag = 0;
+    }
+  }    
+
   
   my ($material) = $l->leistungsart_such_posnr('LEISTUNGSTYP',$posnr,$datum_l);
 
@@ -349,7 +395,7 @@ sub speichern {
     } elsif ($l->leistungsart_pruef_zus($posnr,'NACHT') && ($d->zeit_h($zeit_von) <= 8 || $d->zeit_h($zeit_von) >= 20)) {
       # alles ok
     } elsif (($l->leistungsart_pruef_zus($posnr,'SONNTAG') || $l->leistungsart_pruef_zus($posnr,'SAMSTAG') || $l->leistungsart_pruef_zus($posnr,'NACHT')) && ($dow < 6 || $dow==6 && $d->zeit_h($zeit_von) < 12) || $d->zeit_h($zeit_von)>8 && $d->zeit_h($zeit_von) > 20) {
-      $hint .= "Positionsnummer nur zu bestimmten Tagen und Zeiten, es wurde nichts gespeichert";
+      $hint .= '\nPositionsnummer nur zu bestimmten Tagen und Zeiten, es wurde nichts gespeichert';
       $hscript = 'document.rechpos.datum.select();document.rechpos.datum.focus()';
       return;
     }
@@ -364,16 +410,6 @@ sub speichern {
   ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
   if ($l_fuerzeit > 0) {
     # prüfen ob gültige Zeiten erfasst sind
-    if (!($d->check_zeit($zeit_von))) {
-      $hint .= '\nkeine gültige Uhrzeit von erfasst, nichts gespeichert';
-      $hscript = 'document.rechpos.zeit_von.focus();';
-      return;
-    }
-    if (!($d->check_zeit($zeit_bis))) {
-      $hint .= '\nkeine gültige Uhrzeit bis erfasst, nichts gespeichert';
-      $hscript = 'document.rechpos.zeit_bis.focus();';
-      return;
-    }
     my $dauer = $d->dauer_m($zeit_bis,$zeit_von);
     if ($zeit_von eq '' || $zeit_bis eq '' || $dauer == 0) {
       $hint .= '\nBitte Zeit von, Zeit bis erfassen, nichts gespeichert';
@@ -412,8 +448,8 @@ sub speichern {
     $entfernung_nacht=0;
     $entfernung_tag=0;
     $leist_id=$l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis_neu,'',10);
-    $hint .= " Zuschlag prozentual wurde zusätzlich gespeichert" if ($prozent > 0);
-    $hint .= " Zuschlag wurde zusätzlich gespeichert" if ($ze_preis > 0);
+    $hint .= '\nZuschlag prozentual wurde zusätzlich gespeichert' if ($prozent > 0);
+    $hint .= '\nZuschlag wurde zusätzlich gespeichert' if ($ze_preis > 0);
   }
 
   # prüfen, ob Materialpauschale gerechnet werden muss
@@ -427,7 +463,7 @@ sub speichern {
     $entfernung_tag=0;
     my ($ze_preis) = $l->leistungsart_such_posnr('EINZELPREIS',$m_zus,$datum_l);
     $leist_id=$l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
-    $hint .= " Materialpauschale wurde zusätzlich gespeichert";
+    $hint .= '\nMaterialpauschale wurde zusätzlich gespeichert';
   }
 
 
@@ -465,6 +501,10 @@ sub matpausch {
       my @dat_frau = $s->stammdaten_frau_id($frau_id);
       my $geb_kind = $dat_frau[3];
       $geb_kind = $d->convert($geb_kind);
+      if ($geb_kind eq 'error') {
+	$geb_kind = '1900.01.01';
+	$hint .= '\nGeburtsdatum Kind konnte nicht ermittelt werden, bitte Ergebiss überprüfen';
+      }
       # Wieviele Tage liegen zwischen $datum_l und Geburtsdatum Kind?
       my $days = Delta_Days(unpack('A4xA2xA2',$datum_l),unpack('A4xA2xA2',$geb_kind));
       $comp = 1 if (abs($days)<$op_wert && $op eq '<');
@@ -478,7 +518,7 @@ sub matpausch {
       $entfernung_tag=0;
       my ($ze_preis) = $l->leistungsart_such_posnr('EINZELPREIS',$m_zus,$datum_l);
       $leist_id=$l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
-      $hint .= " Abhängige Materialpauschale wurde zusätzlich gespeichert";
+      $hint .= '\nAbhängige Materialpauschale wurde zusätzlich gespeichert';
     }
   }
 }
