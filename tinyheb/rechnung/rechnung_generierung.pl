@@ -16,12 +16,14 @@ use Heb_stammdaten;
 use Heb_datum;
 use Heb_leistung;
 use Heb_krankenkassen;
+use Heb;
 
 my $q = new CGI;
 my $s = new Heb_stammdaten;
 my $d = new Heb_datum;
 my $l = new Heb_leistung;
 my $k = new Heb_krankenkassen;
+my $h = new Heb;
 
 my $debug=1;
 
@@ -84,7 +86,6 @@ print '<td><b>Geb.:</b></td>';
 print '<td><b>Geb. Kind:</b></td>';
 print '</tr>';
 print "\n";
-
 print '<tr>';
 #print "<td><input type='text' class='disabled' disabled name='frau_id' value='$frau_id' size='3' onchange='open(\"ps2html?frau_id=\"+frau_id.value,\"rechnung\");'></td>";
 print "<td><input type='text' size='3' class='disabled' disabled name='frau_id' value='$frau_id'></td>";
@@ -98,6 +99,38 @@ print "<td><input type='text' class='disabled' disabled name='geburtsdatum_frau'
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind' value='$geb_kind' size='10'></td>";
 print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl\",\"frauenauswahl\",\"scrollbar=yes,innerwidth=700,innerheight=400\");'></td>";
 print "</tr>";
+# Informationen zur Krankenkasse ausgeben
+if ($name_krankenkasse ne '') {
+  # prüfen ob zu ik Zentral IK vorhanden ist
+  my ($zik)=$k->krankenkasse_sel("ZIK",$ik_krankenkasse);
+  my $test_ind = $h->parm_unique('IK'.$zik);
+  my ($name_zik)=$k->krankenkasse_sel("NAME",$zik);
+  print "<tr>";
+  my $text='';
+  if (defined($zik) && $zik > 0) {
+    $text.="zentral IK vorhanden: $zik ($name_zik)";
+  } else {
+    $text .= "keine zentral IK vorhanden";
+  }
+
+  if (defined($test_ind)) { # ZIK als Annahmestelle vorhanden
+    if ($test_ind == 0) {
+      $text .= " Datenaustausch im Test Rechnung muss auf Papier erstellt werden";
+    } elsif ($test_ind == 1) {
+      $text .= "Datenaustausch in der Erprobungsphase Rechnung muss auf Papier und per Mail erstellt werden";
+    } elsif ($test_ind == 2) {
+      $text .= "Datenaustausch in Produktion Rechnung muss per Mail erstellt werden";
+    } else {
+      $text .= "Falsch Parametrisiert, bitte Parameter für Zentral-IK prüfen";
+    }
+  } else {
+    $text .= " kein elektronischer Datenaustausch, Rechnung muss auf Papier erstellt werden";
+  }
+  print "<td colspan='5'><input type='text' class='disabled' disabled name='zik' value='$text' size='113'>";
+  print "</td>";
+  print "</tr>";
+}
+
 print '</table>';
 
 # Zeile mit Knöpfen für unterschiedliche Funktionen
