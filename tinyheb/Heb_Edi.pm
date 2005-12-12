@@ -63,7 +63,7 @@ sub gen_auf {
   substr($st,7,2)='01'; # Version der Auftragsstruktur '01' erste Version
   substr($st,9,8)= sprintf "%8.8u",348; # Länge Auftragsdatei Konstant 348
   substr($st,17,3)= '000'; # Laufende Nummer bei Teillieferung 000 komplett
-  if ($test_ind > 0) { # prüfen ob Test oder Produktion
+  if ($test_ind > 1) { # prüfen ob Test oder Produktion
     substr($st,20,5) = 'ESOL0'; # Produktion (siehe 3.2.3)
   } else {
     substr($st,20,5) = 'TSOL0'; # Test (siehe 3.2.3)
@@ -495,6 +495,7 @@ sub SLLA {
       $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
 
   $geb_frau=$d->convert($geb_frau);$geb_frau =~ s/-//g;
+  die "Geburtsdatum der Frau ist kein gültiges Datum, es kann keine elektronische Rechnung erstellt werden, bitte in den Stammdaten korrigieren\n" if ($geb_frau eq 'error');
   $geb_kind=$d->convert($geb_kind);$geb_kind =~ s/-//g;
   
   # 1. FKT Segment erzeugen
@@ -741,7 +742,7 @@ sub edi_rechnung {
 
   # Dateinamen ermitteln
   my $dateiname='';
-  if ($test_ind > 0) { # prüfen ob Test oder Produktion
+  if ($test_ind > 1) { # prüfen ob Test oder Produktion
     $dateiname .= 'ESOL0'; # Produktion (siehe 3.2.3)
   } else {
     $dateiname .= 'TSOL0'; # Test (siehe 3.2.3)
