@@ -8,18 +8,24 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
     alert("Es wurde keine gültige Krankenkasse erfasst,\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert.");
     return false;
   }
-  var error_text = '';
   if (vorname == '') {
-    error_text=error_text+"Vorname Frau  wurde nicht erfasst\n";
+    alert("Vorname Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
+    return false;
   }
   if (nachname == '') {
-    error_text=error_text+"Nachname Frau  wurde nicht erfasst\n";
-  }
-  if (geb_kind == '00.00.0000' || geb_kind == '') {
-    error_text=error_text+"Geburtsdatum Kind wurde nicht erfasst\n";
+    alert("Nachname Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
+    return false;
   }
   if (geb_frau == '00.00.0000' || geb_frau == '') {
-    error_text=error_text+"Geburtsdatum Frau wurde nicht erfasst\n";
+    alert("Geburtsdatum Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
+    return false;
+  }
+
+  // weiche Plausiprüfungen
+  var error_text = '';
+
+  if (geb_kind == '00.00.0000' || geb_kind == '') {
+    error_text=error_text+"Geburtsdatum Kind wurde nicht erfasst\n";
   }
   if (plz == 0 || plz == '') {
     error_text=error_text+"PLZ wurde nicht erfasst\n";
