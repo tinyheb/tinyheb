@@ -423,7 +423,7 @@ sub SLGA {
   
   shift;
 
-  my ($rechnr,$zik) = @_;
+  my ($rechnr,$zik,$ktr) = @_;
   my $lfdnr = 0;
   my $ref=1; # Nachrichtenreferenznummer
   my $erg = '';
@@ -437,12 +437,12 @@ sub SLGA {
   $rechdatum =~ s/-//g;
 
   # 1. FKT Segment erzeugen
-  $erg .= Heb_Edi->SLGA_FKT($ik,$ik);$lfdnr++;
+  $erg .= Heb_Edi->SLGA_FKT($ktr,$ik);$lfdnr++;
   # 2. REC Segment erzeugen
   $erg .= Heb_Edi->SLGA_REC($rechnr,$rechdatum);$lfdnr++;
   # 3. GES Segment erzeugen
   # zunächst Rechnungsbetrag ermittelen
-  my ($hilf,$betrag_slla)=Heb_Edi->SLLA($rechnr,$zik);
+  my ($hilf,$betrag_slla)=Heb_Edi->SLLA($rechnr,$zik,$ktr);
   if ($betrag_slla != $betrag) {
     if ($rechdatum > 20051006) {
       die "Betragsermittlung zu Papierrechnung unterschiedlich Edi:$betrag_slla, Papier: $betrag!!!\n";
@@ -469,7 +469,7 @@ sub SLLA {
 
   shift;
 
-  my ($rechnr,$zik) = @_;
+  my ($rechnr,$zik,$ktr) = @_;
   my $lfdnr = 1; # muss mit 1 beginnen sonst keine korrekte Zählung
   #                laut Herr Birk AOK Rheinland
   my $gesamtsumme = 0.00; # summe aller Rechnungsbeträge
@@ -499,7 +499,7 @@ sub SLLA {
   $geb_kind=$d->convert($geb_kind);$geb_kind =~ s/-//g;
   
   # 1. FKT Segment erzeugen
-  $erg .= Heb_Edi->SLLA_FKT($ik,$ik);$lfdnr++;
+  $erg .= Heb_Edi->SLLA_FKT($ktr,$ik);$lfdnr++;
   # 2. REC Segment erzeugen
   $erg .= Heb_Edi->SLLA_REC($rechnr,$rechdatum);$lfdnr++;
   # 3. INV Segment erzeugen
@@ -607,15 +607,15 @@ sub gen_nutz {
 
   shift;
 
-  my ($rechnr,$zik,$datenaustauschref) = @_;
+  my ($rechnr,$zik,$ktr,$datenaustauschref) = @_;
 
   my $erg = '';
 
   my $test_ind = $h->parm_unique('IK'.$zik);
   my ($zw_erg,$erstelldatum)= Heb_Edi->UNB($zik,$datenaustauschref,$test_ind);
   $erg .= $zw_erg;
-  $erg .= Heb_Edi->SLGA($rechnr,$zik);
-  my ($erg_slla,$summe) = Heb_Edi->SLLA($rechnr,$zik);
+  $erg .= Heb_Edi->SLGA($rechnr,$zik,$ktr);
+  my ($erg_slla,$summe) = Heb_Edi->SLLA($rechnr,$zik,$ktr);
   $erg .= $erg_slla;
   $erg .= Heb_Edi->UNZ($datenaustauschref);
   return ($erg,$erstelldatum);
@@ -731,14 +731,14 @@ sub edi_rechnung {
   die "Rechnung nicht vorhanden Abbruch\n" if (!defined($rechdatum));
 
   # prüfen ob zu ik Zentral IK vorhanden ist
-  my ($zik)=$k->krankenkasse_sel("ZIK",$ik);
+  my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
   my $test_ind = $h->parm_unique('IK'.$zik);
   return undef if (!defined($test_ind)); # ZIK nicht als Annahmestelle vorhanden
   my $datenaustauschref = $h->parm_unique('DTAUS'.$zik);
   my $schl_flag = $h->parm_unique('SCHL'.$zik);
   my $sig_flag = $h->parm_unique('SIG'.$zik);
 
-  ($erg_nutz,$erstell_nutz) = Heb_Edi->gen_nutz($rechnr,$zik,$datenaustauschref);
+  ($erg_nutz,$erstell_nutz) = Heb_Edi->gen_nutz($rechnr,$zik,$ktr,$datenaustauschref);
 
   # Dateinamen ermitteln
   my $dateiname='';
