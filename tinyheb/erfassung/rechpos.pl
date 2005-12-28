@@ -478,7 +478,7 @@ sub speichern {
   $entfernung_tag*=$anzahl_frauen;
   $entfernung_nacht*=$anzahl_frauen;
   $strecke='gesamt';
-
+  $begruendung='';
 }
 
 
