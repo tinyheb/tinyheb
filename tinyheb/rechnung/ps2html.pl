@@ -157,13 +157,31 @@ my $absender=$h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME').
 $p->text($x1,24.7,$absender);
 
 # Empfänger
+# zunächst richtige Annahmestelle für Belege holen
+# und zu dieser Anschrift holen
+my ($beleg_ik,$beleg_typ)=$k->krankenkasse_beleg_ik($ik_krankenkasse);
+my $beleg_parm = $h->parm_unique('BELEGE');
+$beleg_ik=$ik_krankenkasse if(!(defined($beleg_parm)) || $beleg_parm != 1);
+my  ($name_krankenkasse_beleg,
+     $plz_krankenkasse_beleg,
+     $plz_post_krankenkasse_beleg,
+     $ort_krankenkasse_beleg,
+     $strasse_krankenkasse_beleg,
+     $postfach_krankenkasse_beleg) = $k->krankenkasse_sel('NAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$beleg_ik);
+
+$name_krankenkasse_beleg = '' unless (defined($name_krankenkasse_beleg));
+$plz_krankenkasse_beleg = '' unless (defined($plz_krankenkasse_beleg));
+$plz_post_krankenkasse_beleg = '' unless (defined($plz_post_krankenkasse_beleg));
+$strasse_krankenkasse_beleg = '' unless (defined($strasse_krankenkasse_beleg));
+$postfach_krankenkasse_beleg = '' unless (defined($postfach_krankenkasse_beleg));
+
 $p->setfont($font,10);
 $y1=23.8;
-$p->text($x1,$y1,$name_krankenkasse);
-$p->text($x1,$y1-$y_font,$strasse_krankenkasse) if ($plz_post_krankenkasse ne '' && $plz_post_krankenkasse == 0);
-$p->text($x1,$y1-$y_font,"Postfach $postfach_krankenkasse") if ($plz_post_krankenkasse ne '' && $plz_post_krankenkasse > 0);
-$p->text($x1,$y1-3*$y_font,$plz_krankenkasse." ".$ort_krankenkasse) if ($plz_post_krankenkasse ne '' && $plz_post_krankenkasse == 0);
-$p->text($x1,$y1-3*$y_font,$plz_post_krankenkasse." ".$ort_krankenkasse) if ($plz_post_krankenkasse ne '' && $plz_post_krankenkasse > 0);
+$p->text($x1,$y1,$name_krankenkasse_beleg);
+$p->text($x1,$y1-$y_font,$strasse_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
+$p->text($x1,$y1-$y_font,"Postfach $postfach_krankenkasse_beleg") if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg > 0);
+$p->text($x1,$y1-3*$y_font,$plz_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
+$p->text($x1,$y1-3*$y_font,$plz_post_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg > 0);
 
 
 # Betreff Zeile
