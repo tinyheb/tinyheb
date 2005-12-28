@@ -35,8 +35,11 @@ my $plz_post = $q->param('plz_post_krankenkasse') || '';
 my $ort = $q->param('ort_krankenkasse') || '';
 my $ik = $q->param('ik_krankenkasse') || 0;
 my $zik = $q->param('zik_krankenkasse') || '';
+my $zik_typ = $q->param('zik_typ') || 0;
 my $postfach = $q->param('postfach_krankenkasse') || '';
 my $bemerkung = $q->param('bemerkung_krankenkasse') || '';
+my $beleg_ik = $q->param('beleg_ik') || '';
+my $pubkey = '';
 
 my $speichern = $q->param('Speichern');
 
@@ -100,7 +103,7 @@ print '<tr>';
 print "<td><input type='text' name='ik_krankenkasse' value='$ik' size='9'></td>";
 print "<td><input type='text' name='name_krankenkasse' value='$name' size='40'></td>";
 print "<td><input type='text' name='kname_krankenkasse' value='$kname' size='40'></td>";
-print "<td><input type='button' name='kasse_suchen' value='Suchen' onClick='return kassesuchen(name_krankenkasse,ik_krankenkasse,form);'></tr>";
+print "<td><input type='button' name='kasse_suchen' value='Suchen' onClick='return kassesuchen();'></tr>";
 print '</table>';
 print "\n";
 
@@ -165,15 +168,33 @@ print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
 print '<td><b>ZIK:</b></td>';
+print '<td><b>ZIK Typ:</b></td>';
 print '<td><b>Bemerkung:</b></td>';
 print '</tr>';
 
 # Eingabe Felder
 print "<tr>";
-print "<td><input type='text' name='zik_krankenkasse' value='$zik' size='9'></td>";
-print "<td><input type='text' name='bemerkung_krankenkasse' value='$bemerkung' size='60'></td>";
+print "<td valign='top'><input type='text' name='zik_krankenkasse' value='$zik' size='9'></td>";
+print "<td valign='top'><input type='text' name='zik_typ' value='$zik_typ' size='2' maxsize='1'></td>";
+print "<td valign='bottom'><textarea name='bemerkung_krankenkasse' cols='70' rows='2'>$bemerkung</textarea></td>";
 if ($zik ne '' && $zik > 0) {
-  print "<td><input type='button' name='kasse_aufrufen' value='Aufrufen' onClick='window.location=\"krankenkassenerfassung.pl?func=3&ik_krankenkasse=$zik\";'></td>";
+  print "<td valign='top'><input type='button' name='kasse_aufrufen' value='Aufrufen' onClick='window.location=\"krankenkassenerfassung.pl?func=3&ik_krankenkasse=$zik\";'></td>";
+}
+print '</tr>';
+print '</table>';
+print "\n";
+
+
+print '<tr>';
+print '<td>';
+print '<table border="0" align="left">';
+print '<tr>';
+print '<td><b>IK für Papierbelege:</b></td>';
+print '</tr>';
+print "<tr>";
+print "<td><input type='text' name='beleg_ik' value='$beleg_ik' size='9'></td>";
+if ($beleg_ik ne '' && $beleg_ik > 0) {
+  print "<td><input type='button' name='kasse_aufrufen' value='Aufrufen' onClick='window.location=\"krankenkassenerfassung.pl?func=3&ik_krankenkasse=$beleg_ik\";'></td>";
 }
 print '</tr>';
 print '</table>';
@@ -213,6 +234,7 @@ print '</td>';
 print '<td>';
 print '<input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.krankenkassen)"';
 print '</td>';
+print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
@@ -237,7 +259,7 @@ sub print_color {
 
 sub speichern {
   # Speichert die Daten in der Krankenkassen Datenbank
-  my $erg = $k->krankenkassen_ins($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung);
+  my $erg = $k->krankenkassen_ins($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik);
   return $erg;
 }
 
@@ -249,7 +271,7 @@ sub loeschen {
 
 sub aendern {
   # Ändert die Daten zur angegebenen Krankenkassen in der Datenbank
-  my $erg = $k->krankenkassen_update($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung);
+  my $erg = $k->krankenkassen_update($kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik,$ik);
   return $erg;
 }
 
@@ -259,6 +281,6 @@ sub hole_krank_daten {
   $ik = $k->krankenkasse_next_ik($ik) if ($func==1);
   $ik = $k->krankenkasse_prev_ik($ik) if ($func==2);
   $ik=$ik_alt if (!defined($ik));
-  ($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung)= $k->krankenkassen_krank_ik($ik);
+  ($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$pubkey,$zik_typ,$beleg_ik)= $k->krankenkassen_krank_ik($ik);
   return;
 }
