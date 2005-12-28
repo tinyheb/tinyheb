@@ -100,33 +100,56 @@ print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind'
 print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl\",\"frauenauswahl\",\"scrollbar=yes,innerwidth=700,innerheight=400\");'></td>";
 print "</tr>";
 # Informationen zur Krankenkasse ausgeben
+my $text='';
 if ($name_krankenkasse ne '') {
   # prüfen ob zu ik Zentral IK vorhanden ist
-  my ($zik)=$k->krankenkasse_sel("ZIK",$ik_krankenkasse);
+  my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
   my $test_ind = $h->parm_unique('IK'.$zik);
   my ($name_zik)=$k->krankenkasse_sel("NAME",$zik);
-  print "<tr>";
-  my $text='';
   if (defined($zik) && $zik > 0) {
-    $text.="zentral IK vorhanden: $zik ($name_zik)";
+    $text.="Datenannahmestelle: $zik ($name_zik). ";
   } else {
-    $text .= "keine zentral IK vorhanden";
+    $text .= "keine zentral Datenannahmestelle vorhanden";
   }
 
   if (defined($test_ind)) { # ZIK als Annahmestelle vorhanden
     if ($test_ind == 0) {
-      $text .= " Datenaustausch im Test Rechnung muss auf Papier erstellt werden";
+      $text .= "Testphase, Rechnung auf Papier erstellen.\n";
     } elsif ($test_ind == 1) {
-      $text .= "Datenaustausch in der Erprobungsphase Rechnung muss auf Papier und per Mail erstellt werden";
+      $text .= "Erprobungsphase, Rechnung auf Papier und Mail erstellen.\n";
     } elsif ($test_ind == 2) {
-      $text .= "Datenaustausch in Produktion Rechnung muss per Mail erstellt werden";
+      $text .= "Produktion, Rechnung per Mail erstellen.\n";
     } else {
-      $text .= "Falsch Parametrisiert, bitte Parameter für Zentral-IK prüfen";
+      $text .= "Falsch Parametrisiert, bitte Parameter für Datenannahmestelle prüfen!\n";
     }
   } else {
-    $text .= " kein elektronischer Datenaustausch, Rechnung muss auf Papier erstellt werden";
+    $text .= "kein elektronischer Datenaustausch, Rechnung auf Papier erstellen.\n";
   }
-  print "<td colspan='5'><input type='text' class='disabled' disabled name='zik' value='$text' size='113'>";
+}
+
+# Infos zur Rechnungsanschrift nur wenn Krankenkasse vorhanden ist
+if (defined($ik_krankenkasse) && $ik_krankenkasse ne '') {
+  my ($beleg_ik,$beleg_typ)=$k->krankenkasse_beleg_ik($ik_krankenkasse);
+  my $beleg_parm = $h->parm_unique('BELEGE');
+  $beleg_typ=1 if(!(defined($beleg_parm)) || $beleg_parm != 1);
+  if ($beleg_typ==1) {
+    $text .= "Rechnung wird unmittelbar an Krankenkasse geschickt\n";
+  } elsif($beleg_typ==2) {
+    my ($name_beleg)=$k->krankenkasse_sel("NAME",$beleg_ik);
+    $text .= "Rechnung über direkt verknüpfte Belegannahmestelle $beleg_ik ($name_beleg)\n";
+  } elsif($beleg_typ==3) {
+    my ($name_beleg)=$k->krankenkasse_sel("NAME",$beleg_ik);
+    my ($ktr,$da)=Heb_krankenkassen->krankenkasse_ktr_da($ik_krankenkasse);
+    my ($name_ktr)=$k->krankenkasse_sel("NAME",$ktr);
+    $text .= "Rechnung w/ zentralem Kostenträger $ktr ($name_ktr) an Belegannahmestelle $beleg_ik ($name_beleg)\n";
+  } else {
+    $text .= "unbekannte Belegannahmestelle, Bitte benachrichtigen Sie den Software Ersteller\n";
+  }
+}
+
+if ($text ne '') {
+  print "<tr>";
+  print "<td colspan='6'><textarea name='hinweise' cols='112' rows='2' class='disabled' disabled >$text</textarea>";
   print "</td>";
   print "</tr>";
 }
