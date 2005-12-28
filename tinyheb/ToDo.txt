@@ -1,7 +1,9 @@
 Offen:
-02.10.05
-In Stammdatenmaske und Datenbank wird Feld für Anzahl der Kinder benötigt.
+10.10.05
+Bei Änderung Vorsorgeuntersuchung wird Materialpauschale zweitesmal gespeichert.
+Das darf nicht sein.
 
+02.10.05
 Für privat Versicherte muss Rechnung erstellt werden können.
 
 01.10.05
@@ -9,9 +11,6 @@ Krankenkassen Menue auf neue Plausi überarbeiten.
 
 21.08.05
 Auwertung, für welche Frauen existieren noch Positionen in Bearbeitung
-
-20.08.05
-Summen für Rechnungen ausgeben, offene Rechnungen, erl. Rechnungen
 
 24.07.05
 generelles stylesheet Heb.css einführen, um die Textgröße auf die optimale Größe zu setzen.
@@ -31,11 +30,26 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+18.12.05
+Wenn Begründung erfasst und gespeichert wird, muss danach auf default gestellt werden.
+
+
+12.12.05
+Es wurde bei Pos 4 nicht automatisch erkannt das Nacht ist und nichts gespeichert,
+Wenn Positionsnummer ersetzt wird w/ SaSoNa, muss ggf. auch Kilometer geändert werden?
+Es muss Prüfun auf zweitesmal gemacht  werden, z.B. 2 Hausbesuch am gleichen Tag.
+
+
+02.12.05
+In Stammdatenmaske und Datenbank wird Feld für Anzahl der Kinder benötigt.
+
+
 25.09.05
 Plausiprüfung bei "entgültig Drucken"
 harte Prüfung: IK muss gültig sein
 weiche Prüfung: Vorname, Nachname, PLZ, Ort, Strasse,geb_frau, geb_kind,
 kvnr, kvnr_gueltig.
+Summen für Rechnungen ausgeben, offene Rechnungen, erl. Rechnungen
 
 11.09.05
 Wenn PLZ nur 4-stellig in Datenbank gespeichert ist, muss der Wert trotzdem 5-stellig angezeigt werden.
