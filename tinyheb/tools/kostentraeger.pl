@@ -20,7 +20,7 @@ if ($option{h}) {
   print "
  usage:  $0 options dateien pfad
  -v <-> debug/verbose
- -c <-> check
+ -c <-> check (unbedingt notwendig, wenn update gemacht werden soll)
  -o <-> formatierte ausgabe
  -u <-> update
  -n <-> not equal ausgabe ungleiche kassen
@@ -90,6 +90,8 @@ LINE:while ($zeile=<FILE>) {
     my $asp_name = ''; # Ansprechpartner
     my $asp_tel = ''; # Tel. Ansprechpartner
     my $bemerkung = ''; # zusätzliche Informationen zur KK
+    my $zik_typ = 0; # Typ der Zentral IK 0 keine Zuordnung
+    my $beleg_ik = 0; # Gibt es Belegannahmestelle
     print "--------------KRANKENKASSE ANFANG\n" if $debug;
     until ($zeile =~ /\AUNT/) {
       print "ZEILE $zeile\n" if $debug;
@@ -113,24 +115,41 @@ LINE:while ($zeile=<FILE>) {
       if ($zeile =~ /\AVKG/) {
 	my @erg = split '\+',$zeile;
 	# Art der Verknüpfung ist 3 = Verweis auf Dateiannahmestelle oder
-	# Art der Verknüpfung ist 9 = Verweis auf Papierannahmestelle
+	
 	# Verweis ist nicht auf sich selbst
 	# Art der Anlieferung ist 7 = digitalisiert
 	# oder Papierannahmestelle (9) und Abrechnungscode 50 = Hebamme
 	$erg[9]=-1 unless(defined($erg[9]));
-	if (($erg[1]==3 && $erg[5]==7 && $erg[2]!=$idk ) || ($erg[1]==9 && $erg[9]==50) && $erg[2] != $idk) {
+	if ($erg[1]==3 && $erg[5]==7 && $erg[2]!=$idk ) {
 	  $zentral_idk=$erg[2];
-	  $bemerkung = "Zentral IK ohne Kommentar $zeile" if ($erg[1]==3 && $erg[5]==7);
-	  $bemerkung = "Papierannahmestelle für Hebammen wegen Abrechnungscode $erg[9] und $zeile" if ($erg[1]==9 && $erg[9]==50);
+	  $bemerkung .= "Zentral IK mit Entschlüsselungsbefugnis w/ $zeile\n";
+	  $zik_typ=3; # Datenannamestelle mit Entschlüsselungsbefugnis
 	}
+
 	# Art der Verknüpfung = 1 Verweis auf Kostenträger
 	# Abrechnungscode = 00 alle Leistungsarten oder 50 Hebammen
 	# Verweis ist nicht auf sich selbst
 	if (($erg[1]==1 && ($erg[9]==00 || $erg[9]==50) && $erg[2]!=$idk)) {
 	  $zentral_idk=$erg[2];
-	  $bemerkung = "Verweis auf zentralen Kostenträger w/ $zeile";
+	  $zik_typ=1; # zentraler Kostenträger
+	  $bemerkung .= "Verweis auf zentralen Kostenträger w/ $zeile\n";
 	}
-#	print "--> @erg\n";
+
+	# Art der Verknüpfung ist 9 = Verweis auf Papierannahmestelle
+	# Verweis ist nicht auf sich selbst
+	# Abrechnungscode 50=Hebamme oder 99 für nicht aufgeführte Gruppen
+	# Abrechnungscode 00=für alle Leistungsarten
+	# Art der Datenanlieferung ist 21=Rechnung Papier oder 
+	# Art der Datenanlieferung ist 28 beinhaltet 21
+	#
+	if ($erg[1]==9 && 
+	    ($erg[9]==50 || $erg[9]==99 || $erg[9]==0) && 
+	    ($erg[5]==28 || $erg[5]==21) &&
+	    $erg[2] != $idk) {
+	  $beleg_ik=$erg[2];
+	  $bemerkung .= "Belegannahme w/ $zeile\n";
+	}
+	#	print "--> @erg\n";
       }
       $bemerkung =~ s/'//g;
 
@@ -198,20 +217,23 @@ LINE:while ($zeile=<FILE>) {
     $asp_tel = '' unless(defined($asp_tel));
     $kasse .= "$asp_tel\t";
     $kasse .= "$zentral_idk\t";
-    $kasse .= "$bemerkung\n";
+    $kasse .= "$bemerkung\t";
+    $kasse .= "\t"; # Pubkey überspringen
+    $kasse .= "$zik_typ\t";
+    $kasse .= "$beleg_ik\n";
 
     print $kasse if($ausgabe);
     print "--------------KRANKENKASSE ENDE\n" if $debug;
-    my ($k_ik,$k_kname,$k_name,$k_strasse,$k_plz_haus,$k_plz_post,$k_ort,$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung)= $k->krankenkassen_krank_ik($idk);
+    my ($k_ik,$k_kname,$k_name,$k_strasse,$k_plz_haus,$k_plz_post,$k_ort,$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung,$k_pubkey,$k_zik_typ,$k_beleg_ik)= $k->krankenkassen_krank_ik($idk);
     if ($check) {
-      my ($ik_n,$kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n) = split "\t",$kasse;
+      my ($ik_n,$kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$pubkey_n,$zik_typ_n,$beleg_ik_n) = split "\t",$kasse;
       $plz_haus_n=0 if ($plz_haus_n eq '');
       $plz_post_n=0 if ($plz_post_n eq '');
       $bemerkung_n='' unless (defined($bemerkung_n));
       if (!defined($k_ik)) {
 	print "Neue Kasse: $kasse";
 	$c_neu++;
-	$k->krankenkassen_ins($idk,$kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n) if ($update);
+	$k->krankenkassen_ins($idk,$kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ_n,$beleg_ik_n) if ($update);
       }
       if (defined($k_ik)) {
 	if ($k_kname eq $kname_n && 
@@ -223,7 +245,10 @@ LINE:while ($zeile=<FILE>) {
 	    $k_postfach eq $postfach_n &&
 	    $k_asp_name eq $asp_name_n &&
 	    $k_asp_tel eq $asp_tel_n  &&
-	    $k_zik eq $zik_n
+	    $k_zik eq $zik_n &&
+	    $k_bemerkung eq $bemerkung_n &&
+	    $k_zik_typ == $zik_typ_n &&
+	    $k_beleg_ik == $beleg_ik_n
 	   ) {
 	  $c_gleich++;
 	} else {
@@ -231,7 +256,7 @@ LINE:while ($zeile=<FILE>) {
 	  if ($aus_ungleich) {
 	    print "----geaenderte Kasse $k_ik\n";
 	    print "war schon im Datenhaushalt neu aus Datei $file\n" if(defined($alle_kassen{$k_ik}));
-	    print "ALT\t\tNEU\n";
+	    print "ALT\t\t\tNEU\n";
 	    print "NAME $k_name\t\t$name_n\n" if(!($k_name eq $name_n));
 	    print "KNAME $k_kname\t\t$kname_n\n" if(!($k_kname eq $kname_n));
 	    print "$k_strasse\t\t$strasse_n\n" if(!($k_strasse eq $strasse_n));
@@ -241,11 +266,13 @@ LINE:while ($zeile=<FILE>) {
 	    print "$k_postfach\t\t$postfach_n\n" if(!($k_postfach eq $postfach_n));
 	    print "$k_asp_name\t\t$asp_name_n\n" if(!($k_asp_name eq $asp_name_n));
 	    print "$k_asp_tel\t\t$asp_tel_n\n" if(!($k_asp_tel eq $asp_tel_n));
-	    print "$k_zik\t\t$zik_n\n" if(!($k_zik eq $zik_n));
-	    print "$k_bemerkung\t\t$bemerkung_n\n" if(!($k_bemerkung eq $bemerkung_n));
+	    print "ZIK\t$k_zik\t\t$zik_n\n" if(!($k_zik eq $zik_n));
+	    print "ZIK_TYP\t$k_zik_typ\t\t$zik_typ_n" if (!($k_zik_typ == $zik_typ_n));
+	    print "BELEG_IK\t$k_beleg_ik\t$beleg_ik_n" if (!($k_beleg_ik == $beleg_ik_n));
+	    print "BEM\t$k_bemerkung\t\t$bemerkung_n\n" if(!($k_bemerkung eq $bemerkung_n));
 	  }
 	  # update auf Datenbank
-	  $k->krankenkassen_update($kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$k_ik) if ($update);
+	  $k->krankenkassen_update($kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ,$beleg_ik_n,$k_ik) if ($update);
 	}
       }
     }
