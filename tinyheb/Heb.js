@@ -1,10 +1,5 @@
 //alert("Heb.js wird geladen");
 
-function kassesuchen(name,ik,formular) {
-// öffnet Fenster in dem eine Krankenkasse ausgewählt werden kann
-open("kassenauswahl.pl?name="+name.value+"&ik="+ik.value,"kassenwahl","scrollbars=yes,innerwidth=700,height=400");
-  };
-
 function haupt() {
   // springt von einem Untermenue ins Hauptmenue
 open("../hebamme.html","_top");
