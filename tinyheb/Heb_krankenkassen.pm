@@ -243,7 +243,11 @@ sub krankenkasse_beleg_ik {
   if (defined($ktr) && $ktr > 0) {
     ($beleg_ik)=Heb_krankenkassen->krankenkasse_sel("BELEG_IK",$ktr);
     # Typ = 3, IK verweist über zentralen Kostenträger an Belegannahmestelle
-    return ($beleg_ik,3) if(defined($beleg_ik) && $beleg_ik > 0);
+    if(defined($beleg_ik) && $beleg_ik > 0) {
+      return ($beleg_ik,3);
+    } else {
+      return ($ik,1);
+    }
   } else {
     return ($ik,1);
   }
