@@ -2,9 +2,9 @@ function loeschen() {
   open("krankenkassenerfassung.pl","_top");
 };
 
-function kassesuchen(name,ik,formular) {
+function kassesuchen() {
   // öffnet Fenster in dem eine Krankenkasse ausgewählt werden kann
-  open("kassenauswahl.pl?name="+name.value+"&ik="+ik.value,"kassenwahl","scrollbars=yes,width=800");
+  open("kassenauswahl.pl","kassenwahl","scrollbars=yes,width=800,height=400");
 };
 
 function next_satz(formular) {
