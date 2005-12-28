@@ -23,7 +23,7 @@ sub new {
   $dbh = Heb->connect;
   $krank_such = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
 			      "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL, ".
-			      "ZIK, BEMERKUNG ".
+			      "ZIK, BEMERKUNG, PUBKEY, ZIK_TYP, BELEG_IK ".
 			      "from Krankenkassen where ".
 			      "NAME LIKE ? and ".
 			      "PLZ_HAUS LIKE ? and ".
@@ -94,10 +94,10 @@ sub krankenkassen_ins {
   my $krankenkassen_ins = $dbh->prepare("insert into Krankenkassen ".
 					"(IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
 					"PLZ_POST,ORT,POSTFACH, ".
-					"ASP_NAME,ASP_TEL,ZIK,BEMERKUNG) ".
+					"ASP_NAME,ASP_TEL,ZIK,BEMERKUNG,ZIK_TYP,BELEG_IK) ".
 					"values (?,?,?,?,?,?,".
 					"?,?,".
-					"?,?,?,?);")
+					"?,?,?,?,?,?);")
     or die $dbh->errstr();
   my $erg = $krankenkassen_ins->execute(@_)
     or die $dbh->errstr();
@@ -107,13 +107,15 @@ sub krankenkassen_ins {
 sub krankenkassen_update {
   # speichert geänderte Daten ab
   shift;
+  my @ein=@_;
   # updaten an DB vorbereiten
   my $krankenkassen_up = $dbh->prepare("update Krankenkassen set ".
 				       "KNAME=?,NAME=?,STRASSE=?,".
 				       "PLZ_HAUS=?,PLZ_POST=?,ORT=?,".
 				       "POSTFACH=?,".
 				       "ASP_NAME=?,ASP_TEL=?,ZIK=?, ".
-				       "BEMERKUNG=? ".
+				       "BEMERKUNG=?,ZIK_TYP=?,".
+				       "BELEG_IK=? ".
 				       "where IK=?;")
     or die $dbh->errstr();
   my $erg = $krankenkassen_up->execute(@_)
@@ -179,7 +181,7 @@ sub krankenkassen_krank_ik {
   
   my $krank_ik = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
 			       "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL,".
-			       "ZIK,BEMERKUNG ".
+			       "ZIK,BEMERKUNG,PUBKEY,ZIK_TYP,BELEG_IK ".
 			       "from Krankenkassen where IK = ?;")
     or die $dbh->errstr();
   $krank_ik->execute(@_) or die $dbh->errstr();
@@ -191,5 +193,61 @@ sub krankenkassen_krank_ik {
   }
   return @erg;
 }
+
+
+sub krankenkasse_ktr_da {
+  # liefert zu einer Krankenkasse die Kostenträger IK
+  # und die dazugehörige IK der Datenannahmestelle
+  # wenn ik nicht auf einen Kostenträger verweist, ist die Kasse
+  # der Kostenträger dann wird die IK als Ergebniss geliefert
+  shift;
+
+  my ($ik)=@_;
+  my ($zik,$zik_typ)=Heb_krankenkassen->krankenkasse_sel("ZIK,ZIK_TYP",$ik);
+  my $ktr=0;
+  my $da=0;
+  my $da_typ=0;
+  if ($zik_typ==0) {
+    $ktr=$ik;
+    $da=0;
+  } elsif($zik_typ==1) {
+    $ktr=$zik;
+    ($da,$da_typ)=Heb_krankenkassen->krankenkasse_sel("ZIK,ZIK_TYP",$ktr);
+    $da=0 if(!defined($da_typ) || $da_typ != 3);
+  } elsif($zik_typ==3) {
+    $ktr=$ik;
+    $da=$zik;
+  }
+  return ($ktr,$da);
+}
+
+sub krankenkasse_beleg_ik {
+  # liefert zu einer Krankenkasse die IK Nummer, an die Belege
+  # geschickt werden müssen
+  # Ergebniss sind zwei Werte: IK Nummer und Typ
+  # IK Nummer an die Belege gehen
+  # Typ = 1, Belege gehen an die übergebene IK
+  # Typ = 2, IK verweist unmittelbar auf Belegannahmestelle
+  # Typ = 3, IK verweist über zentralen Kostenträger an Belegannahmestelle
+  shift;
+
+  my ($ik)=@_;
+  my $beleg_ik=0;
+  my $typ=1;
+
+  # Typ = 2, IK verweist unmittelbar auf Belegannahmestelle
+  ($beleg_ik)=Heb_krankenkassen->krankenkasse_sel("BELEG_IK",$ik);
+  return ($beleg_ik,2) if(defined($beleg_ik) && $beleg_ik > 0);
+
+  my ($ktr,$da)=Heb_krankenkassen->krankenkasse_ktr_da($ik);
+  if (defined($ktr) && $ktr > 0) {
+    ($beleg_ik)=Heb_krankenkassen->krankenkasse_sel("BELEG_IK",$ktr);
+    # Typ = 3, IK verweist über zentralen Kostenträger an Belegannahmestelle
+    return ($beleg_ik,3) if(defined($beleg_ik) && $beleg_ik > 0);
+  } else {
+    return ($ik,1);
+  }
+}
+
 
 1;
