@@ -29,7 +29,8 @@ my $hint='';
 my $id =$q->param('id') || 0;
 my $id2 =$q->param('id2') || 0;
 my $pname = $q->param('pname') || '';
-my $pvalue = $q->param('pvalue') || '';
+my $pvalue = $q->param('pvalue');
+$pvalue = '' unless(defined($pvalue));
 my $pbeschreibung = $q->param('pbeschreibung') || '';
 
 my $speichern = $q->param('Speichern');
@@ -80,7 +81,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body bgcolor=white>';
 print '<div align="center">';
-print '<h1>Parameter $Revision: 1.2 $ <br>$Date: 2005-08-20 16:04:40 $</h1>';
+print '<h1>Parameter $Revision: 1.3 $ <br>$Date: 2005-12-28 18:03:58 $</h1>';
 print '<hr width="100%">';
 print '</div><br>';
 # Formular ausgeben
