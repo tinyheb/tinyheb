@@ -120,7 +120,8 @@ LINE:while ($zeile=<FILE>) {
 	# Art der Anlieferung ist 7 = digitalisiert
 	# oder Papierannahmestelle (9) und Abrechnungscode 50 = Hebamme
 	$erg[9]=-1 unless(defined($erg[9]));
-	if ($erg[1]==3 && $erg[5]==7 && $erg[2]!=$idk ) {
+	if ($erg[1]==3 && $erg[5]==7 && $erg[2]!=$idk && 
+	    ($erg[9]==00 || $erg[9]==50)) {
 	  $zentral_idk=$erg[2];
 	  $bemerkung .= "Zentral IK mit Entschlüsselungsbefugnis w/ $zeile\n";
 	  $zik_typ=3; # Datenannamestelle mit Entschlüsselungsbefugnis
