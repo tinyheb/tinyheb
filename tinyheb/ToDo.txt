@@ -1,8 +1,6 @@
 Offen:
-10.10.05
-Bei Änderung Vorsorgeuntersuchung wird Materialpauschale zweitesmal gespeichert.
-Das darf nicht sein.
-
+31.12.05
+Wenn es sich um Zwillinge handelt, muss Zuschlag gerechnet werden. Pro Kind
 02.10.05
 Für privat Versicherte muss Rechnung erstellt werden können.
 
@@ -24,12 +22,16 @@ Plausiprüfung bei der Kilometer Erfassung, wann Tag und wann Nacht und nur eins 
 In Rechnungsposten Erfassung (rechpos.pl):
 - es soll nur dann KM erfassbar sein, wenn wirklich KM erfasst werden müssen.
 - Wenn DAUER bei Leistungsart angegeben ist, prüfen, ob Begründung notwendig.
-- wenn Positionsnummer mit Zuschlag gelöscht wird, Zuschlag auch löschen
+
 
 
 
 ----------------------------------------------------------------
 Erledigt:
+31.12.05
+Bei Änderung Vorsorgeuntersuchung wird Materialpauschale zweitesmal gespeichert. War Anforderung vom 10.10.05
+- wenn Positionsnummer mit Zuschlag gelöscht wird, Zuschlag auch löschen. War Anforderung vor dem 09.07.05
+
 18.12.05
 Wenn Begründung erfasst und gespeichert wird, muss danach auf default gestellt werden.
 
