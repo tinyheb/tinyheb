@@ -97,7 +97,7 @@ print "<td><input type='text' class='disabled' disabled name='vorname' value='$v
 print "<td><input type='text' class='disabled' disabled name='nachname' value='$nachname' size='40'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_frau' value='$geb_frau' size='10'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind' value='$geb_kind' size='10'></td>";
-print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl\",\"frauenauswahl\",\"scrollbar=yes,innerwidth=700,innerheight=400\");'></td>";
+print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl\",\"frauenauswahl\",\"scrollbars=yes,innerwidth=750,innerheight=400\");'></td>";
 print "</tr>";
 # Informationen zur Krankenkasse ausgeben
 my $text='';
