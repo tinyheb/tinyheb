@@ -53,20 +53,22 @@ my $func = $q->param('func') || 0;
 print $q->header ( -type => "text/html", -expires => "-1d");
 
 if ($auswahl eq 'Neu' && defined($abschicken)) {
-  speichern();
+  $hint=speichern($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke);
   $entfernung_tag=0;
   $entfernung_nacht=0;
+  $begruendung='';
 }
 
 if ($auswahl eq 'Ändern' && defined($abschicken)) {
   aendern();
-  $entfernung_tag=0;
-  $entfernung_nacht=0; 
+  hole_daten();
   $auswahl='Neu';
 }
 
 if ($func == 3) {
-  loeschen();
+  loeschen($leist_id);
+  $hint='';
+  $auswahl='Neu';
 }
 
 if ($func == 2) {
@@ -284,15 +286,18 @@ sub printbox {
 # Routinen zum Speichern und Ändern
 sub speichern {
 
+  my ($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke)=@_;
+
   my $zuschlag='';
+  my $hint='';
 
   if ($frau_id == 0) {
     $hint .= "Bitte Frau auswählen";
-    return;
+    return $hint;
   }
   if ($posnr eq '') {
     $hint .= "Keine PosNr. gewählt, nichts gespeichert";
-    return;
+    return $hint;
   }
 
   # prüfen ob Uhrzeit erfasst wurde, wenn ja, muss es gültige Zeit sein
@@ -300,12 +305,12 @@ sub speichern {
     if (!($d->check_zeit($zeit_von))) {
       $hint .= '\nkeine gültige Uhrzeit von erfasst, nichts gespeichert';
       $hscript = 'document.rechpos.zeit_von.focus();';
-      return;
+      return $hint;
     }
     if (!($d->check_zeit($zeit_bis))) {
       $hint .= '\nkeine gültige Uhrzeit bis erfasst, nichts gespeichert';
       $hscript = 'document.rechpos.zeit_bis.focus();';
-      return;
+      return $hint;
     }
   }
   
@@ -314,7 +319,7 @@ sub speichern {
   if ($datum_l eq 'error') {
     $hint .= "ungültiges Datum erfasst, nichts gespeichert";
     $hscript = 'document.rechpos.datum.focus()';
-    return;
+    return $hint;
   }
   # Entfernung konvertieren
   $entfernung_tag =~ s/,/\./g;
@@ -326,17 +331,6 @@ sub speichern {
     $entfernung_nacht /= $anzahl_frauen;
   }
 
-  # prüfen ob andere Positionsnummer w/ Zweitesmal genutzt werden muss
-  # wird genau dann gemacht, wenn die Positionsnummer am gleichen Tag
-  # schon erfasst ist
-  my ($zweitesmal) = $l->leistungsart_such_posnr('ZWEITESMAL',$posnr,$datum_l);
-  if ($zweitesmal =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
-    if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr AND DATUM='$datum_l'")>0) {
-      $hint .= "Positionsnummer $posnr w/ Zweitesmal ersetzt durch $2";
-      $posnr=$2;
-    }
-  }
-
 
   # Wenn Sonntag angegeben ist, prüfen ob Sonntag und richtige PosNr
   my $dow=Day_of_Week($d->jmt($datum));
@@ -346,7 +340,7 @@ sub speichern {
     # print "Samstag erkannt\n";
     # prüfen ob es sich um andere Positionsnummer handelt
     if ($1 ne '+')  {
-      $hint .= "Positionsnummer $posnr w/ Samstag ersetzt durch $2";
+      $hint .= "Positionsnummer $posnr w/ Samstag ersetzt durch $2 ";
       $posnr = $2;
     } else {
       $zuschlag = $2;
@@ -358,7 +352,7 @@ sub speichern {
     # print "Sonntag erkannt\n";
     # prüfen ob es sich um andere Positionsnummer handelt
     if ($1 ne '+')  {
-      $hint .= "Positionsnummer $posnr w/ Sonntag oder Feiertag ersetzt durch $2";
+      $hint .= "Positionsnummer $posnr w/ Sonntag oder Feiertag ersetzt durch $2 ";
       $posnr = $2;
     } else {
       $zuschlag = $2;
@@ -370,7 +364,7 @@ sub speichern {
     # print "Sonntag erkannt\n";
     # prüfen ob es sich um andere Positionsnummer handelt
     if ($1 ne '+')  {
-      $hint .= "Positionsnummer $posnr w/ Nacht ersetzt durch $2";
+      $hint .= "Positionsnummer $posnr w/ Nacht ersetzt durch $2 ";
       $posnr = $2;
       # dann sind es auch Nachtkilometer
       $entfernung_nacht = $entfernung_tag;
@@ -382,6 +376,19 @@ sub speichern {
       $entfernung_tag = 0;
     }
   }    
+
+
+  # prüfen ob andere Positionsnummer w/ Zweitesmal genutzt werden muss
+  # wird genau dann gemacht, wenn die Positionsnummer am gleichen Tag
+  # schon erfasst ist
+  my ($zweitesmal) = $l->leistungsart_such_posnr('ZWEITESMAL',$posnr,$datum_l);
+  if ($zweitesmal =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr AND DATUM='$datum_l'")>0) {
+      $hint .= "Positionsnummer $posnr w/ Zweitesmal ersetzt durch $2 ";
+      $posnr=$2;
+    }
+  }
+
 
   
   my ($material) = $l->leistungsart_such_posnr('LEISTUNGSTYP',$posnr,$datum_l);
@@ -394,10 +401,10 @@ sub speichern {
       # alles ok
     } elsif ($l->leistungsart_pruef_zus($posnr,'NACHT') && ($d->zeit_h($zeit_von) <= 8 || $d->zeit_h($zeit_von) >= 20)) {
       # alles ok
-    } elsif (($l->leistungsart_pruef_zus($posnr,'SONNTAG') || $l->leistungsart_pruef_zus($posnr,'SAMSTAG') || $l->leistungsart_pruef_zus($posnr,'NACHT')) && ($dow < 6 || $dow==6 && $d->zeit_h($zeit_von) < 12) || $d->zeit_h($zeit_von)>8 && $d->zeit_h($zeit_von) > 20) {
+    } elsif (($l->leistungsart_pruef_zus($posnr,'SONNTAG') || $l->leistungsart_pruef_zus($posnr,'SAMSTAG') || $l->leistungsart_pruef_zus($posnr,'NACHT')) && ($dow < 6 || $dow==6 && $d->zeit_h($zeit_von) < 12) || $d->zeit_h($zeit_von)<8 && $d->zeit_h($zeit_von) > 20) {
       $hint .= '\nPositionsnummer nur zu bestimmten Tagen und Zeiten, es wurde nichts gespeichert';
       $hscript = 'document.rechpos.datum.select();document.rechpos.datum.focus()';
-      return;
+      return $hint;
     }
   }
 
@@ -414,7 +421,7 @@ sub speichern {
     if ($zeit_von eq '' || $zeit_bis eq '' || $dauer == 0) {
       $hint .= '\nBitte Zeit von, Zeit bis erfassen, nichts gespeichert';
       $hscript = 'document.rechpos.zeit_von.focus();';
-      return;
+      return $hint;
     }
     $preis = sprintf "%3.3u",($dauer / $l_fuerzeit) if ($fuerzeit_flag ne 'E');
     $preis = sprintf "%3.2f",($dauer / $l_fuerzeit) if ($fuerzeit_flag eq 'E');
@@ -438,6 +445,7 @@ sub speichern {
     $zuschlag=0 if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$zuschlag"));
   }
 
+
   # prüfen ob Zuschlag gespeichert werden muss
   if ($zuschlag ne '' && $zuschlag > 0) {
     my ($prozent,$ze_preis) = $l->leistungsart_such_posnr('PROZENT,EINZELPREIS',$zuschlag,$datum_l);
@@ -447,7 +455,7 @@ sub speichern {
     # Entfernung darf nicht 2mal gerechnet werden
     $entfernung_nacht=0;
     $entfernung_tag=0;
-    $leist_id=$l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis_neu,'',10);
+    $l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis_neu,'',10);
     $hint .= '\nZuschlag prozentual wurde zusätzlich gespeichert' if ($prozent > 0);
     $hint .= '\nZuschlag wurde zusätzlich gespeichert' if ($ze_preis > 0);
   }
@@ -462,7 +470,7 @@ sub speichern {
     $entfernung_nacht=0;
     $entfernung_tag=0;
     my ($ze_preis) = $l->leistungsart_such_posnr('EINZELPREIS',$m_zus,$datum_l);
-    $leist_id=$l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
+    $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
     $hint .= '\nMaterialpauschale wurde zusätzlich gespeichert';
   }
 
@@ -470,15 +478,44 @@ sub speichern {
   # prüfen, ob Materialpauschale für Zuschlag gerechnet werden muss
   # hier mit Vergleichswerten
   ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN1,ZUSATZGEBUEHREN2',$zuschlag,$datum_l);
-  matpausch($mat_zus,$mat_zus2,$datum_l);
+  $hint .= matpausch($mat_zus,$mat_zus2,$datum_l);
   ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN3,ZUSATZGEBUEHREN4',$zuschlag,$datum_l);
-  matpausch($mat_zus,$mat_zus2,$datum_l);
+  $hint .= matpausch($mat_zus,$mat_zus2,$datum_l);
   
 
   $entfernung_tag*=$anzahl_frauen;
   $entfernung_nacht*=$anzahl_frauen;
   $strecke='gesamt';
-  $begruendung='';
+  return $hint;
+}
+
+
+sub abh {
+  # prüfen gibt es Abhängige Positionsnummer für bestimmten Typ
+  # z.B. Samstag, Sonntag, Nacht (muss übergeben werden)
+  # wenn diese existiert wird die ID der entsprechenden Nummer
+  # als Ergebnis geliefert, undef sonst
+  
+  my ($posnr,$abh_posnr,$datum_l) = @_;
+  my ($l_posnr) = $l->leistungsart_such_posnr($abh_posnr,$posnr,$datum_l);
+  return undef unless(defined($l_posnr));
+  if ($l_posnr =~ /^(\+{0,1})(\d{1,3})$/ && $2 > 0) {
+    # print "$typ erkannt\n";
+    # prüfen ob es sich um andere Positionsnummer handelt
+#    if ($1 eq '+') {
+      # welche ID hat diese Posnr?
+      $l->leistungsdaten_werte($frau_id,"ID","POSNR=$2 AND DATUM='$datum_l'");
+      my ($id)=$l->leistungsdaten_werte_next();
+      return $id;
+#    }
+  }
+  if ($l_posnr =~ /(\+)(M)(\d{1,3})/ && $3 > 0) {
+    # Materialpauschalen
+    $l->leistungsdaten_werte($frau_id,"ID","POSNR='$2$3' AND DATUM='$datum_l'");
+    my ($id)=$l->leistungsdaten_werte_next();
+    return $id;
+  }
+  return undef;
 }
 
 
@@ -488,8 +525,10 @@ sub matpausch {
   # auf Material verweisst und Abhängigkeit zur Zeit besteht
   # der Vergleichswert wird aus Zusatzvermerk ermittelt
   my ($mat_zus,$mat_zus2,$datum_l) = @_;
+  my $hint='';
+
   # keine Prüfung, wenn Werte nicht definiert
-  return if (!defined($mat_zus2));
+  return '' if (!defined($mat_zus2));
   if ($mat_zus2 ne '' && $mat_zus =~ /(\+M)(\d{1,3})/ && $2 > 0) {
     my $m_zus='M'.$2;
     my $comp=0; # Flag ob gespeichert werden muss oder nicht
@@ -517,24 +556,107 @@ sub matpausch {
       $entfernung_nacht=0;
       $entfernung_tag=0;
       my ($ze_preis) = $l->leistungsart_such_posnr('EINZELPREIS',$m_zus,$datum_l);
-      $leist_id=$l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
+      $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
       $hint .= '\nAbhängige Materialpauschale wurde zusätzlich gespeichert';
     }
   }
+  return $hint;
 }
 
 
 sub loeschen {
 #  print "loeschen\n";
+  my ($leist_id)=@_;
+  # bevor gelöscht wird, genaue Daten zu entsprechendem Satz holen
+  my @erg=$l->leistungsdaten_such_id($leist_id);
+  my $posnr=$erg[1];
+  my $datum_l=$d->convert($erg[4]);
   $l->leistungsdaten_delete($frau_id,$leist_id);
+  
+  my $leist_id_loe=abh($posnr,'SAMSTAG',$datum_l);
+  loeschen($leist_id_loe) if(defined($leist_id_loe));
+
+  $leist_id_loe=abh($posnr,'SONNTAG',$datum_l);
+  loeschen($leist_id_loe) if(defined($leist_id_loe));
+
+  $leist_id_loe=abh($posnr,'NACHT',$datum_l);
+  loeschen($leist_id_loe) if(defined($leist_id_loe));
+
+  $leist_id_loe=abh($posnr,'ZUSATZGEBUEHREN1',$datum_l);
+  loeschen($leist_id_loe) if(defined($leist_id_loe));
+
+  $leist_id_loe=abh($posnr,'ZUSATZGEBUEHREN2',$datum_l);
+  loeschen($leist_id_loe) if(defined($leist_id_loe));
+
+  $leist_id_loe=abh($posnr,'ZUSATZGEBUEHREN3',$datum_l);
+  loeschen($leist_id_loe) if(defined($leist_id_loe));
+
+  $leist_id_loe=abh($posnr,'ZUSATZGEBUEHREN4',$datum_l);
+  loeschen($leist_id_loe) if(defined($leist_id_loe));
+
+  $leist_id_loe=abh($posnr,'ZWILLINGE',$datum_l);
+  loeschen($leist_id_loe) if(defined($leist_id_loe));
+
+
+  $leist_id_loe=abh($posnr,'ZWEITESMAL',$datum_l);
+  if(defined($leist_id_loe)) {
+    # Wenn es diese Position gibt, muss sie gelöscht werden und
+    # als erstesmal gespeichert werden.
+    my @erg=$l->leistungsdaten_such_id($leist_id_loe);
+    $l->leistungsart_zus($erg[1],'ZWEITESMAL',$datum_l);
+    my $werte='';
+    while (my $poszus=$l->leistungsart_zus_next()) {
+      $werte .= ',' if ($werte ne '');
+      $werte .= $poszus;
+    }
+    if ($l->leistungsdaten_werte($frau_id,"ID","(POSNR in ($werte) or POSNR=$erg[1]) and DATUM>='$datum_l'",'DATUM')) {
+      my ($id)=$l->leistungsdaten_werte_next();
+      my @erg=$l->leistungsdaten_such_id($id);
+      loeschen($id); # pos löschen und später erneut einfügen
+      my $datum_id_loe=$d->convert($erg[4]);
+      my $posnr=$erg[1];
+      $posnr=$werte if ($erg[1] == $posnr);
+      # Erneut speichern
+      $hint=speichern($erg[2],$posnr,$begruendung,$datum_id_loe,$erg[5].':00',$erg[6].':00',$erg[7],$erg[8],$erg[9],'anteilig');
+    }
+    $l->leistungsdaten_delete($frau_id,$leist_id_loe);
+  }
+
+
+  $leist_id_loe=abh($posnr,'EINMALIG',$datum_l);
+  if(defined($leist_id_loe)) {
+    # es muss noch geprüft werden, ob jetzt eine andere Positionsnummer
+    # w/ Einmalig gewählt werden muss
+    # zunächst Prüfen welche Positionsnummern relevant sind
+    my @erg=$l->leistungsdaten_such_id($leist_id_loe);
+    loeschen($leist_id_loe);
+    $l->leistungsart_zus($erg[1],'EINMALIG',$datum_l);
+    my $werte='';
+    while (my $poszus=$l->leistungsart_zus_next()) {
+      $werte .= ',' if ($werte ne '');
+      $werte .= $poszus;
+    }
+    if ($l->leistungsdaten_werte($frau_id,"ID","POSNR in ($werte) and DATUM>='$datum_l'")) {
+      my ($id)=$l->leistungsdaten_werte_next();
+      my @erg=$l->leistungsdaten_such_id($id);
+      loeschen($id); # pos löschen und später erneut einfügen
+      my $datum_id_loe=$d->convert($erg[4]);
+      my $posnr=$erg[1];
+      # Zuschlag für anderen Tag speichern
+      $hint=speichern($erg[2],$posnr,$begruendung,$datum_id_loe,$erg[5].':00',$erg[6].':00',$erg[7],$erg[8],$erg[9],'anteilig');
+    }
+    $l->leistungsdaten_delete($frau_id,$leist_id_loe);
+  }
+
+
   $leist_id=0;
 }
 
 sub aendern {
   return if ($frau_id==0 || $leist_id ==0);
-  loeschen();
-  speichern();
-
+  loeschen($leist_id);
+  $hint=speichern($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke);
+  $hint='';
 }
 
 
