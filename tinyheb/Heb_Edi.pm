@@ -434,6 +434,7 @@ sub SLGA {
   # Rahmendaten für Rechnung aus Datenbank holen
   $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
   my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
+  $betrag+=0.0; # entfernen der führenden Nullen
   $rechdatum =~ s/-//g;
 
   # 1. FKT Segment erzeugen
@@ -443,7 +444,7 @@ sub SLGA {
   # 3. GES Segment erzeugen
   # zunächst Rechnungsbetrag ermittelen
   my ($hilf,$betrag_slla)=Heb_Edi->SLLA($rechnr,$zik,$ktr);
-  if ($betrag_slla != $betrag) {
+  if ($betrag_slla ne $betrag) {
     if ($rechdatum > 20051006) {
       die "Betragsermittlung zu Papierrechnung unterschiedlich Edi:$betrag_slla, Papier: $betrag!!!\n";
     } else {
@@ -535,9 +536,15 @@ sub SLLA {
     # ENF Segment ausgeben
     if($ltyp ne 'M') { 
       # keine Materialpauschale
-      $erg .= Heb_Edi->SLLA_ENF($leistdat[1],$leistdat[4],$epreis,$anzahl);
+      if($epreis > 0) { # hier wird nicht prozentual gerechnet
+	$erg .= Heb_Edi->SLLA_ENF($leistdat[1],$leistdat[4],$epreis,$anzahl);
+	$gesamtsumme += sprintf "%.2f",($epreis*$anzahl);
+      } else {
+	$erg .= Heb_Edi->SLLA_ENF($leistdat[1],$leistdat[4],$leistdat[10],$anzahl);
+	$gesamtsumme += sprintf "%.2f",($leistdat[10]*$anzahl);
+      }
       $lfdnr++;
-      $gesamtsumme += sprintf "%.2f",($epreis*$anzahl);
+
       print "Summe: $gesamtsumme,",$epreis*$anzahl,"\n" if ($debug>100);
     } else {
       # Materialpauschale 
@@ -560,6 +567,8 @@ sub SLLA {
 
     # d. Kilometergeld ausgeben
     my $posnr_wegegeld='';
+    $leistdat[7] = sprintf "%.2f",$leistdat[7]; # w/ Rundungsfehlern
+    $leistdat[8] = sprintf "%.2f",$leistdat[8]; # w/ Rundungsfehlern
     $posnr_wegegeld='91' if ($leistdat[7] > 0 && $leistdat[7] <= 2);# Tag < 2
     $posnr_wegegeld='92' if ($leistdat[8] > 0 && $leistdat[8] <= 2);# Nacht < 2
     $posnr_wegegeld='93' if ($leistdat[7] > 0 && $leistdat[7] > 2); # Tag > 2
@@ -809,7 +818,7 @@ sub mail {
   $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
   my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
   # prüfen ob zu ik Zentral IK vorhanden ist
-  my ($zik)=$k->krankenkasse_sel("ZIK",$ik);
+  my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
   my $test_ind = $h->parm_unique('IK'.$zik);
   return undef if (!defined($test_ind)); # ZIK nicht als Annahmestelle vorhanden
 
