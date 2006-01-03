@@ -26,6 +26,7 @@ our $leistungsdaten_such_rechnr; # Sucht Leistungsdaten einer bestimmten Rechnun
 our $leistungsdaten_werte; # sucht werte für Frau
 our $pruef_zus; # zuschlagspflichtige Posnr
 our $leistungsart_such_werte; # suchen nach mehreren Leistungsarten
+our $zus; # welche werte verweisen auf Zuschlagspflichtige Posnr
 
 my $debug = 1;
 our $dbh; # Verbindung zur Datenbank
@@ -223,6 +224,24 @@ sub leistungsdaten_such_id {
 }
 
 
+sub leistungsart_zus {
+  # holt alle Positionsnummer, die auf bestimmten Wert verweisen
+  shift;
+  my $posnr=shift;
+  my $wert=shift;
+  my $datum=shift;
+  $zus = $dbh->prepare("select distinct POSNR from Leistungsart ".
+		       "where $wert=$posnr and ?>= GUELT_VON and ? <= GUELT_BIS;")
+    or die $dbh->errstr();
+  my $erg = $zus->execute($datum,$datum) or die $dbh->errstr();
+  return $erg if ($erg>0);
+  return 0;
+}
+
+sub leistungsart_zus_next {
+  return $zus->fetchrow_array();
+}
+
 
 sub leistungsart_pruef_zus {
   # prüft ob Positionsnummer zuschlagspflichtig ist
@@ -230,7 +249,7 @@ sub leistungsart_pruef_zus {
   my $posnr=shift;
   my $wert=shift;
   $pruef_zus = $dbh->prepare("select distinct $wert from Leistungsart ".
-				"where $posnr=$wert;")
+			     "where $posnr=$wert;")
     or die $dbh->errstr();
   my $erg = $pruef_zus->execute() or die $dbh->errstr();
   return $erg if ($erg>0);
@@ -321,7 +340,6 @@ sub leistungsdaten_werte {
   shift;
   my ($frau_id,$werte,$where,$order) = @_;
   if (defined($where) && $where ne '') {
-    $where =~ s/,/ and /g;
     $where = ' and '.$where;
   } else {
     $where = '';
