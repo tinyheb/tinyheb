@@ -115,7 +115,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.17 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.18 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -323,7 +323,7 @@ print '<td><input type="submit" name="abschicken" value="Speichern"</td>';
 print '<td><input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.stammdaten)"></td>';
 print '<td><input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.stammdaten)"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
-print '<td><input type="button" name="rechnung" value="Rechnung" onclick="rechnung_erfassen(document.stammdaten)"></td>';
+print '<td><input type="button" name="rechnung" value="Rechnungsposten erfassen" onclick="rechnung_erfassen(document.stammdaten)"></td>';
 # nächste Zeile
 print '<tr><td>&nbsp;</td>';
 print '<td><input type="button" name="drucken" value="Rech. Druck" onclick="druck(document.stammdaten)"></td>';
