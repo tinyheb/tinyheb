@@ -207,7 +207,7 @@ sub krankenkasse_ktr_da {
   my $ktr=0;
   my $da=0;
   my $da_typ=0;
-  if ($zik_typ==0) {
+  if (!defined($zik_typ) || $zik_typ==0) {
     $ktr=$ik;
     $da=0;
   } elsif($zik_typ==1) {
