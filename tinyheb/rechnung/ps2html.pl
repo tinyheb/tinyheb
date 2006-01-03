@@ -400,8 +400,8 @@ sub print_wegegeld {
     my $datum = $d->convert_tmj($erg[4]);
     $p->text({align => 'right'},4,$y1,$datum); # Datum andrucken
     my $entf=0;
-    $entf = sprintf "%.1f",$erg[7] if ($tn eq 'T');
-    $entf = sprintf "%.1f",$erg[8] if ($tn eq 'N');
+    $entf = sprintf "%.2f",$erg[7] if ($tn eq 'T');
+    $entf = sprintf "%.2f",$erg[8] if ($tn eq 'N');
     my $entfp = $entf;
     $entfp =~ s/\./,/g;
     $preis =~s/\./,/g;
