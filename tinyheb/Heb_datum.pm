@@ -40,6 +40,7 @@ sub convert {
   shift; # package namen vom Stack nehmen
 
   my ($eingabe_datum) = @_;
+  return unless(defined($eingabe_datum));
   return $eingabe_datum if ($eingabe_datum =~ /\d{1,4}-\d{1,2}-\d{1,2}/);
   my ($tag,$monat,$jahr) = split '\.',$eingabe_datum;
   return "error" if (!(defined($tag) && defined($monat) && defined($jahr)));
