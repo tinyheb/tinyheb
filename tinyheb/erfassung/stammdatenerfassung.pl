@@ -115,7 +115,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.18 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.19 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -410,7 +410,7 @@ sub hole_frau_daten {
   $entfernung =~ s/\./,/g;
   $geb_frau = '' if ($geb_frau eq '00.00.0000');
   $geb_kind = '' if ($geb_kind eq '00.00.0000');
-  $plz = sprintf "%5.5u",$plz if ($plz > 0);
+  $plz = sprintf "%5.5u",$plz if ($plz ne '' && $plz > 0);
   $plz = '' if ($plz == 0);
   $ik_krankenkasse='' if (!defined($ik_krankenkasse));
   
