@@ -296,19 +296,19 @@ sub speichern {
     return $hint;
   }
   if ($posnr eq '') {
-    $hint .= "Keine PosNr. gewählt, nichts gespeichert";
+    $hint .= "FEHLER: Keine PosNr. gewählt, nichts gespeichert";
     return $hint;
   }
 
   # prüfen ob Uhrzeit erfasst wurde, wenn ja, muss es gültige Zeit sein
   if ($zeit_von ne '' || $zeit_bis ne '') {
     if (!($d->check_zeit($zeit_von))) {
-      $hint .= '\nkeine gültige Uhrzeit von erfasst, nichts gespeichert';
+      $hint .= '\nFEHLER: keine gültige Uhrzeit von erfasst, nichts gespeichert';
       $hscript = 'document.rechpos.zeit_von.focus();';
       return $hint;
     }
     if (!($d->check_zeit($zeit_bis))) {
-      $hint .= '\nkeine gültige Uhrzeit bis erfasst, nichts gespeichert';
+      $hint .= '\nFEHLER: keine gültige Uhrzeit bis erfasst, nichts gespeichert';
       $hscript = 'document.rechpos.zeit_bis.focus();';
       return $hint;
     }
@@ -317,7 +317,7 @@ sub speichern {
   # Datum konvertieren
   my $datum_l = $d->convert($datum);
   if ($datum_l eq 'error') {
-    $hint .= "ungültiges Datum erfasst, nichts gespeichert";
+    $hint .= "FEHLER: ungültiges Datum erfasst, nichts gespeichert";
     $hscript = 'document.rechpos.datum.focus()';
     return $hint;
   }
@@ -402,7 +402,7 @@ sub speichern {
     } elsif ($l->leistungsart_pruef_zus($posnr,'NACHT') && ($d->zeit_h($zeit_von) <= 8 || $d->zeit_h($zeit_von) >= 20)) {
       # alles ok
     } elsif (($l->leistungsart_pruef_zus($posnr,'SONNTAG') || $l->leistungsart_pruef_zus($posnr,'SAMSTAG') || $l->leistungsart_pruef_zus($posnr,'NACHT')) && ($dow < 6 || $dow==6 && $d->zeit_h($zeit_von) < 12) || $d->zeit_h($zeit_von)<8 && $d->zeit_h($zeit_von) > 20) {
-      $hint .= '\nPositionsnummer nur zu bestimmten Tagen und Zeiten, es wurde nichts gespeichert';
+      $hint .= '\nFEHLER: Positionsnummer nur zu bestimmten Tagen und Zeiten, es wurde nichts gespeichert';
       $hscript = 'document.rechpos.datum.select();document.rechpos.datum.focus()';
       return $hint;
     }
@@ -419,7 +419,7 @@ sub speichern {
     # prüfen ob gültige Zeiten erfasst sind
     my $dauer = $d->dauer_m($zeit_bis,$zeit_von);
     if ($zeit_von eq '' || $zeit_bis eq '' || $dauer == 0) {
-      $hint .= '\nBitte Zeit von, Zeit bis erfassen, nichts gespeichert';
+      $hint .= '\nFEHLER: Bitte Zeit von, Zeit bis erfassen, nichts gespeichert';
       $hscript = 'document.rechpos.zeit_von.focus();';
       return $hint;
     }
@@ -442,7 +442,17 @@ sub speichern {
   my ($einmal_zus) = $l->leistungsart_such_posnr('EINMALIG',$posnr,$datum_l);
   if ($einmal_zus =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
     $zuschlag=$2;
-    $zuschlag=0 if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$zuschlag"));
+    if ($l->leistungsdaten_werte($frau_id,"ID,DATUM","POSNR=$zuschlag","DATUM")) {
+      my ($id,$datum1)=$l->leistungsdaten_werte_next();
+      $datum1 =~ s/-//g;
+      my $datum2 = $datum_l;
+      $datum2 =~ s/-//g;
+      if ($datum1 <= $datum2) {
+	$zuschlag=0;
+      } else {
+	loeschen($id); # Neues Datum ist kleiner als bisheriges
+      }      
+    }
   }
 
 
@@ -609,7 +619,7 @@ sub loeschen {
       $werte .= ',' if ($werte ne '');
       $werte .= $poszus;
     }
-    if ($l->leistungsdaten_werte($frau_id,"ID","(POSNR in ($werte) or POSNR=$erg[1]) and DATUM>='$datum_l'",'DATUM')) {
+    if ($l->leistungsdaten_werte($frau_id,"ID","(POSNR in ($werte) or POSNR=$erg[1])",'DATUM')) {
       my ($id)=$l->leistungsdaten_werte_next();
       my @erg=$l->leistungsdaten_such_id($id);
       loeschen($id); # pos löschen und später erneut einfügen
@@ -636,7 +646,7 @@ sub loeschen {
       $werte .= ',' if ($werte ne '');
       $werte .= $poszus;
     }
-    if ($l->leistungsdaten_werte($frau_id,"ID","POSNR in ($werte) and DATUM>='$datum_l'")) {
+    if ($l->leistungsdaten_werte($frau_id,"ID","POSNR in ($werte)","DATUM")) {
       my ($id)=$l->leistungsdaten_werte_next();
       my @erg=$l->leistungsdaten_such_id($id);
       loeschen($id); # pos löschen und später erneut einfügen
@@ -654,25 +664,38 @@ sub loeschen {
 
 sub aendern {
   return if ($frau_id==0 || $leist_id ==0);
+  # Werte der zu löschenden Position holen, falls bei Speichern etwas
+  # schief geht
+  my @erg=$l->leistungsdaten_such_id($leist_id);
   loeschen($leist_id);
+  $leist_id=0;
   $hint=speichern($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke);
-  $hint='';
+  if ($hint=~/FEHLER/g) {
+    # jetzt alte Daten wieder speichern
+    my $datum=$d->convert($erg[4]);
+    speichern($erg[2],$erg[1],$erg[3],$datum,$erg[5].':00',$erg[6].':00',$erg[7],$erg[8],$erg[9],'anteilig');
+    $hint='Änderung konnte nicht durchdeführt werden, wegen'.$hint;
+  } else {
+    $hint = '';
+  }
 }
 
 
 sub hole_daten {
 #  print "hole daten\n";
   my @erg=$l->leistungsdaten_such_id($leist_id);
-  $frau_id = $erg[2] || 0;
+#  $frau_id = $erg[2] || 0;
   $posnr = $erg[1] || '';
   $begruendung = $erg[3] || '';
   $datum = $erg[4];
   $zeit_von = $erg[5] || '';
   $zeit_bis = $erg[6] || '';
   $anzahl_frauen = $erg[9] || '1';
+  $erg[7] = 0 unless (defined($erg[7]));
   $entfernung_tag = $erg[7]*$anzahl_frauen || 0;
   $entfernung_tag = sprintf "%.2f",$entfernung_tag;
   $entfernung_tag =~ s/\./,/g;
+  $erg[8] = 0 unless (defined($erg[8]));
   $entfernung_nacht = $erg[8]*$anzahl_frauen || 0;
   $entfernung_nacht = sprintf "%.2f",$entfernung_nacht;
   $entfernung_nacht =~ s/\./,/g;
