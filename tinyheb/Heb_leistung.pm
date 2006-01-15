@@ -1,9 +1,23 @@
 #!/usr/bin/perl -wT
 
-# 21.12.2003
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# author: Thomas Baum
+# Copyright (C) 2003,2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 package Heb_leistung;
 
@@ -133,6 +147,18 @@ sub rechnung_such {
 sub rechnung_such_next {
   return $rech_such->fetchrow_array() or die $dbh->errstr();
 } 
+
+
+sub rechnung_up_werte {
+  # ändert vorgegebene Werte in der Rechnungsdatenbank
+  shift;
+  my $rech_id=shift;
+  my $werte=shift;
+  my $rech_up = $dbh->prepare("update Rechnung ".
+			      "set $werte where RECHNUNGSNR = ?;")
+    or die $dbh->errstr();
+  $rech_up->execute($rech_id) or die $dbh->errstr();
+}
 
 
 
