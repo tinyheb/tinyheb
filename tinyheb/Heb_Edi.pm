@@ -1,9 +1,23 @@
 #!/usr/bin/perl -wT
 
-# 08.10.2005
 # Package für elektronische Rechnungen
 
-# author: Thomas Baum
+# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 package Heb_Edi;
 
@@ -947,8 +961,9 @@ sub edi_update {
   # Rechnung und Leistungsdaten und hinterlegt da den neuen
   # Rechnungsstatus
   shift;
-  my ($rechnr,$ignore) = @_;
+  my ($rechnr,$ignore,$dateiname,$datum) = @_;
 
+  $datum =~ s/://g;
   # Rahmendaten für Rechnung aus Datenbank holen
   $l->rechnung_such("ZAHL_DATUM,BETRAGGEZ,BETRAG,STATUS","RECHNUNGSNR=$rechnr");
   my ($zahl_datum,$betraggez,$betrag,$status)=$l->rechnung_such_next();
@@ -962,6 +977,23 @@ sub edi_update {
   while (my ($id)=$l->leistungsdaten_such_rechnr_next()) {
     $l->leistungsdaten_up_werte($id,"STATUS=$status");
   }
+  # jetzt noch Datum, Auftragsdatei und Nutzdatendatei in DB abspeichern.
+  my $auf = '';
+  my $nutz = '';
+  # Auftragsdatei lesen
+  open AUF, "$path/tmp/$dateiname.AUF" or die "Konnte Auftragsdatei nicht für speichern in DB öffnen $!";
+ LINE: while (my $zeile=<AUF>) {
+    $auf .= $zeile;
+  }
+  close AUF;
+  # Nutzdatendatei lesen
+  open NUTZ, "$path/tmp/$dateiname" or die "Konnte Nutzdatendatei nicht für speichern in DB öffnen $!";
+ LINE: while (my $zeile=<NUTZ>) {
+    $nutz .= $zeile;
+  }
+  close NUTZ;
+  $l->rechnung_up_werte($rechnr,"EDI_DATUM='$datum',EDI_NUTZ=\"$nutz\",EDI_AUFTRAG=\"$auf\"");
+
   return 1;
 }
 1;
