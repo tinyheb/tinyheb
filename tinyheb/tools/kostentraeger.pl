@@ -126,6 +126,14 @@ LINE:while ($zeile=<FILE>) {
 	  $bemerkung .= "Zentral IK mit Entschlüsselungsbefugnis w/ $zeile\n";
 	  $zik_typ=3; # Datenannamestelle mit Entschlüsselungsbefugnis
 	}
+	if ($erg[1]==2 && $erg[5]==7 &&
+	    ($erg[9]==00 || $erg[9]==50)) {
+	  if ($zentral_idk==0) {
+	    $zentral_idk=$erg[2];
+	    $bemerkung .= "Zentral IK ohne Entschlüsselungsbefugnis w/ $zeile\n";
+	    $zik_typ=2; # Datenannahmestelle ohne Entschlüsselungsbefugnis
+	  }
+	}
 
 	# Art der Verknüpfung = 1 Verweis auf Kostenträger
 	# Abrechnungscode = 00 alle Leistungsarten oder 50 Hebammen
