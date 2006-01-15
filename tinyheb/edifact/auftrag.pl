@@ -1,8 +1,24 @@
 #!/usr/bin/perl -w
 
-# Version 0.1 
 # erstellen der Auftragsdatei für den Datenaustausch mit den
 # gestzlichen Krankenkassen
+
+# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 use strict;
 use Getopt::Long;
@@ -60,6 +76,12 @@ my ($dateiname,$erstell_auf,$erstell_nutz)=$e->edi_rechnung($rechnr);
 die "Zentral IK ist keine Datenannahmestelle oder nicht Parametrisiert keine elektronische Rechnung erstellt \n" unless(defined($dateiname));
 
 my $erg=$e->mail($dateiname,$rechnr,$erstell_auf,$erstell_nutz);
+
+if($update) {
+  die "die Rechnung ist schon (Teil-)bezahlt, es kann kein update mehr gemacht werden\n" if($status > 23);
+  $e->edi_update($rechnr,$ignore,$dateiname,$erstell_auf);
+}
+
 if ($sendmail) {
   # ergebnis nach sendmail pipen
   open SEND, "| /usr/sbin/sendmail -t"
@@ -68,10 +90,6 @@ if ($sendmail) {
   close SEND;
 } else {
   print $erg;
-}
-if($update) {
-  die "die Rechnung ist schon (Teil-)bezahlt, es kann kein update mehr gemacht werden\n" if($status > 23);
-  $e->edi_update($rechnr,$ignore);
 }
 
 # Am Ende alle erstellten Zwischendateien verschieben, in Verzeichnis
