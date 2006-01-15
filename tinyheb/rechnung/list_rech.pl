@@ -64,6 +64,7 @@ while (my @erg=$l->rechnung_such_next()) {
   print "<td style='width:3.5cm;text-align:left'>$erg_frau[1], $erg_frau[0]</td>"; # Name Frau
   # Name Krankenkasse holen
   my ($name)=$k->krankenkasse_ik("NAME",$erg[8]);
+  $name = 'unbekannt' unless(defined($name));
   print "<td style='width:3.0cm;text-align:left'>$name</td>"; # Name Krankenkasse
   print "<td style='width:1.6cm;text-align:left'>$erg[1]</td>"; # Datum Rech
   my $g_preis = sprintf "%.2f",$erg[4];$g_preis =~ s/\./,/g;
