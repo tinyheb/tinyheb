@@ -230,6 +230,23 @@ neue_seite(6);
 # Begründungen ausgeben
 print_begruendung() if ($l->leistungsdaten_offen($frau_id,'BEGRUENDUNG <> ""')>0);
 
+# Prüfen ob auch elektronisch versand wird
+if ($name_krankenkasse ne '') {
+  # prüfen ob zu ik Zentral IK vorhanden ist
+  my $text='';
+  my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
+  my $test_ind = $h->parm_unique('IK'.$zik);
+  my ($name_zik)=$k->krankenkasse_sel("NAME",$zik);
+  if (defined($zik) && $zik > 0 && defined($test_ind) && $test_ind==1) {
+    $y1-=$y_font;
+    neue_seite(7);
+    $p->text($x1,$y1,"Diese Rechnung wurde im Rahmen der Erprobungsphase des Datenaustausches im Abrechnungsverfahren");$y1-=$y_font;
+    $p->text($x1,$y1,"nach §302 SGB V per E-Mail an die zuständige Datenannahmestelle");$y1-=$y_font;
+    $p->text($x1,$y1,"$zik ($name_zik) geschickt.");$y1-=$y_font;$y1-=$y_font;
+  }
+}
+
+
 # Abschlusstext ausgeben
 neue_seite(7);
 $p->text($x1,$y1,"Bitte überweisen Sie den Gesamtbetrag innerhalb der gesetzlichen Frist von drei Wochen nach");$y1-=$y_font;
