@@ -74,7 +74,25 @@ sub gen_auf {
   substr($st,33,15) = sprintf "%-15u", $h->parm_unique('HEB_IK'); #Absender Eigner der Daten
   substr($st,48,15) = sprintf "%-15u", $h->parm_unique('HEB_IK'); #Absender physikalisch
   substr($st,63,15) = sprintf "%-15u", $ik_empfaenger; # Empfänger, der die Daten nutzen soll und im Besitz des Schlüssels ist, um verschlüsselte Infos zu entschlüsseln
-  substr($st,78,15) = sprintf "%-15u", $ik_empfaenger; # Empfänger, der die Daten physikalisch empfangen soll
+
+  # Anhand der IK Empfänger Nummer prüfen, ob der Schlüsselnutzer
+  # unterschiedliches RZ nutzt, dann ist anderer physikalischer Empfänger
+  # anzugeben
+  my $ik_empfaenger_physisch=$ik_empfaenger;
+  $ik_empfaenger_physisch=$h->parm_unique('EMPF'.$ik_empfaenger);
+  if (defined($ik_empfaenger_physisch) && $ik_empfaenger_physisch>0) {
+    # physikalischer Empfänger ist unterschiedlich
+    my $zik_typ=0;
+    ($ik_empfaenger_physisch,$zik_typ)=$k->krankenkasse_sel("ZIK,ZIK_TYP",$ik_empfaenger);
+    if ($zik_typ == 2) { # Datenannahmestelle ohne Entschlüsselungsbefugnis
+      substr($st,78,15) = sprintf "%-15u", $ik_empfaenger_physisch; # Empfänger, der die Daten physikalisch empfangen soll
+    } else {
+      die "Zu Datenannahmestelle $ik_empfaenger mit Entschlüsselungsbefugnis konnte keine physikalische Annahmestelle gefunden werden w/ $zik_typ\n"
+    }
+  } else {
+    substr($st,78,15) = sprintf "%-15u", $ik_empfaenger; # Empfänger, der die Daten physikalisch empfangen soll
+  }
+
   substr($st,93,6) = '000000'; # Fehlernr bei Rücksendung von Dateien
   substr($st,99,6) = '000000'; # Maßnahme laut Fehlerkatalog
 
@@ -661,7 +679,7 @@ sub sig {
  LINE: while (my $zeile=<NUTZ>) {
     next LINE if($zeile =~ /^\n$/ && $sig_flag != 3);
     if ($sig_flag != 3) {
-      $zeile =~ s/\n$//;
+      $zeile =~ s/\r\n$//;
       $zeile .= $crlf;
     }
     print AUS $zeile;
