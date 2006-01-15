@@ -73,7 +73,7 @@ print "\n";
 
 
 # die wirklichen Infos kommen aus einem Programm
-print "<iframe src='list_rech.pl' name='list_rech' width='840' height='250' scrolling='yes' frameborder='1' align='left'>";
+print "<iframe src='../blank.html' name='list_rech' width='840' height='250' scrolling='yes' frameborder='1' align='left'>";
 print "</iframe>";
 print '</form>';
 
