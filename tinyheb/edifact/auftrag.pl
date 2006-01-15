@@ -10,10 +10,14 @@ use lib '../';
 
 use Heb_Edi;
 use Heb_leistung;
+use Heb_krankenkassen;
+
+our $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
 
 my $debug=1;
 my $e = new Heb_Edi;
 my $l = new Heb_leistung;
+my $k = new Heb_krankenkassen;
 
 my $help=0;
 my $update=0;
@@ -42,8 +46,8 @@ if (!($rechnr =~ /\d{8}/)) {
   die "keine gültige Rechnungsnummer angegeben\n";
 }
 
-$l->rechnung_such("ZAHL_DATUM,BETRAGGEZ,BETRAG,STATUS","RECHNUNGSNR=$rechnr");
-my ($zahl_datum,$betraggez,$betrag,$status)=$l->rechnung_such_next();
+$l->rechnung_such("ZAHL_DATUM,BETRAGGEZ,BETRAG,STATUS,IK","RECHNUNGSNR=$rechnr");
+my ($zahl_datum,$betraggez,$betrag,$status,$ik)=$l->rechnung_such_next();
 
 die "Rechnung nicht vorhanden Abbruch\n" if (!defined($status));
 
@@ -69,5 +73,11 @@ if($update) {
   die "die Rechnung ist schon (Teil-)bezahlt, es kann kein update mehr gemacht werden\n" if($status > 23);
   $e->edi_update($rechnr,$ignore);
 }
+
+# Am Ende alle erstellten Zwischendateien verschieben, in Verzeichnis
+# für Datenannahmestelle
+ my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
+system("mkdir -p $path/tmp/$zik");
+system("mv $path/tmp/$dateiname* $path/tmp/$zik");
 
 	    
