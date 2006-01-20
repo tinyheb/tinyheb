@@ -36,13 +36,15 @@ my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
 $entfernung_frau =~ s/\./,/g;
 
 my  ($name_krankenkasse,
+     $kname_krankenkasse,
      $plz_krankenkasse,
      $plz_post_krankenkasse,
      $ort_krankenkasse,
      $strasse_krankenkasse,
-     $postfach_krankenkasse) = $k->krankenkasse_sel('NAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$ik_krankenkasse);
+     $postfach_krankenkasse) = $k->krankenkasse_sel('NAME,KNAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$ik_krankenkasse);
 
 $name_krankenkasse = '' unless (defined($name_krankenkasse));
+$kname_krankenkasse = '' unless (defined($kname_krankenkasse));
 $plz_krankenkasse = '' unless (defined($plz_krankenkasse));
 $plz_post_krankenkasse = '' unless (defined($plz_post_krankenkasse));
 $strasse_krankenkasse = '' unless (defined($strasse_krankenkasse));
@@ -163,13 +165,15 @@ my ($beleg_ik,$beleg_typ)=$k->krankenkasse_beleg_ik($ik_krankenkasse);
 my $beleg_parm = $h->parm_unique('BELEGE');
 $beleg_ik=$ik_krankenkasse if(!(defined($beleg_parm)) || $beleg_parm != 1);
 my  ($name_krankenkasse_beleg,
+     $kname_krankenkasse_beleg,
      $plz_krankenkasse_beleg,
      $plz_post_krankenkasse_beleg,
      $ort_krankenkasse_beleg,
      $strasse_krankenkasse_beleg,
-     $postfach_krankenkasse_beleg) = $k->krankenkasse_sel('NAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$beleg_ik);
+     $postfach_krankenkasse_beleg) = $k->krankenkasse_sel('NAME,KNAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$beleg_ik);
 
 $name_krankenkasse_beleg = '' unless (defined($name_krankenkasse_beleg));
+$kname_krankenkasse_beleg = '' unless (defined($kname_krankenkasse_beleg));
 $plz_krankenkasse_beleg = '' unless (defined($plz_krankenkasse_beleg));
 $plz_post_krankenkasse_beleg = '' unless (defined($plz_post_krankenkasse_beleg));
 $strasse_krankenkasse_beleg = '' unless (defined($strasse_krankenkasse_beleg));
@@ -177,7 +181,7 @@ $postfach_krankenkasse_beleg = '' unless (defined($postfach_krankenkasse_beleg))
 
 $p->setfont($font,10);
 $y1=23.8;
-$p->text($x1,$y1,$name_krankenkasse_beleg);
+$p->text($x1,$y1,$kname_krankenkasse_beleg);
 $p->text($x1,$y1-$y_font,$strasse_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
 $p->text($x1,$y1-$y_font,"Postfach $postfach_krankenkasse_beleg") if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg > 0);
 $p->text($x1,$y1-3*$y_font,$plz_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
@@ -236,13 +240,13 @@ if ($name_krankenkasse ne '') {
   my $text='';
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
   my $test_ind = $h->parm_unique('IK'.$zik);
-  my ($name_zik)=$k->krankenkasse_sel("NAME",$zik);
+  my ($kname_zik)=$k->krankenkasse_sel("KNAME",$zik);
   if (defined($zik) && $zik > 0 && defined($test_ind) && $test_ind==1) {
     $y1-=$y_font;
     neue_seite(7);
     $p->text($x1,$y1,"Diese Rechnung wurde im Rahmen der Erprobungsphase des Datenaustausches im Abrechnungsverfahren");$y1-=$y_font;
     $p->text($x1,$y1,"nach §302 SGB V per E-Mail an die zuständige Datenannahmestelle");$y1-=$y_font;
-    $p->text($x1,$y1,"$zik ($name_zik) geschickt.");$y1-=$y_font;$y1-=$y_font;
+    $p->text($x1,$y1,"$zik ($kname_zik) geschickt.");$y1-=$y_font;$y1-=$y_font;
   }
 }
 
