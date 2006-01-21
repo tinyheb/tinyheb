@@ -147,7 +147,7 @@ if (defined($ik_krankenkasse) && $ik_krankenkasse ne '') {
   }
 }
 
-if ($text ne '') {
+if ($text ne '' && $versichertenstatus ne 'privat') {
   print "<tr>";
   print "<td colspan='6'><textarea name='hinweise' cols='112' rows='2' class='disabled' disabled >$text</textarea>";
   print "</td>";
