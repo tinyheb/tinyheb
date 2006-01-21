@@ -17,7 +17,7 @@ function frausuchen(vorname,nachname,geb,formular) {
   };
 
 function kvnr_check(kvnummer) {
-  re=/^\d{10}$/;
+  re=/^\d{9,10}$/;
   if (kvnummer.value != '' && !re.test(kvnummer.value)) {
     alert("Bitte KV-Nummer 10 stellig numerisch erfassen");
     kvnummer.focus();
@@ -29,9 +29,15 @@ function ik_gueltig_check(ik_nummer) {
   // prüfung auf gültige ik nummer
   re =/^\d{9}$/;
   if (ik_nummer.value != '' && !re.test(ik_nummer.value)) {
-    alert("Bitte IK-Nummer 9 stellig numerisch erfasseb");
-    ik_nummer.focus();
-    ik_nummer.select();
+    // prüfen, ob 7-stellig erfasst wurde
+    re =/^\d{7}$/;
+    if (!re.test(ik_nummer.value)) {
+      alert("Bitte IK-Nummer 9 stellig numerisch erfassen");
+      ik_nummer.focus();
+      ik_nummer.select();
+    } else {
+      ik_nummer.value = '10'+ik_nummer.value;
+    }
   }
 }
 
