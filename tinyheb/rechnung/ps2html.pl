@@ -76,67 +76,70 @@ $p->text(15.1+2.4,27.8,$rechnungsnr);
 $p->text(15.1,27.8-$y_font,"Datum");
 $p->text(15.1+2.4,27.8-$y_font,$datum);
 
-$p->box($x1,25.1,$x2,26.4); # Kiste für Krankenkasse y=25.1 y2=26.4
 my $y1=27.7;
-$p->setfont($font,8);
-$p->text(12.7,$y1-3*$y_font,"Zahlungspflichtige Kasse (Rechnungsempfänger):");
-$p->setfont($font,10);
-$p->text(12.7,$y1-4*$y_font,"IK:");
-$p->setfont($font_b,10);
-$p->text(15.1,$y1-4*$y_font,$ik_krankenkasse);
-$p->text(12.7,$y1-5*$y_font,$name_krankenkasse);
-$p->setfont($font,10);
-$p->text(12.7,$y1-6*$y_font,$plz_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse > 0);
-$p->text(12.7,$y1-6*$y_font,$plz_post_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse == 0);
+# Kiste für Krankenkassen nur ausgeben, wenn keine privat Rechnung
+if ($versichertenstatus ne 'privat') {
+  $p->box($x1,25.1,$x2,26.4); # Kiste für Krankenkasse y=25.1 y2=26.4
+  $p->setfont($font,8);
+  $p->text(12.7,$y1-3*$y_font,"Zahlungspflichtige Kasse (Rechnungsempfänger):");
+  $p->setfont($font,10);
+  $p->text(12.7,$y1-4*$y_font,"IK:");
+  $p->setfont($font_b,10);
+  $p->text(15.1,$y1-4*$y_font,$ik_krankenkasse);
+  $p->text(12.7,$y1-5*$y_font,$name_krankenkasse);
+  $p->setfont($font,10);
+  $p->text(12.7,$y1-6*$y_font,$plz_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse > 0);
+  $p->text(12.7,$y1-6*$y_font,$plz_post_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse == 0);
+  
+  $p->box($x1,23.8,$x2,24.6);# Kiste für Mitglied y1=23.8 y2=24.6
+  $p->setfont($font,8);
+  $y1=24.7;
+  $p->text(12.7,$y1,"Mitglied");
+  $p->setfont($font_b,10);
+  $p->text(12.7,$y1-$y_font,$nachname.", ".$vorname);
+  $p->setfont($font,10);
+  $p->text(12.7,$y1-2*$y_font,"geboren am");
+  $p->text(15.1,$y1-2*$y_font,$geb_frau);
+  
+  $p->box($x1,21.7,$x2,23.8);# Anschrift und Versichertenstatus y1=21.7 y2=23.8
+  $y1=23.4;
+  $p->text(12.7,$y1,$plz." ".$ort);
+  $p->text(12.7,$y1-$y_font,$strasse);
+  $p->text(12.7,$y1-2*$y_font,"Mitgl-Nr.");
+  $p->setfont($font_b,10);
+  $p->text(15.1,$y1-2*$y_font,$kv_nummer);
+  $p->setfont($font,10);
+  $p->text(12.7,$y1-3*$y_font,"V-Status:");
+  $p->setfont($font_b,10);
+  $p->text(15.1,$y1-3*$y_font,$versichertenstatus);
+  $p->setfont($font,10);
+  $p->text(12.7,$y1-4*$y_font,"gült.bis:");
+  $p->setfont($font_b,10);
+  my ($m,$j) = unpack("A2A2",$kv_gueltig);
+  $p->text(15.1,$y1-4*$y_font,"$m/$j");
 
-$p->box($x1,23.8,$x2,24.6);# Kiste für Mitglied y1=23.8 y2=24.6
-$p->setfont($font,8);
-$y1=24.7;
-$p->text(12.7,$y1,"Mitglied");
-$p->setfont($font_b,10);
-$p->text(12.7,$y1-$y_font,$nachname.", ".$vorname);
-$p->setfont($font,10);
-$p->text(12.7,$y1-2*$y_font,"geboren am");
-$p->text(15.1,$y1-2*$y_font,$geb_frau);
 
-$p->box($x1,21.7,$x2,23.8);# Anschrift und Versichertenstatus y1=21.7 y2=23.8
-$y1=23.4;
-$p->text(12.7,$y1,$plz." ".$ort);
-$p->text(12.7,$y1-$y_font,$strasse);
-$p->text(12.7,$y1-2*$y_font,"Mitgl-Nr.");
-$p->setfont($font_b,10);
-$p->text(15.1,$y1-2*$y_font,$kv_nummer);
-$p->setfont($font,10);
-$p->text(12.7,$y1-3*$y_font,"V-Status:");
-$p->setfont($font_b,10);
-$p->text(15.1,$y1-3*$y_font,$versichertenstatus);
-$p->setfont($font,10);
-$p->text(12.7,$y1-4*$y_font,"gült.bis:");
-$p->setfont($font_b,10);
-my ($m,$j) = unpack("A2A2",$kv_gueltig);
-$p->text(15.1,$y1-4*$y_font,"$m/$j");
-
-
-$p->box($x1,20.8,$x2,21.3);# Kiste für Kind y1=20.8 y2=21.3
-$p->setfont($font,8);
-$y1=21.35;
-$p->text(12.7,$y1,"Kind:");
-$p->setfont($font,10);
-# prüfen ob ET oder Geburtsdatum
-my $geb_kind_et=$d->convert($geb_kind);$geb_kind_et =~ s/-//g;
-my $datum_jmt=$d->convert($datum);$datum_jmt =~ s/-//g;
-# zeilen nur ausgeben, wenn geb Kind gültig ist
-if ($geb_kind_et ne 'error') {
-  if ($datum_jmt >= $geb_kind_et) {
-    $p->text(12.7,$y1-$y_font,"geboren am");
-  } else {
-    $p->text(12.7,$y1-$y_font,"ET");
+  $p->box($x1,20.8,$x2,21.3);# Kiste für Kind y1=20.8 y2=21.3
+  $p->setfont($font,8);
+  $y1=21.35;
+  $p->text(12.7,$y1,"Kind:");
+  $p->setfont($font,10);
+  # prüfen ob ET oder Geburtsdatum
+  my $geb_kind_et=$d->convert($geb_kind);$geb_kind_et =~ s/-//g;
+  my $datum_jmt=$d->convert($datum);$datum_jmt =~ s/-//g;
+  # zeilen nur ausgeben, wenn geb Kind gültig ist
+  if ($geb_kind_et ne 'error') {
+    if ($datum_jmt >= $geb_kind_et) {
+      $p->text(12.7,$y1-$y_font,"geboren am");
+    } else {
+      $p->text(12.7,$y1-$y_font,"ET");
   }
   
-  $p->text(15.1,$y1-$y_font,$geb_kind) if($anz_kinder < 2);
-  $p->text(15.1,$y1-$y_font,$geb_kind. ' ('.$kinder[$anz_kinder-1].')') if($anz_kinder > 1);
-} else {
+    $p->text(15.1,$y1-$y_font,$geb_kind) if($anz_kinder < 2);
+    $p->text(15.1,$y1-$y_font,$geb_kind. ' ('.$kinder[$anz_kinder-1].')') if($anz_kinder > 1);
+  } else {
     $p->text(12.7,$y1-$y_font,"unbekannt");
+  }
 }
 
 # Anschrift der Hebamme
@@ -160,7 +163,8 @@ $p->text($x1,24.7,$absender);
 
 # Empfänger
 # zunächst richtige Annahmestelle für Belege holen
-# und zu dieser Anschrift holen
+# und zu dieser Anschrift holen,
+
 my ($beleg_ik,$beleg_typ)=$k->krankenkasse_beleg_ik($ik_krankenkasse);
 my $beleg_parm = $h->parm_unique('BELEGE');
 $beleg_ik=$ik_krankenkasse if(!(defined($beleg_parm)) || $beleg_parm != 1);
@@ -171,7 +175,7 @@ my  ($name_krankenkasse_beleg,
      $ort_krankenkasse_beleg,
      $strasse_krankenkasse_beleg,
      $postfach_krankenkasse_beleg) = $k->krankenkasse_sel('NAME,KNAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$beleg_ik);
-
+  
 $name_krankenkasse_beleg = '' unless (defined($name_krankenkasse_beleg));
 $kname_krankenkasse_beleg = '' unless (defined($kname_krankenkasse_beleg));
 $plz_krankenkasse_beleg = '' unless (defined($plz_krankenkasse_beleg));
@@ -179,13 +183,24 @@ $plz_post_krankenkasse_beleg = '' unless (defined($plz_post_krankenkasse_beleg))
 $strasse_krankenkasse_beleg = '' unless (defined($strasse_krankenkasse_beleg));
 $postfach_krankenkasse_beleg = '' unless (defined($postfach_krankenkasse_beleg));
 
-$p->setfont($font,10);
-$y1=23.8;
-$p->text($x1,$y1,$kname_krankenkasse_beleg);
-$p->text($x1,$y1-$y_font,$strasse_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
-$p->text($x1,$y1-$y_font,"Postfach $postfach_krankenkasse_beleg") if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg > 0);
-$p->text($x1,$y1-3*$y_font,$plz_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
-$p->text($x1,$y1-3*$y_font,$plz_post_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg > 0);
+# nur dann, wenn keine privat Rechnung
+if ($versichertenstatus ne 'privat') {
+  $p->setfont($font,10);
+  $y1=23.8;
+  $p->text($x1,$y1,$kname_krankenkasse_beleg);
+  $p->text($x1,$y1-$y_font,$strasse_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
+  $p->text($x1,$y1-$y_font,"Postfach $postfach_krankenkasse_beleg") if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg > 0);
+  $p->text($x1,$y1-3*$y_font,$plz_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
+  $p->text($x1,$y1-3*$y_font,$plz_post_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg > 0);
+}
+
+if ($versichertenstatus eq 'privat') {
+  $p->setfont($font,10);
+  $y1=23.8;
+  $p->text($x1,$y1,$vorname.' '.$nachname);
+  $p->text($x1,$y1-$y_font,$strasse);
+  $p->text($x1,$y1-3*$y_font,$plz.' '.$ort);
+}
 
 
 # Betreff Zeile
@@ -235,7 +250,7 @@ neue_seite(6);
 print_begruendung() if ($l->leistungsdaten_offen($frau_id,'BEGRUENDUNG <> ""')>0);
 
 # Prüfen ob auch elektronisch versand wird
-if ($name_krankenkasse ne '') {
+if ($name_krankenkasse ne '' && $versichertenstatus ne 'privat') {
   # prüfen ob zu ik Zentral IK vorhanden ist
   my $text='';
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
@@ -465,6 +480,11 @@ sub print_teil {
   while (my @erg=$l->leistungsdaten_offen_next()) {
     my @erg2=$l->leistungsdaten_such_id($erg[0]);
     my ($bez,$fuerzeit,$epreis)=$l->leistungsart_such_posnr("KBEZ,FUERZEIT,EINZELPREIS ",$erg[1],$erg[4]);
+    if ($versichertenstatus eq 'privat') {
+      $epreis *= $h->parm_unique('PRIVAT_FAKTOR');
+      $epreis = sprintf "%.2f",$epreis;
+    }
+    
     my $fuerzeit_flag='';
     ($fuerzeit_flag,$fuerzeit)=$d->fuerzeit_check($fuerzeit);
     $bez = substr($bez,0,50);
@@ -509,6 +529,12 @@ sub print_teil {
     # datum 4
     my $datum = $d->convert_tmj($erg[4]);
     my $gpreis = sprintf "%.2f",$erg[10];
+
+    if ($versichertenstatus eq 'privat') {
+      $gpreis *= $h->parm_unique('PRIVAT_FAKTOR');
+      $gpreis = sprintf "%.2f",$gpreis;
+    }
+
     $summe+=$gpreis;$gpreis =~ s/\./,/g;
     $p->text({align => 'right'},15,$y1,$datum); # Datum andrucken
     $p->text({align => 'right'},17.3,$y1,$gpreis." EUR"); # Preis andrucken
