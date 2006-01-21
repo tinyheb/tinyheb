@@ -3,22 +3,24 @@
 function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse,kv_nummer,kv_gueltig,versichertenstatus,name_kk,form) {
   // schreibt Rechnung in Fenster und macht update auf Datenbank
   //alert("Drucken Frau"+frau_id+"form"+form+"kk"+name_kk+"plz"+plz);
-  // zunächst harte Plausiprüfungen
-  if (name_kk == '') {
-    alert("Es wurde keine gültige Krankenkasse erfasst,\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert.");
-    return false;
-  }
-  if (vorname == '') {
-    alert("Vorname Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
-    return false;
-  }
-  if (nachname == '') {
-    alert("Nachname Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
-    return false;
-  }
-  if (geb_frau == '00.00.0000' || geb_frau == '') {
-    alert("Geburtsdatum Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
-    return false;
+  // zunächst harte Plausiprüfungen, nur dann wenn keine privat Rechnung
+  if (versichertenstatus != 'privat') {
+    if (name_kk == '') {
+      alert("Es wurde keine gültige Krankenkasse erfasst,\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert.");
+      return false;
+    }
+    if (vorname == '') {
+      alert("Vorname Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
+      return false;
+    }
+    if (nachname == '') {
+      alert("Nachname Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
+      return false;
+    }
+    if (geb_frau == '00.00.0000' || geb_frau == '') {
+      alert("Geburtsdatum Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
+      return false;
+    }
   }
 
   // weiche Plausiprüfungen
