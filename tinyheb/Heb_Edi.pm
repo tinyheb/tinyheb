@@ -559,8 +559,8 @@ sub SLLA {
       $anzahl = sprintf "%3.2f",($dauer / $fuerzeit);
       # prüfen, ob Minuten genau abgerechnet werden muss
       if ($fuerzeit_flag ne 'E') { # nein
-        $anzahl++ if ($anzahl*$fuerzeit < $dauer);
 	$anzahl = sprintf "%2.2u",$anzahl;
+        $anzahl++ if ($anzahl*$fuerzeit < $dauer);
       }
     }
     $leistdat[4] =~ s/-//g; # Datum in korrektes Format bringen
