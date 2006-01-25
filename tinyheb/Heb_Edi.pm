@@ -325,6 +325,11 @@ sub SLLA_NAD {
   $strasse = substr($strasse,0,30);
   $ort =~ s/'/\?'/g;$ort =~ s/\+/\?\+/g;
   $ort = substr($ort,0,25);
+  if (!defined($plz) || $plz == 0) {
+    $plz='';
+  } else {
+    $plz = sprintf "%5.5u",$plz;
+  }
 
   my $erg = 'NAD+';
   $erg .= $nachname.'+'; # nachname
