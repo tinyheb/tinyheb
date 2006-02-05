@@ -73,7 +73,7 @@ if ($status > 20 && !($ignore) ) {
 
 my ($dateiname,$erstell_auf,$erstell_nutz)=$e->edi_rechnung($rechnr);
 
-die "Zentral IK ist keine Datenannahmestelle oder nicht Parametrisiert keine elektronische Rechnung erstellt \n" unless(defined($dateiname));
+die "keine Datenannahmestelle vorhanden oder nicht Parametrisiert keine elektronische Rechnung erstellt \n" unless(defined($dateiname));
 
 my $erg=$e->mail($dateiname,$rechnr,$erstell_auf,$erstell_nutz);
 
@@ -94,8 +94,9 @@ if ($sendmail) {
 
 # Am Ende alle erstellten Zwischendateien verschieben, in Verzeichnis
 # für Datenannahmestelle
- my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
-system("mkdir -p $path/tmp/$zik");
-system("mv $path/tmp/$dateiname* $path/tmp/$zik");
+my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
+my $empf_phys=$k->krankenkasse_empf_phys($zik);
+system("mkdir -p $path/tmp/$empf_phys");
+system("mv $path/tmp/$dateiname* $path/tmp/$empf_phys");
 
 	    
