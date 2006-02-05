@@ -104,12 +104,19 @@ my $text='';
 if ($name_krankenkasse ne '') {
   # prüfen ob zu ik Zentral IK vorhanden ist
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
-  my $test_ind = $h->parm_unique('IK'.$zik);
-  my ($name_zik)=$k->krankenkasse_sel("NAME",$zik);
+  my $test_ind = $k->krankenkasse_test_ind($ik_krankenkasse);
+  my ($name_zik)=$k->krankenkasse_sel("KNAME",$zik);
+  my ($name_ktr)=$k->krankenkasse_sel("KNAME",$ktr);
+  $text.="Kostenträger: $ktr ($name_ktr). ";
   if (defined($zik) && $zik > 0) {
-    $text.="Datenannahmestelle: $zik ($name_zik). ";
+    $text.="Datenannahmestelle: $zik ($name_zik).\n";
   } else {
-    $text .= "keine zentral Datenannahmestelle vorhanden";
+    $text .= "keine zentral Datenannahmestelle vorhanden\n";
+  }
+  my $empf_phys=$k->krankenkasse_empf_phys($zik);
+  my ($name_phys)=$k->krankenkasse_sel("KNAME",$empf_phys);
+  if (defined($empf_phys) && $empf_phys > 0) {
+    $text.="via $empf_phys ($name_phys)\n";
   }
 
   if (defined($test_ind)) { # ZIK als Annahmestelle vorhanden
@@ -135,12 +142,12 @@ if (defined($ik_krankenkasse) && $ik_krankenkasse ne '') {
   if ($beleg_typ==1) {
     $text .= "Rechnung wird unmittelbar an Krankenkasse geschickt\n";
   } elsif($beleg_typ==2) {
-    my ($name_beleg)=$k->krankenkasse_sel("NAME",$beleg_ik);
+    my ($name_beleg)=$k->krankenkasse_sel("KNAME",$beleg_ik);
     $text .= "Rechnung über direkt verknüpfte Belegannahmestelle $beleg_ik ($name_beleg)\n";
   } elsif($beleg_typ==3) {
     my ($name_beleg)=$k->krankenkasse_sel("NAME",$beleg_ik);
     my ($ktr,$da)=Heb_krankenkassen->krankenkasse_ktr_da($ik_krankenkasse);
-    my ($name_ktr)=$k->krankenkasse_sel("NAME",$ktr);
+    my ($name_ktr)=$k->krankenkasse_sel("KNAME",$ktr);
     $text .= "Rechnung w/ zentralem Kostenträger $ktr ($name_ktr) an Belegannahmestelle $beleg_ik ($name_beleg)\n";
   } else {
     $text .= "unbekannte Belegannahmestelle, Bitte benachrichtigen Sie den Software Ersteller\n";
