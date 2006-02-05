@@ -12,6 +12,8 @@ use DBI;
 
 use Heb;
 
+my $h = new Heb;
+
 my $debug = 0;
 our $dbh; # Verbindung zur Datenbank
 
@@ -23,7 +25,7 @@ sub new {
   $dbh = Heb->connect;
   $krank_such = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
 			      "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL, ".
-			      "ZIK, BEMERKUNG, PUBKEY, ZIK_TYP, BELEG_IK ".
+			      "ZIK, BEMERKUNG, PUBKEY, ZIK_TYP, BELEG_IK,EMAIL ".
 			      "from Krankenkassen where ".
 			      "NAME LIKE ? and ".
 			      "PLZ_HAUS LIKE ? and ".
@@ -94,10 +96,10 @@ sub krankenkassen_ins {
   my $krankenkassen_ins = $dbh->prepare("insert into Krankenkassen ".
 					"(IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
 					"PLZ_POST,ORT,POSTFACH, ".
-					"ASP_NAME,ASP_TEL,ZIK,BEMERKUNG,ZIK_TYP,BELEG_IK) ".
+					"ASP_NAME,ASP_TEL,ZIK,BEMERKUNG,ZIK_TYP,BELEG_IK,EMAIL) ".
 					"values (?,?,?,?,?,?,".
 					"?,?,".
-					"?,?,?,?,?,?);")
+					"?,?,?,?,?,?,?);")
     or die $dbh->errstr();
   my $erg = $krankenkassen_ins->execute(@_)
     or die $dbh->errstr();
@@ -115,7 +117,8 @@ sub krankenkassen_update {
 				       "POSTFACH=?,".
 				       "ASP_NAME=?,ASP_TEL=?,ZIK=?, ".
 				       "BEMERKUNG=?,ZIK_TYP=?,".
-				       "BELEG_IK=? ".
+				       "BELEG_IK=?,".
+				       "EMAIL=? ".
 				       "where IK=?;")
     or die $dbh->errstr();
   my $erg = $krankenkassen_up->execute(@_)
@@ -181,7 +184,8 @@ sub krankenkassen_krank_ik {
   
   my $krank_ik = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
 			       "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL,".
-			       "ZIK,BEMERKUNG,PUBKEY,ZIK_TYP,BELEG_IK ".
+			       "ZIK,BEMERKUNG,PUBKEY,ZIK_TYP,BELEG_IK, ".
+			       "EMAIL ".
 			       "from Krankenkassen where IK = ?;")
     or die $dbh->errstr();
   $krank_ik->execute(@_) or die $dbh->errstr();
@@ -213,13 +217,44 @@ sub krankenkasse_ktr_da {
   } elsif($zik_typ==1) {
     $ktr=$zik;
     ($da,$da_typ)=Heb_krankenkassen->krankenkasse_sel("ZIK,ZIK_TYP",$ktr);
-    $da=0 if(!defined($da_typ) || $da_typ != 3);
+    $da=0 if(!defined($da_typ) || $da_typ < 2);
+    $da=$ktr if ($da_typ==2);
   } elsif($zik_typ==3) {
     $ktr=$ik;
     $da=$zik;
+  } elsif ($zik_typ==2) {
+    $ktr=$ik;
+    $da=$ik;
   }
   return ($ktr,$da);
 }
+
+
+sub krankenkasse_empf_phys {
+  # liefert zu einer ik einer Datenannahmestelle
+  # den physikalischen Empfänger
+  shift;
+  my ($ik)=@_;
+  my ($zik,$zik_typ)=Heb_krankenkassen->krankenkasse_sel("ZIK,ZIK_TYP",$ik);
+  return undef if(!defined($zik_typ));
+  return $ik if ($zik_typ == 0 || $zik_typ==1);
+  return $zik if ($zik_typ == 2 || $zik_typ==3);
+}
+
+sub krankenkasse_test_ind {
+  # liefert zu einer Krankenkasse den Testindikator
+  # für Datenlieferung per E-Mail
+  shift;
+
+  my ($ik)=@_;
+  my ($ktr,$da)=Heb_krankenkassen->krankenkasse_ktr_da($ik);
+  my $test_ind = $h->parm_unique('IK'.$da);
+  if (defined($h->parm_unique('KTR'.$ktr))) {
+    $test_ind=$h->parm_unique('KTR'.$ktr);
+  }
+  return $test_ind;
+}
+
 
 sub krankenkasse_beleg_ik {
   # liefert zu einer Krankenkasse die IK Nummer, an die Belege
