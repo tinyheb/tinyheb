@@ -64,6 +64,7 @@ print "Einlesen der Daten von Datei: $eingabe\n" if $debug;
 my @dateien = split ' ',$eingabe;
 
 foreach my $file (@dateien) {
+  my $k_typ = substr($file,0,2); # Krankenkassentyp z.B. AO=AOK
   $file = $pfad.$file;
 # öffnen der Datei mit den Informationen
 open FILE, $file or die "Konnte Datei $file nicht zum Lesen öffnen $!\n";
@@ -92,6 +93,9 @@ LINE:while ($zeile=<FILE>) {
     my $bemerkung = ''; # zusätzliche Informationen zur KK
     my $zik_typ = 0; # Typ der Zentral IK 0 keine Zuordnung
     my $beleg_ik = 0; # Gibt es Belegannahmestelle
+    my $email = ''; # E-Mail Adresse bei Datenannahmestellen
+    my $ktr=0; # Kostenträger zu dieser Krankenkasse
+    my $da=0; # Datenannahmestelle zu dieser Krankenkasse
     print "--------------KRANKENKASSE ANFANG\n" if $debug;
     until ($zeile =~ /\AUNT/) {
       print "ZEILE $zeile\n" if $debug;
@@ -115,33 +119,51 @@ LINE:while ($zeile=<FILE>) {
       if ($zeile =~ /\AVKG/) {
 	my @erg = split '\+',$zeile;
 	# Art der Verknüpfung ist 3 = Verweis auf Dateiannahmestelle oder
-	
-	# Verweis ist nicht auf sich selbst
 	# Art der Anlieferung ist 7 = digitalisiert
-	# oder Papierannahmestelle (9) und Abrechnungscode 50 = Hebamme
+	# und Abrechnungscode 50 = Hebamme, 00 = alle Leistungsarten
+	# 99 für nicht aufgeführte Gruppen
 	$erg[9]=-1 unless(defined($erg[9]));
-	if ($erg[1]==3 && $erg[5]==7 && $erg[2]!=$idk && 
-	    ($erg[9]==00 || $erg[9]==50)) {
-	  $zentral_idk=$erg[2];
-	  $bemerkung .= "Zentral IK mit Entschlüsselungsbefugnis w/ $zeile\n";
-	  $zik_typ=3; # Datenannamestelle mit Entschlüsselungsbefugnis
+	if ($erg[1]==3 && $erg[5]==7 && 
+	    ($erg[9]==00 || $erg[9]==50 || ($erg[9]==99 && $zik_typ < 3))) {
+	  # aok haben ring geschlossen über typ 2 Verbindungen, die dürfen
+	  # hier nicht berücksichtigt werden
+	  if (($k_typ eq 'AO' && $zik_typ < 3) ||
+	      # wenn keine aok und es ist schon kostenträger vorhanden,
+	      # darf nur mit datenannahmestelle überschrieben werden
+	      # wenn kostenträger die gleiche kasse ist
+	      (($k_typ ne 'AO') && $idk != $erg[2] && 
+	       ($zentral_idk==$idk || $zentral_idk==0))) {
+	    $zentral_idk=$erg[2];
+	    $da=$zentral_idk;
+	    $bemerkung .= "Zentral IK mit Entschlüsselungsbefugnis w/ $zeile\n";
+	    $zik_typ=3; # Datenannamestelle mit Entschlüsselungsbefugnis
+	  }
 	}
+
 	if ($erg[1]==2 && $erg[5]==7 &&
 	    ($erg[9]==00 || $erg[9]==50)) {
-	  if ($zentral_idk==0) {
+	  if ($zik_typ < 2) {
 	    $zentral_idk=$erg[2];
 	    $bemerkung .= "Zentral IK ohne Entschlüsselungsbefugnis w/ $zeile\n";
+	    $da=$zentral_idk;
 	    $zik_typ=2; # Datenannahmestelle ohne Entschlüsselungsbefugnis
 	  }
 	}
 
 	# Art der Verknüpfung = 1 Verweis auf Kostenträger
 	# Abrechnungscode = 00 alle Leistungsarten oder 50 Hebammen
-	# Verweis ist nicht auf sich selbst
-	if (($erg[1]==1 && ($erg[9]==00 || $erg[9]==50) && $erg[2]!=$idk)) {
-	  $zentral_idk=$erg[2];
-	  $zik_typ=1; # zentraler Kostenträger
+	if ($erg[1]==1 && ($erg[9]==00 || $erg[9]==50)) {
+	  $ktr=$erg[2];
 	  $bemerkung .= "Verweis auf zentralen Kostenträger w/ $zeile\n";
+	  if ($da == $idk && $erg[2]==$idk) {
+	    $zik_typ=3;
+	    $zentral_idk=$idk;
+	    $ktr=$idk;
+	  } elsif ($zik_typ < 3 || $erg[2]!=$idk) {
+	    $zentral_idk=$erg[2];
+	    $zik_typ=1; # zentraler Kostenträger
+	    $ktr=$erg[2];
+	  }
 	}
 
 	# Art der Verknüpfung ist 9 = Verweis auf Papierannahmestelle
@@ -161,6 +183,13 @@ LINE:while ($zeile=<FILE>) {
 	#	print "--> @erg\n";
       }
       $bemerkung =~ s/'//g;
+      
+      # DatenFernUebertragung
+      if ($zeile =~ /\ADFU\+/) { 
+	my @erg = split '\+',$zeile;
+	$email=$erg[7] if ($erg[2] == 70);
+	$email =~ s/'//g;
+      }
 
       if ($zeile =~ /\ANAM\+/) {
 	$zeile =~ s/\?\+/ und /g;
@@ -229,20 +258,26 @@ LINE:while ($zeile=<FILE>) {
     $kasse .= "$bemerkung\t";
     $kasse .= "\t"; # Pubkey überspringen
     $kasse .= "$zik_typ\t";
-    $kasse .= "$beleg_ik\n";
+    $kasse .= "$beleg_ik\t";
+    if ($email ne '') {
+      $kasse .= "$kname <$email>\t\n";
+    } else {
+      $kasse .="\t\n";
+    }
 
     print $kasse if($ausgabe);
     print "--------------KRANKENKASSE ENDE\n" if $debug;
-    my ($k_ik,$k_kname,$k_name,$k_strasse,$k_plz_haus,$k_plz_post,$k_ort,$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung,$k_pubkey,$k_zik_typ,$k_beleg_ik)= $k->krankenkassen_krank_ik($idk);
+    my ($k_ik,$k_kname,$k_name,$k_strasse,$k_plz_haus,$k_plz_post,$k_ort,$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung,$k_pubkey,$k_zik_typ,$k_beleg_ik,$k_email)= $k->krankenkassen_krank_ik($idk);
+    $k_email='' unless(defined($k_email));
     if ($check) {
-      my ($ik_n,$kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$pubkey_n,$zik_typ_n,$beleg_ik_n) = split "\t",$kasse;
+      my ($ik_n,$kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$pubkey_n,$zik_typ_n,$beleg_ik_n,$email_n) = split "\t",$kasse;
       $plz_haus_n=0 if ($plz_haus_n eq '');
       $plz_post_n=0 if ($plz_post_n eq '');
       $bemerkung_n='' unless (defined($bemerkung_n));
       if (!defined($k_ik)) {
 	print "Neue Kasse: $kasse";
 	$c_neu++;
-	$k->krankenkassen_ins($idk,$kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ_n,$beleg_ik_n) if ($update);
+	$k->krankenkassen_ins($idk,$kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ_n,$beleg_ik_n,$email_n) if ($update);
       }
       if (defined($k_ik)) {
 	if ($k_kname eq $kname_n && 
@@ -257,13 +292,14 @@ LINE:while ($zeile=<FILE>) {
 	    $k_zik eq $zik_n &&
 	    $k_bemerkung eq $bemerkung_n &&
 	    $k_zik_typ == $zik_typ_n &&
-	    $k_beleg_ik == $beleg_ik_n
+	    $k_beleg_ik == $beleg_ik_n &&
+	    $k_email eq $email_n
 	   ) {
 	  $c_gleich++;
 	} else {
 	  $c_ungleich++;
 	  if ($aus_ungleich) {
-	    print "----geaenderte Kasse $k_ik\n";
+	    print "----geaenderte Kasse $k_ik $k_kname\n";
 	    print "war schon im Datenhaushalt neu aus Datei $file\n" if(defined($alle_kassen{$k_ik}));
 	    print "ALT\t\t\tNEU\n";
 	    print "NAME $k_name\t\t$name_n\n" if(!($k_name eq $name_n));
@@ -276,12 +312,13 @@ LINE:while ($zeile=<FILE>) {
 	    print "$k_asp_name\t\t$asp_name_n\n" if(!($k_asp_name eq $asp_name_n));
 	    print "$k_asp_tel\t\t$asp_tel_n\n" if(!($k_asp_tel eq $asp_tel_n));
 	    print "ZIK\t$k_zik\t\t$zik_n\n" if(!($k_zik eq $zik_n));
-	    print "ZIK_TYP\t$k_zik_typ\t\t$zik_typ_n" if (!($k_zik_typ == $zik_typ_n));
-	    print "BELEG_IK\t$k_beleg_ik\t$beleg_ik_n" if (!($k_beleg_ik == $beleg_ik_n));
+	    print "ZIK_TYP\t$k_zik_typ\t\t$zik_typ_n\n" if (!($k_zik_typ == $zik_typ_n));
+	    print "BELEG_IK\t$k_beleg_ik\t$beleg_ik_n\n" if (!($k_beleg_ik == $beleg_ik_n));
+	    print "EMAIL\t$k_email\t$email_n\n" if (!($k_email eq $email_n));
 	    print "BEM\t$k_bemerkung\t\t$bemerkung_n\n" if(!($k_bemerkung eq $bemerkung_n));
 	  }
 	  # update auf Datenbank
-	  $k->krankenkassen_update($kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ,$beleg_ik_n,$k_ik) if ($update);
+	  $k->krankenkassen_update($kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ,$beleg_ik_n,$email_n,$k_ik) if ($update);
 	}
       }
     }
