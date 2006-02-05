@@ -92,19 +92,11 @@ sub gen_auf {
   # Anhand der IK Empfänger Nummer prüfen, ob der Schlüsselnutzer
   # unterschiedliches RZ nutzt, dann ist anderer physikalischer Empfänger
   # anzugeben
-  my $ik_empfaenger_physisch=$ik_empfaenger;
-  $ik_empfaenger_physisch=$h->parm_unique('EMPF'.$ik_empfaenger);
-  if (defined($ik_empfaenger_physisch) && $ik_empfaenger_physisch>0) {
-    # physikalischer Empfänger ist unterschiedlich
-    my $zik_typ=0;
-    ($ik_empfaenger_physisch,$zik_typ)=$k->krankenkasse_sel("ZIK,ZIK_TYP",$ik_empfaenger);
-    if ($zik_typ == 2) { # Datenannahmestelle ohne Entschlüsselungsbefugnis
-      substr($st,78,15) = sprintf "%-15u", $ik_empfaenger_physisch; # Empfänger, der die Daten physikalisch empfangen soll
-    } else {
-      die "Zu Datenannahmestelle $ik_empfaenger mit Entschlüsselungsbefugnis konnte keine physikalische Annahmestelle gefunden werden w/ $zik_typ\n"
-    }
+  my $ik_empfaenger_physisch=$k->krankenkasse_empf_phys($ik_empfaenger);
+  if (!defined($ik_empfaenger_physisch)) {
+    die "Zu Datenannahmestelle $ik_empfaenger mit Entschlüsselungsbefugnis konnte keine physikalische Annahmestelle gefunden werden\n"
   } else {
-    substr($st,78,15) = sprintf "%-15u", $ik_empfaenger; # Empfänger, der die Daten physikalisch empfangen soll
+    substr($st,78,15) = sprintf "%-15u", $ik_empfaenger_physisch; # Empfänger, der die Daten physikalisch empfangen soll
   }
 
   substr($st,93,6) = '000000'; # Fehlernr bei Rücksendung von Dateien
@@ -524,7 +516,7 @@ sub SLLA {
   my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
   $rechdatum =~ s/-//g;
 
-  my $test_ind = $h->parm_unique('IK'.$zik);
+  my $test_ind = $k->krankenkasse_test_ind($ik);
 
   # Stammdaten Frau holen
   my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
@@ -657,7 +649,7 @@ sub gen_nutz {
 
   my $erg = '';
 
-  my $test_ind = $h->parm_unique('IK'.$zik);
+  my $test_ind = $k->krankenkasse_test_ind($ktr);
   my ($zw_erg,$erstelldatum)= Heb_Edi->UNB($zik,$datenaustauschref,$test_ind);
   $erg .= $zw_erg;
   $erg .= Heb_Edi->SLGA($rechnr,$zik,$ktr);
@@ -778,7 +770,7 @@ sub edi_rechnung {
 
   # prüfen ob zu ik Zentral IK vorhanden ist
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
-  my $test_ind = $h->parm_unique('IK'.$zik);
+  my $test_ind = $k->krankenkasse_test_ind($ik);
   return undef if (!defined($test_ind)); # ZIK nicht als Annahmestelle vorhanden
   my $datenaustauschref = $h->parm_unique('DTAUS'.$zik);
   my $schl_flag = $h->parm_unique('SCHL'.$zik);
@@ -793,7 +785,10 @@ sub edi_rechnung {
   } else {
     $dateiname .= 'TSOL0'; # Test (siehe 3.2.3)
   }
-  $dateiname .= sprintf "%3.3u",substr((sprintf "%5.5u",$datenaustauschref),2,3); # Transfernummer
+  my $empf_physisch=$k->krankenkasse_empf_phys($zik);
+  die "Physikalischer Empfänger konnte für ZIK: $zik nicht ermittelt werden\n" unless (defined($empf_physisch));
+  my $transref=$h->parm_unique('DTAUS'.$empf_physisch);
+  $dateiname .= sprintf "%3.3u",substr((sprintf "%5.5u",$transref),2,3); # Transfernummer
   my $dateiname_orig = $dateiname;
 
   # Nutzdatendatei schreiben
@@ -820,7 +815,7 @@ sub edi_rechnung {
 
 
   ($erg_auf,$erstell_auf)  = 
-    Heb_Edi->gen_auf($test_ind,$datenaustauschref,$zik,length($erg_nutz),
+    Heb_Edi->gen_auf($test_ind,$transref,$zik,length($erg_nutz),
 		     $laenge_nutz,
 		     $h->parm_unique('SCHL'.$zik),
 		     $h->parm_unique('SIG'.$zik));
@@ -835,8 +830,11 @@ sub edi_rechnung {
 
   # wenn alles gelaufen ist, Datenaustauschreferenz erhöhen
   $datenaustauschref++;
+  $transref++;
+  $transref=0 if($transref > 999);
   $datenaustauschref=0 if($datenaustauschref > 99999);
   $h->parm_up('DTAUS'.$zik,$datenaustauschref);
+  $h->parm_up('DTAUS'.$empf_physisch,$transref) if($empf_physisch != $zik);
   return ($dateiname_orig,$erstell_auf,$erstell_nutz);
 }
 
@@ -856,7 +854,7 @@ sub mail {
   my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
   # prüfen ob zu ik Zentral IK vorhanden ist
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
-  my $test_ind = $h->parm_unique('IK'.$zik);
+  my $test_ind = $k->krankenkasse_test_ind($ik);
   return undef if (!defined($test_ind)); # ZIK nicht als Annahmestelle vorhanden
 
   my $boundary='Boundary-00='.$rechnr;
