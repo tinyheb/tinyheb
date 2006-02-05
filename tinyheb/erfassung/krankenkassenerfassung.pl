@@ -39,6 +39,7 @@ my $zik_typ = $q->param('zik_typ') || 0;
 my $postfach = $q->param('postfach_krankenkasse') || '';
 my $bemerkung = $q->param('bemerkung_krankenkasse') || '';
 my $beleg_ik = $q->param('beleg_ik') || '';
+my $email = $q->param('email') || '';
 my $pubkey = '';
 
 my $speichern = $q->param('Speichern');
@@ -115,6 +116,15 @@ print '<td><b>Ansprechpartner:</b></td></tr>';
 print "<tr><td><input type='text' name='asp_tel_krankenkasse' value='$asp_tel' size='40'></td>";
 print "<td><input type='text' name='asp_name_krankenkasse' value='$asp_name' size='40'></td></tr>";
 print '</table>';
+print "\n";
+
+# Zeile Email
+print '<tr><td>';
+print '<table border="0" align="left">';
+print '<tr><td><b>E-Mail:</b></td></tr>';
+print "<tr><td><input type='text' name='email' value='$email' size='50'></td></tr>";
+print '</table>';
+print '</td></tr>';
 print "\n";
 
 # leere Zeile
@@ -259,7 +269,7 @@ sub print_color {
 
 sub speichern {
   # Speichert die Daten in der Krankenkassen Datenbank
-  my $erg = $k->krankenkassen_ins($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik);
+  my $erg = $k->krankenkassen_ins($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik,$email);
   return $erg;
 }
 
@@ -271,7 +281,7 @@ sub loeschen {
 
 sub aendern {
   # Ändert die Daten zur angegebenen Krankenkassen in der Datenbank
-  my $erg = $k->krankenkassen_update($kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik,$ik);
+  my $erg = $k->krankenkassen_update($kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik,$email,$ik);
   return $erg;
 }
 
@@ -281,6 +291,6 @@ sub hole_krank_daten {
   $ik = $k->krankenkasse_next_ik($ik) if ($func==1);
   $ik = $k->krankenkasse_prev_ik($ik) if ($func==2);
   $ik=$ik_alt if (!defined($ik));
-  ($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$pubkey,$zik_typ,$beleg_ik)= $k->krankenkassen_krank_ik($ik);
+  ($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$pubkey,$zik_typ,$beleg_ik,$email)= $k->krankenkassen_krank_ik($ik);
   return;
 }
