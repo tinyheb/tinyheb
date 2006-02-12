@@ -27,6 +27,7 @@ use lib '../';
 use Heb_Edi;
 use Heb_leistung;
 use Heb_krankenkassen;
+use Heb;
 
 our $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
 
@@ -34,6 +35,7 @@ my $debug=1;
 my $e = new Heb_Edi;
 my $l = new Heb_leistung;
 my $k = new Heb_krankenkassen;
+my $h = new Heb;
 
 my $help=0;
 my $update=0;
@@ -84,7 +86,7 @@ if($update) {
 
 if ($sendmail) {
   # ergebnis nach sendmail pipen
-  open SEND, "| /usr/sbin/sendmail -t"
+  open SEND, "| /usr/sbin/sendmail -t -f ".$h->parm_unique('HEB_EMAIL')
     or die "konnte sendmail nicht öffnen $!\n";
   print SEND $erg;
   close SEND;
