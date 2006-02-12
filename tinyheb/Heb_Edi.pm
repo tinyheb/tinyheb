@@ -967,6 +967,7 @@ sub edi_update {
   my ($rechnr,$ignore,$dateiname,$datum) = @_;
 
   $datum =~ s/://g;
+  $datum .= '00';
   # Rahmendaten für Rechnung aus Datenbank holen
   $l->rechnung_such("ZAHL_DATUM,BETRAGGEZ,BETRAG,STATUS","RECHNUNGSNR=$rechnr");
   my ($zahl_datum,$betraggez,$betrag,$status)=$l->rechnung_such_next();
