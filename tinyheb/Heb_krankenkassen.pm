@@ -1,9 +1,24 @@
 #!/usr/bin/perl -wT
 
-# 19.02.2004
-# Package um Krankenkassen aus Datenbank zu verarbeiten
+# Package um Krankenkassen zu verarbeiten
 
-# author: Thomas Baum
+# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
 
 package Heb_krankenkassen;
 
@@ -252,6 +267,9 @@ sub krankenkasse_test_ind {
   if (defined($h->parm_unique('KTR'.$ktr))) {
     $test_ind=$h->parm_unique('KTR'.$ktr);
   }
+  # prüfen, ob PUBKEY vorhanden ist
+  my ($pubkey) = Heb_krankenkassen->krankenkasse_sel("PUBKEY",$da);
+  return undef if(!(defined($pubkey)) or $pubkey eq '');
   return $test_ind;
 }
 
