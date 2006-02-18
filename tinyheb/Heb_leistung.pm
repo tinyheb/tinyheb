@@ -433,7 +433,7 @@ sub leistungsart_such_werte {
   my ($posnr,$ltyp,$kbez,$guelt) = @_;
  
   my $where='';
-  $where = "POSNR = $posnr and " if ($posnr ne '');
+  $where = "POSNR = '$posnr' and " if ($posnr ne '');
   $where = $where."GUELT_VON <= '$guelt' and GUELT_BIS >= '$guelt' and" if ($guelt ne '');
   $leistungsart_such_werte =
     $dbh->prepare("select ID,POSNR,LEISTUNGSTYP,KBEZ,".
