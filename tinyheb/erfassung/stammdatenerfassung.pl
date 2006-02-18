@@ -3,9 +3,23 @@
 #-d:ptkdb
 #-d:DProf  
 
-# author: Thomas Baum
-# 07.02.2004
 # Stammdaten erfassen
+# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 use strict;
 use CGI;
@@ -115,7 +129,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.21 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.22 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -413,7 +427,7 @@ sub hole_frau_daten {
   $geb_kind = '' if ($geb_kind eq '00.00.0000');
   $plz = sprintf "%5.5u",$plz if ($plz ne '' && $plz > 0);
   $plz = '' if ($plz eq '' || $plz == 0);
-  $ik_krankenkasse='' if (!defined($ik_krankenkasse) || $ik_krankenkasse == 0);
+  $ik_krankenkasse='' if (!defined($ik_krankenkasse) || $ik_krankenkasse eq '' || $ik_krankenkasse == 0);
   
   return;
 }
