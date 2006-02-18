@@ -3,9 +3,24 @@
 #-d:ptkdb
 #-d:DProf  
 
-# author: Thomas Baum
-# 02.07.2005
 # Parameter erfassen, ändern, löschen
+
+# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 use strict;
 use CGI;
@@ -81,7 +96,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body bgcolor=white>';
 print '<div align="center">';
-print '<h1>Parameter $Revision: 1.3 $ <br>$Date: 2005-12-28 18:03:58 $</h1>';
+print '<h1>Parameter $Revision: 1.4 $ <br>$Date: 2006-02-18 15:39:39 $</h1>';
 print '<hr width="100%">';
 print '</div><br>';
 # Formular ausgeben
