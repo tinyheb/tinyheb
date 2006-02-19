@@ -112,7 +112,7 @@ print "<td><input type='text' class='disabled' disabled name='vorname' value='$v
 print "<td><input type='text' class='disabled' disabled name='nachname' value='$nachname' size='40'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_frau' value='$geb_frau' size='10'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind' value='$geb_kind' size='10'></td>";
-print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl\",\"frauenauswahl\",\"scrollbars=yes,innerwidth=750,innerheight=400\");'></td>";
+print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl?suchen=Suchen\",\"frauenauswahl\",\"scrollbars=yes,innerwidth=750,innerheight=400\");'></td>";
 print "</tr>";
 # Informationen zur Krankenkasse ausgeben
 my $text='';
@@ -126,12 +126,12 @@ if ($name_krankenkasse ne '') {
   if (defined($zik) && $zik > 0) {
     $text.="Datenannahmestelle: $zik ($name_zik).\n";
   } else {
-    $text .= "keine zentral Datenannahmestelle vorhanden\n";
+    $text .= "keine zentral Datenannahmestelle vorhanden. ";
   }
   my $empf_phys=$k->krankenkasse_empf_phys($zik);
   my ($name_phys)=$k->krankenkasse_sel("KNAME",$empf_phys);
   if (defined($empf_phys) && $empf_phys > 0) {
-    $text.="via $empf_phys ($name_phys)\n";
+    $text.="via $empf_phys ($name_phys) ";
   }
 
   if (defined($test_ind)) { # ZIK als Annahmestelle vorhanden
@@ -160,7 +160,7 @@ if (defined($ik_krankenkasse) && $ik_krankenkasse ne '') {
     my ($name_beleg)=$k->krankenkasse_sel("KNAME",$beleg_ik);
     $text .= "Rechnung über direkt verknüpfte Belegannahmestelle $beleg_ik ($name_beleg)\n";
   } elsif($beleg_typ==3) {
-    my ($name_beleg)=$k->krankenkasse_sel("NAME",$beleg_ik);
+    my ($name_beleg)=$k->krankenkasse_sel("KNAME",$beleg_ik);
     my ($ktr,$da)=Heb_krankenkassen->krankenkasse_ktr_da($ik_krankenkasse);
     my ($name_ktr)=$k->krankenkasse_sel("KNAME",$ktr);
     $text .= "Rechnung w/ zentralem Kostenträger $ktr ($name_ktr) an Belegannahmestelle $beleg_ik ($name_beleg)\n";
@@ -186,7 +186,7 @@ print '<tr>';
 # entgültig drucken nur dann einschalten, wenn Rechnung wirklich Daten enthält
 # damit keine Rechnung ohne Gegenwert gespeichert wird
 if ($l->leistungsdaten_offen($frau_id,'')) {
-  print "<td><input type='button' name='pdruck' value='entgültig Drucken' onclick='druck_fertig(\"$frau_id\",\"$vorname\",\"$nachname\",\"$geb_frau\",\"$geb_kind\",\"$plz\",\"$ort\",\"$strasse\",\"$kv_nummer\",\"$kv_gueltig\",\"$versichertenstatus\",\"$name_krankenkasse\",rechnungen_gen);'</td>";
+  print "<td><input type='button' name='pdruck' value='Rechnung fertigstellen' onclick='druck_fertig(\"$frau_id\",\"$vorname\",\"$nachname\",\"$geb_frau\",\"$geb_kind\",\"$plz\",\"$ort\",\"$strasse\",\"$kv_nummer\",\"$kv_gueltig\",\"$versichertenstatus\",\"$name_krankenkasse\",rechnungen_gen);'</td>";
 } else {
   print "<td><input type='button' disabled name='pdruck' value='entgültig Drucken'></td>";
 }
