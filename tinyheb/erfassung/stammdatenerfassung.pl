@@ -83,8 +83,10 @@ if ($ik_krankenkasse ne '' && $ik_krankenkasse > 0) {
    $ort_krankenkasse,
    $strasse_krankenkasse) = $k->krankenkasse_sel('NAME,PLZ_HAUS,ORT,STRASSE',$ik_krankenkasse);
   $name_krankenkasse = 'nicht bekannte IK angegeben' unless defined ($name_krankenkasse);
-} else {
+} elsif($versichertenstatus ne 'privat') {
   $name_krankenkasse = 'noch keine gültige Krankenkasse gewählt';
+} else {
+  $name_krankenkasse = 'Privat versichert';
 }
 
 $ort_krankenkasse = '' unless defined ($ort_krankenkasse);
@@ -129,7 +131,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.22 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.23 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
