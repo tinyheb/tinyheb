@@ -35,7 +35,7 @@ function rechnung_erfassen(formular) {
 
 function frausuchen(vorname,nachname,geb,formular) {
   // öffnet Fenster in dem eine Frau ausgewählt werden kann
-  open("frauenauswahl.pl?vorname="+vorname.value+"&nachname="+nachname.value+"&geb_f="+geb.value+"&suchen=Suchen","frauenwahl","scrollbars=yes,width=700,height=400");
+  open("frauenauswahl.pl?vorname="+vorname.value+"&nachname="+nachname.value+"&geb_f="+geb.value+"&suchen=Suchen&sel_status=alle","frauenwahl","scrollbars=yes,width=700,height=400");
   };
 
 function kvnr_check(kvnummer) {
