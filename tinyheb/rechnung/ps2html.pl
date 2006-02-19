@@ -267,20 +267,23 @@ neue_seite(6);
 
 # Begründungen ausgeben
 print_begruendung() if ($l->leistungsdaten_offen($frau_id,'BEGRUENDUNG <> ""')>0);
+$y1-=$y_font;
+neue_seite(7);
 
 # Prüfen ob auch elektronisch versand wird
 if ($name_krankenkasse ne '' && $versichertenstatus ne 'privat') {
   # prüfen ob zu ik Zentral IK vorhanden ist
   my $text='';
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
-  my $test_ind = $h->parm_unique('IK'.$zik);
+  my $test_ind = $k->krankenkasse_test_ind($ik_krankenkasse);
   my ($kname_zik)=$k->krankenkasse_sel("KNAME",$zik);
   if (defined($zik) && $zik > 0 && defined($test_ind) && $test_ind==1) {
-    $y1-=$y_font;
-    neue_seite(7);
     $p->text($x1,$y1,"Diese Rechnung wurde im Rahmen der Erprobungsphase des Datenaustausches im Abrechnungsverfahren");$y1-=$y_font;
-    $p->text($x1,$y1,"nach §302 SGB V per E-Mail an die zuständige Datenannahmestelle");$y1-=$y_font;
+    $p->text($x1,$y1,"nach §302 SGB V per E-Mail an die zuständige Datenannahmestelle ");$y1-=$y_font;
     $p->text($x1,$y1,"$zik ($kname_zik) geschickt.");$y1-=$y_font;$y1-=$y_font;
+  } elsif (defined($zik) && $zik > 0 && defined($test_ind) && $test_ind==2) {
+    $p->text($x1,$y1,"Diese Rechnung dient nur Ihren persönlichen Unterlagen, die Rechnung muss ausschließlich per");$y1-=$y_font;
+    $p->text($x1,$y1,"E-Mail an die zuständige Datenannahmestelle geschickt werden.");$y1-=$y_font;
   }
 }
 
