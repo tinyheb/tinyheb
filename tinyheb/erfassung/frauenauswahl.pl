@@ -49,6 +49,7 @@ my $ort = $q->param('ort') || '';
 my $plz = $q->param('plz') || '';
 my $strasse = $q->param('strasse') || '';
 
+my $sel_status = $q->param('sel_status') || 'ungleich erl.';
 my $suchen = $q->param('suchen');
 my $abschicken = $q->param('abschicken');
 
@@ -103,6 +104,18 @@ print "<td><input type='text' name='strasse' value='$strasse' size='10'></td>";
 print '</table>';
 print "\n";
 
+# Zeile mit Pop Menue um Einschränkung auf erledigt vorzunehmen
+print '<tr>';
+print '<td>';
+print '<select name="sel_status" size="1">';
+print '<option';
+print ' selected' if ($sel_status eq 'alle');
+print '>alle</option';
+print '<option';
+print ' selected' if ($sel_status eq 'ungleich erl.');
+print '>ungleich erl.</option';
+print '</td></tr>';
+
 # Zeile mit Knöpfen für unterschiedliche Funktionen
 print '<tr>';
 print '<td>';
@@ -132,7 +145,7 @@ if (defined($suchen)) {
   print '</tr>';
   # suchkriterien erweitern
   $vorname='%'.$vorname.'%';
-  $nachname='%'.$nachname.'%';
+  $nachname=$nachname.'%';
   $geb_f = $d->convert($geb_f) if ($geb_f ne '');
   $geb_f='%'.$geb_f.'%';
   $geb_k = $d->convert($geb_k) if ($geb_k ne '');
@@ -172,20 +185,22 @@ if (defined($suchen)) {
     if($l->leistungsdaten_werte($f_id,'distinct status','','status')) {
       ($status)=$l->leistungsdaten_werte_next();
       $status=$l->status_text($status);
-    } 
-    print '<tr>';
-    $f_vorname=' ' if (!defined($f_vorname));print "<td>$f_vorname</td>";
-    $f_nachname=' ' if (!defined($f_nachname));print "<td>$f_nachname</td>";
-    print "<td>$f_geb_f</td>";
-    print "<td>$f_geb_k</td>";
-    print "<td>$f_plz</td>";
-    $f_ort=' ' if (!defined($f_ort));print "<td>$f_ort</td>";
-    $f_strasse=' ' if (!defined($f_strasse));print "<td>$f_strasse</td>";
-    print "<td>$status</td>";
-    print '<td><input type="button" name="waehlen" value="Auswählen"';
-    print "onclick=\"frau_eintrag('$f_id');self.close();\">";
-    print "</td>";
-    print "</tr>\n";
+    }
+    if ($sel_status eq 'alle' || $status ne $l->status_text(30)) {
+      print '<tr>';
+      $f_vorname=' ' if (!defined($f_vorname));print "<td>$f_vorname</td>";
+      $f_nachname=' ' if (!defined($f_nachname));print "<td>$f_nachname</td>";
+      print "<td>$f_geb_f</td>";
+      print "<td>$f_geb_k</td>";
+      print "<td>$f_plz</td>";
+      $f_ort=' ' if (!defined($f_ort));print "<td>$f_ort</td>";
+      $f_strasse=' ' if (!defined($f_strasse));print "<td>$f_strasse</td>";
+      print "<td>$status</td>";
+      print '<td><input type="button" name="waehlen" value="Auswählen"';
+      print "onclick=\"frau_eintrag('$f_id');self.close();\">";
+      print "</td>";
+      print "</tr>\n";
+    }
   }
 }
 print '</form>';
