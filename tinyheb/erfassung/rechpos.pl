@@ -424,6 +424,23 @@ sub speichern {
   }
 
 
+  # Leistungstyp Plausi
+  if (ltyp_plausi($posnr,$frau_id,$datum_l) ne '') {
+    $hint .= ltyp_plausi($posnr,$frau_id,$datum_l);
+    return $hint;
+  }
+
+  # spezielle Prüfungen für PosNr. 1
+  if (pos1_plausi($posnr,$frau_id,$datum_l) ne '') {
+    $hint .= pos1_plausi($posnr,$frau_id,$datum_l);
+    return $hint;
+  }
+
+  # spezielle Prüfungen für PosNr. 2, 4, 5 und 8
+  if (pos2458_plausi($posnr,$frau_id,$datum_l) ne '') {
+    $hint .= pos2458_plausi($posnr,$frau_id,$datum_l);
+    return $hint;
+  }
 
   # Preis berechnen in Abhängigkeit der Dauer
   my $preis=0;
@@ -436,6 +453,10 @@ sub speichern {
     if ($zeit_von eq '' || $zeit_bis eq '' || $dauer == 0) {
       $hint .= '\nFEHLER: Bitte Zeit von, Zeit bis erfassen, nichts gespeichert';
       $hscript = 'document.rechpos.zeit_von.focus();';
+      return $hint;
+    }
+    if (dauer_plausi($posnr,$dauer,$datum_l,$begruendung) ne '') {
+      $hint .= dauer_plausi($posnr,$dauer,$datum_l,$begruendung);
       return $hint;
     }
     $preis = sprintf "%3.3u",($dauer / $l_fuerzeit) if ($fuerzeit_flag ne 'E');
@@ -587,6 +608,72 @@ sub matpausch {
   }
   return $hint;
 }
+
+
+sub pos1_plausi {
+  # prüft ob Positionsnummer 1 erfasst wurde
+  # liefert als Ergebnis '' wenn kein Fehler aufgetreten ist oder
+  # Fehlermeldung wenn Fehler aufgetreten ist
+  my ($posnr,$frau_id,$datum_l) = @_;
+  return '' if $posnr ne '1';
+  if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr") > 12) {
+    return 'FEHLER: Position ist höchstens zwölfmal berechnungsfähig\nes wurde nichts gespeichert';
+  }
+  if ($l->leistungsdaten_werte($frau_id,"POSNR",
+			       "POSNR in (2,4,5,8) and DATUM='$datum_l'")) {
+    return 'FEHLER: Positionsnummer ist neben Leistungen nach 2,4,5 und 8\n an demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
+  }
+  return '';
+}
+
+sub pos2458_plausi {
+  # prüft für Positionsnummer 2,4,5,8 ob schon Positionsnummer 1 erfasst
+  # wurde
+  # liefert Ergebnis '' wenn kein Fehler aufgetreten ist oder
+  # Fehlermeldung wenn Fehler aufgetreten ist
+  my ($posnr,$frau_id,$datum_l)=@_;
+  return '' if ($posnr ne '2' && $posnr ne '4' && 
+		$posnr ne '5' && $posnr ne '8');
+  if ($l->leistungsdaten_werte($frau_id,"POSNR",
+			       "POSNR=1 and DATUM='$datum_l'")) {
+    return 'FEHLER: Positionsnummer '.$posnr.' ist neben Leistungen nach 1\nan demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
+  }
+  return '';
+}
+
+
+sub dauer_plausi {
+  # prüft, ob begründung für Positionsnummer erfasst werden muss,
+  # dass ist genau dann der Fall, wenn dauer > DAUER.
+  my ($posnr,$dauer,$datum_l,$begruendung)=@_;
+  my ($l_dauer)=$l->leistungsart_such_posnr('DAUER',$posnr,$datum_l);
+  if ($l_dauer > 0 && $l_dauer < $dauer && $begruendung eq '') {
+    return 'FEHLER: Bei Leistung nach Positionsnummer '.$posnr.' länger als\n'.$l_dauer.' Minuten ist dies zu begründen\nes wurde nichts gespeichert';
+  }
+  return '';
+}
+
+sub ltyp_plausi {
+  # prüft, das Leistungstyp A (Mutterschaftsvorsorge und Schwangeren-
+  # betreuung vor Geburt des Kindes erfolgen,
+  # C (Wochenbett) nur nach Geburt des Kindes
+  # Prüfung wird nur durchgeführt, wenn Geburtsdatum des Kindes bekannt ist
+  my ($posnr,$frau_id,$datum_l)=@_;
+  my @dat_frau = $s->stammdaten_frau_id($frau_id);
+  my $geb_kind=$d->convert($dat_frau[3]);
+  return '' if ($geb_kind eq 'error');
+  my ($ltyp)=$l->leistungsart_such_posnr('LEISTUNGSTYP',$posnr,$datum_l);
+  $geb_kind =~ s/-//g;
+  $datum_l =~ s/-//g;
+  if ($ltyp eq 'A' && $geb_kind < $datum_l) {
+    return 'FEHLER: Leistungen der Schwangerenbetreuung können nur vor Geburt des\nKindes erbracht werden.\nEs wurde nichts gespeichert';
+  }
+  if ($ltyp eq 'C' && $geb_kind > $datum_l) {
+    return 'FEHLER: Leistungen im Wochenbett können erst nach Geburt des Kindes\nerbracht werden. Es wurde nichts gespeichert.';
+  }
+  return '';
+}
+  
 
 
 sub loeschen {
