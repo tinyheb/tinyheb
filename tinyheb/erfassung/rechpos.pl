@@ -24,7 +24,7 @@
 
 use strict;
 use CGI;
-use Date::Calc qw(Today Day_of_Week Delta_Days);
+use Date::Calc qw(Today Day_of_Week Delta_Days Add_Delta_Days);
 
 use lib "../";
 use Heb_stammdaten;
@@ -442,6 +442,18 @@ sub speichern {
     return $hint;
   }
 
+  # spezielle Prüfung w/ Zeitesmal im Wochenbett
+  if (Cd_plausi($posnr,$frau_id,$datum_l,$begruendung) ne '') {
+    $hint .= Cd_plausi($posnr,$frau_id,$datum_l,$begruendung);
+    return $hint;
+  }
+
+  # spezielle Prüfung w/ wie viele Wochenbettbesuche
+  if (Cc_plausi($posnr,$frau_id,$datum_l,$begruendung) ne '') {
+    $hint .= Cc_plausi($posnr,$frau_id,$datum_l,$begruendung);
+    return $hint;
+  }
+
   # Preis berechnen in Abhängigkeit der Dauer
   my $preis=0;
   my $fuerzeit_flag='';
@@ -673,7 +685,57 @@ sub ltyp_plausi {
   }
   return '';
 }
-  
+
+sub Cd_plausi {
+  # prüft, ob Posnr 25,26 innerhalb der ersten zehn Tage nach der Geburt
+  # abgerechnet werden --> OK
+  # oder ob Posnr 25,26,29,32,33 nach zehn Tagen 
+  # innerhalb von 8 Wochen = 56 Tage mit Begründung --> OK
+  # oder nach 8 Wochen mit Begründung 'auf ärztliche Anordnung' --> OK
+  my ($posnr,$frau_id,$datum_l,$begruendung)=@_;
+
+  return '' if ($posnr ne '25' && $posnr ne '26' && $posnr ne '29' &&
+		$posnr ne '32' && $posnr ne '33');
+
+  my @dat_frau = $s->stammdaten_frau_id($frau_id);
+  my $geb_kind=$d->convert($dat_frau[3]);
+  return '' if ($geb_kind eq 'error');
+  my $days = Delta_Days(unpack('A4xA2xA2',$geb_kind),unpack('A4xA2xA2',$datum_l));
+  if ($days < 11 && ($posnr eq '25' || $posnr eq '26')) {
+    return '';
+  } elsif ($days < 11 && $posnr ne '25' && $posnr ne '26' && 
+	   $begruendung eq '') {
+    return '\nFEHLER: innerhalb der ersten 10 Tage dürfen nur Posnr 25 und 26\nohne Begründung zweimal abgerechnet werden.\nEs wurde nichts gespeichert';
+  } elsif ($days < 57 && $begruendung eq '') {
+    return '\nFEHLER: Position '.$posnr.' nach 10 Tagen innerhalb 8 Wochen nur mit Begründung.\nEs wurde nichts gespeichert';
+  } elsif ($days > 56 && ($begruendung !~ /Anordnung/)) {
+    return '\nFEHLER: Position '.$posnr.' nach 8 Wochen nur auf ärztliche Anordnung\nEs wurde nichts gespeichert';
+  }
+  return '';
+}
+
+sub Cc_plausi {
+  # Leistungen nach 22,23,25 bis 33 und 35 sind nur mehr als 16 mal
+  # abrechenbar, wenn ärztlich angeordnet
+  my ($posnr,$frau_id,$datum_l,$begruendung)=@_;
+
+  return '' if ($posnr ne '22' && $posnr ne '23' && $posnr ne '25' &&
+		$posnr ne '26' && $posnr ne '27' && $posnr ne '28' &&
+		$posnr ne '29' && $posnr ne '30' && $posnr ne '31' &&
+		$posnr ne '32' && $posnr ne '33' && $posnr ne '35');
+
+  my @dat_frau = $s->stammdaten_frau_id($frau_id);
+  my $geb_kind=$d->convert($dat_frau[3]);
+  return '' if ($geb_kind eq 'error');
+  my $days = Delta_Days(unpack('A4xA2xA2',$geb_kind),unpack('A4xA2xA2',$datum_l));
+  my $zehn_spaeter=join('-',Add_Delta_Days($d->jmt($geb_kind),10));
+  if ($days > 10 && 
+      ($begruendung !~ /Anordnung/) &&
+      ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR in (22,23,25,26,28,29,30,31,32,33,35) AND DATUM>'$zehn_spaeter'") > 16) ) {
+    return 'FEHLER: Position '.$posnr.' ist ab dem 11 Tag höchstens 16 mal berechnungsfähig\nohne ärztliche Anordnung\nes wurde nichts gespeichert';
+  }
+  return '';
+}
 
 
 sub loeschen {
@@ -717,17 +779,19 @@ sub loeschen {
     my @erg=$l->leistungsdaten_such_id($leist_id_loe);
     $l->leistungsart_zus($erg[1],'ZWEITESMAL',$datum_l);
     my $werte='';
+    my $wert_neu='';
     while (my $poszus=$l->leistungsart_zus_next()) {
+      $wert_neu = $poszus if ($werte eq '');
       $werte .= ',' if ($werte ne '');
       $werte .= $poszus;
     }
-    if ($l->leistungsdaten_werte($frau_id,"ID","(POSNR in ($werte) or POSNR=$erg[1])",'DATUM')) {
+    if ($l->leistungsdaten_werte($frau_id,"ID","(POSNR in ($werte) or POSNR=$erg[1]) and DATUM >= '".$d->convert($erg[4])."'",'DATUM')) {
       my ($id)=$l->leistungsdaten_werte_next();
       my @erg=$l->leistungsdaten_such_id($id);
       loeschen($id); # pos löschen und später erneut einfügen
       my $datum_id_loe=$d->convert($erg[4]);
       my $posnr=$erg[1];
-      $posnr=$werte if ($erg[1] == $posnr);
+      $posnr=$wert_neu if($wert_neu ne '');
       # Erneut speichern
       $hint=speichern($erg[2],$posnr,$begruendung,$datum_id_loe,$erg[5].':00',$erg[6].':00',$erg[7],$erg[8],$erg[9],'anteilig');
     }
