@@ -72,11 +72,16 @@ if ($auswahl eq 'Neu' && defined($abschicken)) {
   $entfernung_tag=0;
   $entfernung_nacht=0;
   $begruendung='';
+  $anzahl_frauen=1;
 }
 
 if ($auswahl eq 'Ändern' && defined($abschicken)) {
   aendern();
   hole_daten();
+  $entfernung_tag=0;
+  $entfernung_nacht=0;
+  $begruendung='';
+  $anzahl_frauen=1;
   $auswahl='Neu';
 }
 
@@ -610,11 +615,10 @@ sub matpausch {
     }
     
     if ($comp) { # es muss gespeichert werden
-      # Entfernung nicht 2mal rechnen
-      $entfernung_nacht=0;
-      $entfernung_tag=0;
+      # Entfernung nicht 2mal rechnen bei Materialpauschale, daher
+      # mit Entfernung 0 aufrufen
       my ($ze_preis) = $l->leistungsart_such_posnr('EINZELPREIS',$m_zus,$datum_l);
-      $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
+      $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',0,0,$anzahl_frauen,$ze_preis,'',10);
       $hint .= '\nAbhängige Materialpauschale wurde zusätzlich gespeichert';
     }
   }
