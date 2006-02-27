@@ -224,7 +224,11 @@ if ($versichertenstatus eq 'privat') {
 
 # Betreff Zeile
 $p->setfont($font_b,10);
-$p->text(2,19.7,"Gebührenabrechnung nach HebGV");
+if ($versichertenstatus ne 'privat') {
+  $p->text(2,19.7,"Gebührenabrechnung nach HebGV");
+} else {
+  $p->text(2,19.7,"Gebührenabrechnung nach HebGo NW");
+}
 
 fussnote(); # auf der ersten Seite explizit angeben
 
@@ -290,8 +294,13 @@ if ($name_krankenkasse ne '' && $versichertenstatus ne 'privat') {
 
 # Abschlusstext ausgeben
 neue_seite(7);
-$p->text($x1,$y1,"Bitte überweisen Sie den Gesamtbetrag innerhalb der gesetzlichen Frist von drei Wochen nach");$y1-=$y_font;
-$p->text($x1,$y1,"Rechnungseingang (§5 Abs. 4 HebGV) unter Angabe der Rechnungsnummer.");
+if ($versichertenstatus ne 'privat') {
+  $p->text($x1,$y1,"Bitte überweisen Sie den Gesamtbetrag innerhalb der gesetzlichen Frist von drei Wochen nach");$y1-=$y_font;
+  $p->text($x1,$y1,"Rechnungseingang (§5 Abs. 4 HebGV) unter Angabe der Rechnungsnummer.");
+} else {
+  $p->text($x1,$y1,"Bitte überweisen Sie den Gesamtbetrag innerhalb der gesetzlichen Frist von 30 Tagen nach");$y1-=$y_font;
+  $p->text($x1,$y1,"Rechnungseinang unter Angabe der Rechnungsnummer.");
+}
 $y1-=$y_font;$y1-=$y_font;$y1-=$y_font;
 $p->text($x1,$y1,"Mit freundlichen Grüßen");
 
@@ -474,7 +483,7 @@ sub print_wegegeld {
     $gpreis =~s/\./,/g;
     $p->text({align => 'right'},17.3,$y1,$gpreis." EUR"); # Preis andrucken
     $y1-=$y_font;
-    neue_seite(4,$tn);
+    neue_seite(5,$tn);
   }
   $y1+=$y_font-0.05;
   $p->line(17.4,$y1,15.1,$y1);$y1-=$y_font-0.1;
