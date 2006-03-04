@@ -448,6 +448,7 @@ sub print_wegegeld {
   $text ='Wegegeld bei Nacht Entfernung nicht mehr als 2 KM' if ($tn eq 'NK');
   $p->text($x1,$y1,$text);$y1-=$y_font;
   while (my @erg=$l->leistungsdaten_offen_next()) {
+    neue_seite(5,$tn);
     if($tn eq 'N') {
       ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'94',$erg[4]);
       $preis =~ s/\./,/g;
@@ -483,7 +484,6 @@ sub print_wegegeld {
     $gpreis =~s/\./,/g;
     $p->text({align => 'right'},17.3,$y1,$gpreis." EUR"); # Preis andrucken
     $y1-=$y_font;
-    neue_seite(5,$tn);
   }
   $y1+=$y_font-0.05;
   $p->line(17.4,$y1,15.1,$y1);$y1-=$y_font-0.1;
