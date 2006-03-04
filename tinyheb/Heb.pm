@@ -26,7 +26,7 @@ use strict;
 use DBI;
 
 our $dbh; # Verbindung zur Datenbank
-our $user='baum';
+our $user='wwwrun';
 our $pass='';
 
 my $debug = 1;
