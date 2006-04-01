@@ -173,8 +173,13 @@ print '<tr>';
 print "<td><input type='text' name='entfernung_tag' value='$entfernung_tag' size='6'></td>";
 print "<td><input type='text' name='entfernung_nacht' value='$entfernung_nacht' size='6'></td>";
 print "<td><input type='text' name='anzahl_frauen' value='$anzahl_frauen' size='2'></td>";
-print "<td><input type='radio' name='strecke' value='gesamt' checked>gesamt";
-print "<input type='radio' name='strecke' value='anteilig'>anteilig";
+if ($strecke eq 'gesamt') {
+  print "<td><input type='radio' name='strecke' value='gesamt' checked>gesamt";
+  print "<input type='radio' name='strecke' value='anteilig'>anteilig";
+} else {
+  print "<td><input type='radio' name='strecke' value='gesamt'>gesamt";
+  print "<input type='radio' name='strecke' value='anteilig' checked>anteilig";
+}
 print "</td>";
 print "</tr>";
 print '</table>';
@@ -277,7 +282,7 @@ sub printbox {
     print ' selected' if ($posnr eq $l_posnr);
     print " >";
     $script .= "if(formular.posnr.value == '$l_posnr') {formular.preis.value=$l_preis;\n";
-    if ($l_fuerzeit > 0 || $wahl eq 'B') {
+    if (defined($l_fuerzeit) && $l_fuerzeit > 0 || $wahl eq 'B') {
       $script .= "formular.zeit_von.disabled=false;\n";
       $script .= "formular.zeit_bis.disabled=false;\n";
       $script .= "var zl_tag = document.getElementsByName('zeit_von');\n";
@@ -464,7 +469,7 @@ sub speichern {
   my $fuerzeit_flag='';
   my ($l_epreis,$l_fuerzeit) = $l->leistungsart_such_posnr('EINZELPREIS,FUERZEIT',$posnr,$datum_l);
   ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
-  if ($l_fuerzeit > 0) {
+  if (defined($l_fuerzeit) && $l_fuerzeit > 0) {
     # prüfen ob gültige Zeiten erfasst sind
     my $dauer = $d->dauer_m($zeit_bis,$zeit_von);
     if ($zeit_von eq '' || $zeit_bis eq '' || $dauer == 0) {
