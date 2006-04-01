@@ -22,6 +22,7 @@
 
 use strict;
 use Getopt::Long;
+use File::Copy;
 use lib '../';
 
 use Heb_Edi;
@@ -30,6 +31,10 @@ use Heb_krankenkassen;
 use Heb;
 
 our $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
+if (!(-d "$path/tmp")) { # Zielverzeichnis anlegen
+  mkdir "$path/tmp";
+}
+
 
 my $debug=1;
 my $e = new Heb_Edi;
@@ -98,7 +103,16 @@ if ($sendmail) {
 # für Datenannahmestelle
 my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
 my $empf_phys=$k->krankenkasse_empf_phys($zik);
-system("mkdir -p $path/tmp/$empf_phys");
-system("mv $path/tmp/$dateiname* $path/tmp/$empf_phys");
+print "Rechnung erfolgreich verschickt\n";
+$e->edi_update($rechnr,1,$dateiname,$erstell_auf);
+if (!(-d "$path/tmp/$empf_phys")) { # Zielverzeichnis anlegen
+  mkdir "$path/tmp/$empf_phys";
+}
+foreach my $ext ('','.AUF','.enc','.sig','.base64') {
+  if (-e "$path/tmp/$dateiname$ext") {
+    move("$path/tmp/$dateiname$ext","$path/tmp/$empf_phys/$dateiname$ext");
+  }
+}
+
 
 	    
