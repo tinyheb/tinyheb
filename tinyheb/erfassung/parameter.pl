@@ -96,7 +96,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body bgcolor=white>';
 print '<div align="center">';
-print '<h1>Parameter $Revision: 1.4 $ <br>$Date: 2006-02-18 15:39:39 $</h1>';
+print '<h1>Parameter $Revision: 1.5 $ <br>$Date: 2006-04-01 18:53:44 $</h1>';
 print '<hr width="100%">';
 print '</div><br>';
 # Formular ausgeben
@@ -168,7 +168,7 @@ print '</select>';
 print '</td>';
 print '<td>';
 print '<input type="button" name="reset" value="Inhalt löschen"';
-print ' onClick="loeschen()">';
+print ' onClick=window.location="parameter.pl">';
 print '</td>';
 print '<td>';
 print '<input type="submit" name="abschicken" value="Speichern"';
