@@ -305,23 +305,15 @@ $y1-=$y_font;$y1-=$y_font;$y1-=$y_font;
 $p->text($x1,$y1,"Mit freundlichen Grüßen");
 
 # write the output to a file
-$p->output("/tmp/wwwrun/file.ps");
+#$p->output("/tmp/wwwrun/file.ps");
 my $speichern = $q->param("speichern") || '';
 
 # in Browser schreiben
-open (FILE,"/tmp/wwwrun/file.ps") or die "Can't open file.ps: $!\n";
+#open (FILE,"/tmp/wwwrun/file.ps") or die "Can't open file.ps: $!\n";
 print $q->header ( -type => "application/postscript", -expires => "-1d");
-my $in='';
-my $all_rech='';
-while ($in =<FILE>) {
-  if ($in =~ /%%Title:/) {
-    print "%%Title: $nachname","_",$vorname,"\n";
-    $all_rech .= "%%Title: $nachname"."_".$vorname."\n";
-  } else {
-    $all_rech.=$in;
-    print $in;
-  }
-}
+my $all_rech=$p->get();
+$all_rech =~ s/PostScript::Simple generated page/${nachname}_${vorname}/g;
+print $all_rech;
 
 if ($speichern eq 'save') {
   # setzt alle Daten in der Datenbank auf Rechnung und speichert die Rechnung
