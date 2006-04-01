@@ -30,6 +30,7 @@ use Tk::ItemStyle;
 
 use Mail::Sender;
 use File::stat;
+use File::Copy;
 
 use Heb;
 use Heb_Edi;
@@ -39,6 +40,11 @@ use Heb_stammdaten;
 
 
 my $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
+
+
+if (!(-d "$path/tmp")) { # Zielverzeichnis anlegen
+  mkdir "$path/tmp";
+}
 
 my $h = new Heb;
 my $e = new Heb_Edi;
@@ -178,24 +184,13 @@ MainLoop;
 sub sendmail {
   my @sel = $hlist->infoSelection;
 
-  foreach (@sel) {
+RECH:  foreach (@sel) {
     my $rechnr=$_;
     print "Selektiert: $rechnr, baue Rechnung\n";
 
-    my ($dateiname,$erstell_auf,$erstell_nutz)=$e->edi_rechnung($rechnr);
-    $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
-    my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
-    # prüfen ob zu ik Zentral IK vorhanden ist
-    my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
-    my $test_ind = $k->krankenkasse_test_ind($ik);
-
-    my $dateiname_ext=$dateiname; # Dateiendung der Nutzdatendatei
-    $dateiname_ext = $dateiname.'.sig' if ($h->parm_unique('SIG'.$zik) > 0);
-    $dateiname_ext = $dateiname.'.enc' if ($h->parm_unique('SCHL'.$zik) > 0);
-
     open my $debug, ">>$path/maillog";
     $Mail::Sender::NO_X_MAILER=1;
-    my $sender = ();
+    my $sender = undef;
     if ($user_pass ne '') {
       $sender = new Mail::Sender ({smtp => $prov_sel,
 				   from => $h->parm_unique('HEB_IK').'<'.$user_from.'>',
@@ -203,25 +198,47 @@ sub sendmail {
 				   auth => 'LOGIN',
 				   authid => $user_sel,
 				   authpwd => $user_pass,
-				   debug_level => 1,
-				   boundary => 'tinyheb-'.$rechnr})
-	or die "Fehler bei Mailverschicken $Mail::Sender::Error\n";
+				   debug_level => 2,
+				   boundary => 'tinyheb-'.$rechnr});
     } else {
       $sender = new Mail::Sender ({smtp => $prov_sel,
 				   from => $h->parm_unique('HEB_IK').'<'.$user_from.'>',
 				   debug => $debug,
-				   debug_level => 1,
-				   boundary => 'tinyheb-'.$rechnr})
-	or die "Fehler bei Mailverschicken $Mail::Sender::Error\n";
+				   debug_level => 2,
+				   boundary => 'tinyheb-'.$rechnr});
     }
 
+    if ($sender < 0){
+      fehler("Fehler bei Mailverschicken von Rechnung $rechnr: $Mail::Sender::Error\nversenden wird abgebrochen ");
+      last RECH;
+    }
 #    print "SENDER\n";
 #    print Pretty $sender;
 
-    $sender->OpenMultipart({to => $h->parm_unique('MAIL'.$zik),
-			    bcc => $user_from,
-			    subject => $h->parm_unique('HEB_IK')})
-      or die "Fehler bei Mailverschicken $Mail::Sender::Error\n";
+    $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
+    my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
+    # prüfen ob zu ik Zentral IK vorhanden ist
+    my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
+    my $test_ind = $k->krankenkasse_test_ind($ik);
+
+    if ($sender->OpenMultipart({to => $h->parm_unique('MAIL'.$zik),
+				bcc => $user_from,
+				subject => $h->parm_unique('HEB_IK')}) < 0) {
+      fehler("Fehler bei Mailverschicken von Rechnung $rechnr: $Mail::Sender::Error\nversenden wird abgebrochen ");
+      last RECH;
+    }
+
+    # Edi Rechnung erstellen
+    my ($dateiname,$erstell_auf,$erstell_nutz)=(undef,undef,undef);
+    ($dateiname,$erstell_auf,$erstell_nutz)=$e->edi_rechnung($rechnr);
+    if(!defined($dateiname)) {
+      fehler("Fehler bei Mailverschicken von Rechnung $rechnr:\nelektronische Rechnung konnte nicht erstellt werden $! \nversenden wird abgebrochen ");
+      last RECH;
+    }
+    my $dateiname_ext=$dateiname; # Dateiendung der Nutzdatendatei
+    $dateiname_ext = $dateiname.'.sig' if ($h->parm_unique('SIG'.$zik) > 0);
+    $dateiname_ext = $dateiname.'.enc' if ($h->parm_unique('SCHL'.$zik) > 0);
+
 
     my $msg_body='';
     my $crlf = "\x0d\x0a";
@@ -235,26 +252,30 @@ sub sendmail {
     $msg_body .= $user_from.$crlf;
     $msg_body .= $h->parm_unique('HEB_TEL').$crlf;
     
-    $sender->Body({charset => 'iso-8859-1',
-		   ctype => 'text/plain',
-		   encoding => 'Base64',
-		   msg => $msg_body})
-      or die "Fehler bei Mailverschicken $Mail::Sender::Error\n";
+    if ($sender->Body({charset => 'iso-8859-1',
+		       ctype => 'text/plain',
+		       encoding => 'Base64',
+		       msg => $msg_body}) < 0) {
+      fehler("Fehler bei Mailverschicken von Rechnung $rechnr: $Mail::Sender::Error\nversenden wird abgebrochen ");
+      last RECH;
+    }
 
       # Auftragsdatei lesen und verschicken
     open AUF, "$path/tmp/$dateiname.AUF"
       or die "Konnte Auftragsdatei nicht öffnen\n";
     my $auf = <AUF>;
     close AUF;
-    $sender->Part(
+    if($sender->Part(
 		    {ctype => 'text/plain',
 		     charset => 'iso-8859-1',
 		     encoding => 'Base64',
 		     name => $dateiname.'.auf',
 		     disposition => 'attachment; filename="'.$dateiname.'.auf"',
 		     msg => $auf
-		     })
-      or die "Fehler bei Mailverschicken Auftragsdatei  $Mail::Sender::Error\n";
+		    }) < 0) {
+      fehler("Fehler bei Mailverschicken von Rechnung $rechnr: $Mail::Sender::Error\nversenden wird abgebrochen ");
+      last RECH;
+    }
 
     # Nutzdatendatei lesen
     my $nutz='';
@@ -263,27 +284,53 @@ sub sendmail {
     $nutz .= $zeile;
   }
   close NUTZ;
-    $sender->Part(
+    if ($sender->Part(
                 {ctype => 'text/plain',
                  name => $dateiname,
                  charset => 'iso-8859-1',
                  encoding => 'Base64',
                  disposition => 'attachment; filename="'.$dateiname.'";',
                  msg => $nutz
-                })
-      or die "Fehler bei Mailverschicken Nutzdatendatei  $Mail::Sender::Error\n";
+                }) < 0) {
+      fehler("Fehler bei Mailverschicken von Rechnung $rechnr: $Mail::Sender::Error\nversenden wird abgebrochen ");
+      last RECH;
+    }
+
 
     if ($sender->Close()) { #update nur machen, wenn Rechnung erfolgreich
       print "Rechnung erfolgreich verschickt\n";
       $e->edi_update($rechnr,1,$dateiname,$erstell_auf);
       my $empf_phys=$k->krankenkasse_empf_phys($zik);
-      system("mkdir -p $path/tmp/$empf_phys");
-      system("mv $path/tmp/$dateiname* $path/tmp/$empf_phys");
+      if (!(-d "$path/tmp/$empf_phys")) { # Zielverzeichnis anlegen
+	mkdir "$path/tmp/$empf_phys";
+      }
+      foreach my $ext ('','.AUF','.enc','.sig') {
+	if (-e "$path/tmp/$dateiname$ext") {
+	  move("$path/tmp/$dateiname$ext","$path/tmp/$empf_phys/$dateiname$ext");
+	}
+      }
+      $mw->messageBox(-title => 'Rechnungsversandt',
+		      -type => 'OK',
+		      -message => "Rechnung $rechnr erfolgreich verschickt",
+		      -default => 'OK'
+		      );
     } else {
-      print "Konnte Rechnung nicht verschicken: $Mail::Sender::Error\n";
+      fehler("Fehler bei Mailverschicken von Rechnung $rechnr: $Mail::Sender::Error\nversenden wird abgebrochen ");
+      last RECH;
     }
   }
   fill_hlist();
+}
+
+
+
+sub fehler {
+  my ($text)=@_;
+  $mw->messageBox(-title => 'Rechnungsversandt',
+		  -type => 'OK',
+		  -message => "$text\n",
+		  -default => 'OK'
+		 );
 }
 
 
