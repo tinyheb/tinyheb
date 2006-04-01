@@ -108,6 +108,8 @@ if (defined($suchen)) {
     print '<tr>';
     print "<td>$p_name</td>";
     print "<td>$p_beschreibung</td>";
+    $p_wert =~ s/</&lt;/g;
+    $p_wert =~ s/>/&gt;/g;
     print "<td>$p_wert</td>";
     print '<td><input type="button" name="waehlen" value="Auswählen"';
     print "onclick=\"p_eintrag('$id','$p_name','$p_wert','$p_beschreibung');self.close()\"></td>";
@@ -120,6 +122,9 @@ print '</table>';
 
 print <<SCRIPTE;
 <script>
+
+window.focus();
+
   function p_eintrag(parm_id,name,wert,beschreibung) {
     // in Parent Dokument übernehmen
     var formular=opener.window.document.forms[0];
