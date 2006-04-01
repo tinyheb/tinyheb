@@ -39,8 +39,8 @@ my $k = new Heb_krankenkassen;
 my $s = new Heb_stammdaten;
 my $d = new Heb_datum;
 
-my $delim = "'\r\n"; # Trennzeichen
-my $crlf = "\r\n";
+my $delim = "'\x0d\x0a"; # Trennzeichen
+my $crlf = "\x0d\x0a";
 
 our $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
 our $dbh;
@@ -688,11 +688,11 @@ sub sig {
     
  
  LINE: while (my $zeile=<NUTZ>) {
-    next LINE if($zeile =~ /^\n$/ && $sig_flag != 3);
-    if ($sig_flag != 3) {
-      $zeile =~ s/\r\n$//;
-      $zeile .= $crlf;
-    }
+#    next LINE if($zeile =~ /^\n$/ && $sig_flag != 3);
+#    if ($sig_flag != 3) {
+#      $zeile =~ s/\r\n$//;
+#      $zeile .= $crlf;
+#    }
     print AUS $zeile;
   }
   close NUTZ;
@@ -732,11 +732,11 @@ sub enc {
   open AUS, ">$path/tmp/$dateiname.enc";
     
  LINE: while (my $zeile=<NUTZ>) {
-    next LINE if($zeile =~ /^\n$/ && $schl_flag != 3);
-    if ($schl_flag != 3) {
-      $zeile =~ s/\n$//;
-      $zeile .= $crlf;
-    }
+#    next LINE if($zeile =~ /^\n$/ && $schl_flag != 3);
+#    if ($schl_flag != 3) {
+#      $zeile =~ s/\n$//;
+#      $zeile .= $crlf;
+#    }
     print AUS $zeile;
   }
   close NUTZ;
