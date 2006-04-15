@@ -32,7 +32,7 @@ use Heb_krankenkassen;
 use Heb_stammdaten;
 use Heb_datum;
 
-my $debug=1;
+my $debug=0;
 my $h = new Heb;
 my $l = new Heb_leistung;
 my $k = new Heb_krankenkassen;
@@ -44,11 +44,62 @@ my $crlf = "\x0d\x0a";
 
 our $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
 our $dbh;
+our $ERROR = '';
 
 sub new {
-  my($class) = @_;
+  my $class = shift;
+  my $rechnr = shift;
   my $self = {};
   $dbh = Heb->connect;
+  # Rahmendaten für Rechnung aus Datenbank holen
+  $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
+  my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
+  if(!defined($rechdatum)) {
+    $ERROR="Rechnung nicht vorhanden";
+    return undef;
+  }
+  $rechdatum =~ s/-//g;
+  $self->{rechdatum}=$rechdatum;
+  $betrag+=0.0;
+  $self->{betrag}=$betrag;
+  $self->{testind} = $k->krankenkasse_test_ind($ik);
+  if (!defined($self->{testind})) {
+    $ERROR="Keine Datennahmestelle vorhanden";
+    return undef;
+  }
+  
+  # kostenträger ermitteln
+  my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
+  $self->{kostentraeger}=$ktr;
+  $self->{annahmestelle}=$zik;
+  my ($hilf,$betrag_slla)=Heb_Edi->SLLA($rechnr,$zik,$ktr);
+  if ($betrag_slla ne $self->{betrag}) {
+    $ERROR="Betragsermittlung zu Papierrechnung unterschiedlich Edi Betrag:$betrag_slla, Papier: $betrag!!!";
+    return undef;
+  }
+  
+  # physikalischen Empfänger ermitteln
+  my $empf_physisch=$k->krankenkasse_empf_phys($zik);
+  if (!defined($empf_physisch)) {
+    $ERROR="Physikalischer Empfänger konnte für ZIK: $zik nicht ermittelt werden";
+    return undef;
+  }
+  $self->{empf_physisch}=$empf_physisch;
+
+  # Stammdaten Frau holen
+  my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
+      $anz_kinder,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
+      $ik_krankenkasse,$naechste_hebamme,
+      $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
+  $geb_frau=$d->convert($geb_frau);$geb_frau =~ s/-//g;
+  if($geb_frau eq 'error') {
+    $ERROR="Geburtsdatum der Frau ist kein gültiges Datum, es kann keine elektronische Rechnung erstellt werden, bitte in den Stammdaten korrigieren";
+    return undef;
+  }
+  $self->{vorname}=$vorname;
+  $self->{nachname}=$nachname;
+  $self->{geb_frau}=$geb_frau;
+  $self->{plz}=$plz;
   bless $self, ref $class || $class;
   return $self;
 }
@@ -214,6 +265,21 @@ sub SLGA_REC {
 }
 
 
+sub SLGA_UST {
+  # generiert SLGA UST Segment
+  my $self = shift;
+  my $ustid = shift;
+  $ustid =~ s/\// /g;
+  
+  my $erg = 'UST+';
+  $erg .= $ustid.'+';
+  $erg .= 'J'; # Hebammen sind Umsatzsteuerbefreit
+  $erg .= $delim; # Zeilentrennung anfügen
+
+  return $erg;
+}
+
+
 sub SLGA_GES {
   # generiert SLGA_GES Segment
 
@@ -342,8 +408,8 @@ sub SLLA_ENF {
   shift; # package Namen vom Stack nehmen
 
   my($posnr,$datum,$preis,$menge) = @_;
-  print "Posnr, $posnr,$datum, $preis, $menge ",$preis*$menge,"\n" if ($debug >100);
   $menge = sprintf "%.2f",$menge;
+  print "Posnr: $posnr,\t Datum: $datum, Preis: $preis,\t Menge: $menge\tPreis*Menge:",$preis*$menge,"\t" if ($debug >100);
   $menge =~ s/\./,/g;
 
   my $erg = 'ENF+';
@@ -450,7 +516,7 @@ sub SLGA {
   # generiert kompletten Nachrichtentyp SLGA
   # inkl. Kopf und Endesegment
   
-  shift;
+  my $self = shift;
 
   my ($rechnr,$zik,$ktr) = @_;
   my $lfdnr = 0;
@@ -470,8 +536,12 @@ sub SLGA {
   $erg .= Heb_Edi->SLGA_FKT($ktr,$ik);$lfdnr++;
   # 2. REC Segment erzeugen
   $erg .= Heb_Edi->SLGA_REC($rechnr,$rechdatum);$lfdnr++;
-  # 3. GES Segment erzeugen
-  # zunächst Rechnungsbetrag ermittelen
+  # 3. UST Segement erzeugen, wenn Steuernummer vorhanden
+  if ($h->parm_unique('HEB_STNR')) {
+    $erg .= $self->SLGA_UST($h->parm_unique('HEB_STNR'));$lfdnr++;
+  }
+  # 4. GES Segment erzeugen
+  # zunächst Rechnungsbetrag ermitteln
   my ($hilf,$betrag_slla)=Heb_Edi->SLLA($rechnr,$zik,$ktr);
   if ($betrag_slla ne $betrag) {
     if ($rechdatum > 20051006) {
@@ -540,6 +610,7 @@ sub SLLA {
 
   # 5. ENF Segmente generieren
   # dazu Schleife über alle Positionen, die die Rechnungsnummer enthalten
+  my %ges_sum;$ges_sum{A}=0;$ges_sum{C}=0;$ges_sum{M}=0;$ges_sum{B}=0;
   $l->leistungsdaten_such_rechnr("*",$rechnr.' order by DATUM');
   while (my @leistdat=$l->leistungsdaten_such_rechnr_next()) {
     $leistdat[5]=substr($leistdat[5],0,5); # nur HH:MM aus Ergebniss
@@ -568,13 +639,16 @@ sub SLLA {
       if($epreis > 0) { # hier wird nicht prozentual gerechnet
 	$erg .= Heb_Edi->SLLA_ENF($leistdat[1],$leistdat[4],$epreis,$anzahl);
 	$gesamtsumme += sprintf "%.2f",($epreis*$anzahl);
+	my $wert= sprintf "%.2f",($epreis*$anzahl);
+	$ges_sum{$ltyp} += $wert;
       } else {
 	$erg .= Heb_Edi->SLLA_ENF($leistdat[1],$leistdat[4],$leistdat[10],$anzahl);
 	$gesamtsumme += sprintf "%.2f",($leistdat[10]*$anzahl);
+	$ges_sum{$ltyp} += (sprintf "%2.f",($leistdat[10]*$anzahl));
       }
       $lfdnr++;
 
-      print "Summe: $gesamtsumme,",$epreis*$anzahl,"\n" if ($debug>100);
+
     } else {
       # Materialpauschale 
       $erg .= Heb_Edi->SLLA_ENF(70,$leistdat[4],$leistdat[10],1);
@@ -582,7 +656,11 @@ sub SLLA {
       # Text mit ausgeben
       $erg .= Heb_Edi->SLLA_TXT($bez);$lfdnr++;
       $gesamtsumme += $leistdat[10];
+      $ges_sum{$ltyp} += $leistdat[10];
     }
+
+    print "Zwischensumme ohne Wegegeld: $gesamtsumme\n" if ($debug>100);
+    print "Typ A:",$ges_sum{A},"\tTyp B:",$ges_sum{B},"\tTyp C:",$ges_sum{C},"\tTyp M:",$ges_sum{M},"\n" if ($debug > 50);
 
     # b. prüfen ob Zeitangaben ausgegeben werden müssen
     if (defined($fuerzeit) && $fuerzeit > 0) {
@@ -624,6 +702,7 @@ sub SLLA {
 	$summe_km+=$km_preis;
 	print "Wegegeld summe: $summe_km, $km_preis\n" if ($debug > 1000);
       }
+      print "\n" if ($debug > 100);
     }
   }
 
