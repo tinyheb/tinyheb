@@ -37,7 +37,7 @@ if (!(-d "$path/tmp")) { # Zielverzeichnis anlegen
 
 
 my $debug=1;
-my $e = new Heb_Edi;
+
 my $l = new Heb_leistung;
 my $k = new Heb_krankenkassen;
 my $h = new Heb;
@@ -78,6 +78,10 @@ if ($status > 20 && !($ignore) ) {
   die "Rechnung wurde schon elektronisch gestellt oder ist schon (Teil-)bezahlt Rechnungsstatus ist:$status\n";
 }
 
+my $e = new Heb_Edi($rechnr);
+if(!defined($e)) {
+  die "Fehler: $Heb_Edi::ERROR Abbruch\n";
+}
 my ($dateiname,$erstell_auf,$erstell_nutz)=$e->edi_rechnung($rechnr);
 
 die "keine Datenannahmestelle vorhanden oder nicht Parametrisiert keine elektronische Rechnung erstellt \n" unless(defined($dateiname));
