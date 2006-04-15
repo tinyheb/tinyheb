@@ -95,7 +95,7 @@ print '<table border="0" width="700" align="left">';
 print '<tr><td><table border="0" align="left">';
 print '<tr>';
 print '<td><b>ID</b></td>';
-print '<td>';print_color('Name:',$name);print '</td>';
+print '<td><b>Name</b></td>';
 print '</tr>';
 print "\n";
 
