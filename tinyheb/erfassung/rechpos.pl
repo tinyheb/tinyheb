@@ -407,6 +407,7 @@ sub speichern {
   # wird genau dann gemacht, wenn die Positionsnummer am gleichen Tag
   # schon erfasst ist
   my ($zweitesmal) = $l->leistungsart_such_posnr('ZWEITESMAL',$posnr,$datum_l);
+  $zweitesmal='' unless (defined($zweitesmal));
   if ($zweitesmal =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
     if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr AND DATUM='$datum_l'")>0) {
       $hint .= "Positionsnummer $posnr w/ Zweitesmal ersetzt durch $2 ";
@@ -498,6 +499,7 @@ sub speichern {
   # wird genau dann gemacht, wenn die Positionsnummer 
   # noch nicht erfasst ist
   my ($einmal_zus) = $l->leistungsart_such_posnr('EINMALIG',$posnr,$datum_l);
+  $einmal_zus = '' unless(defined($einmal_zus));
   if ($einmal_zus =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
     $zuschlag=$2;
     if ($l->leistungsdaten_werte($frau_id,"ID,DATUM","POSNR=$zuschlag","DATUM")) {
@@ -532,6 +534,7 @@ sub speichern {
   # wird genau dann gemacht, wenn Zusatzgebühr1 auf Material verweisst.
   # und keine Abhängigkeit zur Zeit besteht
   my ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN1,ZUSATZGEBUEHREN2',$posnr,$datum_l);
+  $mat_zus2 = '' unless(defined($mat_zus2));
   if ($mat_zus2 eq '' && $mat_zus =~ /(\+M)(\d{1,3})/ && $2 > 0) {
     my $m_zus='M'.$2;
     # Entfernung nicht 2mal rechnen
