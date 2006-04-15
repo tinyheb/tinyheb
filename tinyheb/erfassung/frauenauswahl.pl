@@ -110,10 +110,10 @@ print '<td>';
 print '<select name="sel_status" size="1">';
 print '<option';
 print ' selected' if ($sel_status eq 'alle');
-print '>alle</option';
+print '>alle</option>';
 print '<option';
 print ' selected' if ($sel_status eq 'ungleich erl.');
-print '>ungleich erl.</option';
+print '>ungleich erl.</option>';
 print '</td></tr>';
 
 # Zeile mit Knöpfen für unterschiedliche Funktionen
