@@ -1,14 +1,19 @@
 Offen:
+14.04.06
+Begleitzettel für Urbelege muss her.
+
+04.04.06
+Steuernummer muss in Rechnung aufgenommen werden.
+Ist in SLGA Segement UST.
+
+Auslagen müssen in Rechnung mit angegeben werden können.
+
+
 31.12.05
 Wenn es sich um Zwillinge handelt, muss Zuschlag gerechnet werden. Pro Kind
-02.10.05
-Für privat Versicherte muss Rechnung erstellt werden können.
 
 01.10.05
 Krankenkassen Menue auf neue Plausi überarbeiten.
-
-21.08.05
-Auwertung, für welche Frauen existieren noch Positionen in Bearbeitung
 
 24.07.05
 generelles stylesheet Heb.css einführen, um die Textgröße auf die optimale Größe zu setzen.
@@ -28,6 +33,13 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+19.02.06
+Auwertung, für welche Frauen existieren noch Positionen in Bearbeitung. Anforderung vom 21.08.05
+
+21.01.06
+Für privat Versicherte muss Rechnung erstellt werden können. Anforderung vom 02.10.06
+
+
 31.12.05
 Bei Änderung Vorsorgeuntersuchung wird Materialpauschale zweitesmal gespeichert. War Anforderung vom 10.10.05
 - wenn Positionsnummer mit Zuschlag gelöscht wird, Zuschlag auch löschen. War Anforderung vor dem 09.07.05
