@@ -3,3 +3,58 @@ erstes Release, wesentliche Funktionalitäten sind vorhanden,
 siehe Doku in concept/doku.tex.
 Installation bzgl. Datenbank noch nicht wie in Doku beschrieben,
 Initialisierung funktioniert nicht.
+
+nächstes Release:
+Bei der Ausgabe der Rechnung als Postscript wird nicht mehr mit temporären Dateien gearbeitet.
+
+In Rechnungserfassung:
+Bei Rechnungserfassung behält die Auswahlbox zu Strecke den erfassen Wert.
+Bug fix:
+Abfrage auf Initialisierte Werte in Rechnungserfassung.
+
+
+In Rechnungsgenerierung:
+Solange nicht Knopf entgültig Drucken geklickt wird, wird Rechnungsvorschau auf Rechnung
+angezeigt.
+Falls Datenannahmestelle in Echtbetrieb, wird im Anschluss an Rechnung Begleitzettel
+für Urbelege gedruckt.
+Steuernummer der Hebamme wird agedruckt, wenn vorhanden.
+Auslagen werden angedruckt.
+
+In Frauenauswahl:
+Optionen 'erl.' und 'ungleich erl.' wurde bei Netscape Browser nicht korrekt angezeigt.
+
+In Parameterauswahl:
+Bug fix:
+Werte > und < können nicht in HTML angezeigt werden, statt dess &lt; und &gt; genutzt.
+Das Fenster erhält Fokus, wenn aus anderer Maske aufgerufen.
+
+In Maske Parameter:
+Bug fix:
+Der Knogf Inhalt löschen hatte keine Funktionalität.
+
+In Feiertagsauswahl:
+Feldüberschriften ausschließlich in schwarz.
+
+Neue Funktion:
+xauftrag.pl
+grafische Oberfläche zum Verschicken von elektronischen Rechnungen.
+verbessertes Fehlerhandling.
+
+auftrag.pl
+Zum Kopieren der Dateien werden keine Betriebssystem spezifischen Funktionen genutzt.
+Der Pfad zu temporären Dateien wird automatisch angelegt, wenn er nicht exisitiert.
+Objektorientierung von Heb_Edi berücksichtigt.
+
+in Hauptmenue:
+Copyright eingefügt.
+Release mit ausgeben.
+
+In elektronischer Rechnungsgenerierung:
+CRLF wird jetzt als 0d0a dargestellt, damit auf allen OS ablauffähig.
+Neues Segment UST für Steuernummer eingefügt.
+Zusätzliche Debugging Einstellungen eingefügt.
+Erste Schritte in echte Objektorientierung.
+
+Bug Fix:
+Zeilentrennung war falsch 0d0d0a.
