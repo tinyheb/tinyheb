@@ -47,7 +47,6 @@ if (!(-d "$path/tmp")) { # Zielverzeichnis anlegen
 }
 
 my $h = new Heb;
-my $e = new Heb_Edi;
 my $l = new Heb_leistung;
 my $k = new Heb_krankenkassen;
 my $s = new Heb_stammdaten;
@@ -229,6 +228,11 @@ RECH:  foreach (@sel) {
     }
 
     # Edi Rechnung erstellen
+    my $e = new Heb_Edi($rechnr);
+    if (!defined($e)) {
+      fehler($Heb_Edi::ERROR." versenden wird abgebrochen\n");
+      last RECH;
+    }
     my ($dateiname,$erstell_auf,$erstell_nutz)=(undef,undef,undef);
     ($dateiname,$erstell_auf,$erstell_nutz)=$e->edi_rechnung($rechnr);
     if(!defined($dateiname)) {
@@ -244,7 +248,11 @@ RECH:  foreach (@sel) {
     my $crlf = "\x0d\x0a";
     $msg_body .= $dateiname.'.AUF,348,'.$erstell_auf.$crlf;
     # Länge der Nutzdatendatei ermitteln
-    my $st=stat("$path/tmp/$dateiname_ext") or die "Datei $dateiname_ext für Message Body nicht vorhanden:$!\n";
+    my $st=stat("$path/tmp/$dateiname_ext");
+    if(!defined($st)) {
+      fehler("Datei $dateiname_ext für Message Body nicht vorhanden:$!\nversenden wird abgebrochen");
+      last RECH;
+    }
     my $laenge_nutz=$st->size;
     $msg_body .= $dateiname.','.$laenge_nutz.','.$erstell_nutz.$crlf;
     $msg_body .= $h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME').$crlf; # Absender Firmenname
