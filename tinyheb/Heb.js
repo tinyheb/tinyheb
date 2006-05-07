@@ -43,7 +43,9 @@ function plz_check(plz) {
     alert("Bitte PLZ 5 stellig numerisch erfassen");
     plz.focus();
     plz.select();
+    return false;
   }
+  return true;
 }
 
 
