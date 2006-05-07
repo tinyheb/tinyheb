@@ -237,7 +237,7 @@ print '<td>';
 print "<select name='auswahl' size=1 onChange='auswahl_wechsel(document.krankenkassen)'>";
 my $i=0;
 while ($i <= $#aus) {
-  print '<option';
+  print "<option value='$aus[$i]'";
   print ' selected' if ($aus[$i] eq $auswahl);
   print '>';
   print $aus[$i];
