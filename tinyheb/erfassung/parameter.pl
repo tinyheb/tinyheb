@@ -96,7 +96,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body bgcolor=white>';
 print '<div align="center">';
-print '<h1>Parameter $Revision: 1.5 $ <br>$Date: 2006-04-01 18:53:44 $</h1>';
+print '<h1>Parameter $Revision: 1.6 $ <br>$Date: 2006-05-07 17:08:11 $</h1>';
 print '<hr width="100%">';
 print '</div><br>';
 # Formular ausgeben
@@ -157,7 +157,7 @@ print '<td>';
 print "<select name='auswahl' size=1 onChange='auswahl_wechsel(document.parameter)'>";
 my $i=0;
 while ($i <= $#aus) {
-  print '<option';
+  print "<option value='$aus[$i]'";
   print ' selected' if ($aus[$i] eq $auswahl);
   print '>';
   print $aus[$i];
