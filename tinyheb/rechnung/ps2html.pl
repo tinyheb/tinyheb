@@ -1,4 +1,4 @@
-#!/usr/bin/perl -wT
+#!/usr/bin/perl -w
 # -wT
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
@@ -67,8 +67,8 @@ my  ($name_krankenkasse,
 
 $name_krankenkasse = '' unless (defined($name_krankenkasse));
 $kname_krankenkasse = '' unless (defined($kname_krankenkasse));
-$plz_krankenkasse = '' unless (defined($plz_krankenkasse));
-$plz_post_krankenkasse = '' unless (defined($plz_post_krankenkasse));
+$plz_krankenkasse = 0 unless (defined($plz_krankenkasse));
+$plz_post_krankenkasse = 0 unless (defined($plz_post_krankenkasse));
 $strasse_krankenkasse = '' unless (defined($strasse_krankenkasse));
 $postfach_krankenkasse = '' unless (defined($postfach_krankenkasse));
 $plz_krankenkasse = sprintf "%5.5u",$plz_krankenkasse;
@@ -122,8 +122,7 @@ $gsumme += print_wegegeld('NK') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUN
 $gsumme += print_wegegeld('TK') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_T >0, ENTFERNUNG_T <= 2','DATUM')>0);
 }
 
-$gsumme += print_auslagen('MA') if ($l->leistungsdaten_offen($frau_id,'Leistungstyp="M" and (ZUSATZGEBUEHREN1="AUS" or ZUSATZGEBUEHREN1="aus")')>0);
-$gsumme += print_material('M') if ($l->leistungsdaten_offen($frau_id,'Leistungstyp="M" and (ZUSATZGEBUEHREN1 is null or ZUSATZGEBUEHREN1<>"AUS" and ZUSATZGEBUEHREN1<>"aus")')>0);
+$gsumme += print_material('M') if ($l->leistungsdaten_offen($frau_id,'Leistungstyp="M"','sort,ZUSATZGEBUEHREN1,DATUM'));
 
 
 # Gesamtsumme ausgeben
@@ -185,12 +184,34 @@ if (defined($test_ind) && $test_ind==2) {
 }
 
 
-# in Browser schreiben
-#open (FILE,"/tmp/wwwrun/file.ps") or die "Can't open file.ps: $!\n";
-print $q->header ( -type => "application/postscript", -expires => "-1d");
+# in Browser schreiben, falls Windows wird PDF erzeugt, sonst Postscript
 my $all_rech=$p->get();
-$all_rech =~ s/PostScript::Simple generated page/${nachname}_${vorname}/g;
-print $all_rech;
+if ($q->user_agent !~ /Windows/) {
+  print $q->header ( -type => "application/postscript", -expires => "-1d");
+  $all_rech =~ s/PostScript::Simple generated page/${nachname}_${vorname}/g;
+  print $all_rech;
+}
+
+if ($q->user_agent =~ /Windows/) {
+  print $q->header ( -type => "application/pdf", -expires => "-1d");
+  mkdir "/tmp/wwwrun" if(!(-d "/tmp/wwwrun"));
+  $p->output('/tmp/wwwrun/file.ps');
+
+  if ($^O =~ /linux/) {
+    system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
+  } elsif ($^O =~ /MSWin32/) {
+    system('/gs/gs8.15/bin/gs32winc -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps');
+  } else {
+    die "kein Konvertierungsprogramm ps2pdf gefunden\n";
+  }
+
+  open AUSGABE,"/tmp/wwwrun/file.pdf" or
+    die "konnte Datei nicht konvertieren in pdf\n";
+  while (my $zeile=<AUSGABE>) {
+    print $zeile;
+  }
+  close AUSGABE;
+}
 
 if ($speichern eq 'save') {
   # setzt alle Daten in der Datenbank auf Rechnung und speichert die Rechnung
@@ -274,9 +295,8 @@ sub neue_seite {
   $text = 'Wegegeld bei Tag' if ($teil eq 'T');
   $text = 'Wegegeld bei Tag Entfernung nicht mehr als 2 KM' if ($teil eq 'TK');
   $text = 'Wegegeld bei Nacht Entfernung nicht mehr als 2 KM' if ($teil eq 'NK');
-  $text = 'Materialpauschalen' if ($teil eq 'M');
-  $text = 'Auslagen' if ($teil eq 'MA');
-  if ($teil eq 'A' or $teil eq 'B' or $teil eq 'C' or $teil eq 'D' or $teil eq 'M' or $teil eq 'MA') {
+  $text = 'Auslagen (§3 HebGV)' if ($teil eq 'M');
+  if ($teil eq 'A' or $teil eq 'B' or $teil eq 'C' or $teil eq 'D' or $teil eq 'M') {
     $p->setfont($font_b,10);
     $p->text($x1,$y1,$text);$y1-=$y_font;$y1-=$y_font;
     $p->setfont($font,10);
@@ -302,49 +322,58 @@ sub print_begruendung {
 sub print_material {
   my ($typ) = @_;
   my $summe=0;
+  my $posnr=-1;
+  my $zus_posnr=-1;
   neue_seite(6);
   $p->setfont($font_b,10);
-  $p->text($x1,$y1,'Materialpauschalen');$y1-=$y_font;$y1-=$y_font;
+  $p->text($x1,$y1,'Auslagen (§3 HebGV)');$y1-=$y_font;$y1-=$y_font;
   $p->setfont($font,10);
   NEXT: while (my @erg=$l->leistungsdaten_offen_next()) {
-    my ($bez,$epreis)=$l->leistungsart_such_posnr("KBEZ,EINZELPREIS ",$erg[1],$erg[4]);
-    $p->text($x1,$y1,$bez);
-    my $gpreis = sprintf "%.2f",$erg[10];
-    $summe+=$gpreis;$gpreis =~ s/\./,/g;
-    $p->text({align => 'right'},17.3,$y1,$gpreis." EUR"); # Preis andrucken
-    $y1-=$y_font;
-    neue_seite(4,'M');
-  }
- $y1+=$y_font-0.05;
-  $p->line(17.4,$y1,15.1,$y1);$y1-=$y_font-0.1;
-  my $psumme = sprintf "%.2f",$summe;$psumme =~ s/\./,/g;
-  $p->text({align => 'right'},17.3,$y1,$psumme." EUR"); # Gesamt Summe andrucken
-  $p->text({align => 'right'},19.5,$y1,$psumme." EUR"); # Gesamt erneut Summe andrucken
-  $y1-=$y_font;$y1-=$y_font;
-  return $summe;
-}
+    my ($bez,$epreis,$zus1)=$l->leistungsart_such_posnr("KBEZ,EINZELPREIS,ZUSATZGEBUEHREN1 ",$erg[1],$erg[4]);
 
-
-sub print_auslagen {
-  my ($typ) = @_;
-  my $summe=0;
-  neue_seite(6);
-  $p->setfont($font_b,10);
-  $p->text($x1,$y1,'Auslagen');$y1-=$y_font;$y1-=$y_font;
-  $p->setfont($font,10);
-  NEXT: while (my @erg=$l->leistungsdaten_offen_next()) {
-    my ($bez,$epreis)=$l->leistungsart_such_posnr("KBEZ,EINZELPREIS ",$erg[1],$erg[4]);
-    $p->text($x1,$y1,$bez);
+    if($erg[1] =~ /^\d{1,3}$/) { # 
+      $bez = substr($bez,0,50);
+      my $laenge_bez = length($bez)*0.2/2;
+      if ($posnr ne $erg[1]) {
+	# bei posnr wechsel posnr schreiben
+	$p->text({align => 'center'},$x1+1,$y1,$erg[1]);
+	$posnr=$erg[1];
+	$p->text($x1+2,$y1,$bez);
+      } else {
+	# Hochkomma ausgeben, wenn keine Zeitangabe notwendig
+	$p->text({align => 'center'},$x1+2+$laenge_bez,$y1,"\"");
+      }
+    } elsif($erg[1] =~ /^[A-Z]\d{1,3}$/) {
+      # zugeordnete Posnr holen
+      $zus1=70 if (!defined($zus1) or $zus1 eq '');
+      my($bez_zus)=$l->leistungsart_such_posnr("KBEZ",$zus1,$erg[4]);
+      $bez_zus = substr($bez_zus,0,50);
+      my $laenge_bez_zus = length($bez_zus)*0.2/2;
+      if ($zus_posnr ne $zus1) {
+	# bei übergeordneter posnr wechsel posnr schreiben
+	$p->text({align => 'center'},$x1+1,$y1,$zus1);
+	$zus_posnr=$zus1;
+	$posnr=$erg[1];
+	$p->text($x1+2,$y1,$bez_zus);$y1-=$y_font;
+	$p->text($x1+2,$y1,$bez);
+      } elsif ($posnr ne $erg[1]) {
+	$posnr=$erg[1];
+	# bei wechsel posnr schreiben
+	$p->text($x1+2,$y1,$bez);
+      } else {
+	# Hochkomma ausgeben, wenn kein Wechsel vorhanden
+	$p->text({align => 'center'},$x1+2+$laenge_bez_zus,$y1,'"');	
+      }
+    }
     my $datum = $d->convert_tmj($erg[4]);
     $p->text({align => 'right'},15,$y1,$datum); # Datum andrucken
     my $gpreis = sprintf "%.2f",$erg[10];
     $summe+=$gpreis;$gpreis =~ s/\./,/g;
     $p->text({align => 'right'},17.3,$y1,$gpreis." EUR"); # Preis andrucken
     $y1-=$y_font;
-
-    neue_seite(4,'MA');
+    neue_seite(4,'M');
   }
- $y1+=$y_font-0.05;
+  $y1+=$y_font-0.05;
   $p->line(17.4,$y1,15.1,$y1);$y1-=$y_font-0.1;
   my $psumme = sprintf "%.2f",$summe;$psumme =~ s/\./,/g;
   $p->text({align => 'right'},17.3,$y1,$psumme." EUR"); # Gesamt Summe andrucken
@@ -617,8 +646,8 @@ sub anschrift {
   
   $name_krankenkasse_beleg = '' unless (defined($name_krankenkasse_beleg));
   $kname_krankenkasse_beleg = '' unless (defined($kname_krankenkasse_beleg));
-  $plz_krankenkasse_beleg = '' unless (defined($plz_krankenkasse_beleg));
-  $plz_post_krankenkasse_beleg = '' unless (defined($plz_post_krankenkasse_beleg));
+  $plz_krankenkasse_beleg = 0 unless (defined($plz_krankenkasse_beleg));
+  $plz_post_krankenkasse_beleg = 0 unless (defined($plz_post_krankenkasse_beleg));
   $strasse_krankenkasse_beleg = '' unless (defined($strasse_krankenkasse_beleg));
   $postfach_krankenkasse_beleg = '' unless (defined($postfach_krankenkasse_beleg));
   
