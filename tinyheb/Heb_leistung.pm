@@ -257,7 +257,7 @@ sub leistungsart_zus {
   my $wert=shift;
   my $datum=shift;
   $zus = $dbh->prepare("select distinct POSNR from Leistungsart ".
-		       "where $wert=$posnr and ?>= GUELT_VON and ? <= GUELT_BIS;")
+		       "where $wert='$posnr' and ?>= GUELT_VON and ? <= GUELT_BIS;")
     or die $dbh->errstr();
   my $erg = $zus->execute($datum,$datum) or die $dbh->errstr();
   return $erg if ($erg>0);
@@ -275,7 +275,7 @@ sub leistungsart_pruef_zus {
   my $posnr=shift;
   my $wert=shift;
   $pruef_zus = $dbh->prepare("select distinct $wert from Leistungsart ".
-			     "where $posnr=$wert;")
+			     "where '$posnr'=$wert;")
     or die $dbh->errstr();
   my $erg = $pruef_zus->execute() or die $dbh->errstr();
   return $erg if ($erg>0);
@@ -321,28 +321,65 @@ sub leistungsart_such_posnr {
 
 sub leistungsart_next_id {
   # holt zur gegebenen ID die nächste Leistungsart
-  shift;
+  my $self = shift;
   my ($id)=@_;
-  my $leistungsart_next_id =
-    $dbh->prepare("select ID from Leistungsart where ".
-		  "ID > ? limit 1;")
-      or die $dbh->errstr();
-  $leistungsart_next_id->execute($id) or die $dbh->errstr();
-  return $leistungsart_next_id->fetchrow_array();
+  my @erg = $self->leistungsart_id($id);
+  $erg[1]=0 unless(defined($erg[1]));
+  my $leistungsart_next_id;
+  if ($erg[1] =~ /^\d{1,3}$/) {
+    $leistungsart_next_id =
+      $dbh->prepare("select ID,cast(POSNR as unsigned) as sort ".
+		    "from Leistungsart where ".
+		    "cast(POSNR as unsigned) >= ? ".
+		    "order by sort, POSNR, GUELT_VON;")
+	or die $dbh->errstr();
+  } else {
+    $leistungsart_next_id =
+      $dbh->prepare("select ID,cast(POSNR as unsigned) as sort ".
+		    "from Leistungsart where ".
+		    "POSNR >= ? ".
+		    "order by POSNR, sort, GUELT_VON;")
+	or die $dbh->errstr();
+  }
+  $leistungsart_next_id->execute($erg[1]) or die $dbh->errstr();
+  my @erg2 = $leistungsart_next_id->fetchrow_array();
+
+  @erg2 = $leistungsart_next_id->fetchrow_array() while ($erg2[0] != $id);  
+  @erg2 = $leistungsart_next_id->fetchrow_array();
+  return $erg2[0];
 }
 
 
 
 sub leistungsart_prev_id {
   # holt zur gegebenen ID die vorhergehende Leistungsart
-  shift;
+  my $self = shift;
   my ($id)=@_;
-  my $leistungsart_prev_id =
-    $dbh->prepare("select ID from Leistungsart where ".
-		  "ID < ? order by ID desc limit 1;")
-      or die $dbh->errstr();
-  $leistungsart_prev_id->execute($id) or die $dbh->errstr();
-  return $leistungsart_prev_id->fetchrow_array();
+  my @erg = $self->leistungsart_id($id);
+  $erg[1]=0 unless(defined($erg[1]));
+  my $leistungsart_prev_id;
+
+  if ($erg[1] =~ /^\d{1,3}$/) {
+    $leistungsart_prev_id =
+      $dbh->prepare("select ID,cast(POSNR as unsigned) as sort ".
+		    "from Leistungsart where ".
+		    "cast(POSNR as unsigned) <= ? ".
+		    "order by sort DESC, POSNR DESC, GUELT_VON DESC;")
+	or die $dbh->errstr();
+  } else {
+    $leistungsart_prev_id =
+      $dbh->prepare("select ID,cast(POSNR as unsigned) as sort ".
+		    "from Leistungsart where ".
+		    "POSNR <= ? ".
+		    "order by POSNR DESC, sort DESC, GUELT_VON DESC;")
+	or die $dbh->errstr();
+  }
+  $leistungsart_prev_id->execute($erg[1]) or die $dbh->errstr();
+  my @erg2 = $leistungsart_prev_id->fetchrow_array();
+  @erg2 = $leistungsart_prev_id->fetchrow_array() while ($erg2[0] != $id);
+  @erg2 = $leistungsart_prev_id->fetchrow_array();
+  return $erg2[0];
+
 }
 
 
@@ -458,12 +495,14 @@ sub leistungsart_such_werte_next {
 
 sub leistungsart_ins {
   # fügt neue Leistungsart in Datenbank ein
-  shift;
+  my $self = shift;
+  
   my $id=1+Heb->parm_unique('LEISTUNGSART_ID');
   my ($posnr,$bez,$ltyp,$epreis,$proz,
       $sonn,$nacht,$sam,$fuerz,$dau,$zwill,
       $zweites,$einm,$begrue,$zus1,
-      $zus2,$zus3,$zus4,$g_v,$g_b,$kbez)=@_;
+      $zus2,$zus3,$zus4,$g_v,$g_b,$kbez,$id_alt)=@_;
+  $id = $id_alt if(defined($id_alt));
 
   my $leistungsart_ins=
     $dbh->prepare("insert into Leistungsart ".
@@ -481,7 +520,7 @@ sub leistungsart_ins {
 		  "?,?,?);")
       or die $dbh->errstr();
   $leistungsart_ins->execute($id,$posnr,$bez,$ltyp,$epreis,$proz,$sonn,$nacht,$sam,$fuerz,$dau,$zwill,$zweites,$einm,$begrue,$zus1,$zus2,$zus3,$zus4,$g_v,$g_b,$kbez) or die $dbh->errstr();
-  Heb->parm_up('LEISTUNGSART_ID',$id);
+  Heb->parm_up('LEISTUNGSART_ID',$id) if(!defined($id_alt));
   return $id;
 }
 
