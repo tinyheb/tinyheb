@@ -111,7 +111,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="leistungsarterfassung" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Leistungsarten<br> $Revision: 1.3 $</h1>';
+print '<h1>Leistungsarten<br> $Revision: 1.4 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -288,9 +288,15 @@ sub speichern {
   # Speichert die Daten in der Stammdaten Datenbank
   # print "Speichern in DB\n";
   # Datümer konvertierten
+  my $leist_id_alt = shift;
+ 
   my $g_von = $d->convert($guelt_von);
   my $g_bis = $d->convert($guelt_bis);
-  $leist_id=$l->leistungsart_ins($posnr,$bezeichnung,$leistungstyp,$einzelpreis,$prozent,$sonntag,$nacht,$samstag,$fuerzeit,$dauer,$zwillinge,$zweitesmal,$einmalig,$begruendungspflicht,$zusatz1,$zusatz2,$zusatz3,$zusatz4,$g_von,$g_bis,$kbez);
+  if (defined($leist_id_alt)) {
+    $leist_id=$l->leistungsart_ins($posnr,$bezeichnung,$leistungstyp,$einzelpreis,$prozent,$sonntag,$nacht,$samstag,$fuerzeit,$dauer,$zwillinge,$zweitesmal,$einmalig,$begruendungspflicht,$zusatz1,$zusatz2,$zusatz3,$zusatz4,$g_von,$g_bis,$kbez,$leist_id_alt);
+  } else {
+    $leist_id=$l->leistungsart_ins($posnr,$bezeichnung,$leistungstyp,$einzelpreis,$prozent,$sonntag,$nacht,$samstag,$fuerzeit,$dauer,$zwillinge,$zweitesmal,$einmalig,$begruendungspflicht,$zusatz1,$zusatz2,$zusatz3,$zusatz4,$g_von,$g_bis,$kbez);
+  }
 }
 
 sub loeschen {
@@ -302,8 +308,9 @@ sub loeschen {
 sub aendern {
   # Ändert die Daten zu einer Leistungsart in der Datenbank
   return if ($leist_id==0);
+  my $leist_id_alt = $leist_id;
   loeschen();
-  speichern();
+  speichern($leist_id_alt);
 }
 
 sub hole_leistart_daten {
@@ -319,5 +326,15 @@ sub hole_leistart_daten {
    $kbez)= $l->leistungsart_id($leist_id);
   $guelt_von = $d->convert_tmj($guelt_von);
   $guelt_bis = $d->convert_tmj($guelt_bis);
+  $zusatz1 = '' unless (defined($zusatz1));
+  $zusatz2 = '' unless (defined($zusatz2));
+  $zusatz3 = '' unless (defined($zusatz3));
+  $zusatz4 = '' unless (defined($zusatz4));
+  $zwillinge = '' unless (defined($zwillinge));
+  $zweitesmal = '' unless (defined($zweitesmal));
+  $einmalig = '' unless (defined($einmalig));
+  $prozent = '' unless (defined($prozent));
+  $begruendungspflicht = '' unless (defined($begruendungspflicht));
+  $einzelpreis = '' unless (defined($einzelpreis));
   $kbez =~ s/'/&#145/g;
 }
