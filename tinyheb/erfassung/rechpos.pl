@@ -116,14 +116,14 @@ print '<body id="rechpos_window" bgcolor=white>';
 
 # Formular für eigentliche Erfassung ausgeben
 print '<form name="rechpos" action="rechpos.pl" method="get" target=rechpos onsubmit="return leistung_speicher(this);" bgcolor=white>';
-print '<table border="0" width="100%" align="left">';
 
 # Leistungspositionen 
 # z1 s1
 print '<h3>Leistungspositionen</h3>';
 print '<table border="0" align="left">';
 print '<tr>';
-print '<td><table border="0" align="left">';
+print '<td>';
+print '<table border="0" align="left">';
 print '<tr>';
 print '<td><b>Datum:</b></td>';
 print '<td><b>Posnr:</b></td>';
@@ -183,6 +183,8 @@ if ($strecke eq 'gesamt') {
 print "</td>";
 print "</tr>";
 print '</table>';
+
+
 print "\n";
 
 
@@ -197,7 +199,7 @@ print '<td>';
 print "<select name='auswahl' size=1 onChange='auswahl_wechsel(document.rechpos)'>";
 my $i=0;
 while ($i <= $#aus) {
-  print '<option';
+  print "<option value='$aus[$i]'";
   print ' selected' if ($aus[$i] eq $auswahl);
   print '>';
   print $aus[$i];
@@ -214,6 +216,7 @@ print '<td><input type="button" name="Drucken" value="Drucken" onClick="druck(do
 print '</tr>';
 print '</table>';
 print '</form>';
+print '</td>';
 print '</tr>';
 print '</table>';
 # //  auswahl_wechsel(document.rechpos);
@@ -523,9 +526,7 @@ sub speichern {
     $preis_neu = $preis * $prozent if ($prozent > 0);
     $preis_neu = $ze_preis if ($ze_preis > 0);
     # Entfernung darf nicht 2mal gerechnet werden
-    $entfernung_nacht=0;
-    $entfernung_tag=0;
-    $l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis_neu,'',10);
+    $l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',0,0,$anzahl_frauen,$preis_neu,'',10);
     $hint .= '\nZuschlag prozentual wurde zusätzlich gespeichert' if ($prozent > 0);
     $hint .= '\nZuschlag wurde zusätzlich gespeichert' if ($ze_preis > 0);
   }
@@ -535,14 +536,13 @@ sub speichern {
   # und keine Abhängigkeit zur Zeit besteht
   my ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN1,ZUSATZGEBUEHREN2',$posnr,$datum_l);
   $mat_zus2 = '' unless(defined($mat_zus2));
-  if ($mat_zus2 eq '' && $mat_zus =~ /(\+M)(\d{1,3})/ && $2 > 0) {
-    my $m_zus='M'.$2;
-    # Entfernung nicht 2mal rechnen
-    $entfernung_nacht=0;
-    $entfernung_tag=0;
-    my ($ze_preis) = $l->leistungsart_such_posnr('EINZELPREIS',$m_zus,$datum_l);
-    $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$ze_preis,'',10);
-    $hint .= '\nMaterialpauschale wurde zusätzlich gespeichert';
+  $mat_zus = '' unless(defined($mat_zus));
+  if ($mat_zus2 eq '' && $mat_zus =~ /(\+[A-Z]?)(\d{1,3})/ && $2 > 0) {
+    my $m_zus=$1.$2;$m_zus =~ s/\+//;
+    # Entfernung nicht 2mal rechnen, deshalb im insert statement auf 0 setzen
+    my ($ze_preis,$kbez) = $l->leistungsart_such_posnr('EINZELPREIS,KBEZ',$m_zus,$datum_l);
+    $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',0,0,$anzahl_frauen,$ze_preis,'',10);
+    $hint .= '\nAuslage '.$kbez.' wurde zusätzlich gespeichert';
   }
 
 
@@ -580,7 +580,7 @@ sub abh {
       return $id;
 #    }
   }
-  if ($l_posnr =~ /(\+)(M)(\d{1,3})/ && $3 > 0) {
+  if ($l_posnr =~ /(\+)([A-Z])(\d{1,3})/ && $3 > 0) {
     # Materialpauschalen
     $l->leistungsdaten_werte($frau_id,"ID","POSNR='$2$3' AND DATUM='$datum_l'");
     my ($id)=$l->leistungsdaten_werte_next();
@@ -600,8 +600,8 @@ sub matpausch {
 
   # keine Prüfung, wenn Werte nicht definiert
   return '' if (!defined($mat_zus2));
-  if ($mat_zus2 ne '' && $mat_zus =~ /(\+M)(\d{1,3})/ && $2 > 0) {
-    my $m_zus='M'.$2;
+  if ($mat_zus2 ne '' && $mat_zus =~ /(\+[A-Z]?)(\d{1,3})/ && $2 > 0) {
+    my $m_zus=$1.$2;$m_zus=~s/\+//;
     my $comp=0; # Flag ob gespeichert werden muss oder nicht
     # operator für Vergleich ermitteln
     my ($op,$op_wert,$op_vgltyp) = 
@@ -625,9 +625,9 @@ sub matpausch {
     if ($comp) { # es muss gespeichert werden
       # Entfernung nicht 2mal rechnen bei Materialpauschale, daher
       # mit Entfernung 0 aufrufen
-      my ($ze_preis) = $l->leistungsart_such_posnr('EINZELPREIS',$m_zus,$datum_l);
+      my ($ze_preis,$kbez) = $l->leistungsart_such_posnr('EINZELPREIS,KBEZ',$m_zus,$datum_l);
       $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',0,0,$anzahl_frauen,$ze_preis,'',10);
-      $hint .= '\nAbhängige Materialpauschale wurde zusätzlich gespeichert';
+      $hint .= '\nAuslage '.$kbez.' wurde zusätzlich gespeichert';
     }
   }
   return $hint;
