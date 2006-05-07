@@ -89,11 +89,12 @@ print '<hr width="100%">';
 print '</div>';
 # Formular ausgeben
 print '<form name="rechnung" action="rechnungserfassung.pl" method="get" target=_top bgcolor=white>';
-print '<table border="0" width="700" align="left">';
+print '<table id="oben" border="0" width="700" align="left">';
 
 # Zeile mit Frauen Daten 
 # z1 s1
-print '<tr><td><table border="0" align="left">';
+print '<tr><td>';
+print '<table id="z1s1" border="0" align="left">';
 print '<tr>';
 print '<td><b>ID</b></td>';
 print '<td><b>Vorname:</b></td>';
@@ -112,13 +113,14 @@ print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind'
 print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl\",\"frauenauswahl\",\"scrollbars=yes,innerwidth=750,innerheight=400\");'></td>";
 print "</tr>";
 print '</table>';
+print "</td></tr>\n";
 print "\n";
-
 # leere Zeile
 print '<tr><td>&nbsp;</td></tr>';
 
 # bisher erfasste Positionen angezeigen
-print '<tr><td><table style="margin-left: 0" border="0" width=800 align="left">';
+print "<tr><td>\n";
+print '<table id="ueberschrift" style="margin-left: 0" border="0" width=800 align="left">';
 print '<tr>';
 print '<td style="width:4.3cm;text-align:right">Datum</td>';
 print '<td style="width:1.6cm;text-align:center">Nr.</td>';
@@ -134,25 +136,27 @@ print '<td style="width:0.8cm;text-align:right">kmN</td>';
 print '<td style="width:0.6cm;text-align:right">Anz.</td>';
 print '<td style="width:1.0cm;text-align:right">Stat</td>';
 print "</tr>";
-print '</table>';
-print "\n";
+print "</table>\n";
+print '<br>';
+print "</td>\n";
+print "</tr>\n";
+print "</form>\n";
+
 # die wirklichen Infos kommen aus einem Programm
+print "<tr><td>\n";
 print "<iframe src='../blank.html' name='list_posnr' width='840' height='250' scrolling='yes' frameborder='1'>";
 print "</iframe>";
+print "</td>\n";
+print "</tr>\n";
 
 # Formular für eigentliche Erfassung ausgeben
-print "<iframe src='rechpos.pl?frau_id=$frau_id' name='rechpos' width='800' height='250' scrolling='auto' frameborder='0'>";
+print "<tr>\n<td>\n";
+print "<iframe src='rechpos.pl?frau_id=$frau_id' name='rechpos' width='800' height='250' scrolling='no' frameborder='0'>";
 print "</iframe>";
+print "</td>\n";
+print "</tr>\n";
+print "</table>\n";
 
-print '</form>';
-print '</tr>';
-print '</table>';
-print <<SCRIPTE;
-<script>
-//  set_focus(document.krankenkassen);
-//  auswahl_wechsel(document.rechnungsdaten);
-</script>
-SCRIPTE
 print "</body>";
 print "</html>";
 

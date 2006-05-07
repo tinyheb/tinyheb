@@ -201,11 +201,13 @@ print "\n";
 print '</form>';
 print '</td>';
 print '</tr>';
-print '</table>';
 
+print "<tr><td>\n";
 print "<iframe src='ps2html.pl?frau_id=$frau_id' name='rechnung' width='880' height='550' scrolling='auto' frameborder='1'>" if ($frau_id > 0);
 print "<iframe src='../blank.html' name='rechnung' width='880' height='550' scrolling='yes' frameborder='1'>" if ($frau_id == 0);
 print "</iframe>";
+print "</td></tr>\n";
+print "</table>\n";
 
 
 
