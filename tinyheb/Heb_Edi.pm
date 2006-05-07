@@ -616,7 +616,7 @@ sub SLLA {
     $leistdat[5]=substr($leistdat[5],0,5); # nur HH:MM aus Ergebniss
     $leistdat[6]=substr($leistdat[6],0,5); # nur HH:MM aus Ergebniss
     # a. zuerst normale posnr füllen
-    my ($bez,$fuerzeit,$epreis,$ltyp)=$l->leistungsart_such_posnr("KBEZ,FUERZEIT,EINZELPREIS,LEISTUNGSTYP ",$leistdat[1],$leistdat[4]);
+    my ($bez,$fuerzeit,$epreis,$ltyp,$zus1)=$l->leistungsart_such_posnr("KBEZ,FUERZEIT,EINZELPREIS,LEISTUNGSTYP,ZUSATZGEBUEHREN1 ",$leistdat[1],$leistdat[4]);
     my $fuerzeit_flag='';
     my $dauer=0;
     my $anzahl=1; # Default, wenn keine Zeitangabe notwendig
@@ -651,10 +651,22 @@ sub SLLA {
 
     } else {
       # Materialpauschale 
-      $erg .= Heb_Edi->SLLA_ENF(70,$leistdat[4],$leistdat[10],1);
-      $lfdnr++;
-      # Text mit ausgeben
-      $erg .= Heb_Edi->SLLA_TXT($bez);$lfdnr++;
+      # Prüfen, welche Positionsnumer genutzt werden muss
+      if ($leistdat[1] =~ /^[A-Z]\d{1,3}$/) {
+	# es muss zugeordnete Positionsnummer geben, diese steht in $zus1
+	$zus1 = 70 if (!defined($zus1) or $zus1 eq '');
+	$erg .= Heb_Edi->SLLA_ENF($zus1,$leistdat[4],$leistdat[10],1);
+	$lfdnr++;
+	# Text mit ausgeben
+	$erg .= Heb_Edi->SLLA_TXT($bez);$lfdnr++;
+      } elsif ($leistdat[1] =~ /^\d{1,3}$/) {
+	$erg .= Heb_Edi->SLLA_ENF($leistdat[1],$leistdat[4],$leistdat[10],1);
+	$lfdnr++;
+      } else {
+	$ERROR="Materialpauschale konnte nicht ermittelt werden\n";
+	return undef;
+      }
+      
       $gesamtsumme += $leistdat[10];
       $ges_sum{$ltyp} += $leistdat[10];
     }
