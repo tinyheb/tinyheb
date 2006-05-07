@@ -131,11 +131,11 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.23 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.24 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
-print '<form name="stammdaten" action="stammdatenerfassung.pl" method="get" target=_top bgcolor=white>';
+print '<form name="stammdaten" action="stammdatenerfassung.pl" method="get" target=_top onsubmit="return frau_speicher(this);" bgcolor=white>';
 print '<table border="0" width="700" align="left">';
 
 # Zeile Vorname, Nachname, Geburtsdatum
@@ -156,7 +156,7 @@ print "<td><input type='text' name='vorname' value='$vorname' size='30' maxlengt
 # z2 s2
 print "<td><input type='text' name='nachname' value='$nachname' size='47' maxlength='47'></td>";
 # z2 s3
-print "<td><input type='text' name='geburtsdatum_frau' value='$geb_frau' size='10' maxlength='10' onBlur='datum_check(this)'></td>";
+print "<td><input type='text' name='geburtsdatum_frau' value='$geb_frau' size='10' maxlength='10' onChange='datum_check(this)'></td>";
 print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='return frausuchen(stammdaten.vorname,stammdaten.nachname,stammdaten.geburtsdatum_frau,form);'></tr>";
 print '</table>';
 print "\n";
@@ -183,7 +183,7 @@ print '</tr>';
 
 # Eingabe Felder
 print "<tr>";
-print "<td><input type='text' name='plz' value='$plz' size='5' maxlength='5' onBlur='return plz_check(this)'></td>";
+print "<td><input type='text' name='plz' value='$plz' size='5' maxlength='5' onChange='plz_check(this)'></td>";
 print "<td><input type='text' name='ort' value='$ort' size='25' maxlength='25'></td>";
 print "<td><input type='text' name='strasse' value='$strasse' size='30' maxlength='30'></td>";
 print '</tr>';
@@ -215,13 +215,13 @@ print "\n";
 
 print '<tr>';
 print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='10' maxlength='10' onBlur='kvnr_check(this);'></td>";
-print "<td><input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='4' maxlength='4' onBlur='return kvnr_gueltig_check(this)'></td>";
+print "<td><input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='4' maxlength='4' onChange='kvnr_gueltig_check(this)'></td>";
 # z4.2 s3
 print '<td>';
 print "<select name='versichertenstatus' size=1>";
 my $j=0;
 while ($j <= $#verstatus) {
-  print '<option';
+  print "<option value='$verstatus[$j]'";
   print ' selected' if ($verstatus[$j] eq $versichertenstatus);
   print '>';
   print $verstatus[$j];
@@ -229,7 +229,7 @@ while ($j <= $#verstatus) {
   $j++;
 }
 print "</td>\n";
-print "<td><input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='10' maxlength='9' onBlur='ik_gueltig_check(this)'></td>";
+print "<td><input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='10' maxlength='9' onChange='ik_gueltig_check(this)'></td>";
 print "<td><input type='button' name='kasse_waehlen' value='Kasse auswählen' onClick='return kassen_auswahl();'></td>";
 print '</tr>';
 print '</table>';
@@ -323,7 +323,7 @@ print '<td>';
 print "<select name='auswahl' size=1 onChange='auswahl_wechsel(document.stammdaten)'>";
 my $i=0;
 while ($i <= $#aus) {
-  print '<option';
+  print "<option value='$aus[$i]'";
   print ' selected' if ($aus[$i] eq $auswahl);
   print '>';
   print $aus[$i];
@@ -375,15 +375,19 @@ sub speichern {
   # Datümer konvertierten
   my $geb_f = $d->convert($geb_frau);
   my $geb_k = $d->convert($geb_kind);
-  # Entfernung koverieren
-  $entfernung =~ s/,/\./g;
+  my $ent_sp = $entfernung;
+  $ent_sp =~ s/,/\./g;
+  my $plz_sp = $plz; $plz_sp = 0 if (!defined($plz_sp) or $plz_sp eq '');
+  my $ik_sp = $ik_krankenkasse; $ik_sp = 0 if (!defined($ik_sp) or $ik_sp eq '');
+  $geb_k = '0000-00-00' if(!defined($geb_k) or $geb_k eq 'error');
+  $geb_f = '0000-00-00' if(!defined($geb_f) or $geb_f eq 'error');
+  $ent_sp = 0 if(!defined($ent_sp) or $ent_sp eq '');
   
   # jetzt speichern
-  my $erg = $s->stammdaten_ins($vorname,$nachname,$geb_f,$strasse,$plz,$ort,$tel,
-			       $entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
-			       $ik_krankenkasse,$anz_kinder,$geb_k,$naechste_hebamme,
+  my $erg = $s->stammdaten_ins($vorname,$nachname,$geb_f,$strasse,$plz_sp,$ort,$tel,
+			       $ent_sp,$kv_nummer,$kv_gueltig,$versichertenstatus,
+			       $ik_sp,$anz_kinder,$geb_k,$naechste_hebamme,
 			       $begruendung_nicht_nae_heb,$TODAY);
-  $entfernung =~ s/\./,/g;
   return $erg;
 }
 
@@ -403,14 +407,19 @@ sub aendern {
   # Datümer konvertierten
   my $geb_f = $d->convert($geb_frau);
   my $geb_k = $d->convert($geb_kind);
-  $entfernung =~ s/,/\./g;
-  
+  my $ent_sp = $entfernung;
+  $ent_sp =~ s/,/\./g;
+  my $plz_sp = $plz; $plz_sp = 0 if (!defined($plz_sp) or $plz_sp eq '');
+  my $ik_sp = $ik_krankenkasse; $ik_sp = 0 if (!defined($ik_sp) or $ik_sp eq '');
+  $geb_k = '0000-00-00' if(!defined($geb_k) or $geb_k eq 'error');
+  $geb_f = '0000-00-00' if(!defined($geb_f) or $geb_f eq 'error');
+  $ent_sp = 0 if(!defined($ent_sp) or $ent_sp eq '');
+
   # jetzt speichern
-  my $erg = $s->stammdaten_update($vorname,$nachname,$geb_f,$strasse,$plz,$ort,$tel,
-			      $entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
-			      $ik_krankenkasse,$anz_kinder,$geb_k,$naechste_hebamme,
+  my $erg = $s->stammdaten_update($vorname,$nachname,$geb_f,$strasse,$plz_sp,$ort,$tel,
+			      $ent_sp,$kv_nummer,$kv_gueltig,$versichertenstatus,
+			      $ik_sp,$anz_kinder,$geb_k,$naechste_hebamme,
 			      $begruendung_nicht_nae_heb,$TODAY,$frau_id);
-  $entfernung =~ s/\./,/g;
   return $erg;
 }
 
