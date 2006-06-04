@@ -24,7 +24,7 @@ use strict;
 use lib '../';
 
 use Tk;
-use Tk::JBrowseEntry;
+use Tk::BrowseEntry;
 use Tk::HList;
 use Tk::ItemStyle;
 
@@ -38,9 +38,12 @@ use Heb_leistung;
 use Heb_krankenkassen;
 use Heb_stammdaten;
 
-
-my $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
-
+my $path = $ENV{HOME}; # für temporäre Dateien
+if ($^O =~ /MSWin32/) {
+  $path .='/tinyheb';
+} else {
+  $path .='/.tinyheb';
+}
 
 if (!(-d "$path/tmp")) { # Zielverzeichnis anlegen
   mkdir "$path/tmp";
@@ -84,7 +87,7 @@ my $mw = MainWindow->new(-title => 'Elektronische Rechnungen',
 
 my $h_frame = $mw->Frame();
 my $hlist = $h_frame->Scrolled('HList',
-			       -scrollbars => 'se',
+			       -scrollbars => 'osoe',
 			       -columns => 7,
 			       -header => 1,
 			       -width => 95,
@@ -151,13 +154,21 @@ HebLabEntry($z1_from_f,'From',
 	     -width => 30})->pack(-side => 'left');
 
 
+my $z2_prov_f = $z1_prov_f->Frame(
+#			   -borderwidth => 3,
+#			   -relief => 'raised'
+			   )->pack(-side => 'left');
+$z2_prov_f->Label(-text => 'Mail Provider')->pack(-side => 'top',
+						  -anchor => 'w');
 
-my $prov = $z1_prov_f->JBrowseEntry(-label => 'Mail Server',
-				    -labelPack => [side => 'top', -anchor => 'w'],
-				    -variable => \$prov_sel,
-				    -choices => \@provider,
-				    -browsecmd => \&prov_neu,
-				    -state => 'readonly')->pack(-side => 'left');
+#my $prov = $z1_prov_f->BrowseEntry(#-label => 'Mail Server',
+my $prov = $z2_prov_f->BrowseEntry(#-label => 'Mail Server',
+				   -variable => \$prov_sel,
+				   -choices => \@provider,
+				   -browsecmd => \&prov_neu,
+				   -state => 'readonly')->pack(-side => 'left',
+							       -anchor => 'w',
+							      );
 
 HebLabEntry($z1_prov_f,'Benutzer Name',
 	    {-textvariable => \$user_sel,
