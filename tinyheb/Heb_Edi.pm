@@ -41,8 +41,18 @@ my $d = new Heb_datum;
 
 my $delim = "'\x0d\x0a"; # Trennzeichen
 my $crlf = "\x0d\x0a";
+my $openssl ='openssl';
 
-our $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
+$openssl = '/OpenSSL/bin/'.$openssl if ($^O =~ /MSWin32/);
+
+our $path = $ENV{HOME}; # für temporäre Dateien
+if ($^O =~ /MSWin32/) {
+  $path .='/tinyheb';
+} else {
+  $path .='/.tinyheb';
+}
+mkdir "$path" if(!(-d "$path"));
+
 our $dbh;
 our $ERROR = '';
 
@@ -760,18 +770,18 @@ sub sig {
 
   if ($sig_flag == 0) {
     # PEM verschlüsseln
-    open NUTZ, "cat $path/tmp/$dateiname |" or
+    open NUTZ, "$path/tmp/$dateiname" or
       die "konnte Datei nicht NICHT signieren\n";
   }
   if ($sig_flag == 2) {
     # PEM signieren
     die "PEM Signierung  ist nicht implementiert, bitte nutzen sie pkcs7\n";
-    open NUTZ, "openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform PEM -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
+    open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform PEM -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
       die "konnte Datei nicht PEM signieren\n";
   }
   if ($sig_flag == 3) {
     # DER signieren um später base64 encoden zu können
-    open NUTZ, "openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
+    open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
       die "konnte Datei nicht DER verschlüsseln\n";
   }
 
@@ -779,11 +789,6 @@ sub sig {
     
  
  LINE: while (my $zeile=<NUTZ>) {
-#    next LINE if($zeile =~ /^\n$/ && $sig_flag != 3);
-#    if ($sig_flag != 3) {
-#      $zeile =~ s/\r\n$//;
-#      $zeile .= $crlf;
-#    }
     print AUS $zeile;
   }
   close NUTZ;
@@ -804,13 +809,13 @@ sub enc {
 
   if ($schl_flag == 0) {
     # PEM verschlüsseln
-    open NUTZ, "cat $path/tmp/$dateiname |" or
+    open NUTZ, "$path/tmp/$dateiname" or
       die "konnte Datei nicht NICHT verschlüsseln\n";
   }
   if ($schl_flag == 2) {
     # PEM verschlüsseln
     die "PEM Verschlüsselung ist nicht implementiert, bitte nutzen sie pkcs7\n";
-    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform PEM $path/tmp/zik.pem |" or
+    open NUTZ, "$openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER $path/tmp/zik.pem |" or
       die "konnte Datei nicht PEM verschlüsseln\n";
   }
   if ($schl_flag == 3) {
@@ -823,11 +828,6 @@ sub enc {
   open AUS, ">$path/tmp/$dateiname.enc";
     
  LINE: while (my $zeile=<NUTZ>) {
-#    next LINE if($zeile =~ /^\n$/ && $schl_flag != 3);
-#    if ($schl_flag != 3) {
-#      $zeile =~ s/\n$//;
-#      $zeile .= $crlf;
-#    }
     print AUS $zeile;
   }
   close NUTZ;
