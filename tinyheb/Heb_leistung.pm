@@ -544,6 +544,10 @@ sub status_text {
   return 'Rechnung' if($status==20);
   return 'Edi Rech.' if($status==22);
   return 'Teilzahl.' if($status==24);
+  return '1.&nbsp;Mahnung' if($status==26);
+  return '2.&nbsp;Mahnung' if($status==27);
+  return '3.&nbsp;Mahnung' if($status==28);
+  return '4.&nbsp;Mahnung' if($status==29);
   return 'erl.' if($status==30);
   return "$status unbekannt";
 }
