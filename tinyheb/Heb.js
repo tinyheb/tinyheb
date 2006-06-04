@@ -29,7 +29,8 @@ open("../hebamme.html","_top");
 
 function stamm(id,formular) {
   // springt von einem Untermenue in die Stammdatenerfassung
-  if (formular.name != 'rechnungen_gen' && formular.name != 'rechposbear') {
+  if (formular.name != 'rechnungen_gen' && formular.name != 'rechposbear' &&
+      formular.name != 'mahnung_gen') {
     open("stammdatenerfassung.pl?func=3&frau_id="+id,"_top");
   } else {
     open("../erfassung/stammdatenerfassung.pl?func=3&frau_id="+id,"_top");
