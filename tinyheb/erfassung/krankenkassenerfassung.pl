@@ -307,5 +307,15 @@ sub hole_krank_daten {
   $ik = $k->krankenkasse_prev_ik($ik) if ($func==2);
   $ik=$ik_alt if (!defined($ik));
   ($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$pubkey,$zik_typ,$beleg_ik,$email)= $k->krankenkassen_krank_ik($ik);
+  if ($plz_haus > 0) {
+    $plz_haus = sprintf "%5.5u",$plz_haus;
+  } else {
+    $plz_haus = '';
+  }
+  if ($plz_post > 0) {
+    $plz_post = sprintf "%5.5u",$plz_post;
+  } else {
+    $plz_post = '';
+  }
   return;
 }
