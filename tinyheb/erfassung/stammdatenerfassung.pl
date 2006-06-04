@@ -47,6 +47,7 @@ my @verstatus = ('1 1','3 1','privat');
 my $hint = '';
 
 my $frau_id = $q->param('frau_id') || '0';
+my $frau_id2 = $q->param('frau_id2') || $frau_id;
 my $vorname = $q->param('vorname') || '';
 my $nachname = $q->param('nachname') || '';
 my $geb_frau = $q->param('geburtsdatum_frau') || '';
@@ -131,7 +132,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.24 $</h1>';
+print '<h1>Stammdaten<br> $Revision: 1.25 $</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -151,7 +152,8 @@ print "\n";
 
 # z2 s1
 print '<tr>';
-print "<td><input type='text' name='frau_id' value='$frau_id' size='5'></td>";
+print "<input type='hidden' name='frau_id' value='$frau_id' size='5'>";
+print "<td><input type='text' disabled class='disabled' name='frau_id2' value='$frau_id2' size='5'></td>";
 print "<td><input type='text' name='vorname' value='$vorname' size='30' maxlength='30'></td>";
 # z2 s2
 print "<td><input type='text' name='nachname' value='$nachname' size='47' maxlength='47'></td>";
@@ -432,6 +434,7 @@ sub hole_frau_daten {
    $anz_kinder,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
    $ik_krankenkasse,$naechste_hebamme,
    $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
+  $frau_id2=$frau_id;
   $entfernung = '0.0' unless defined($entfernung);
   $entfernung =~ s/\./,/g;
   $geb_frau = '' if ($geb_frau eq '00.00.0000');
