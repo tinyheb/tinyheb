@@ -39,9 +39,33 @@ $l->rechnung_such("RECH,EDI_AUFTRAG,EDI_NUTZ","RECHNUNGSNR=$rech_id");
 my ($rech,$edi_auf,$edi_nutz)=$l->rechnung_such_next();
 
 if ($rechtyp == 1) {
-  print $q->header ( -type => "application/postscript", -expires => "-1d");
-  print $rech;
+  if ($q->user_agent =~ /Windows/) {
+    print $q->header ( -type => "application/pdf", -expires => "-1d");
+    mkdir "/tmp/wwwrun" if(!(-d "/tmp/wwwrun"));
+    open AUSGABE,"/tmp/wwwrun/file.ps" or
+      die "konnte Datei nicht in pdf konvertieren, Schreibfehler für file.ps\n";
+    print AUSGABE $rech;
+    close AUSGABE;
+    if ($^O =~ /linux/) {
+      system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
+    } elsif ($^O =~ /MSWin32/) {
+      system('/gs/gs8.15/bin/gs32winc -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps');
+    } else {
+      die "kein Konvertierungsprogramm ps2pdf gefunden\n";
+    }
+    
+    open AUSGABE,"/tmp/wwwrun/file.pdf" or
+      die "konnte Datei nicht konvertieren in pdf\n";
+    while (my $zeile=<AUSGABE>) {
+      print $zeile;
+    }
+    close AUSGABE;
+  } else {
+    print $q->header ( -type => "application/postscript", -expires => "-1d");
+    print $rech;
+  }
 }
+
 if ($rechtyp == 2) {
   print $q->header ( -type => "text/html", -expires => "-1d");
   print '<head>';
