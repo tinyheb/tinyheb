@@ -22,7 +22,7 @@
 
 //alert("rechnung.js wird geladen");
 
-function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse,kv_nummer,kv_gueltig,versichertenstatus,name_kk,form) {
+function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse,kv_nummer,kv_gueltig,versichertenstatus,name_kk,test_ind,form) {
   // schreibt Rechnung in Fenster und macht update auf Datenbank
   //alert("Drucken Frau"+frau_id+"form"+form+"kk"+name_kk+"plz"+plz);
   // zunächst harte Plausiprüfungen, nur dann wenn keine privat Rechnung
@@ -43,6 +43,15 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
       alert("Geburtsdatum Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
       return false;
     }
+    if (kv_nummer == 0 || kv_nummer == '') {
+      error_text=error_text+"Krankenversicherungsnummer wurde nicht erfasst\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert";
+      return false;
+    }
+    if (versichertenstatus == 0 || versichertenstatus == '') {
+      error_text=error_text+"Versichertenstatus wurde nicht erfasst\n";
+      return false;
+    }
+
   }
 
   // weiche Plausiprüfungen
@@ -60,14 +69,8 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
   if (strasse == '') {
     error_text=error_text+"Strasse wurde nicht erfasst\n";
   }
-  if (kv_nummer == 0 || kv_nummer == '') {
-    error_text=error_text+"Krankenversicherungsnummer wurde nicht erfasst\n";
-  }
   if (kv_gueltig == 0 || kv_gueltig == '') {
     error_text=error_text+"Gültigkeitsdatum Krankenversicherungsnummer wurde nicht erfasst\n";
-  }
-  if (versichertenstatus == 0 || versichertenstatus == '') {
-    error_text=error_text+"Versichertenstatus wurde nicht erfasst\n";
   }
 
   // prüfen liegen Fehler vor
@@ -82,11 +85,26 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
     open("ps2html.pl?frau_id="+frau_id+"&speichern=save","rechnung");
     // Knopf entgültig Drucken auf disabled stellen
     form.pdruck.disabled=true;
-    alert("Rechnung wurde gespeichert\nBitte Rechnung über 'Print All' drucken");
+    var text ='';
+    if (test_ind == -1 || test_ind == 0) {
+      text="Rechnung wurde gespeichert\nBitte Rechnung über 'Print All' drucken";
+    }
+    if (test_ind == 1) {
+      text="Rechnung wurde gespeichert\nBitte Rechnung über 'Print All' drucken\nund sowohl per Post wie auch E-Mail verschicken";
+    }
+    if (test_ind == 2) {
+      text="Rechnung wurde gespeichert\nBei Bedarf Begleitzettel drucken\nRechnung per E-Mail verschicken";
+    }
+    alert(text);
   } else {
     alert("Bitte zunächst Frau auswählen");
   }
 };
+
+function mahn_fertig(frau_id,rechnr,form) {
+  form.pdruck.disabled=true;
+  open("mahnung.pl?frau_id="+frau_id+"&speichern=save&rechnr="+rechnr,"mahnung");
+}
 
 function bearb_rech(rechnr,status) {
   // Bearbeitungsmaske Rechnung mit Daten füllen
