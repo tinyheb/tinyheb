@@ -102,6 +102,12 @@ if ($versichertenstatus ne 'privat') {
 
 fussnote(); # auf der ersten Seite explizit angeben
 
+# Falz  ausgeben
+$p->setlinewidth(0.015);
+$p->line(0,19,0.3,19);
+$p->line(20.7,19,21,19);
+$p->setlinewidth(0.04);
+
 # Rechnung ausgeben für Rechnungsteile A,B,C
 $y1=18.5;
 my $gsumme=0;
