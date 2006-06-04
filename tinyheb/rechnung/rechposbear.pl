@@ -155,8 +155,10 @@ print '<tr>';
 print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print "<td><input type='button' name='stammdaten' value='Stammdaten' onClick='stamm($r_fk_st,document.rechposbear);'></td>";
-print '<td><input type="button" name="mahnung" value="Mahnung generieren"></td>';
+print "<td><input type='button' name='mahnung' value='Mahnung generieren' onClick='parent.window.location=\"mahnung_generierung.pl?frau_id=$r_fk_st&rechnr=$r_rechnr;\"'></td>";
 print '</tr>';
+
+
 print '</table>';
 
 print '</td></tr>';
