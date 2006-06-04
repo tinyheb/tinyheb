@@ -30,7 +30,12 @@ use Heb_leistung;
 use Heb_krankenkassen;
 use Heb;
 
-our $path = $ENV{HOME}.'/.tinyheb'; # für temporäre Dateien
+my $path = $ENV{HOME}; # für temporäre Dateien
+if ($^O =~ /MSWin32/) {
+  $path .='/tinyheb';
+} else {
+  $path .='/.tinyheb';
+}
 if (!(-d "$path/tmp")) { # Zielverzeichnis anlegen
   mkdir "$path/tmp";
 }
