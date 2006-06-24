@@ -1,10 +1,81 @@
-Rel myHeb-0-1-0:
-erstes Release, wesentliche Funktionalitäten sind vorhanden,
-siehe Doku in concept/doku.tex.
-Installation bzgl. Datenbank noch nicht wie in Doku beschrieben,
-Initialisierung funktioniert nicht.
+Release 0.7.0
 
-nächstes Release:
+Heb.js:
+auch aus Mahnungsgenerierung kann Frauenauswahl aufgerufen werden.
+
+
+Es wird erkannt, auf welchem OS das Programm läuft und entsprechend der Pfad für openssl gesetzt.
+Pfade für temporäre Dateien werden automatisch angelegt.
+
+kostentraeger.pl:
+verbesserte Ausgabe von Informationen bei verbose für PLZ und Postfächer.
+Bug fix:
+Bei ' im Namen oder Kurznamen der Krankenkasse werden diese jetzt
+korrekt in den Datenhaushalt übernommen.
+enthält der Name der Krankenkasse numerische Werte, werden diese korrekt übernommen.
+
+
+Heb_Edi:
+Falls nicht verschlüsselt oder signiert wird, wird Datei nicht per Pipe gelesen sondern mit "normalen" perl Funktionen.
+
+Heb_Leistung:
+Mahnstatus' werden berücksichtigt.
+
+Link auf GPL Lizenz eingefügt.
+
+xauftrag.pl:
+JBrowseEntry wird nicht mehr genutzt, nur noch BrowseEntry.
+
+Krankenkassenerfassung:
+PLZ mit weniger als 5-stellen werden korrekt angezeugt.
+Bug fixes:
+Bei ' im Namen oder Kurznamen der Krankenkasse werden diese jetzt 
+korrekt angezeigt.
+Postfach wird mit 6-Stellen angezeigt.
+
+Stammdatenerfassung:
+Frau_ID ist nicht mehr erfassbar.
+
+Rechnungsgenerierung:
+Falz wird mit ausgedruckt.
+Nach Rechnung fertigstellen wird angezeigt, wie mit der Rechnung zu verfahren ist, Drucken und/oder per
+Mail verschicken.
+
+Bug Fix:
+bei Privatrechnungen müssen bestimmte Felder nicht gefüllt sein.
+
+Ausgabe alte Rechnungen:
+Es wird erkannt, von welchem OS das Programm aufgerufen wird und entweder PostScript oder PDF als
+Ausgabe erzeugt.
+
+Es können Mahnungen generiert werden.
+
+allgemeine Plausiprüfungen an Möglichkeiten in Firefox 1.5.0.2 angepasst.
+
+Bug fix:
+Inhalte der Comboboxen wurden im IE6 nicht korrekt berücksichtigt.
+
+Rechnungspostenerfassung:
+Layout wurde im IE6 nicht korrekt angezeigt.
+Anpassung wegen neuer offizieller Positionsnummern für Auslagen.
+
+Leistungsartenerfassung:
+nach Änderung bleibt die alte ID erhalten.
+Wird der Knopf nächster oder vorheriger Datensatz gedrückt, wird auf die vorherige oder nachfolgende Positionsnummer gesprungen.
+
+Bug fix:
+Alphanumerische Positionsnummern wurden nicht korrekt verarbeitet.
+
+Rechnungsgenerierung:
+Verbesserter Umgang mit nicht initialisierten numerischen Feldern.
+Anpassung wegen neuer offizieller Positionsnummern für Auslagen.
+Bei Aufruf der Funktion von einem Browser unter Windows wird pdf als Ausgabe erzeugt. 
+Dazu wird ps2pdf unter linux und gs32winc unter Windows genutzt.
+Damit sind temporäre Dateien notwendig, das entsprechende Verzeichnis wird automatisch angelegt.
+
+
+
+Release 0.6.0
 Bei der Ausgabe der Rechnung als Postscript wird nicht mehr mit temporären Dateien gearbeitet.
 
 In Rechnungserfassung:
@@ -58,3 +129,10 @@ Erste Schritte in echte Objektorientierung.
 
 Bug Fix:
 Zeilentrennung war falsch 0d0d0a.
+
+Rel myHeb-0-1-0:
+erstes Release, wesentliche Funktionalitäten sind vorhanden,
+siehe Doku in concept/doku.tex.
+Installation bzgl. Datenbank noch nicht wie in Doku beschrieben,
+Initialisierung funktioniert nicht.
+
