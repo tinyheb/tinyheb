@@ -133,7 +133,9 @@ if (defined($suchen)) {
     print '<td><input type="button" name="waehlen" value="Auswählen"';
     print "\n";
     $k_bemerkung = ' ' if($k_bemerkung eq '');
-    print "onclick=\"kk_eintrag('$k_ik','$k_kname','$k_name','$k_plz_haus','$k_plz_post','$k_ort','$k_strasse');self.close()\"></td>";
+    $k_kname =~ s/'/\\'/g;
+    $k_name =~ s/'/\\'/g;
+    print "onclick=\"kk_eintrag('$k_ik','$k_kname','$k_name','$k_plz_haus','$k_plz_post','$k_ort','$k_strasse');self.close();\"></td>";
     print "</tr>\n";
   }
 }
@@ -147,7 +149,7 @@ print <<SCRIPTE;
     kassenauswahl.close();
   }
   function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse) {
-    // alert("gewählt"+name+plz+ort+strasse+ik);
+    //  alert("gewählt"+name+plz_haus+ort+strasse+k_ik);
     // in Parent Dokument übernehmen
     // alert("parent"+opener.window.document.forms[0].name);
     var formular=opener.window.document.forms[0];
