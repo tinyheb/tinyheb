@@ -178,7 +178,7 @@ print '</tr>';
 print "<tr>";
 print "<td><input type='text' name='plz_post_krankenkasse' value='$plz_post' size='5' onBlur='return plz_check(this)'></td>";
 print "<td><input type='text' disabled class=disabled name='ort2_krankenkasse' value='$ort' size='40'></td>";
-print "<td><input type='text' name='postfach_krankenkasse' value='$postfach' size='5'></td>";
+print "<td><input type='text' name='postfach_krankenkasse' value='$postfach' size='6'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
@@ -251,13 +251,13 @@ print '<input type="button" name="reset" value="Inhalt löschen"';
 print ' onClick="loeschen()">';
 print '</td>';
 print '<td>';
-print '<input type="submit" name="abschicken" value="Speichern"';
+print '<input type="submit" name="abschicken" value="Speichern">';
 print '</td>';
 print '<td>';
-print '<input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.krankenkassen)"';
+print '<input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.krankenkassen)">';
 print '</td>';
 print '<td>';
-print '<input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.krankenkassen)"';
+print '<input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.krankenkassen)">';
 print '</td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '</tr>';
@@ -307,6 +307,9 @@ sub hole_krank_daten {
   $ik = $k->krankenkasse_prev_ik($ik) if ($func==2);
   $ik=$ik_alt if (!defined($ik));
   ($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$pubkey,$zik_typ,$beleg_ik,$email)= $k->krankenkassen_krank_ik($ik);
+  $kname =~ s/'/&#145;/g;
+  $name =~ s/'/&#145;/g;
+  $strasse =~ s/'/&#145;/g;
   if ($plz_haus > 0) {
     $plz_haus = sprintf "%5.5u",$plz_haus;
   } else {
