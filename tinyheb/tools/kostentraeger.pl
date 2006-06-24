@@ -112,11 +112,12 @@ LINE:while ($zeile=<FILE>) {
     print "--------------KRANKENKASSE ANFANG\n" if $debug;
     until ($zeile =~ /\AUNT/) {
       print "ZEILE $zeile\n" if $debug;
-      if ($zeile =~ /\AIDK\+(\d{9})\+(\d{2})\+(\D{0,30})/) {
+      if ($zeile =~ /\AIDK\+(\d{9})\+(\d{2})\+(.+)/) {
 	$idk = $1;
 	$kname = $3;
 	$kname =~ s/\?\+/ und /g;
 	$kname =~ s/\+/ /g;
+	$kname =~ s/\?'/'/g;
 	$kname =~ s/  / /g;
 	$kname =~ s/ $//;
 	print "--> IK: $idk\n" if $debug;
@@ -206,13 +207,14 @@ LINE:while ($zeile=<FILE>) {
 
       if ($zeile =~ /\ANAM\+/) {
 	$zeile =~ s/\?\+/ und /g;
-	$zeile =~ s/  / /g;
 	my @erg = split '\+',$zeile;
 	shift @erg;
 	shift @erg;
 	$name=join " ",@erg;
+	$name =~ s/\?'/'/g;
+	$name =~ s/  / /g;
+	$name =~ s/ $//;
 	print "--> NAME $name\n" if $debug;
-
       }
 
       if ($zeile =~ /\AANS\+/) {
@@ -318,10 +320,10 @@ LINE:while ($zeile=<FILE>) {
 	    print "NAME $k_name\t\t$name_n\n" if(!($k_name eq $name_n));
 	    print "KNAME $k_kname\t\t$kname_n\n" if(!($k_kname eq $kname_n));
 	    print "$k_strasse\t\t$strasse_n\n" if(!($k_strasse eq $strasse_n));
-	    print "$k_plz_haus\t\t$plz_haus_n\n" if(!($k_plz_haus == $plz_haus_n));
-	    print "$k_plz_post\t\t$plz_post_n\n" if(!($k_plz_post == $plz_post_n));
+	    print "PLZ_HAUS $k_plz_haus\t\t$plz_haus_n\n" if(!($k_plz_haus == $plz_haus_n));
+	    print "PLZ_POST $k_plz_post\t\t$plz_post_n\n" if(!($k_plz_post == $plz_post_n));
 	    print "$k_ort\t\t$ort_n\n" if(!($k_ort eq $ort_n));
-	    print "$k_postfach\t\t$postfach_n\n" if(!($k_postfach eq $postfach_n));
+	    print "POSTFACH $k_postfach\t\t$postfach_n\n" if(!($k_postfach eq $postfach_n));
 	    print "$k_asp_name\t\t$asp_name_n\n" if(!($k_asp_name eq $asp_name_n));
 	    print "$k_asp_tel\t\t$asp_tel_n\n" if(!($k_asp_tel eq $asp_tel_n));
 	    print "ZIK\t$k_zik\t\t$zik_n\n" if(!($k_zik eq $zik_n));
