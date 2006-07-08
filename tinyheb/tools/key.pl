@@ -30,8 +30,10 @@ use Getopt::Std;
 
 use lib '../';
 use Heb_krankenkassen;
+use Heb;
 
 my $k = new Heb_krankenkassen;
+my $h = new Heb;
 
 my %option = ();
 getopts("vp:f:o:hu",\%option);
@@ -101,7 +103,35 @@ foreach my $file (@dateien) {
       open SCHREIB, ">$o_pfad/datei$file_counter.pem"
 	or die "Konnte Datei nicht zum schreiben öffnen $!\n";
       print SCHREIB "-----BEGIN CERTIFICATE-----\n";
-      print "------------------------------\n" if $debug;
+
+      my ($kname,$email)=$k->krankenkasse_sel('KNAME,EMAIL',$ik);
+      if (defined($kname)) {
+	my $test_ind = $h->parm_unique('IK'.$ik);
+	if (defined($test_ind)) {
+	  print "Datenannahmestelle $ik ist schon im Datenhaushalt mit: $test_ind\n";
+	} else {
+	  my ($ktr,$da)=$k->krankenkasse_ktr_da($ik);
+	  print "Datenannahmestelle $ik ist nicht im Datenhaushalt,\nKTR: $ktr, DA: $da ";
+	  if ($da == $ik || $da == 0) {
+	    print "wird angelegt\n";
+	    print "IK$ik. 00\n";
+	    print "DTAUS$ik 1\n";
+	    print "SCHL$ik 03\n";
+	    print "SIG$ik 00\n";
+	    print "MAIL$ik $email\n";
+	    if ($option{u}) {
+	      $h->parm_ins("IK$ik","00","Datenannahmestelle ($kname) Testindikator 0=Test, 1=Erprobungsphase,2=Produktion");
+	      $h->parm_ins("DTAUS$ik","01","Datenaustauschreferenz für diese Datenannahmestelle ($kname)");
+	      $h->parm_ins("SCHL$ik","03","Verschlüsselung für diese Datenannahmestelle ($kname)");
+	      $h->parm_ins("SIG$ik","00","Signatur für diese Datenannahmestelle ($kname)");
+	      $h->parm_ins("MAIL$ik",$email,"Mail Adresse der Datenanname stelle ($kname)");
+	    }
+	  } else {
+	    print "wird nicht angelegt, weil keine Datenannahmestelle\n";
+	  }
+	}
+      }
+	
 
       if ($option{u} && $k->krankenkasse_sel('NAME',$ik)) {
 	# kasse existiert update machen
@@ -109,6 +139,7 @@ foreach my $file (@dateien) {
       }
       $erg = '';
       $ik=0;
+      print "------------------------------\n" if $debug;
     }
   }
   close (FILE);
