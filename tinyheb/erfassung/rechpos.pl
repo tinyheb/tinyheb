@@ -468,6 +468,12 @@ sub speichern {
     return $hint;
   }
 
+  # Prüfung auf Begründungspflicht
+  if (Begruendung_plausi($posnr,$datum_l,$begruendung) ne '') {
+    $hint .= Begruendung_plausi($posnr,$datum_l,$begruendung);
+    return $hint;
+  }
+
   # Preis berechnen in Abhängigkeit der Dauer
   my $preis=0;
   my $fuerzeit_flag='';
@@ -745,6 +751,20 @@ sub Cc_plausi {
       ($begruendung !~ /Anordnung/) &&
       ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR in (22,23,25,26,28,29,30,31,32,33,35) AND DATUM>'$zehn_spaeter'") > 16) ) {
     return 'FEHLER: Position '.$posnr.' ist ab dem 11 Tag höchstens 16 mal berechnungsfähig\nohne ärztliche Anordnung\nes wurde nichts gespeichert';
+  }
+  return '';
+}
+
+sub Begruendung_plausi {
+  # Falls in den Leistungsdaten das Feld Begruendungspflicht auf j steht,
+  # muss eine Begründung vorhanden sein
+  my ($posnr,$datum_l,$begruendung)=@_;
+  my ($l_begruendungspflicht)=
+    $l->leistungsart_such_posnr('BEGRUENDUNGSPFLICHT',$posnr,$datum_l);
+  if (uc $l_begruendungspflicht eq 'J' && 
+      !(defined($begruendung )) ||
+      $begruendung eq '') {
+    return 'FEHLER: Bei Position '.$posnr.' ist eine Begründung notwendig\n es wurde nichts gespeichert';
   }
   return '';
 }
