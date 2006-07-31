@@ -762,8 +762,7 @@ sub Begruendung_plausi {
   my ($l_begruendungspflicht)=
     $l->leistungsart_such_posnr('BEGRUENDUNGSPFLICHT',$posnr,$datum_l);
   if (uc $l_begruendungspflicht eq 'J' && 
-      !(defined($begruendung )) ||
-      $begruendung eq '') {
+      (!defined($begruendung ) || $begruendung eq '')) {
     return 'FEHLER: Bei Position '.$posnr.' ist eine Begründung notwendig\n es wurde nichts gespeichert';
   }
   return '';
