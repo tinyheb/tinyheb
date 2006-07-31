@@ -103,9 +103,9 @@ if ($versichertenstatus ne 'privat') {
 fussnote(); # auf der ersten Seite explizit angeben
 
 # Falz  ausgeben
-$p->setlinewidth(0.015);
-$p->line(0,19,0.3,19);
-$p->line(20.7,19,21,19);
+$p->setlinewidth(0.02);
+$p->line(0,19,0.5,19);
+$p->line(20.6,19,21,19);
 $p->setlinewidth(0.04);
 
 # Rechnung ausgeben für Rechnungsteile A,B,C
@@ -562,7 +562,7 @@ sub anschrift {
     $p->text(12.7,$y1-4*$y_font,"IK:");
     $p->setfont($font_b,10);
     $p->text(15.1,$y1-4*$y_font,$ik_krankenkasse);
-    $p->text(12.7,$y1-5*$y_font,$name_krankenkasse);
+    $p->text(12.7,$y1-5*$y_font,$kname_krankenkasse);
     $p->setfont($font,10);
     $p->text(12.7,$y1-6*$y_font,$plz_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse > 0);
     $p->text(12.7,$y1-6*$y_font,$plz_post_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse == 0);
