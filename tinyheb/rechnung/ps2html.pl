@@ -431,8 +431,11 @@ sub print_wegegeld {
     $p->text(8,$y1,"(Anteil $erg[9] Besuche)") if ($erg[9]>1); # Anzahl Frauen
     $p->text({align => 'right'},12.5,$y1,"á $preis");
     $preis =~ s/,/\./g;
-    $summe += $preis * $entf if ($entf>=2);
-    $summe += $preis if($entf<2);
+    my $teilsumme = 0;
+    $teilsumme = ($preis * $entf) if ($entf>=2);
+    $teilsumme = $preis if($entf<2);
+    $teilsumme = sprintf "%.2f",$teilsumme;
+    $summe += $teilsumme;
     my $gpreis = sprintf "%.2f",$preis * $entf;
     $gpreis = $preis if($entf<2);
     $gpreis =~s/\./,/g;
