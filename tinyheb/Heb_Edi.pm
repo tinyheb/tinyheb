@@ -82,11 +82,6 @@ sub new {
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
   $self->{kostentraeger}=$ktr;
   $self->{annahmestelle}=$zik;
-  my ($hilf,$betrag_slla)=Heb_Edi->SLLA($rechnr,$zik,$ktr);
-  if ($betrag_slla ne $self->{betrag}) {
-    $ERROR="Betragsermittlung zu Papierrechnung unterschiedlich Edi Betrag:$betrag_slla, Papier: $betrag!!!";
-    return undef;
-  }
   
   # physikalischen Empfänger ermitteln
   my $empf_physisch=$k->krankenkasse_empf_phys($zik);
@@ -106,11 +101,24 @@ sub new {
     $ERROR="Geburtsdatum der Frau ist kein gültiges Datum, es kann keine elektronische Rechnung erstellt werden, bitte in den Stammdaten korrigieren";
     return undef;
   }
+  $geb_kind=$d->convert($geb_kind);$geb_kind =~ s/-//g;
+  if($geb_kind eq 'error') {
+    $ERROR="Geburtsdatum des Kindes ist kein gültiges Datum, es kann keine elektronische Rechnung erstellt werden, bitte in den Stammdaten korrigieren";
+    return undef;
+  }
+  $self->{geb_kind}=$geb_kind;
   $self->{vorname}=$vorname;
   $self->{nachname}=$nachname;
   $self->{geb_frau}=$geb_frau;
   $self->{plz}=$plz;
   bless $self, ref $class || $class;
+
+  my ($hilf,$betrag_slla)=$self->SLLA($rechnr,$zik,$ktr);
+  if ($betrag_slla ne $self->{betrag}) {
+    $ERROR="Betragsermittlung zu Papierrechnung unterschiedlich Edi Betrag:$betrag_slla, Papier: $betrag!!!";
+    return undef;
+  }
+  
   return $self;
 }
 
@@ -120,7 +128,7 @@ sub gen_auf {
   # generiert Auftragsdatei wie den Richtlinien für den Datenaustausch mit 
   # den geetzlichen Krankenkassen beschrieben.
 
-  shift; # package Namen vom Stack nehmen
+  my $self=shift; # package Namen vom Stack nehmen
 
   my ($test_ind,$transfer_nr,$ik_empfaenger,
       $dateigroesse_nutz,$dateigroesse_ueb,
@@ -153,7 +161,8 @@ sub gen_auf {
   # Anhand der IK Empfänger Nummer prüfen, ob der Schlüsselnutzer
   # unterschiedliches RZ nutzt, dann ist anderer physikalischer Empfänger
   # anzugeben
-  my $ik_empfaenger_physisch=$k->krankenkasse_empf_phys($ik_empfaenger);
+#  my $ik_empfaenger_physisch=$k->krankenkasse_empf_phys($ik_empfaenger);
+  my $ik_empfaenger_physisch=$self->{empf_physisch};
   if (!defined($ik_empfaenger_physisch)) {
     die "Zu Datenannahmestelle $ik_empfaenger mit Entschlüsselungsbefugnis konnte keine physikalische Annahmestelle gefunden werden\n"
   } else {
@@ -208,7 +217,7 @@ sub gen_auf {
 sub UNB {
   # generiert UNB Segment, Kopfsegment der Nutzendatei
   
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   my ($ik_empfaenger,$datenaustauschref,$test_ind) = @_;
 
@@ -231,7 +240,7 @@ sub UNB {
 sub UNZ {
   # generiert UNZ Segment, Endesegment der Nutzendatei
 
-  shift;
+  my $self=shift;
 
   my ($datenaustauschref) = @_;
 
@@ -249,7 +258,7 @@ sub SLGA_FKT {
   # ist analog SLLA_FKT Segment, weil keine Sammelabrechnung erstellt wird
   # muss aber noch Absender zusätzlich enthalten
 
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   my ($ik_kostentraeger,$ik_krankenkasse) = @_;
   my $erg = 'FKT+';
@@ -268,10 +277,10 @@ sub SLGA_FKT {
 sub SLGA_REC {
   # generiert SLGA REC Segment
   # analog SLLA REC Segment
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   my ($rechnr,$rechdatum) = @_;
-  return Heb_Edi->SLLA_REC($rechnr,$rechdatum);
+  return $self->SLLA_REC($rechnr,$rechdatum);
 }
 
 
@@ -293,7 +302,7 @@ sub SLGA_UST {
 sub SLGA_GES {
   # generiert SLGA_GES Segment
 
-  shift;
+  my $self=shift;
 
   my ($gesamtsumme,$status) = @_;
   $gesamtsumme =~ s/\./,/g;
@@ -311,7 +320,7 @@ sub SLGA_GES {
 sub SLGA_NAM {
   # generiert SLGA_NAM Segment
 
-  shift;
+  my $self=shift;
 
   my $erg = 'NAM+';
   $erg .= substr($h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME'),0,30).'+'; # Name der Hebamme
@@ -326,7 +335,7 @@ sub SLGA_NAM {
 sub SLLA_FKT {
   # generiert SLLA_FKT Segment
 
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   my ($ik_kostentraeger,$ik_krankenkasse) = @_;
   
@@ -344,7 +353,7 @@ sub SLLA_FKT {
 sub SLLA_REC {
   # generiert SLLA REC Segment
 
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   my ($rechnr,$rechdatum) = @_;
 
@@ -361,7 +370,7 @@ sub SLLA_REC {
 sub SLLA_INV {
   # generiert SLLA INV Segment
   
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   my ($kvnr,$kvstatus,$rechnr) = @_;
 
@@ -381,7 +390,7 @@ sub SLLA_INV {
 sub SLLA_NAD {
   # generiert SLLA NAD Segment
 
-  shift; # package Namen vom Stack nehmen
+  my $self=shift; # package Namen vom Stack nehmen
 
   my ($nachname,$vorname,$geb_frau,$strasse,$plz,$ort) = @_;
   # Steuerzeichen aufbereiten
@@ -415,7 +424,7 @@ sub SLLA_NAD {
 sub SLLA_ENF {
   # generiert SLLA ENF Segement
 
-  shift; # package Namen vom Stack nehmen
+  my $self=shift; # package Namen vom Stack nehmen
 
   my($posnr,$datum,$preis,$menge) = @_;
   $menge = sprintf "%.2f",$menge;
@@ -443,7 +452,7 @@ sub SLLA_ENF {
 
 sub SLLA_SUT {
   # generiert SLLA SUT Segment
-  shift; 
+  my $self=shift; 
 
   my ($zeit_von,$zeit_bis,$dauer) = @_;
   $zeit_von =~ s/://g;
@@ -461,9 +470,10 @@ sub SLLA_SUT {
 
 sub SLLA_TXT {
   # generiert SLLA TXT Segment
-  shift;
+  my $self=shift;
   
   my ($text)=@_;
+  $text =~ s/'/\?'/g;$text =~ s/\+/\?\+/g; # Steuerzeichen aufbereiten
   $text = substr($text,0,70);
 
   my $erg = 'TXT+';
@@ -476,7 +486,7 @@ sub SLLA_TXT {
 
 sub SLLA_BES {
   # generiert SLLA BES Segment
-  shift;
+  my $self=shift;
 
   my ($betrag) = @_;
   $betrag = sprintf "%.2f",$betrag;
@@ -490,9 +500,24 @@ sub SLLA_BES {
 }
 
 
+sub SLLA_ZUV {
+  # generiert SLLA ZUV Segement
+  my $self=shift;
+  
+  my $erg = 'ZUV+';
+  $erg .= '+'; # Vertragsarztnummer muss nicht geliefer werden
+  $erg .= $self->{geb_kind}; # Geburtsdatum Kind
+  $erg .= '+';
+  $erg .= '0'; # Zuzahlungskennzeichen ist immer Null
+  $erg .= $delim;
+
+  return $erg;
+}
+
+
 sub UNH {
   # generiert UNH Segment
-  shift;
+  my $self=shift;
 
   my ($lfdnr,$typ)=@_;
   $lfdnr = sprintf "%5.5u",$lfdnr;
@@ -507,7 +532,7 @@ sub UNH {
 
 sub UNT {
   # generiert UNT Segment
-  shift;
+  my $self=shift;
 
   my ($anzahl,$refnr) = @_;
   $anzahl = sprintf "%6.6u",$anzahl;
@@ -534,7 +559,7 @@ sub SLGA {
   my $erg = '';
 
   # Kopfsegment UNH produzieren
-  $erg .= Heb_Edi->UNH($ref,'SLGA');$lfdnr++;
+  $erg .= $self->UNH($ref,'SLGA');$lfdnr++;
 
   # Rahmendaten für Rechnung aus Datenbank holen
   $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
@@ -543,16 +568,16 @@ sub SLGA {
   $rechdatum =~ s/-//g;
 
   # 1. FKT Segment erzeugen
-  $erg .= Heb_Edi->SLGA_FKT($ktr,$ik);$lfdnr++;
+  $erg .= $self->SLGA_FKT($ktr,$ik);$lfdnr++;
   # 2. REC Segment erzeugen
-  $erg .= Heb_Edi->SLGA_REC($rechnr,$rechdatum);$lfdnr++;
+  $erg .= $self->SLGA_REC($rechnr,$rechdatum);$lfdnr++;
   # 3. UST Segement erzeugen, wenn Steuernummer vorhanden
   if ($h->parm_unique('HEB_STNR')) {
     $erg .= $self->SLGA_UST($h->parm_unique('HEB_STNR'));$lfdnr++;
   }
   # 4. GES Segment erzeugen
   # zunächst Rechnungsbetrag ermitteln
-  my ($hilf,$betrag_slla)=Heb_Edi->SLLA($rechnr,$zik,$ktr);
+  my ($hilf,$betrag_slla)=$self->SLLA($rechnr,$zik,$ktr);
   if ($betrag_slla ne $betrag) {
     if ($rechdatum > 20051006) {
       die "Betragsermittlung zu Papierrechnung unterschiedlich Edi:$betrag_slla, Papier: $betrag!!!\n";
@@ -560,14 +585,14 @@ sub SLGA {
       print "ACHTUNG Papier zu Edi Rechnung unterschiedlich, da Rechnung vor dem 06.10.2005 erstellt wurde wird weiter gearbeitet,\nEdi:$betrag_slla, Papier: $betrag!!!\n";
     }
   }
-  $erg .= Heb_Edi->SLGA_GES($betrag_slla,'00');$lfdnr++;
-  $erg .= Heb_Edi->SLGA_GES($betrag_slla,'11');$lfdnr++;
+  $erg .= $self->SLGA_GES($betrag_slla,'00');$lfdnr++;
+  $erg .= $self->SLGA_GES($betrag_slla,'11');$lfdnr++;
   
   # 4. NAM Segment erzeugen
-  $erg .= Heb_Edi->SLGA_NAM();$lfdnr++;
+  $erg .= $self->SLGA_NAM();$lfdnr++;
 
   # 5. UNT Segment erzeugen
-  $erg .= Heb_Edi->UNT($lfdnr+1,$ref);
+  $erg .= $self->UNT($lfdnr+1,$ref);
   
   return $erg;
 }
@@ -577,7 +602,7 @@ sub SLLA {
   # generiert kompletten Nachrichtentyp SLLA 
   # inkl. Kopf und Endesegment
 
-  shift;
+  my $self=shift;
 
   my ($rechnr,$zik,$ktr) = @_;
   my $lfdnr = 1; # muss mit 1 beginnen sonst keine korrekte Zählung
@@ -589,7 +614,7 @@ sub SLLA {
   my $summe_km=0; # summe des Kilometergeldes
 
   # Kopfsegment UNH produzieren
-  $erg .= Heb_Edi->UNH($ref,'SLLA');$lfdnr++;
+  $erg .= $self->UNH($ref,'SLLA');$lfdnr++;
   
   # Rahmendaten für Rechnung aus Datenbank holen
   $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
@@ -606,16 +631,15 @@ sub SLLA {
 
   $geb_frau=$d->convert($geb_frau);$geb_frau =~ s/-//g;
   die "Geburtsdatum der Frau ist kein gültiges Datum, es kann keine elektronische Rechnung erstellt werden, bitte in den Stammdaten korrigieren\n" if ($geb_frau eq 'error');
-  $geb_kind=$d->convert($geb_kind);$geb_kind =~ s/-//g;
   
   # 1. FKT Segment erzeugen
-  $erg .= Heb_Edi->SLLA_FKT($ktr,$ik);$lfdnr++;
+  $erg .= $self->SLLA_FKT($ktr,$ik);$lfdnr++;
   # 2. REC Segment erzeugen
-  $erg .= Heb_Edi->SLLA_REC($rechnr,$rechdatum);$lfdnr++;
+  $erg .= $self->SLLA_REC($rechnr,$rechdatum);$lfdnr++;
   # 3. INV Segment erzeugen
-  $erg .= Heb_Edi->SLLA_INV($kv_nummer,$versichertenstatus,$rechnr);$lfdnr++;
+  $erg .= $self->SLLA_INV($kv_nummer,$versichertenstatus,$rechnr);$lfdnr++;
   # 4. NAD Segment erzeugen
-  $erg .= Heb_Edi->SLLA_NAD($nachname,$vorname,$geb_frau,$strasse,$plz,$ort);
+  $erg .= $self->SLLA_NAD($nachname,$vorname,$geb_frau,$strasse,$plz,$ort);
   $lfdnr++;
 
   # 5. ENF Segmente generieren
@@ -647,12 +671,12 @@ sub SLLA {
     if($ltyp ne 'M') { 
       # keine Materialpauschale
       if($epreis > 0) { # hier wird nicht prozentual gerechnet
-	$erg .= Heb_Edi->SLLA_ENF($leistdat[1],$leistdat[4],$epreis,$anzahl);
+	$erg .= $self->SLLA_ENF($leistdat[1],$leistdat[4],$epreis,$anzahl);
 	$gesamtsumme += sprintf "%.2f",($epreis*$anzahl);
 	my $wert= sprintf "%.2f",($epreis*$anzahl);
 	$ges_sum{$ltyp} += $wert;
       } else {
-	$erg .= Heb_Edi->SLLA_ENF($leistdat[1],$leistdat[4],$leistdat[10],$anzahl);
+	$erg .= $self->SLLA_ENF($leistdat[1],$leistdat[4],$leistdat[10],$anzahl);
 	$gesamtsumme += sprintf "%.2f",($leistdat[10]*$anzahl);
 	$ges_sum{$ltyp} += (sprintf "%2.f",($leistdat[10]*$anzahl));
       }
@@ -665,12 +689,12 @@ sub SLLA {
       if ($leistdat[1] =~ /^[A-Z]\d{1,3}$/) {
 	# es muss zugeordnete Positionsnummer geben, diese steht in $zus1
 	$zus1 = 70 if (!defined($zus1) or $zus1 eq '');
-	$erg .= Heb_Edi->SLLA_ENF($zus1,$leistdat[4],$leistdat[10],1);
+	$erg .= $self->SLLA_ENF($zus1,$leistdat[4],$leistdat[10],1);
 	$lfdnr++;
 	# Text mit ausgeben
-	$erg .= Heb_Edi->SLLA_TXT($bez);$lfdnr++;
+	$erg .= $self->SLLA_TXT($bez);$lfdnr++;
       } elsif ($leistdat[1] =~ /^\d{1,3}$/) {
-	$erg .= Heb_Edi->SLLA_ENF($leistdat[1],$leistdat[4],$leistdat[10],1);
+	$erg .= $self->SLLA_ENF($leistdat[1],$leistdat[4],$leistdat[10],1);
 	$lfdnr++;
       } else {
 	$ERROR="Materialpauschale konnte nicht ermittelt werden\n";
@@ -686,12 +710,12 @@ sub SLLA {
 
     # b. prüfen ob Zeitangaben ausgegeben werden müssen
     if (defined($fuerzeit) && $fuerzeit > 0) {
-      $erg .= Heb_Edi->SLLA_SUT($leistdat[5],$leistdat[6],$dauer);$lfdnr++;
+      $erg .= $self->SLLA_SUT($leistdat[5],$leistdat[6],$dauer);$lfdnr++;
     }
 
     # c. Begründungstexte ausgeben
     if ($leistdat[3] ne '') { # Begründung ausgeben
-      $erg .= Heb_Edi->SLLA_TXT($leistdat[3]);$lfdnr++;
+      $erg .= $self->SLLA_TXT($leistdat[3]);$lfdnr++;
     }
 
     # d. Kilometergeld ausgeben
@@ -707,18 +731,18 @@ sub SLLA {
       my $anteilig='';
       $anteilig='a' if ($leistdat[9]>1);# anteiliges Wegegeld
       if ($posnr_wegegeld eq '91' || $posnr_wegegeld eq '92') {
-	$erg .= Heb_Edi->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,1);
+	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,1);
 	$lfdnr++;
 	$summe_km+=$epreis;
 	print "Wegegeld summe: $summe_km, $epreis\n" if ($debug > 1000);
       } elsif ($posnr_wegegeld eq '93') {
-	$erg .= Heb_Edi->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[7]);
+	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[7]);
 	$lfdnr++;
 	my $km_preis = sprintf "%.2f",$leistdat[7]*$epreis;
 	$summe_km+=$km_preis;
 	print "Wegegeld summe: $summe_km, $km_preis,km: $leistdat[7]\n" if ($debug > 1000);
       } elsif ($posnr_wegegeld eq '94') {
-	$erg .= Heb_Edi->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[8]);
+	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[8]);
 	$lfdnr++;
 	my $km_preis = sprintf "%.2f",$leistdat[8]*$epreis;
 	$summe_km+=$km_preis;
@@ -728,12 +752,15 @@ sub SLLA {
     }
   }
 
-  # 6. BES Segment ausgeben
-  $gesamtsumme += $summe_km;
-  $erg .= Heb_Edi->SLLA_BES($gesamtsumme);
+  # 6 ZUV Segment erzeugen
+  $erg .= $self->SLLA_ZUV;$lfdnr++;
 
-  # 6. UNT Endesegment ausgeben
-  $erg .= Heb_Edi->UNT($lfdnr+1,$ref);
+  # 7. BES Segment ausgeben
+  $gesamtsumme += $summe_km;
+  $erg .= $self->SLLA_BES($gesamtsumme);
+
+  # 8. UNT Endesegment ausgeben
+  $erg .= $self->UNT($lfdnr+1,$ref);
   print "$gesamtsumme, $summe_km\n" if ($debug > 10);
   return ($erg,$gesamtsumme);
 }
@@ -744,19 +771,19 @@ sub gen_nutz {
   # generiert Nutzdatendatei
   # mit allen notwendigen Segmenten
 
-  shift;
+  my $self=shift;
 
   my ($rechnr,$zik,$ktr,$datenaustauschref) = @_;
 
   my $erg = '';
 
   my $test_ind = $k->krankenkasse_test_ind($ktr);
-  my ($zw_erg,$erstelldatum)= Heb_Edi->UNB($zik,$datenaustauschref,$test_ind);
+  my ($zw_erg,$erstelldatum)= $self->UNB($zik,$datenaustauschref,$test_ind);
   $erg .= $zw_erg;
-  $erg .= Heb_Edi->SLGA($rechnr,$zik,$ktr);
-  my ($erg_slla,$summe) = Heb_Edi->SLLA($rechnr,$zik,$ktr);
+  $erg .= $self->SLGA($rechnr,$zik,$ktr);
+  my ($erg_slla,$summe) = $self->SLLA($rechnr,$zik,$ktr);
   $erg .= $erg_slla;
-  $erg .= Heb_Edi->UNZ($datenaustauschref);
+  $erg .= $self->UNZ($datenaustauschref);
   return ($erg,$erstelldatum);
 }
 
@@ -764,7 +791,7 @@ sub gen_nutz {
 sub sig {
   # signieren Nutzdatendatei
 
-  shift;
+  my $self=shift;
 
   my ($dateiname,$sig_flag)=@_;
 
@@ -803,7 +830,7 @@ sub sig {
 sub enc {
   # verschlüsselt Nutzdatendatei
 
-  shift;
+  my $self=shift;
 
   my ($dateiname,$schl_flag)=@_;
 
@@ -844,7 +871,7 @@ sub edi_rechnung {
   # generiert komplette elektronische Rechnung 
   # Auftrags- und Nutzdatendatei
   
-  shift;
+  my $self=shift;
 
   my ($rechnr) = @_;
 
@@ -867,7 +894,7 @@ sub edi_rechnung {
   my $schl_flag = $h->parm_unique('SCHL'.$zik);
   my $sig_flag = $h->parm_unique('SIG'.$zik);
 
-  ($erg_nutz,$erstell_nutz) = Heb_Edi->gen_nutz($rechnr,$zik,$ktr,$datenaustauschref);
+  ($erg_nutz,$erstell_nutz) = $self->gen_nutz($rechnr,$zik,$ktr,$datenaustauschref);
 
   # Dateinamen ermitteln
   my $dateiname='';
@@ -900,16 +927,16 @@ sub edi_rechnung {
   close(KWRITE);
 
   # signieren
-  ($dateiname,$laenge_nutz)=Heb_Edi->sig($dateiname,$sig_flag);
+  ($dateiname,$laenge_nutz)=$self->sig($dateiname,$sig_flag);
   # verschlüsseln
-  ($dateiname,$laenge_nutz)=Heb_Edi->enc($dateiname,$schl_flag);
+  ($dateiname,$laenge_nutz)=$self->enc($dateiname,$schl_flag);
 
 
   ($erg_auf,$erstell_auf)  = 
-    Heb_Edi->gen_auf($test_ind,$transref,$zik,length($erg_nutz),
-		     $laenge_nutz,
-		     $h->parm_unique('SCHL'.$zik),
-		     $h->parm_unique('SIG'.$zik));
+    $self->gen_auf($test_ind,$transref,$zik,length($erg_nutz),
+		   $laenge_nutz,
+		   $h->parm_unique('SCHL'.$zik),
+		   $h->parm_unique('SIG'.$zik));
 
   # jetzt Dateien schreiben mit physikalischen Namen
 
@@ -935,7 +962,7 @@ sub mail {
   # als Ergebniss wird ein String geliefert, der ggf. nach sendmail
   # gepiped werden kann.
 
-  shift;
+  my $self=shift;
 
   my ($dateiname,$rechnr,$erstell_auf,$erstell_nutz) = @_;
 
@@ -1054,7 +1081,7 @@ sub edi_update {
   # macht update auf Tabelle 
   # Rechnung und Leistungsdaten und hinterlegt da den neuen
   # Rechnungsstatus
-  shift;
+  my $self=shift;
   my ($rechnr,$ignore,$dateiname,$datum) = @_;
 
   $datum =~ s/://g;
