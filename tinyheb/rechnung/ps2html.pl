@@ -105,7 +105,7 @@ fussnote(); # auf der ersten Seite explizit angeben
 # Falz  ausgeben
 $p->setlinewidth(0.02);
 $p->line(0,19,0.5,19);
-$p->line(20.6,19,21,19);
+$p->line(20.4,19,21,19);
 $p->setlinewidth(0.04);
 
 # Rechnung ausgeben für Rechnungsteile A,B,C
