@@ -188,6 +188,7 @@ print '<tr>';
 my $test_ind = $k->krankenkasse_test_ind($ik_krankenkasse);
 $test_ind = -1 unless(defined($test_ind));
 if ($l->leistungsdaten_offen($frau_id,'')) {
+  $name_krankenkasse =~ s/'/\\'/g;
   print "<td><input type='button' name='pdruck' value='Rechnung fertigstellen' onclick='druck_fertig(\"$frau_id\",\"$vorname\",\"$nachname\",\"$geb_frau\",\"$geb_kind\",\"$plz\",\"$ort\",\"$strasse\",\"$kv_nummer\",\"$kv_gueltig\",\"$versichertenstatus\",\"$name_krankenkasse\",\"$test_ind\",rechnungen_gen);'</td>";
 } else {
   print "<td><input type='button' disabled name='pdruck' value='entgültig Drucken'></td>";
