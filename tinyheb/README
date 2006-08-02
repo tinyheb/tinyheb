@@ -1,0 +1,66 @@
+<< 0. Was ist tinyHeb >>
+
+tinyHeb ist eine Webapplikation mit der Hebammen die notwendigen Abrechnungen
+gegenüber den gesetzlichen Krankenkassen durchführen können.
+tinyHeb kann sowohl Papier, wie auch elektronische Rechnungen produzieren.
+Die gesetzlichen Anforderungen nach §301a, resp. §302 SGB V werden eingehalten.
+
+<< 1. Installation >>
+Am einfachsten ist die Installation über RPM Pakete, die im Internet zum
+download zur Verfügung stehen. Die genaue Anleitung findet man im Internet
+unter: http://home.arcor.de/thomas.baum/tinyheb
+Abhängige Pakete werden automatisch installiert.
+
+Wenn die Installation auf Basis des Sources durchgeführt werden soll sind die
+folgenden Schritte notwendig.
+
+<< Schritt 1 >>
+	wechsel in das Verzeichnis DATA
+	Befehl mysql -u root < init.sql ausführen
+	damit werden die notwendigen user und Datenbanktabellen angelegt
+
+<< Schritt 2 >>
+	Setzen der Aliase in der Konfigurationsdatei des Webservers
+	In der Datei httpd.conf folgenden Alias einfügen:
+	Include /etc/apache2/conf.d/tinyheb.conf
+
+<< Schritt 3 >>
+	Kopieren der Datei tinyheb.conf aus dem Verzeichnis apache2 nach 
+	/etc/apache2/conf.d/tinyheb.conf
+	su;cp apache2/tinyheb.conf /etc/apache2/conf.d/tinyheb.conf
+
+<< Schritt 4 >>
+	Rekursives Kopieren des gesamten tinyheb Verzeichnisses nach /srv/www/cgi-bin/tinyheb
+	oder alternativ, das tinyheb.tar in /srv/www/cgi-bin entpacken
+	su; cd /srv/www/cgi-bin/; tar -xf tinyheb.tar
+
+<< Schritt 5 >>
+	Webserver neu starten
+	cd /etc/init.d; ./apache2 restart
+
+Fertig:
+im Browser kann jetzt über http://localhost/tinyheb/ oder http://localhost/tinyheb/hebamme.html
+tinyHeb gestart werden.
+um elektronische Rechnungen zu verschicken existiert das Programm xauftrag.pl im Verzeichnis edifact.
+
+
+<< 2. Änderungshistorie >>
+Die Änderungshistorie befindet sich in der Datei RelNotes.txt
+
+<< 3. benötigte perl Module zur Laufzeit >>
+DBI,
+DBD,
+CGI,
+Date::Calc
+File::stat,
+MIME::QuotedPrint,
+Tk,
+Mail::Sender,
+PostScript::Simple
+
+<< 4. zusätzliche Programme >>
+OpenSSL muss installiert sein, wenn man verschlüsselte Rechnungen erzeugen möchte
+
+<< 5. Fragen >>
+wenn es Probleme bei der Installation geben sollte, schreibt mir einfach eine Mail:
+thomas.baum@arcor.de
