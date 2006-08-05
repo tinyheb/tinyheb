@@ -198,6 +198,12 @@ RECH:  foreach (@sel) {
     my $rechnr=$_;
     print "Selektiert: $rechnr, baue Rechnung\n";
 
+    my $e = new Heb_Edi($rechnr);
+    if (!defined($e)) {
+      fehler($Heb_Edi::ERROR." versenden wird abgebrochen.\nBitte Hersteller benachrichtigen.");
+      last RECH;
+    }
+
     open my $debug, ">>$path/maillog";
     $Mail::Sender::NO_X_MAILER=1;
     my $sender = undef;
@@ -219,7 +225,7 @@ RECH:  foreach (@sel) {
     }
 
     if ($sender < 0){
-      fehler("Fehler bei Mailverschicken von Rechnung $rechnr: $Mail::Sender::Error\nversenden wird abgebrochen ");
+      fehler("Fehler bei Mailverschicken von Rechnung $rechnr: $Mail::Sender::Error\nversenden wird abgebrochen.");
       last RECH;
     }
 #    print "SENDER\n";
@@ -238,12 +244,7 @@ RECH:  foreach (@sel) {
       last RECH;
     }
 
-    # Edi Rechnung erstellen
-    my $e = new Heb_Edi($rechnr);
-    if (!defined($e)) {
-      fehler($Heb_Edi::ERROR." versenden wird abgebrochen\n");
-      last RECH;
-    }
+    # Edi Rechnung entgültig erstellen
     my ($dateiname,$erstell_auf,$erstell_nutz)=(undef,undef,undef);
     ($dateiname,$erstell_auf,$erstell_nutz)=$e->edi_rechnung($rechnr);
     if(!defined($dateiname)) {
