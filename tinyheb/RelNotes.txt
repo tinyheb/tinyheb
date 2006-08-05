@@ -1,3 +1,30 @@
+Release 0.7.1
+
+beim Einlesen der Schlüsseldateien werden automatisch die notwendigen Parameter angelegt,
+wenn die Datenannahmestelle noch nicht parametrisiert ist.
+
+Rechnungspostenerfassung:
+Plausiprüfung auf Begründungspflicht eingeführt.
+
+Hauptmenue:
+Aus dem Hauptmenue kann direkt auf die PDF Dokumenation zugegriffen werden.
+
+elektronische Rechnungen:
+es wird wie von ARZ Emmendingen gewünscht zusätzlich ZUV Segment gesendet.
+weitere Schritte in Richtung echte Objektorientierung.
+
+Bug fix:
+Bei Krankenkassen mit ' im Namen konnte keine Rechnung gedruckt werden.
+
+Bug fix:
+Rundungsfehler auf Papierrechnung bei Kilometergeld.
+
+Bug fix:
+in xauftrag.pl wurde Teil der E-Mail schon generiert, auch wenn Fehler bei Rechnungsgenerierung auftrat, dadurch wurden E-Mail ohne Nutzdaten an Datenannahmestellen übermittelt.
+
+
+
+-------------------------------------------------
 Release 0.7.0
 
 Heb.js:
