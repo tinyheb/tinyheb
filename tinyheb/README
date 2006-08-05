@@ -15,7 +15,8 @@ Wenn die Installation auf Basis des Sources durchgeführt werden soll sind die
 folgenden Schritte notwendig.
 
 << Schritt 1 >>
-	wechsel in das Verzeichnis DATA
+	wechsel in das Verzeichnis DATA wenn Installation aus Sourcen erfolgte
+	wechsel in das Verzeichnis tinyheb-mysql wenn Installation aus RPM erfolgte
 	Befehl mysql -u root < init.sql ausführen
 	damit werden die notwendigen user und Datenbanktabellen angelegt
 
