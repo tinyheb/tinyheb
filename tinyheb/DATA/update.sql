@@ -1,13 +1,13 @@
 use PRD_Hebamme;
 
 update Parms set VALUE = 'BKK <le@bkk-bv.de>' where name='MAIL104027544';
-update Leistungsarten set DAUER=180 where POSNR=6;
-update Leistungsarten set FUERZEIT='E60' where POSNR=7;
-update Leistungsarten set FUERZEIT='E60' where POSNR=8;
-update Leistungsarten set SONNTAG='' where POSNR=15;
-update Leistungsarten set SAMSTAG='' where POSNR=15;
-update Leistungsarten set NACHT='' where POSNR=15;
-update Leistungsarten set FUERZEIT='E60' where POSNR=40;
+update Leistungsart set DAUER=180 where POSNR=6;
+update Leistungsart set FUERZEIT='E60' where POSNR=7;
+update Leistungsart set FUERZEIT='E60' where POSNR=8;
+update Leistungsart set SONNTAG='' where POSNR=15;
+update Leistungsart set SAMSTAG='' where POSNR=15;
+update Leistungsart set NACHT='' where POSNR=15;
+update Leistungsart set FUERZEIT='E60' where POSNR=40;
 update Parms set VALUE ='AOK RZ Lahr <da@dta.aok.de>' where name='MAIL108018007';
 update Parms set VALUE = 'TSystems <dav01@b2b.mailorbit.de>' where name = 'MAIL109905003';
 update Parms set VALUE ='AOK Sachsen <da@dta.aok.de>' where name='MAIL107299005';
