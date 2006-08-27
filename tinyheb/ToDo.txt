@@ -1,4 +1,55 @@
 Offen:
+26.08.06
+Plausiprüfung für Kilometer bei Rechnungsposten erfassen.
+Es dürfen nur numerische Werte erfasst werden können.
+Es kann nur geändert werden, wenn vorher Positiosnummer ausgewählt wurde.
+Positionsnummer 6  mehr als 2 mal am selben Tag nur auf ärztliche Anordnung.
+Positionsnummer 7 nicht mehr als 14 Stunden
+
+Plausiprüfungen für Positionsnummer 40.
+
+25.08.06
+Doku für:
+- Rechnungsposten erfassen
+- Rechnungen generieren
+- versandte Rechnungen bearbeiten
+
+13.08.06
+Druck alter Rechnungen muss auch für Windows funktionieren.
+
+12.08.06
+In Spec File ggf. mozplugger mit aufnehmen.
+
+12.08.06
+Plausiprüfungen bei Frauenauswahl müssen analog der Prüfungen in Stammdatenerfassung sein.
+
+12.08.06
+prüfen ob mit harten Fehlern in mysql richtig umgegangen wird.
+
+12.08.06
+- Installationshinweise für Windows aufnehmen.
+
+12.08.06
+eigene Ergassungs- und Bearbeitungsmaske für Stammdaten der Hebamme
+
+12.08.06
+verbessertes Fehlerhandling in Heb_Edi.pm
+- Abfrage ob Verschlüsselung erfolgreich
+- Abfrage ob E-Mail Adresse der DA und der Hebamme vorhanden ist
+
+12.08.06
+Makefile.PL erstellen
+
+06.08.06 
+eigene Erfassungs- und Bearbeitungsmaske für Datenannahmestellen
+
+06.08.06
+eigene Erfassungs- und Bearbeitungsmaske für Materialien
+
+06.08.06
+Bei Rechnungsbearbeitung muss Einschränkung auf ungleich erl. möglich sein.
+
+01.08.06
 Mahnungen für privat Versicherte
 
 31.12.05
@@ -6,9 +57,7 @@ Wenn es sich um Zwillinge handelt, muss Zuschlag gerechnet werden. Pro Kind
 
 01.10.05
 Krankenkassen Menue auf neue Plausi überarbeiten.
-
-24.07.05
-generelles stylesheet Heb.css einführen, um die Textgröße auf die optimale Größe zu setzen.
+z.B. Speichern darf nur zulässig sein, wenn alle Plausi OK sind.
 
 
 23.07.05
@@ -25,6 +74,19 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+26.08.06
+generelles stylesheet Heb.css einführen, um die Textgröße auf die optimale Größe zu setzen. Anforderung vom 24.07.05
+
+- Dokumentation anpassen auf Version 0.7.1 Anforderung vom 12.08.06
+- Hyperref Links auf Anhang funktionieren nicht. Anforderung vom 12.08.06
+
+Datum Plausiprüfung bei Feiertagserfassung ist nicht korrekt, bei 
+Speichern des Formulares muss geprüft werden, ob im Datum
+ein gültiger Wert steht. Anforderung vom 19.08.06
+
+- Rechnungsposten erfassen Anforderung vom 25.08.06
+- Rechnungen generieren Anforderung vom 25.08.06
+
 05.08.06
 Bei privat Versicherten ist keine Plausi auf gültigkeitsdatum der Versichertenkarte notwendig. Anforderung vom 31.07.06
 

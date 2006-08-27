@@ -1,3 +1,37 @@
+Release 0.7.2
+
+Bug fix:
+Bei der Krankenkassensuche ist jetzt die Vorgabe der PLZ des Postfaches möglich
+
+Bug fix:
+In der Leistungsarten Maske war ein Blättern auf den nächsten Datensatz nicht möglich, wenn
+keine Leistungsart angezeigt war.
+
+Bug fix:
+Bei Leistungsartenauswahl hatte Vorgabe des Datums keine Wirkung.
+Bei Leistungsartenauswahl wird Fenster in Vordergrund geholt, wenn Fenster schon geöffnet war.
+
+Nutzung eines generellen Stylesheets Heb.css für einheitliches aussehen der Masken.
+
+wesentliche Erweiterung der Anleitung.
+
+Bug fix:
+Bei Feiertagsauswahl wird Fenster in Vordergrund geholt, wenn Fenster schon geöffnet war.
+
+Bug fix:
+Datum Prüfung bei Feiertagsauswahl war nicht implementiert.
+
+Bug fix:
+In Maske Stammdaten konnte Krankenversicherungsnummer fehlerhaft gespeichert werden.
+
+Bug fix:
+Bei der Rechnungsgenerierung konnte es bei Windows Installationen passieren, dass alte Rechnungen
+angezeigt wurden.
+Bei fehlender Krankenversicherungsnummer, Versichertenstatus oder Geburtsdatum Kind, wurde kein
+Fehler ausgegeben, trotzdem wurde die Rechnung nicht gespeichert.
+
+
+---------------------------------------------------
 Release 0.7.1
 
 beim Einlesen der Schlüsseldateien werden automatisch die notwendigen Parameter angelegt,
