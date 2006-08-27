@@ -6,10 +6,18 @@ tinyHeb kann sowohl Papier, wie auch elektronische Rechnungen produzieren.
 Die gesetzlichen Anforderungen nach §301a, resp. §302 SGB V werden eingehalten.
 
 << 1. Installation >>
+In diesem Abschnitt ist die Installation für Linux Systeme beschrieben,
+Win* Nutzer lesen bitte die Installationshinweise in der Datei README.win
+
 Am einfachsten ist die Installation über RPM Pakete, die im Internet zum
 download zur Verfügung stehen. Die genaue Anleitung findet man im Internet
 unter: http://home.arcor.de/thomas.baum/tinyheb
 Abhängige Pakete werden automatisch installiert.
+
+Wer in den vollen Genuß der Rechnungvorschau kommen möchte, muss noch das Paket
+mozplugger installieren, dies ist leider seit SuSE 9.3 nicht mehr in der
+Distribution enthalten. Bei Packmann kann es heruntergeladen werden. Wer nicht
+weiss wie das funktioniert, schicke mir bitte eine Mail.
 
 Wenn die Installation auf Basis des Sources durchgeführt werden soll sind die
 folgenden Schritte notwendig.
@@ -39,10 +47,14 @@ folgenden Schritte notwendig.
 	Webserver neu starten
 	cd /etc/init.d; ./apache2 restart
 
-Fertig:
-im Browser kann jetzt über http://localhost/tinyheb/ oder http://localhost/tinyheb/hebamme.html
+fast fertig:
+im Browser kann jetzt über http://localhost/tinyheb/hebamme.html
 tinyHeb gestart werden.
 um elektronische Rechnungen zu verschicken existiert das Programm xauftrag.pl im Verzeichnis edifact.
+
+<< Schritt 6 >>
+	Jetzt ist es noch notwendig die Parameter wie in Kapitel 2.4 des Handbuches beschrieben
+	anzupassen, damit z.B. der wirkliche Name der Hebamme auf der Rechnung erscheint.
 
 
 << 2. Änderungshistorie >>
