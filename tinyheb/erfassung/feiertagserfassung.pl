@@ -88,7 +88,7 @@ print '<h1>Feiertage</h1>';
 print '<hr width="100%">';
 print '</div><br>';
 # Formular ausgeben
-print '<form name="feiertage" action="feiertagserfassung.pl" method="get" target=_top bgcolor=white>';
+print '<form name="feiertage" action="feiertagserfassung.pl" method="get" target=_top onsubmit="return feiertag_speicher(this);" bgcolor=white>';
 print '<table border="0" width="700" align="left">';
 
 # Zeile ID, Name
@@ -137,7 +137,7 @@ print '<tr>';
 print '<td><b>Datum</b></td>';
 print '</tr>';
 print '<tr>';
-print "<td><input type='text' name='datum_feiertag' value='$datum' size='10' onblur='datum_check(this);'></td>";
+print "<td><input type='text' name='datum_feiertag' value='$datum' size='10' onChange='datum_check(this);'></td>";
 print '</tr>';
 print '</table>';
 print "\n";

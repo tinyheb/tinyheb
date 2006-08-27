@@ -25,8 +25,17 @@ function loeschen() {
 
 function feiertagsuchen(name,bund,formular) {
   // öffnet Fenster in dem ein Feiertag ausgewählt werden kann
+  //  alert("feiertag suchen");
   open("feiertagauswahl.pl?name_feiertag="+name.value+"&bund_feiertag="+bund.value+"&suchen=suchen","feiertagwahl","scrollbars=yes,width=600,height=400");
 };
+
+
+function feiertag_speicher(formular) {
+  if (!datum_check(formular.datum_feiertag)) {
+    return false;
+  }
+  return true;
+}
 
 function next_satz(formular) {
 	var id = 0;
@@ -51,3 +60,4 @@ function prev_satz(formular) {
 		alert("Bitte Menuepunkt Anzeigen wählen");
 	}
 }
+//alert("feiertag.js geladen");
