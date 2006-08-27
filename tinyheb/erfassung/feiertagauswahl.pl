@@ -133,6 +133,7 @@ print <<SCRIPTE;
        }
     }
   }
+window.focus();
 </script>
 SCRIPTE
 print "</body>'";
