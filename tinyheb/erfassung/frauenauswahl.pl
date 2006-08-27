@@ -66,6 +66,7 @@ print '<head>';
 print '<title>Frau suchen</title>';
 print '<script language="javascript" src="../Heb.js"></script>';
 print '<script language="javascript" src="stammdaten.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 print '<body bgcolor=white>';
 print '<div align="center">';

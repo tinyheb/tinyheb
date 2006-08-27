@@ -73,15 +73,8 @@ print '<head>';
 print '<title>Parameter</title>';
 print '<script language="javascript" src="../Heb.js"></script>';
 print '<script language="javascript" src="parameter.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  .invisible { color:white; background-color:white;border-style:none}
-  </style>
-STYLE
 
 if (($auswahl eq 'Löschen') && defined($abschicken)) {
   loeschen();
@@ -96,7 +89,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body bgcolor=white>';
 print '<div align="center">';
-print '<h1>Parameter $Revision: 1.6 $ <br>$Date: 2006-05-07 17:08:11 $</h1>';
+print '<h1>Parameter</h1>';
 print '<hr width="100%">';
 print '</div><br>';
 # Formular ausgeben

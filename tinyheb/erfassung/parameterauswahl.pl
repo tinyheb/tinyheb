@@ -45,6 +45,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 # Alle Felder zur Eingabe ausgeben
 print '<head>';
 print '<title>Parameter suchen</title>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 print '<body bgcolor=white>';
 print '<div align="center">';

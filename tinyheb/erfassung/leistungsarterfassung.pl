@@ -87,15 +87,8 @@ print '<head>';
 print '<title>Leistungsarten</title>';
 print '<script language="javascript" src="leistungen.js"></script>';
 print '<script language="javascript" src="../Heb.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  .enabled { color:black; background-color:white}
-  </style>
-STYLE
 
 if (($auswahl eq 'Löschen') && defined($abschicken)) {
   loeschen();
@@ -111,7 +104,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="leistungsarterfassung" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Leistungsarten<br> $Revision: 1.4 $</h1>';
+print '<h1>Leistungsarten</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
