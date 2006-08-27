@@ -100,16 +100,8 @@ print '<head>';
 print '<title>Rechnungen</title>';
 print '<script language="javascript" src="../Heb.js"></script>';
 print '<script language="javascript" src="leistungen.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  .invisible { color:white; background-color:white;border-style:none}
-  .enabled { color:black; background-color:white}
-  </style>
-STYLE
 
 # Alle Felder zur Eingabe ausgeben
 print '<body id="rechpos_window" bgcolor=white>';
@@ -212,7 +204,7 @@ print '</td>';
 print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '<td><input type="button" name="stammdaten" value="Stammdaten" onClick="stamm(frau_id.value,document.rechpos);"></td>';
-print '<td><input type="button" name="Drucken" value="Drucken" onClick="druck(document.rechpos);"></td>';
+print '<td><input type="button" name="Drucken" value="Rechnung generieren" onClick="druck(document.rechpos);"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
