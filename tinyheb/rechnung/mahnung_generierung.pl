@@ -75,15 +75,8 @@ print '<title>Mahnungen generieren</title>';
 print '<script language="javascript" src="../erfassung/stammdaten.js"></script>';
 print '<script language="javascript" src="../Heb.js"></script>';
 print '<script language="javascript" src="rechnung.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  .invisible { color:white; background-color:white;border-style:none}
-  </style>
-STYLE
 
 # Alle Felder zur Eingabe ausgeben
 print '<body bgcolor=white>';

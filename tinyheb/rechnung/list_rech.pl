@@ -50,16 +50,8 @@ print '<head>';
 print '<title>list_rech</title>';
 print '<script language="javascript" src="../Heb.js"></script>';
 print '<script language="javascript" src="rechnung.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  .invisible { color:white; background-color:white;border-style:none}
-  </style>
-STYLE
-
 
 # Alle Felder zur Eingabe ausgeben 
 print '<table rules=rows style="margin-left:0" border="2" width="100%" align="left">';
