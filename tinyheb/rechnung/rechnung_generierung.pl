@@ -70,15 +70,8 @@ print '<title>Rechnungen generieren</title>';
 print '<script language="javascript" src="../erfassung/stammdaten.js"></script>';
 print '<script language="javascript" src="../Heb.js"></script>';
 print '<script language="javascript" src="rechnung.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  .invisible { color:white; background-color:white;border-style:none}
-  </style>
-STYLE
 
 # Alle Felder zur Eingabe ausgeben
 print '<body bgcolor=white>';
@@ -194,7 +187,7 @@ if ($l->leistungsdaten_offen($frau_id,'')) {
   print "<td><input type='button' disabled name='pdruck' value='entgültig Drucken'></td>";
 }
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
-print '<td><input type="button" name="echnungerf" value="Rechnungserfassung" onClick="recherf(frau_id.value);"></td>';
+print '<td><input type="button" name="echnungerf" value="Rechnungsposten erfassen" onClick="recherf(frau_id.value);"></td>';
 print '<td><input type="button" name="stammdaten" value="Stammdaten" onClick="stamm(frau_id.value,document.rechnungen_gen);"></td>';
 print '</tr>';
 print '</table>';
