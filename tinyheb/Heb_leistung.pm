@@ -23,6 +23,7 @@ package Heb_leistung;
 
 use strict;
 use DBI;
+use Date::Calc qw(Today);
 
 use Heb;
 use Heb_datum;
@@ -324,7 +325,11 @@ sub leistungsart_next_id {
   my $self = shift;
   my ($id)=@_;
   my @erg = $self->leistungsart_id($id);
-  $erg[1]=0 unless(defined($erg[1]));
+  if (!(defined($erg[1]))) {
+    my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
+    $erg[1]=1;
+    ($id)=$self->leistungsart_such_posnr('ID',$erg[1],$TODAY);
+  }
   my $leistungsart_next_id;
   if ($erg[1] =~ /^\d{1,3}$/) {
     $leistungsart_next_id =
@@ -356,9 +361,13 @@ sub leistungsart_prev_id {
   my $self = shift;
   my ($id)=@_;
   my @erg = $self->leistungsart_id($id);
-  $erg[1]=0 unless(defined($erg[1]));
-  my $leistungsart_prev_id;
+  if (!(defined($erg[1]))) {
+    my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
+    $erg[1]=1;
+    ($id)=$self->leistungsart_such_posnr('ID',$erg[1],$TODAY);
+  }
 
+  my $leistungsart_prev_id;
   if ($erg[1] =~ /^\d{1,3}$/) {
     $leistungsart_prev_id =
       $dbh->prepare("select ID,cast(POSNR as unsigned) as sort ".
