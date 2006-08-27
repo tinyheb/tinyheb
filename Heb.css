@@ -1,0 +1,7 @@
+HTML { font-size: 10pt; color:black;}
+TH { font-size: 10pt; color:black; }
+TD { font-size: 10pt; color:black; }
+
+.disabled {  color:black; background-color:gainsboro }
+.enabled { color:black; background-color:white }
+.invisible { color:white; background-color:white;border-style:none}
