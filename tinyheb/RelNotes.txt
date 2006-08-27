@@ -30,7 +30,9 @@ angezeigt wurden.
 Bei fehlender Krankenversicherungsnummer, Versichertenstatus oder Geburtsdatum Kind, wurde kein
 Fehler ausgegeben, trotzdem wurde die Rechnung nicht gespeichert.
 
-
+Bug fix:
+fehlende E-Mail Adressen einiger Datenannahmestellen
+fehlerhafte Leistungsarten bei Positionsnummern 6,7,8,15 und 40.
 ---------------------------------------------------
 Release 0.7.1
 
