@@ -51,6 +51,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 # Alle Felder zur Eingabe ausgeben
 print '<head>';
 print '<title>Krankenkasse suchen</title>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 print '<body bgcolor=white>';
 print '<div align="center">';
@@ -119,7 +120,7 @@ if (defined($suchen)) {
   $plz_post = $plz_post.'%';
   $ort = '%'.$ort.'%';
   $ik = '%'.$ik.'%';
-  $k->krankenkasse_such($name,$plz_haus,$ort,$ik);
+  $k->krankenkasse_such($name,$kname,$plz_haus,$plz_post,$ort,$ik);
   while (my ($k_ik,$k_kname,$k_name,$k_strasse,$k_plz_haus,$k_plz_post,$k_ort,$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung) = $k->krankenkasse_such_next) {
     print '<tr>';
     print "<td>$k_ik</td>";
