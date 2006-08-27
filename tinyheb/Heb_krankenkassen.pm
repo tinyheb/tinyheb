@@ -43,7 +43,9 @@ sub new {
 			      "ZIK, BEMERKUNG, PUBKEY, ZIK_TYP, BELEG_IK,EMAIL ".
 			      "from Krankenkassen where ".
 			      "NAME LIKE ? and ".
+			      "KNAME LIKE ? and ".
 			      "PLZ_HAUS LIKE ? and ".
+			      "PLZ_POST LIKE ? and ".
 			      "ORT LIKE ? and ".
 			      "IK LIKE ?;");
   bless $self, ref $class || $class;
@@ -92,9 +94,9 @@ sub krankenkasse_such {
 
   shift; # package Namen vom stack nehmen
 		     
-  my ($name,$plz,$ort,$ik) = @_;
+  my ($name,$kname,$plz_haus,$plz_post,$ort,$ik) = @_;
   
-  $krank_such->execute($name,$plz,$ort,$ik) or die $dbh->errstr(); 
+  $krank_such->execute($name,$kname,$plz_haus,$plz_post,$ort,$ik) or die $dbh->errstr(); 
 }
 
 sub krankenkasse_such_next {
