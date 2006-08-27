@@ -104,8 +104,8 @@ fussnote(); # auf der ersten Seite explizit angeben
 
 # Falz  ausgeben
 $p->setlinewidth(0.02);
-$p->line(0,19,0.5,19);
-$p->line(20.4,19,21,19);
+$p->line(0,19.2,0.5,19.2);
+$p->line(20.4,19.2,21,19.2);
 $p->setlinewidth(0.04);
 
 # Rechnung ausgeben für Rechnungsteile A,B,C
@@ -203,12 +203,14 @@ if ($q->user_agent !~ /Windows/) {
 if ($q->user_agent =~ /Windows/) {
   print $q->header ( -type => "application/pdf", -expires => "-1d");
   mkdir "/tmp/wwwrun" if(!(-d "/tmp/wwwrun"));
+  unlink('/tmp/wwwrun/file.ps');
   $p->output('/tmp/wwwrun/file.ps');
 
   if ($^O =~ /linux/) {
     system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
   } elsif ($^O =~ /MSWin32/) {
-    system('/gs/gs8.15/bin/gs32winc -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps');
+    unlink('/tmp/wwwrun/file.pdf');
+    system('/gs/gs8.15/bin/gswin32c -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps');
   } else {
     die "kein Konvertierungsprogramm ps2pdf gefunden\n";
   }
