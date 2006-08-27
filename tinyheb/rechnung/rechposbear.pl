@@ -77,17 +77,8 @@ if (defined($abschicken)) {
 print '<head>';
 print '<title>Rechnungen Bearbeiten</title>';
 print '<script language="javascript" src="../Heb.js"></script>';
-#print '<script language="javascript" src="leistungen.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  .invisible { color:white; background-color:white;border-style:none}
-  .enabled { color:black; background-color:white}
-  </style>
-STYLE
 
 # Alle Felder zur Eingabe ausgeben
 print '<body bgcolor=white>';
