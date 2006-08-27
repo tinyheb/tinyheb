@@ -109,14 +109,8 @@ print '<title>Stammdaten</title>';
 print '<script language="javascript" src="stammdaten.js"></script>';
 print '<script language="javascript" src="leistungen.js"></script>';
 print '<script language="javascript" src="../Heb.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  </style>
-STYLE
 
 if (($auswahl eq 'Löschen') && defined($abschicken)) {
   loeschen();
@@ -132,7 +126,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
 # Alle Felder zur Eingabe ausgeben
 print '<body id="stammdaten_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Stammdaten<br> $Revision: 1.25 $</h1>';
+print '<h1>Stammdaten</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
@@ -216,7 +210,7 @@ print '</tr>';
 print "\n";
 
 print '<tr>';
-print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='10' maxlength='10' onBlur='kvnr_check(this);'></td>";
+print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='10' maxlength='10' onChange='kvnr_check(this);'></td>";
 print "<td><input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='4' maxlength='4' onChange='kvnr_gueltig_check(this)'></td>";
 # z4.2 s3
 print '<td>';
@@ -262,7 +256,7 @@ print '<tr>';
 print '<td><b>Geburtsdatum Kind</b></td>';
 print '<td><b>Anzahl Kinder</b></td>';
 print '</tr>';
-print "<td><input type='text' name='geburtsdatum_kind' value='$geb_kind' size='10' maxlength='10' onBlur='return datum_check(this)'></td>";
+print "<td><input type='text' name='geburtsdatum_kind' value='$geb_kind' size='10' maxlength='10' onChange='return datum_check(this)'></td>";
 print '<td>';
 print "<select name='anz_kinder' size=1>";
 $j=0;
@@ -345,7 +339,7 @@ print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="ha
 print '<td><input type="button" name="rechnung" value="Rechnungsposten erfassen" onclick="rechnung_erfassen(document.stammdaten)"></td>';
 # nächste Zeile
 print '<tr><td>&nbsp;</td>';
-print '<td><input type="button" name="drucken" value="Rech. Druck" onclick="druck(document.stammdaten)"></td>';
+print '<td><input type="button" name="drucken" value="Rechnung gen" onclick="druck(document.stammdaten)"></td>';
 print '</tr>';
 
 print '</tr>';
