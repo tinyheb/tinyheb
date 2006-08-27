@@ -68,23 +68,16 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 
 
 print '<head>';
-print '<title>Rechnungen</title>';
+print '<title>Rechnungsposten erfassen</title>';
 #print '<script language="javascript" src="krankenkassen.js"></script>';
 print '<script language="javascript" src="../Heb.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  .invisible { color:white; background-color:white;border-style:none}
-  </style>
-STYLE
 
 # Alle Felder zur Eingabe ausgeben
 print '<body id="rechnung_window" bgcolor=white>';
 print '<div align="center">';
-print '<h1>Rechnungserfassung</h1>';
+print '<h1>Rechnungsposten erfassen</h1>';
 print '<hr width="100%">';
 print '</div>';
 # Formular ausgeben
@@ -122,8 +115,8 @@ print '<tr><td>&nbsp;</td></tr>';
 print "<tr><td>\n";
 print '<table id="ueberschrift" style="margin-left: 0" border="0" width=800 align="left">';
 print '<tr>';
-print '<td style="width:4.3cm;text-align:right">Datum</td>';
-print '<td style="width:1.6cm;text-align:center">Nr.</td>';
+print '<td style="width:5.1cm;text-align:right">Datum</td>';
+print '<td style="width:1.7cm;text-align:right">Nr.</td>';
 print '<td style="width:5.0cm;text-align:left">Gebühren Text</td>';
 print '<td style="width:1.7cm;text-align:right">E. Preis</td>';
 print '<td style="width:1.3cm;text-align:right">G. Preis</td>';
