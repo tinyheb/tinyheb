@@ -26,6 +26,9 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
   // schreibt Rechnung in Fenster und macht update auf Datenbank
   //alert("Drucken Frau"+frau_id+"form"+form+"kk"+name_kk+"plz"+plz);
   // zunächst harte Plausiprüfungen, nur dann wenn keine privat Rechnung
+
+  var error_text = '';
+
   if (versichertenstatus != 'privat') {
     if (name_kk == '') {
       alert("Es wurde keine gültige Krankenkasse erfasst,\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert.");
@@ -43,23 +46,24 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
       alert("Geburtsdatum Frau  wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
       return false;
     }
+    if (geb_kind == '00.00.0000' || geb_kind == '') {
+      alert("Geburtsdatum Kind wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
+    }
     if (kv_nummer == 0 || kv_nummer == '') {
-      error_text=error_text+"Krankenversicherungsnummer wurde nicht erfasst\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert";
+      alert("Krankenversicherungsnummer wurde nicht erfasst\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert");
       return false;
     }
     if (versichertenstatus == 0 || versichertenstatus == '') {
-      error_text=error_text+"Versichertenstatus wurde nicht erfasst\n";
+      alert("Versichertenstatus wurde nicht erfasst\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert");
       return false;
     }
-
+    if (kv_gueltig == 0 || kv_gueltig == '') {
+      error_text=error_text+"Gültigkeitsdatum Krankenversicherungsnummer wurde nicht erfasst\n";
+    }
   }
 
   // weiche Plausiprüfungen
-  var error_text = '';
 
-  if (geb_kind == '00.00.0000' || geb_kind == '') {
-    error_text=error_text+"Geburtsdatum Kind wurde nicht erfasst\n";
-  }
   if (plz == 0 || plz == '') {
     error_text=error_text+"PLZ wurde nicht erfasst\n";
   }
@@ -68,9 +72,6 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
   }
   if (strasse == '') {
     error_text=error_text+"Strasse wurde nicht erfasst\n";
-  }
-  if (kv_gueltig == 0 || kv_gueltig == '') {
-    error_text=error_text+"Gültigkeitsdatum Krankenversicherungsnummer wurde nicht erfasst\n";
   }
 
   // prüfen liegen Fehler vor
