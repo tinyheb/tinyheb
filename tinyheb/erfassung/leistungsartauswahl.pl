@@ -111,9 +111,11 @@ if (defined($suchen)) {
 
   print '</tr>';
   $kbez = $kbez.'%';
-  $leistungstyp = $leistungstyp.'%';
+  $leistungstyp= '%'.$leistungstyp.'%';
+  my $such_guelt='';
+  $such_guelt=$d->convert($guelt) if ($guelt ne '');
 
-  $l->leistungsart_such_werte($posnr,$leistungstyp,$kbez,$guelt);
+  $l->leistungsart_such_werte($posnr,$leistungstyp,$kbez,$such_guelt);
   while (my ($l_leistid,$l_posnr,$l_leistungstyp,$l_kbez,$l_guelt_von,$l_guelt_bis) = $l->leistungsart_such_werte_next) {
     print '<tr>';
     print "<td>$l_posnr</td>";
@@ -138,6 +140,7 @@ print <<SCRIPTE;
     opener.window.location="leistungsarterfassung.pl?func=3&leist_id="+id;
     self.close();
   }
+window.focus();
 </script>
 SCRIPTE
 print "</body>";
