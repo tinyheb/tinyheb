@@ -67,7 +67,7 @@ while (my @erg=$l->rechnung_such_next()) {
   print "<td style='width:0.7cm;text-align:right'>$erg[0]</td>"; # Rechnungsnr
   # Name Frau holen
   my @erg_frau=$s->stammdaten_frau_id($erg[7]);
-  print "<td style='width:3.5cm;text-align:left'>$erg_frau[1], $erg_frau[0]</td>"; # Name Frau
+  print "<td style='width:5.5cm;text-align:left'>$erg_frau[1], $erg_frau[0]</td>"; # Name Frau
   # Name Krankenkasse holen
   my ($name)=$k->krankenkasse_ik("NAME",$erg[8]);
   if (!(defined($name))) {
@@ -75,8 +75,8 @@ while (my @erg=$l->rechnung_such_next()) {
     $name='Privat Rechnung' if ($erg_frau[12] eq 'privat');
   }
   
-  print "<td style='width:3.0cm;text-align:left'>$name</td>"; # Name Krankenkasse
-  print "<td style='width:1.6cm;text-align:left'>$erg[1]</td>"; # Datum Rech
+  print "<td style='width:4.0cm;text-align:left;padding-left:0.1cm'>$name</td>"; # Name Krankenkasse
+  print "<td style='width:1.6cm;text-align:right'>$erg[1]</td>"; # Datum Rech
   my $g_preis = sprintf "%.2f",$erg[4];$g_preis =~ s/\./,/g;
   print "<td style='width:1.0cm;text-align:right'>$g_preis</td>"; # Betrag
   $erg[2] =~ s/00.00.0000//g;
@@ -84,7 +84,7 @@ while (my @erg=$l->rechnung_such_next()) {
   $erg[3] =~ s/00.00.0000//g;
   print "<td style='width:1.6cm;text-align:right'>$erg[3]</td>"; # Eingang
   my $betraggez = sprintf "%.2f",$erg[6];$betraggez=~ s/\./,/g;
-  print "<td style='width:1.6cm;text-align:right'>$betraggez</td>"; # Betrag
+  print "<td style='width:2.2cm;text-align:right'>$betraggez</td>"; # Betrag
 
   my $status = $l->status_text($erg[5]);
   print "<td style='width:1.5cm;text-align:left'>$status</td>"; # Status der Position
