@@ -470,8 +470,19 @@ sub print_teil {
   while (my @erg=$l->leistungsdaten_offen_next()) {
     my @erg2=$l->leistungsdaten_such_id($erg[0]);
     my ($bez,$fuerzeit,$epreis)=$l->leistungsart_such_posnr("KBEZ,FUERZEIT,EINZELPREIS ",$erg[1],$erg[4]);
+
+    if ($epreis == 0) { # prozentuale Berechnung
+      $epreis=$erg[10];
+      $epreis = sprintf "%.2f",$epreis;
+    }
+
     if ($versichertenstatus eq 'privat') {
       $epreis *= $h->parm_unique('PRIVAT_FAKTOR');
+      $epreis = sprintf "%.2f",$epreis;
+    }
+    if ($h->parm_unique('HEB_TARIFKZ') == 25) {
+      $epreis *= 0.9;
+      $epreis += 0.0005; # Rundungsfehler ausgleichen
       $epreis = sprintf "%.2f",$epreis;
     }
     
@@ -494,6 +505,7 @@ sub print_teil {
     }
     
     # prüfen ob Zeitangabe notwendig 
+    my $vk = 1;
     if (defined($fuerzeit) && $fuerzeit > 0) {
       # fuerzeit ausgeben
       $p->text($x1+2,$y1,$erg2[5].'-'.$erg2[6]); # Zeit von bis
@@ -501,7 +513,7 @@ sub print_teil {
       if ($fuerzeit_flag ne 'E') { # nein
 
 	my $dauer = $d->dauer_m($erg2[6],$erg2[5]);
-	my $vk = sprintf "%3.1u",($dauer / $fuerzeit);
+	$vk = sprintf "%3.1u",($dauer / $fuerzeit);
 	$vk++ if ($vk*$fuerzeit < $dauer);
 	$vk = sprintf "%1.1u",$vk;
 	$epreis =~ s/\./,/g;
@@ -509,7 +521,7 @@ sub print_teil {
       }
       if ($fuerzeit_flag eq 'E') { # ja
 	my $dauer = $d->dauer_m($erg2[6],$erg2[5]);
-	my $vk = sprintf "%3.2f",($dauer / $fuerzeit);
+	$vk = sprintf "%3.2f",($dauer / $fuerzeit);
 	$epreis =~ s/\./,/g;
 	$vk =~ s/\./,/g;
 	$p->text($x1+5.5,$y1,$dauer." min = ".$vk." h á ".$epreis." EUR");
@@ -518,12 +530,10 @@ sub print_teil {
 
     # datum 4
     my $datum = $d->convert_tmj($erg[4]);
-    my $gpreis = sprintf "%.2f",$erg[10];
+    my $gpreis = 0;
+    $vk =~ s/,/\./g;	$epreis =~ s/,/\./g;
+    $gpreis = sprintf "%.2f",$vk * $epreis;
 
-    if ($versichertenstatus eq 'privat') {
-      $gpreis *= $h->parm_unique('PRIVAT_FAKTOR');
-      $gpreis = sprintf "%.2f",$gpreis;
-    }
 
     $summe+=$gpreis;$gpreis =~ s/\./,/g;
     $p->text({align => 'right'},15,$y1,$datum); # Datum andrucken
