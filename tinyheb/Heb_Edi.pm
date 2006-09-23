@@ -86,7 +86,7 @@ sub new {
   # physikalischen Empfänger ermitteln
   my $empf_physisch=$k->krankenkasse_empf_phys($zik);
   if (!defined($empf_physisch)) {
-    $ERROR="Physikalischer Empfänger konnte für ZIK: $zik nicht ermittelt werden";
+    $ERROR="Physikalischer Empfänger konnte für ZIK: $zik nicht ermittelt werden.\nBitte Hersteller benachrichtigen";
     return undef;
   }
   $self->{empf_physisch}=$empf_physisch;
@@ -115,10 +115,64 @@ sub new {
 
   my ($hilf,$betrag_slla)=$self->SLLA($rechnr,$zik,$ktr);
   if ($betrag_slla ne $self->{betrag}) {
-    $ERROR="Betragsermittlung zu Papierrechnung unterschiedlich Edi Betrag:$betrag_slla, Papier: $betrag!!!";
+    $ERROR="Betragsermittlung zu Papierrechnung unterschiedlich Edi Betrag:$betrag_slla, Papier: $betrag!!!\nBitte Hersteller benachrichtigen\n";
     return undef;
   }
-  
+
+  # prüfen, ob Datei verschlüsselt werden kann
+  my ($hilf_nutz,$hilf_erstell)=$self->gen_nutz($rechnr,$zik,$ktr,1);
+  unlink("$path/tmp/test_enc");
+  unlink("$path/tmp/test_enc.enc");
+  unlink("$path/tmp/test_enc.sig");
+  my $dateiname = 'test_enc';
+  # Nutzdatendatei schreiben
+  my $descriptor = open NUTZ, ">$path/tmp/$dateiname";
+  if (!defined($descriptor)) {
+    $ERROR= "Konnte Nutzdatei nicht zum Schreiben öffnen $!\n";
+    return undef;
+  }
+  print NUTZ $hilf_nutz;
+  close NUTZ;
+  my $laenge_nutz=length($hilf_nutz);
+
+  # hier muss noch verschlüsselt und signiert werden
+  # Public key der Krankenkasse schreiben
+  my ($pubkey) = $k->krankenkasse_sel("PUBKEY",$zik);
+  $descriptor = open KWRITE,">$path/tmp/zik.pem";
+  if (!defined($descriptor)) {
+    $ERROR= "Konnte öffentlichen Schlüssel zu Datenannahmestelle $zik nicht schreiben, bitte prüfen ob Schlüssel vorhanden ist.\n$!\n";
+    return undef;
+  }
+  print KWRITE "-----BEGIN CERTIFICATE-----\n";
+  print KWRITE $pubkey;
+  print KWRITE "-----END CERTIFICATE-----\n";
+  close(KWRITE);
+
+  my $sig_flag = $h->parm_unique('SIG'.$zik);
+  if (!defined($sig_flag)) {
+    $ERROR= "Parameter für Signatur bei Datennahmestelle $zik fehlt.\nBitte Parameter SIG$zik pflegen\n";
+    return undef;
+  }
+
+  my $schl_flag = $h->parm_unique('SCHL'.$zik);
+  if (!defined($schl_flag)) {
+    $ERROR= "Parameter für Verschlüsselung bei Datennahmestelle $zik fehlt.\nBitte Parameter SCHL$zik pflegen\n";
+    return undef;
+  }
+
+  # signieren
+  ($dateiname,$laenge_nutz)=$self->sig($dateiname,$sig_flag);
+  if ($laenge_nutz == 0) {
+    $ERROR= "Nutzdaten konnten nicht signiert werden.\n$dateiname\nBitte OpenSSL Installation prüfen\n $!";
+    return undef;
+  }
+  # verschlüsseln
+  ($dateiname,$laenge_nutz)=$self->enc($dateiname,$schl_flag);
+  if ($laenge_nutz == 0) {
+    $ERROR= "Nutzdaten konnten nicht verschlüsselt werden.\n$dateiname\nBitte OpenSSL Installation prüfen \n$!\n";
+    return undef;
+  }
+
   return $self;
 }
 
@@ -671,14 +725,22 @@ sub SLLA {
     if($ltyp ne 'M') { 
       # keine Materialpauschale
       if($epreis > 0) { # hier wird nicht prozentual gerechnet
+	if ($h->parm_unique('HEB_TARIFKZ') == 25) { # gebühren ost
+	  $epreis *= 0.9;
+	  $epreis = sprintf "%.2f",$epreis;
+	}
 	$erg .= $self->SLLA_ENF($leistdat[1],$leistdat[4],$epreis,$anzahl);
 	$gesamtsumme += sprintf "%.2f",($epreis*$anzahl);
 	my $wert= sprintf "%.2f",($epreis*$anzahl);
 	$ges_sum{$ltyp} += $wert;
       } else {
+	if ($h->parm_unique('HEB_TARIFKZ') == 25) { # gebühren ost
+	  $leistdat[10] *= 0.9;
+	  $leistdat[10] = sprintf "%.2f",$leistdat[10]+0.0005;
+	}
 	$erg .= $self->SLLA_ENF($leistdat[1],$leistdat[4],$leistdat[10],$anzahl);
 	$gesamtsumme += sprintf "%.2f",($leistdat[10]*$anzahl);
-	$ges_sum{$ltyp} += (sprintf "%2.f",($leistdat[10]*$anzahl));
+	$ges_sum{$ltyp} += (sprintf "%.2f",($leistdat[10]*$anzahl));
       }
       $lfdnr++;
 
@@ -798,21 +860,21 @@ sub sig {
   if ($sig_flag == 0) {
     # PEM verschlüsseln
     open NUTZ, "$path/tmp/$dateiname" or
-      die "konnte Datei nicht NICHT signieren\n";
+      return ("konnte Datei nicht NICHT signieren\n",0);
   }
   if ($sig_flag == 2) {
     # PEM signieren
-    die "PEM Signierung  ist nicht implementiert, bitte nutzen sie pkcs7\n";
+    return("PEM Signierung  ist nicht implementiert, bitte nutzen sie pkcs7\n",0);
     open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform PEM -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
       die "konnte Datei nicht PEM signieren\n";
   }
   if ($sig_flag == 3) {
     # DER signieren um später base64 encoden zu können
     open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
-      die "konnte Datei nicht DER verschlüsseln\n";
+      return ("konnte Datei nicht DER signieren",0);
   }
 
-  open AUS, ">$path/tmp/$dateiname.sig";
+  open AUS, ">$path/tmp/$dateiname.sig" or return ("Konnte Signierte Datei nicht schreiben",0);
     
  
  LINE: while (my $zeile=<NUTZ>) {
@@ -822,7 +884,7 @@ sub sig {
   close AUS;
  
   # Länge der Datei ermitteln
-  my $st=stat($path."/tmp/$dateiname.sig") or die "Datei $dateiname.sig nicht vorhanden:$!\n";
+  my $st=stat($path."/tmp/$dateiname.sig") or return ("konnte Länge der signierten Nutzdaten nicht ermitteln",0);
   return ("$dateiname.sig",$st->size);
 }
 
@@ -837,22 +899,21 @@ sub enc {
   if ($schl_flag == 0) {
     # PEM verschlüsseln
     open NUTZ, "$path/tmp/$dateiname" or
-      die "konnte Datei nicht NICHT verschlüsseln\n";
+      return ("konnte Datei nicht NICHT verschlüsseln",0);
   }
   if ($schl_flag == 2) {
     # PEM verschlüsseln
-    die "PEM Verschlüsselung ist nicht implementiert, bitte nutzen sie pkcs7\n";
+    return ("PEM Verschlüsselung ist nicht implementiert, bitte nutzen sie pkcs7\n",0);
     open NUTZ, "$openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER $path/tmp/zik.pem |" or
       die "konnte Datei nicht PEM verschlüsseln\n";
   }
   if ($schl_flag == 3) {
     # DER verschlüsseln um später base64 encoden zu können
-    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER $path/tmp/zik.pem |" or
-      die "konnte Datei nicht DER verschlüsseln\n";
+    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER $path/tmp/zik.pem |" or return ("Konnte Datei nicht DER verschlüsseln",0);
   }
 
   $dateiname =~ s/\.sig//g;
-  open AUS, ">$path/tmp/$dateiname.enc";
+  open AUS, ">$path/tmp/$dateiname.enc" or return ("konnte verschlüsselte Nutzdaten nicht schreiben",0);
     
  LINE: while (my $zeile=<NUTZ>) {
     print AUS $zeile;
@@ -861,7 +922,7 @@ sub enc {
   close AUS;
   
   # Länge der Datei ermitteln
-  my $st=stat($path."/tmp/$dateiname.enc") or die "Datei $dateiname.enc nicht vorhanden:$!\n";
+  my $st=stat($path."/tmp/$dateiname.enc") or return ("konnte Länge der verschlüsselten Nutzdaten nicht ermitteln",0);
   return ("$dateiname.enc",$st->size);
 }
 
