@@ -162,8 +162,8 @@ print '<td><b>Strecke</b></td>';
 print '</tr>';
 
 print '<tr>';
-print "<td><input type='text' name='entfernung_tag' value='$entfernung_tag' size='6'></td>";
-print "<td><input type='text' name='entfernung_nacht' value='$entfernung_nacht' size='6'></td>";
+print "<td><input type='text' name='entfernung_tag' value='$entfernung_tag' size='6' onChange='numerisch_check(this)'></td>";
+print "<td><input type='text' name='entfernung_nacht' value='$entfernung_nacht' size='6' onChange='numerisch_check(this)'></td>";
 print "<td><input type='text' name='anzahl_frauen' value='$anzahl_frauen' size='2'></td>";
 if ($strecke eq 'gesamt') {
   print "<td><input type='radio' name='strecke' value='gesamt' checked>gesamt";

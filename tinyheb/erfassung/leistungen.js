@@ -114,7 +114,7 @@ function zeit_preis(preis,zeit,mass) {
 }
 
 function leistung_speicher(formular) {
-  //  alert("speichern");
+  //alert("speichern");
   //  Plausiprüfungen, bevor Formular abgeschickt wird.
   if(!uhrzeit_check(formular.zeit_von)) {
     //    alert("Zeit von nicht korrekt erfasst");
@@ -126,6 +126,14 @@ function leistung_speicher(formular) {
   }
   if(!datum_check(formular.datum)) {
     //    alert("Datum nicht korrekt erfasst");
+    return false;
+  }
+  if(!numerisch_check(formular.entfernung_tag)) {
+    //  alert ("numeric prüfung");
+    return false;
+  }
+  if(!numerisch_check(formular.entfernung_nacht)) {
+    //  alert ("numeric prüfung");
     return false;
   }
   return true;

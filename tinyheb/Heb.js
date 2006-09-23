@@ -49,6 +49,19 @@ function plz_check(plz) {
   return true;
 }
 
+function numerisch_check(num) {
+  // prüft ob der übergebene Wert numerisch oder leer ist.
+  if (num.value == '') { return true; }
+  re=/^\d{0,5},{0,1}\d{0,2}$/;
+  if (num.value != '' && !re.test(num.value)) {
+    alert("Bitte numerischen Wert erfassen");
+    num.focus();
+    num.select();
+    return false;
+  }
+  return true;
+}
+
 
 function datum_check(datum) {
 // prüft ob Datum im Format tt.mm.jjjj erfasst wurde, oder leer ist
