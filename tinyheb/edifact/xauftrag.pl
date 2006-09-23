@@ -200,7 +200,7 @@ RECH:  foreach (@sel) {
 
     my $e = new Heb_Edi($rechnr);
     if (!defined($e)) {
-      fehler($Heb_Edi::ERROR." versenden wird abgebrochen.\nBitte Hersteller benachrichtigen.");
+      fehler($Heb_Edi::ERROR." versenden wird abgebrochen.");
       last RECH;
     }
 
