@@ -39,6 +39,22 @@ function frausuchen(vorname,nachname,geb,formular) {
   open("frauenauswahl.pl?vorname="+vorname.value+"&nachname="+nachname.value+"&geb_f="+geb.value+"&suchen=Suchen&sel_status=alle","frauenwahl","scrollbars=yes,width=700,height=400");
   };
 
+
+function frauenauswahl(formular) {
+  // plausiprüfungen bevor formular submittet wird.
+   if (!datum_check(formular.geb_f)) {
+    return false;
+  }
+  if (!datum_check(formular.geb_k)) {
+    return false;
+  }
+  if (!plz_check(formular.plz)) {
+    return false;
+  }
+  return true;
+}
+
+
 function frau_speicher(formular) {
   // plausiprüfungen bevor formular gespeichert wird.
   //  alert('check speicher anfang');
