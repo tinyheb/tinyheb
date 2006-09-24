@@ -80,6 +80,7 @@ print '<head>';
 print '<title>Krankenkassen</title>';
 print '<script language="javascript" src="krankenkassen.js"></script>';
 print '<script language="javascript" src="../Heb.js"></script>';
+print '<script language="javascript" src="stammdaten.js"></script>';
 print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 
@@ -95,7 +96,7 @@ print '<h1>Krankenkassen</h1>';
 print '<hr width="100%">';
 print '</div><br>';
 # Formular ausgeben
-print '<form name="krankenkassen" action="krankenkassenerfassung.pl" method="get" target=_top bgcolor=white>';
+print '<form name="krankenkassen" action="krankenkassenerfassung.pl" method="get" target=_top onsubmit="return kasse_speichern(this);" bgcolor=white>';
 print '<table border="0" width="700" align="left">';
 
 # Zeile IK, Name, KNAME
@@ -109,7 +110,7 @@ print '</tr>';
 print "\n";
 
 print '<tr>';
-print "<td><input type='text' name='ik_krankenkasse' value='$ik' size='9'></td>";
+print "<td><input type='text' name='ik_krankenkasse' value='$ik' size='9' onChange='ik_gueltig_check(this)'></td>";
 print "<td><input type='text' name='name_krankenkasse' value='$name' size='40'></td>";
 print "<td><input type='text' name='kname_krankenkasse' value='$kname' size='40'></td>";
 print "<td><input type='button' name='kasse_suchen' value='Suchen' onClick='return kassesuchen();'></tr>";
@@ -150,7 +151,7 @@ print '<td><b>Strasse:</b></td>';
 print '</tr>';
 # Eingabe Felder
 print "<tr>";
-print "<td><input type='text' name='plz_haus_krankenkasse' value='$plz_haus' size='5' onBlur='return plz_check(this)'></td>";
+print "<td><input type='text' name='plz_haus_krankenkasse' value='$plz_haus' size='5' onchange='return plz_check(this)'></td>";
 print "<td><input type='text' name='ort_krankenkasse' value='$ort' size='40'></td>";
 print "<td><input type='text' name='strasse_krankenkasse' value='$strasse' size='40'></td>";
 print '</tr>';
@@ -169,7 +170,7 @@ print '<td><b>Postfach:</b></td>';
 print '</tr>';
 # Eingabe Felder
 print "<tr>";
-print "<td><input type='text' name='plz_post_krankenkasse' value='$plz_post' size='5' onBlur='return plz_check(this)'></td>";
+print "<td><input type='text' name='plz_post_krankenkasse' value='$plz_post' size='5' onChange='return plz_check(this)'></td>";
 print "<td><input type='text' disabled class=disabled name='ort2_krankenkasse' value='$ort' size='40'></td>";
 print "<td><input type='text' name='postfach_krankenkasse' value='$postfach' size='6'></td>";
 print '</tr>';
@@ -192,7 +193,7 @@ print '</tr>';
 
 # Eingabe Felder
 print "<tr>";
-print "<td valign='top'><input type='text' name='zik_krankenkasse' value='$zik' size='9'></td>";
+print "<td valign='top'><input type='text' name='zik_krankenkasse' value='$zik' size='9' onChange='ik_gueltig_check(this)'></td>";
 print "<td valign='top'><input type='text' name='zik_typ' value='$zik_typ' size='2' maxsize='1'></td>";
 print "<td valign='bottom'><textarea name='bemerkung_krankenkasse' cols='70' rows='2'>$bemerkung</textarea></td>";
 if ($zik ne '' && $zik > 0) {
@@ -210,7 +211,7 @@ print '<tr>';
 print '<td><b>IK für Papierbelege:</b></td>';
 print '</tr>';
 print "<tr>";
-print "<td><input type='text' name='beleg_ik' value='$beleg_ik' size='9'></td>";
+print "<td><input type='text' name='beleg_ik' value='$beleg_ik' size='9' onChange='ik_gueltig_check(this)'></td>";
 if ($beleg_ik ne '' && $beleg_ik > 0) {
   print "<td><input type='button' name='kasse_aufrufen' value='Aufrufen' onClick='window.location=\"krankenkassenerfassung.pl?func=3&ik_krankenkasse=$beleg_ik\";'></td>";
 }
@@ -247,10 +248,10 @@ print '<td>';
 print '<input type="submit" name="abschicken" value="Speichern">';
 print '</td>';
 print '<td>';
-print '<input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.krankenkassen)">';
+print '<input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz_kasse(document.krankenkassen)">';
 print '</td>';
 print '<td>';
-print '<input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.krankenkassen)">';
+print '<input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz_kasse(document.krankenkassen)">';
 print '</td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print '</tr>';
@@ -313,5 +314,7 @@ sub hole_krank_daten {
   } else {
     $plz_post = '';
   }
+  $beleg_ik='' if ($beleg_ik == 0);
+  $zik='' if ($zik == 0);
   return;
 }

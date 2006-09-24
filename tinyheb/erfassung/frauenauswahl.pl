@@ -74,7 +74,7 @@ print '<h1>Frau suchen</h1>';
 print '<hr width="100%">';
 print '</div><br>';
 # Formular ausgeben
-print '<form name="frau_suchen" action="frauenauswahl.pl" method="get" target=_self>';
+print '<form name="frau_suchen" action="frauenauswahl.pl" method="get" target=_self onsubmit="return frauenauswahl(this);">';
 print '<h3>Suchkriterien:</h3>';
 print '<table border="0" width="500" align="left">';
 
@@ -97,9 +97,9 @@ print "\n";
 print '<tr>';
 print "<td><input type='text' name='vorname' value='$vorname' size='15'></td>";
 print "<td><input type='text' name='nachname' value='$nachname' size='15'></td>";
-print "<td><input type='text' name='geb_f' value='$geb_f' size='12' onBlur='datum_check(this)'></td>";
-print "<td><input type='text' name='geb_k' value='$geb_k' size='12' onBlur='datum_check(this)'></td>";
-print "<td><input type='text' name='plz' value='$plz' size='7' onBlur='plz_check(this)'></td>";
+print "<td><input type='text' name='geb_f' value='$geb_f' size='12' onchange='datum_check(this)'></td>";
+print "<td><input type='text' name='geb_k' value='$geb_k' size='12' onchange='datum_check(this)'></td>";
+print "<td><input type='text' name='plz' value='$plz' size='7' onchange='plz_check(this)'></td>";
 print "<td><input type='text' name='ort' value='$ort' size='10'></td>";
 print "<td><input type='text' name='strasse' value='$strasse' size='10'></td>";
 print '</table>';

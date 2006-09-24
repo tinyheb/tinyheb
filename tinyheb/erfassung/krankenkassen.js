@@ -29,7 +29,7 @@ function kassesuchen() {
   open("kassenauswahl.pl","kassenwahl","scrollbars=yes,width=800,height=400");
 };
 
-function next_satz(formular) {
+function next_satz_kasse(formular) {
   // holt die in ik angegebene Krankenkasse ins Fenster
   //	alert("naechster Satz"+ik);
   ik = formular.ik_krankenkasse.value;
@@ -40,8 +40,7 @@ function next_satz(formular) {
   }
 }
 
-
-function prev_satz(formular) {
+function prev_satz_kasse(formular) {
   // holt die in ik angegebene Krankenkasse ins Fenster
   //	alert("naechster Satz"+ik);
   ik = formular.ik_krankenkasse.value;
@@ -50,4 +49,25 @@ function prev_satz(formular) {
   } else {
     alert("Bitte Menuepunkt Anzeigen wählen");
   }
+}
+
+function kasse_speichern(formular) {
+  // plausiprüfungen bevor formular submittet wird.
+  if (!plz_check(formular.plz_haus_krankenkasse)) {
+    return false;
+  }
+  if (!plz_check(formular.plz_post_krankenkasse)) {
+    return false;
+  }
+  if(!ik_gueltig_check(formular.ik_krankenkasse)) {
+    return false;
+  }
+  if(!ik_gueltig_check(formular.zik_krankenkasse)) {
+    return false;
+  }  
+  if(!ik_gueltig_check(formular.beleg_ik)) {
+    return false;
+  }
+
+  return true;
 }
