@@ -78,10 +78,24 @@ sub new {
     return undef;
   }
   
+  # prüfen EMAIL der Hebamme vorhanden
+  $self->{HEB_EMAIL}=$h->parm_unique('HEB_EMAIL');
+  if (!defined($self->{HEB_EMAIL})) {
+    $ERROR="E-Mail Adresse der Hebamme nicht bekannt,\nbitte in den Parametern nachpflegen\n";
+    return undef;
+  }
+
   # kostenträger ermitteln
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
   $self->{kostentraeger}=$ktr;
   $self->{annahmestelle}=$zik;
+
+  # prüfen EMAIL der Annahmestelle vorhanden
+  $self->{MAIL_ANNAHMESTELLE}=$h->parm_unique('MAIL'.$zik);
+  if (!defined($self->{MAIL_ANNAHMESTELLE})) {
+    $ERROR="E-Mail Adresse der Annahmestelle nicht bekannt,\nbitte in den Parametern Parameter MAIL$zik nachpflegen\n";
+    return undef;
+  }
   
   # physikalischen Empfänger ermitteln
   my $empf_physisch=$k->krankenkasse_empf_phys($zik);
