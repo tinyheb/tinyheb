@@ -73,6 +73,14 @@ LINE: while (my $zeile=<RC>) {
     $prov{$parms[0]}{user_from}=$parms[2] || '';
     $prov{$parms[0]}{user_pass}=$parms[3] || '';
   }
+} else {
+  if (open RC,">$path/.xauftragrc") {
+    my ($ename,$eprovider)=split '@',$h->parm_unique('HEB_EMAIL');
+    print RC "mail.arcor.de\t$ename\t$ename@","$eprovider\tpasswort\n";
+    print RC "mail.web.de\t$ename@","$eprovider\t$ename@","$eprovider\tpasswort\n";
+    print RC "provider\tAnmeldenahme\tMailadresse\tPasswort\n";
+    close RC;
+  }
 }
 
 my $prov_sel='localhost';
