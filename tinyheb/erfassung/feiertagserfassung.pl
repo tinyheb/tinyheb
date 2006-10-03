@@ -36,7 +36,8 @@ my $debug=1;
 
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
-my @bund = ('Bundesweit','NRW','Bayern','Rheinlandpfalz','Hessen');
+#my @bund = ('Bundesweit','NRW','Bayern','Rheinlandpfalz','Hessen');
+my @bund = $d->bundeslaender;
 
 my $feiertag_id = $q->param('id_feiertag') || '0';
 my $name = $q->param('name_feiertag') || '';
