@@ -214,6 +214,7 @@ sub speichern {
     $hint .= "Rechnung ist schon gezahlt, nichts gespeichert";
     return;
   }
+#  $r_betraggez = sprintf "%.2f",$r_betraggez;
   if ($betraggez_s+$r_betraggez-$r_betrag > 0.001) {
     $hint .= "gez. Betrag zu groß, nichts gespeichert";
     return;
