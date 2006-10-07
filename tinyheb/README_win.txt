@@ -106,7 +106,7 @@ Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 70%
 
 << Schritt 4 >>
 	Die Archiv Datei von tinyHeb entpacken
-	- Doppelklick auf die Dtei tinyheb_win.0.7.1.tar.gz
+	- Doppelklick auf die Datei tinyheb_win.0.7.1.tar.gz
 	(ggf. hat die Datei einen anderen Namen)
 	startet in der Regel Winzip
 	- Auf die Frage: Das Archiv enthält eine Datei tinyheb_win.0.7.1.tar
@@ -125,7 +125,14 @@ Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 90%
 	hatten, sind Sie quasi fertig mit der Installation und sollten die 
 	nächsten in Schritt 5 aufgeführten Schritte nicht durchführen, da
 	die Konfiguration des Webservers und des MySQL Servers überschrieben würden.
-	Überprüfen Sie daher den Inhat der Datei setup.bat und führen die 
+
+	Das Verzeichnis win32 und die Datei setup.bat existieren noch nicht,
+	da noch zu viele Fehler enthalten sind.
+	Bitte schickt mir eine Mail, ich schicke dann noch Hinweise und
+	einige fehlende Dateien. Selber probieren geht u.u. auch, dauert
+	aber wahrscheinlich 10x solange, wie eine Mail an mich.
+	
+	Überprüfen Sie daher den Inhalt der Datei setup.bat und führen die 
 	einzelnen Schritte ggf. manuell durch.
 	
 	- jetzt müssen noch einige Dateien aus dem Internet geladen werden,
@@ -134,7 +141,17 @@ Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 90%
 	  wechseln
 	- Doppelklick auf setup.bat
 
-Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 100%	
+Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 100%
+
+fast fertig:
+im Browser kann jetzt über http://localhost/tinyheb/hebamme.html
+tinyHeb gestart werden.
+um elektronische Rechnungen zu verschicken existiert das Programm xauftrag.pl im Verzeichnis edifact.
+
+<< Schritt 6 >>
+        Jetzt ist es noch notwendig die Parameter wie in Kapitel 2.4 des Handbuches beschrieben
+        anzupassen, damit z.B. der wirkliche Name der Hebamme auf der Rechnung erscheint.
+	
 
 << 2. Änderungshistorie >>
 Die Änderungshistorie befindet sich in der Datei RelNotes.txt
