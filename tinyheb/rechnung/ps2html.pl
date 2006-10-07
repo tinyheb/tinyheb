@@ -202,7 +202,10 @@ if ($q->user_agent !~ /Windows/) {
 
 if ($q->user_agent =~ /Windows/) {
   print $q->header ( -type => "application/pdf", -expires => "-1d");
-  mkdir "/tmp/wwwrun" if(!(-d "/tmp/wwwrun"));
+  if (!(-d "/tmp/wwwrun")) {
+    mkdir "/tmp" if (!(-d "/tmp"));
+    mkdir "/tmp/wwwrun";
+  }
   unlink('/tmp/wwwrun/file.ps');
   $p->output('/tmp/wwwrun/file.ps');
 
