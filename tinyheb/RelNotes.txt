@@ -1,3 +1,40 @@
+Release 0.8.0
+
+Bug fix:
+In Rechnungsbearbeitung wurde nicht auf Stylesheet Heb.css zugegriffen.
+Rundungsfehler bei Kleinstbeträgen.
+
+Layout Verbesserung bei Anzeige alter Rechnungen
+
+Rechnungsposten Erfassung
+zusätzliche Plausiprüfung, ob erfasste Kilometer numerisch.
+
+Berücksichtigung der Hebammengebhrenordnung OST.
+
+Heb_Edi
+Prüfung ob Verschlüsselung und Signatur erfolgreich.
+Einbau Gebührenordnung OST
+Prüfung ob E-Mail Adresse der Hebamme und der Datenannahmestelle vorhanden sind
+
+Frauenauswahl
+zusätzliche Plausiprüfungen auf erfasste Werte
+
+Krankenkassenerfassung
+zusätzliche Plausiprüfungen auf erfasste Werte
+
+xauftrag.pl
+Wenn Steuerdatei .xauftragrc nicht vorhanden ist, wird diese automatisch mit Beispieleinträgen angelegt.
+
+Handbuch
+Korrektur von Fehlern.
+Überarbeitung des Kapitels "Verschicken der Rechnung per E-Mail"
+neues Kapitel "1.4 Über dieses Handbuch"
+
+Rechnungsgenerierung:
+Bug fix:
+Bei Windows-Systemen wurde temporäres Verzeichnis nicht korrekt angelegt.
+
+----------------------------------------------
 Release 0.7.2
 
 Bug fix:
