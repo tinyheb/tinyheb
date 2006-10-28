@@ -26,6 +26,7 @@ use strict;
 use CGI;
 
 use lib "../";
+use Heb;
 use Heb_stammdaten;
 use Heb_krankenkassen;
 use Heb_leistung;
@@ -47,6 +48,8 @@ my $rechnungsnr = 1+($h->parm_unique('RECHNR'));
 my $datum = $ARGV[2] || $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
 my $speichern = $q->param("speichern") || '';
 my $posnr=-1;
+my $heb_bundesland = $h->parm_unique('HEB_BUNDESLAND') || 'NRW';
+
 
 # zunächst daten der Frau holen
 my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
@@ -97,7 +100,16 @@ $p->setfont($font_b,10);
 if ($versichertenstatus ne 'privat') {
   $p->text(2,19.7,"Gebührenabrechnung nach HebGV");
 } else {
-  $p->text(2,19.7,"Gebührenabrechnung nach HebGo NW");
+  # Abfragen, welche privat Gebührenordnung wird genutzt
+  if ($heb_bundesland eq 'NRW') {
+    $p->text(2,19.7,"Gebührenabrechnung nach HebGO NW");
+  } elsif ($heb_bundesland eq 'Bayern') {
+    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Bayern");
+  } elsif ($heb_bundesland eq 'Niedersachsen') {
+    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Niedersachsen");
+  } else {
+    $p->text(2,19.7,"PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen");
+  }
 }
 
 fussnote(); # auf der ersten Seite explizit angeben
@@ -410,20 +422,25 @@ sub print_wegegeld {
     neue_seite(5,$tn);
     if($tn eq 'N') {
       ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'94',$erg[4]);
-      $preis =~ s/\./,/g;
     }
     if ($tn eq 'T') {
       ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'93',$erg[4]);
-      $preis =~ s/\./,/g;
     }
     if ($tn eq 'TK') {
       ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'91',$erg[4]);
-      $preis =~ s/\./,/g;
     }
     if ($tn eq 'NK') {
       ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'92',$erg[4]);
-      $preis =~ s/\./,/g;
     }
+
+    if ($versichertenstatus eq 'privat') {
+      if ($heb_bundesland eq 'Niedersachsen') {
+	$preis *= $h->parm_unique('PRIVAT_FAKTOR');
+	$preis = sprintf "%.2f",$preis;
+      }
+    }
+    $preis =~ s/\./,/g;
+
     my $datum = $d->convert_tmj($erg[4]);
     $p->text({align => 'right'},4,$y1,$datum); # Datum andrucken
     my $entf=0;
