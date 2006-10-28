@@ -130,4 +130,83 @@ function anseh_rech(rech_id) {
   }
 }
 
+function save_rechposbear(form) {
+  // prüft, ob der gezahlte Betrag kleiner oder größer als der
+  // ursprüngliche Rechnungsbetrag ist, wenn ja, Abfrage
+  // ob trotzdem gespeichert werden soll
+  var rbetrag_gez=form.r_betraggez.value;
+  var betrag=form.betrag.value;
+  var betrag_gez=form.betraggez.value;
+
+  if(form.status.value >= 30) {
+    alert("Rechnungs ist schon erledigt, es wurde nichts gespeichert");
+    return false;
+  }
+
+  //  alert("datum:"+form.zahl_datum.value);
+  if(!datum_check(form.zahl_datum)) {
+    return false;
+  }
+  if (!numerisch_check(form.betraggez)) {
+    return false;
+  }
+  if (betrag_gez == '' || form.rechnungsnr.value == '') {
+    return true;
+  }
+
+  betrag_gez=tonumber(betrag_gez);
+  betrag=tonumber(betrag);
+  rbetrag_gez=tonumber(rbetrag_gez);
+  var summe=betrag_gez+rbetrag_gez;
+  //alert("Werte: "+rbetrag_gez+" "+betrag+" "+betrag_gez+"summe:"+summe);
+  summe = summe * 100;
+  summe = Math.round(summe);
+  summe =summe / 100;
+  //alert("gerundet:"+summe);
+  if (summe > betrag) {
+    var erg=confirm("gezahlter Betrag ist größer als Rechnungsbetrag,\ntrotzdem speichern?");
+    if (!erg) {
+      return false;
+    } else {
+      form.ignore.value=1;
+      return true;
+    }
+  }
+  if (summe < betrag) {
+    var erg=prompt("gezahlter Betrag ist kleiner als Rechnungsbetrag,\ntrotzdem auf erledigt setzten (ja/nein)?","nein");
+    if (!erg) {
+      return false;
+    } else {
+      if (erg == 'ja' || erg == 'JA') {
+	form.ignore.value=1;
+	return true;
+      } else {
+	form.ignore.value=0;
+	return true;
+      }
+    }
+  }
+  //  alert("speicher Ende");
+  return true;
+}
+
+function tonumber(wert) {
+  //  alert ("tonumber:"+wert);
+  re=/^(\d{0,5}),{0,1}(\d{0,2})$/;
+  var retnum=re.test(wert);
+  var vk=RegExp.$1;
+  var nk=RegExp.$2;
+  if (!retnum) {
+    //    alert("hat nicht gematched");
+    vk=0;
+    nk=0;
+  }
+  //  alert ("Ergebnis vk:"+vk+"nk:"+nk);
+  if (nk=='') {
+    nk=0;
+  }
+  var ergebnis=Number(vk+"."+nk);
+  return ergebnis;
+}
+
 //alert("rechnung.js ist geladen");
