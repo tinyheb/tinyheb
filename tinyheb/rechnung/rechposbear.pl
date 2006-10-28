@@ -54,6 +54,7 @@ my $mahn_datum = $q->param('mahn_datum') || '';
 my $zahl_datum = $q->param('zahl_datum') || '';
 my $betraggez = $q->param('betraggez') || 0;
 
+my $ignore = $q->param('ignore') || 0;
 my $abschicken = $q->param('abschicken');
 my $func = $q->param('func') || 0;
 
@@ -68,6 +69,7 @@ $r_betrag=0 unless (defined($r_betrag));
 $r_betraggez=0 unless (defined($r_betraggez));
 $r_ik='NULL' unless (defined($r_ik));
 $r_fk_st=0 unless (defined($r_fk_st));
+$r_status=0 unless (defined($r_status));
 
 
 if (defined($abschicken)) {
@@ -77,6 +79,8 @@ if (defined($abschicken)) {
 print '<head>';
 print '<title>Rechnungen Bearbeiten</title>';
 print '<script language="javascript" src="../Heb.js"></script>';
+print '<script language="javascript" src="rechnung.js"></script>';
+#print '<script>alert("lade rechposbear.pl");</script>';
 print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 
@@ -84,7 +88,7 @@ print '</head>';
 print '<body bgcolor=white>';
 
 # Formular für eigentliche Erfassung ausgeben
-print '<form name="rechposbear" action="rechposbear.pl" method="get" target=rechposbear bgcolor=white>';
+print '<form name="rechposbear" action="rechposbear.pl" method="get" target=rechposbear onsubmit="return save_rechposbear(this);" bgcolor=white>';
 
 # Rechnung 
 # z1 s1
@@ -107,6 +111,9 @@ print "\n";
 
 print '<tr>';
 print "<input type='hidden'name='rechnungsnr' value='$r_rechnr'>";
+print "<input type='hidden'name='ignore' value='$ignore'>";
+print "<input type='hidden'name='status' value='$r_status'>";
+
 print "<td><input type='text' class='disabled' disabled name='rechnungsnr2' value='$r_rechnr' size='9'></td>";
 print "<td><input type='text' class='disabled' disabled name='r_rech_datum' value='$r_rech_datum' size='9'></td>";
 my $g_preis = sprintf "%.2f",$r_betrag;
@@ -131,8 +138,8 @@ print '<td><b>Zahldatum:</b></td>';
 print '<td><b>Betrag gez:</b></td>';
 print '</tr>';
 print '<tr>';
-print "<td><input type='text' name='zahl_datum' value='$TODAY' size='9' onblur='datum_check(this);'></td>";
-print "<td><input type='text' name='betraggez' value='' size='7'></td>";
+print "<td><input type='text' name='zahl_datum' value='$TODAY' size='9' onchange='datum_check(this);'></td>";
+print "<td><input type='text' name='betraggez' value='' size='7' onchange='numerisch_check(this);'></td>";
 print '</tr>';
 print '</table>';
 print '</td></tr>';
@@ -176,11 +183,13 @@ print "</html>";
 sub print_summen {
 #--- neue Tabelle für Summen
 # summe der offenen und erledigten Rechnungen berechnen
-  $l->rechnung_such('sum(betraggez)','betraggez>0');
+  # Teilzahlung und erledigt
+  $l->rechnung_such('sum(betraggez)','status>=24');
   my $summe_gez = $l->rechnung_such_next();
   $summe_gez = sprintf "%.2f",$summe_gez;
-  $l->rechnung_such('sum(betrag)');
-  my $summe_offen = $l->rechnung_such_next()-$summe_gez;
+  
+  $l->rechnung_such('sum(betrag)-sum(betraggez)','status<=24');
+  my $summe_offen = $l->rechnung_such_next();
   $summe_offen = sprintf "%.2f",$summe_offen;
   print '<table border="0">';
   print '<tr>';
@@ -206,7 +215,12 @@ sub speichern {
   my $betraggez_s = $betraggez;
   $betraggez_s =~ s/,/\./g;
   # erst Plausiprüfungen
-  if ($betraggez_s == 0 || $zahl_datum eq '' || $r_rechnr eq '') {
+  if($r_rechnr eq '') {
+    $hint .= "Bitte Rechnung zum Bearbeiten auswählen, nichts gespeichert";
+    return;
+  }
+
+  if ($betraggez_s == 0 || $zahl_datum eq '') {
     $hint .= "Bitte Datum und Betrag erfassen, nichts gespeichert";
     return;
   }
@@ -215,7 +229,7 @@ sub speichern {
     return;
   }
 #  $r_betraggez = sprintf "%.2f",$r_betraggez;
-  if ($betraggez_s+$r_betraggez-$r_betrag > 0.001) {
+  if ($betraggez_s+$r_betraggez-$r_betrag > 0.001 && $ignore==0) {
     $hint .= "gez. Betrag zu groß, nichts gespeichert";
     return;
   }
@@ -224,6 +238,7 @@ sub speichern {
   if ($betraggez_s+$r_betraggez < $r_betrag) {
     # Teilzahlung
     $status=24;
+    $status=30 if($ignore==1);
   } else {
     $status=30;
   }
