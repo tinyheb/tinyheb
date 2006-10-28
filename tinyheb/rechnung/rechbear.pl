@@ -52,6 +52,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 print '<head>';
 print '<title>Rechnungen Bearbeiten</title>';
 print '<script language="javascript" src="../Heb.js"></script>';
+#print '<script>alert("lade rechbear.pl");</script>';
 print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 
@@ -87,8 +88,7 @@ print "</iframe>";
 print '</form>';
 
 # Formular für eigentliche Bearbeitung ausgeben
-print "<iframe src='rechposbear.pl' name='rechposbear' width='840' height='250' scrolling='auto'
- frameborder='0'>";
+print "<iframe src='rechposbear.pl' name='rechposbear' width='840' height='250' scrolling='auto' frameborder='0'>";
 print "</iframe>";
 
 
