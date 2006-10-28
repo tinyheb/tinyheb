@@ -46,6 +46,7 @@ if ($^O =~ /MSWin32/) {
 }
 
 if (!(-d "$path/tmp")) { # Zielverzeichnis anlegen
+  mkdir "$path" if (!(-d "$path"));
   mkdir "$path/tmp";
 }
 
