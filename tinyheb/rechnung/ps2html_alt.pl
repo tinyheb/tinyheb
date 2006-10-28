@@ -1,4 +1,4 @@
-#!/usr/bin/perl -wT
+#!/usr/bin/perl -w
 # -wT
 
 # Ausgabe von alten Rechnungen, entweder Postscript Format oder Edifact
@@ -41,7 +41,11 @@ my ($rech,$edi_auf,$edi_nutz)=$l->rechnung_such_next();
 if ($rechtyp == 1) {
   if ($q->user_agent =~ /Windows/) {
     print $q->header ( -type => "application/pdf", -expires => "-1d");
-    mkdir "/tmp/wwwrun" if(!(-d "/tmp/wwwrun"));
+    if (!(-d "/tmp/wwwrun")) {
+      mkdir "/tmp" if (!(-d "/tmp"));
+      mkdir "/tmp/wwwrun";
+    }
+    unlink('/tmp/wwwrun/file.ps');
     open AUSGABE,"/tmp/wwwrun/file.ps" or
       die "konnte Datei nicht in pdf konvertieren, Schreibfehler für file.ps\n";
     print AUSGABE $rech;
@@ -49,6 +53,7 @@ if ($rechtyp == 1) {
     if ($^O =~ /linux/) {
       system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
     } elsif ($^O =~ /MSWin32/) {
+      unlink('/tmp/wwwrun/file.pdf');
       system('/gs/gs8.15/bin/gs32winc -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps');
     } else {
       die "kein Konvertierungsprogramm ps2pdf gefunden\n";
