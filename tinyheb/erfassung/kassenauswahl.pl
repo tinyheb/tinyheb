@@ -130,13 +130,23 @@ if (defined($suchen)) {
     print "<td>$k_plz_post</td>";
     print "<td>$k_ort</td>";
     print "<td>$k_strasse</td>";
+
+    my $status_edi='kein elektronischer Datenaustausch';
+    my $test_ind= $k->krankenkasse_test_ind($k_ik);
+    if (defined($test_ind)) {
+      $status_edi='Testphase' if ($test_ind == 0);
+      $status_edi='Erprobungsphase' if ($test_ind == 1);
+      $status_edi='Echtbetrieb' if ($test_ind == 2);
+      $status_edi='unbekannt, Bitte Parameter prüfen' if ($test_ind != 0 && $test_ind != 1 && $test_ind != 2);
+    }
+
 #    print "<td>$k_postfach,$k_asp_name,$k_asp_tel,$k_zik,$k_bemerkung</td>";
     print '<td><input type="button" name="waehlen" value="Auswählen"';
     print "\n";
     $k_bemerkung = ' ' if($k_bemerkung eq '');
     $k_kname =~ s/'/\\'/g;
     $k_name =~ s/'/\\'/g;
-    print "onclick=\"kk_eintrag('$k_ik','$k_kname','$k_name','$k_plz_haus','$k_plz_post','$k_ort','$k_strasse');self.close();\"></td>";
+    print "onclick=\"kk_eintrag('$k_ik','$k_kname','$k_name','$k_plz_haus','$k_plz_post','$k_ort','$k_strasse','$status_edi');self.close();\"></td>";
     print "</tr>\n";
   }
 }
@@ -149,7 +159,7 @@ print <<SCRIPTE;
   function zurueck() {
     kassenauswahl.close();
   }
-  function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse) {
+  function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse,status_edi) {
     //  alert("gewählt"+name+plz_haus+ort+strasse+k_ik);
     // in Parent Dokument übernehmen
     // alert("parent"+opener.window.document.forms[0].name);
@@ -161,6 +171,7 @@ print <<SCRIPTE;
        formular.name_krankenkasse.value=name;
        formular.strasse_krankenkasse.value=strasse;
        formular.ort_krankenkasse.value=plz_haus+' '+ort;
+       formular.status_edi_krankenkasse.value=status_edi;
     }
   }
 </script>
