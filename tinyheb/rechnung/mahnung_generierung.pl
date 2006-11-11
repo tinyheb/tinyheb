@@ -44,7 +44,6 @@ my $debug=1;
 
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 
-my $frau_id = $q->param('frau_id') || 0;
 my $rechnr = $q->param('rechnr') || 0;
 
 my $speichern = $q->param('Speichern');
@@ -53,15 +52,16 @@ my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
 my $func = $q->param('func') || 0;
 
+# rechnungsinfos holen
+$l->rechnung_such("RECH_DATUM,MAHN_DATUM,BETRAGGEZ,BETRAG,STATUS,IK,FK_STAMMDATEN","RECHNUNGSNR=$rechnr");
+my ($rech_datum,$mahn_datum,$betraggez,$betrag,$status,$ik_krankenkasse,$frau_id)=$l->rechnung_such_next();
+
+$frau_id = 0 unless(defined($frau_id));
 # zunächst daten der Frau holen
 my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
     $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
     $dummy,$naechste_hebamme,
     $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
-
-# rechnungsinfos holen
-$l->rechnung_such("RECH_DATUM,MAHN_DATUM,BETRAGGEZ,BETRAG,STATUS,IK","RECHNUNGSNR=$rechnr");
-my ($rech_datum,$mahn_datum,$betraggez,$betrag,$status,$ik_krankenkasse)=$l->rechnung_such_next();
 
 # krankenkassendaten ermitteln w/ existensprüfung krankenkasse
 my  ($name_krankenkasse) = $k->krankenkasse_sel('NAME',$ik_krankenkasse);
