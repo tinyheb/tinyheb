@@ -153,7 +153,7 @@ print '<tr>';
 print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print "<td><input type='button' name='stammdaten' value='Stammdaten' onClick='stamm($r_fk_st,document.rechposbear);'></td>";
-print "<td><input type='button' name='mahnung' value='Mahnung generieren' onClick='parent.window.location=\"mahnung_generierung.pl?frau_id=$r_fk_st&rechnr=$r_rechnr;\"'></td>";
+print "<td><input type='button' name='mahnung' value='Mahnung generieren' onClick='mahn_gen(rechnungsnr)'></td>";
 print '</tr>';
 
 
@@ -220,8 +220,8 @@ sub speichern {
     return;
   }
 
-  if ($betraggez_s == 0 || $zahl_datum eq '') {
-    $hint .= "Bitte Datum und Betrag erfassen, nichts gespeichert";
+  if (($betraggez_s == 0 && $ignore == 0) || $zahl_datum eq '') {
+    $hint .= "Bitte Datum und Betrag größer Null erfassen, nichts gespeichert";
     return;
   }
   if ($r_status == 30) {
