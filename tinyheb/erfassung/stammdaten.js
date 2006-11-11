@@ -80,6 +80,20 @@ function frau_speicher(formular) {
   return true;
 }
 
+function save_heb_stammdaten(formular) {
+  // plausiprüfungen für angaben zur hebamme
+  if (!ik_gueltig_check(formular.ik)) {
+    return false;
+  }
+  if (!plz_check(formular.plz)) {
+    return false;
+  }
+  if (!numerisch_check(formular.privat_faktor)) {
+    return false;
+  }
+  return true;
+}
+
 
 function kvnr_check(kvnummer) {
   re=/^\d{9,10}$/;
