@@ -44,7 +44,7 @@ sub new {
 				 "BUNDESLAND LIKE ? and ".
 				 "DATUM LIKE ?;");
   $max_feiertag = Heb->parm_unique('KALENDER_ID');
-  push @{$self->{BUNDESLAENDER}},'Bundesweit','NRW','Bayern','Hessen','Niedersachsen';
+  push @{$self->{BUNDESLAENDER}},'NRW','Bayern','Hessen','Niedersachsen','Hamburg';
   bless $self, ref $class || $class;
   return $self;
 }
