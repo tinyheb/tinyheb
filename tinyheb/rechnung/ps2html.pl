@@ -101,12 +101,16 @@ if ($versichertenstatus ne 'privat') {
   $p->text(2,19.7,"Gebührenabrechnung nach HebGV");
 } else {
   # Abfragen, welche privat Gebührenordnung wird genutzt
-  if ($heb_bundesland eq 'NRW') {
+  if (uc $heb_bundesland eq 'NRW') {
     $p->text(2,19.7,"Gebührenabrechnung nach HebGO NW");
-  } elsif ($heb_bundesland eq 'Bayern') {
+  } elsif (uc $heb_bundesland eq 'BAYERN') {
     $p->text(2,19.7,"Gebührenabrechnung nach HebGO Bayern");
-  } elsif ($heb_bundesland eq 'Niedersachsen') {
+  } elsif (uc $heb_bundesland eq 'NIEDERSACHSEN') {
     $p->text(2,19.7,"Gebührenabrechnung nach HebGO Niedersachsen");
+  } elsif (uc $heb_bundesland eq 'HESSEN') {
+    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Hessen");
+  } elsif (uc $heb_bundesland eq 'HAMBURG') {
+    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Hamburg");
   } else {
     $p->text(2,19.7,"PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen");
   }
@@ -434,7 +438,9 @@ sub print_wegegeld {
     }
 
     if ($versichertenstatus eq 'privat') {
-      if ($heb_bundesland eq 'Niedersachsen') {
+      if (uc $heb_bundesland eq 'NIEDERSACHSEN' ||
+	  uc $heb_bundesland eq 'HESSEN' ||
+	  uc $heb_bundesland eq 'HAMBURG') {
 	$preis *= $h->parm_unique('PRIVAT_FAKTOR');
 	$preis = sprintf "%.2f",$preis;
       }
