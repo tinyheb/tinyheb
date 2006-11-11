@@ -74,6 +74,7 @@ my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
 my $func = $q->param('func') || 0;
 #my $frau_suchen = $q->param('frau_suchen');
+my $status_edi='kein elektronischer Datenaustausch';
 
 hole_frau_daten() if ($func == 1 || $func == 2 || $func==3);
 
@@ -83,7 +84,18 @@ if ($ik_krankenkasse ne '' && $ik_krankenkasse > 0) {
    $plz_krankenkasse,
    $ort_krankenkasse,
    $strasse_krankenkasse) = $k->krankenkasse_sel('NAME,PLZ_HAUS,ORT,STRASSE',$ik_krankenkasse);
-  $name_krankenkasse = 'nicht bekannte IK angegeben' unless defined ($name_krankenkasse);
+  if (!defined($name_krankenkasse)) {
+    $name_krankenkasse = 'nicht bekannte IK angegeben';
+  } else {
+    # ermitteln Status Datenaustausch
+    my $test_ind= $k->krankenkasse_test_ind($ik_krankenkasse);
+    if (defined($test_ind)) {
+      $status_edi='Testphase' if ($test_ind == 0);
+      $status_edi='Erprobungsphase' if ($test_ind == 1);
+      $status_edi='Echtbetrieb' if ($test_ind == 2);
+      $status_edi='unbekannt, Bitte Parameter prüfen' if ($test_ind != 0 && $test_ind != 1 && $test_ind != 2);
+    }
+  }
 } elsif($versichertenstatus ne 'privat') {
   $name_krankenkasse = 'noch keine gültige Krankenkasse gewählt';
 } else {
@@ -239,11 +251,13 @@ print '<tr>';
 print '<td><b>Name Krankenkasse</b></td>';
 print '<td><b>Ort</b></td>';
 print '<td><b>Straße</b></td>';
+print '<td><b>Status Datenaustausch</b></td>';
 print '</tr>';
 print '<tr>';
 print "<td><input type='text' class=disabled disabled name='name_krankenkasse' value='$name_krankenkasse' size='28'></td>";
 print "<td><input type='text' class=disabled disabled name='ort_krankenkasse' value='$plz_krankenkasse&nbsp;$ort_krankenkasse' size='30'></td>";
 print "<td><input type='text' class=disabled disabled name='strasse_krankenkasse' value='$strasse_krankenkasse' size='20'></td>";
+print "<td><input type='text' class=disabled disabled name='status_edi_krankenkasse' value='$status_edi' size='30'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
