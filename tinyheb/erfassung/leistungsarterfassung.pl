@@ -259,7 +259,7 @@ print '<td>';
 print '<input type="button" name="reset" value="Inhalt löschen"';
 print ' onClick="loeschen()">';
 print '</td>';
-print '<td><input type="submit" name="abschicken" value="Speichern"</td>';
+print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
 print '<td><input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz_leistart(document.leistungsart)"></td>';
 print '<td><input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz_leistart(document.leistungsart)"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
