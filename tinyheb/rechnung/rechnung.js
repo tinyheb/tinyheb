@@ -107,6 +107,18 @@ function mahn_fertig(frau_id,rechnr,form) {
   open("mahnung.pl?frau_id="+frau_id+"&speichern=save&rechnr="+rechnr,"mahnung");
 }
 
+function mahn_gen (rechnr) {
+  // springt in Maske Mahnungsgenerierung
+  //alert("hier mahnung");
+  if (rechnr.value != '') {
+    //    opener.opener.window.location="mahnung_generierung.pl?rechnr="+rechnr.value;
+    open("mahnung_generierung.pl?rechnr="+rechnr.value,"_top");
+  } else {
+    alert("Bitte vorher Rechnung zur Bearbeitung auswählen");
+    return false;
+  }
+}
+
 function bearb_rech(rechnr,status) {
   // Bearbeitungsmaske Rechnung mit Daten füllen
   if (status < 30) {
