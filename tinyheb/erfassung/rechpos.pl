@@ -77,7 +77,7 @@ if ($auswahl eq 'Neu' && defined($abschicken)) {
 
 if ($auswahl eq 'Ändern' && defined($abschicken)) {
   aendern();
-  hole_daten();
+  hole_daten() if($leist_id > 0);
   $entfernung_tag=0;
   $entfernung_nacht=0;
   $begruendung='';
@@ -277,7 +277,8 @@ sub printbox {
     print ' selected' if ($posnr eq $l_posnr);
     print " >";
     $script .= "if(formular.posnr.value == '$l_posnr') {formular.preis.value=$l_preis;\n";
-    if (defined($l_fuerzeit) && $l_fuerzeit > 0 || $wahl eq 'B') {
+    if (defined($l_fuerzeit) && $l_fuerzeit > 0 || $wahl eq 'B' ||
+	$l_posnr eq '40') {
       $script .= "formular.zeit_von.disabled=false;\n";
       $script .= "formular.zeit_bis.disabled=false;\n";
       $script .= "var zl_tag = document.getElementsByName('zeit_von');\n";
@@ -445,6 +446,18 @@ sub speichern {
   # spezielle Prüfungen für PosNr. 2, 4, 5 und 8
   if (pos2458_plausi($posnr,$frau_id,$datum_l) ne '') {
     $hint .= pos2458_plausi($posnr,$frau_id,$datum_l);
+    return $hint;
+  }
+
+  # spezielle Prüfung für PosNr. 7 
+  if (pos7_plausi($posnr,$frau_id,$zeit_von,$zeit_bis)) {
+    $hint .= pos7_plausi($posnr,$frau_id,$zeit_von,$zeit_bis);
+    return $hint;
+  }
+
+  # spezielle Prüfung für PosNr. 40 
+  if (pos40_plausi($posnr,$frau_id,$zeit_von,$zeit_bis)) {
+    $hint .= pos40_plausi($posnr,$frau_id,$zeit_von,$zeit_bis);
     return $hint;
   }
 
@@ -648,6 +661,50 @@ sub pos1_plausi {
   return '';
 }
 
+sub pos7_plausi {
+  # Positionsnummer 7 darf die maximale Dauer 14 Stunden nicht überschreiten
+  my ($posnr,$frau_id,$zeit_von,$zeit_bis) = @_;
+  return '' if $posnr ne '7';
+  # zunächst die bisherige Dauer berechnen
+  my $dauer=0;
+  $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
+  while (my($alt_zeit_von,$alt_zeit_bis)=$l->leistungsdaten_werte_next()) {
+    $dauer+=$d->dauer_m($alt_zeit_bis,$alt_zeit_von);
+  }
+  my $erfasst=sprintf "%3.2f",$dauer/60;
+  $erfasst =~ s/\./,/g;
+  $dauer += $d->dauer_m($zeit_bis,$zeit_von);
+  if ($dauer > (14*60)) {
+    return 'FEHLER: Geburtsvorbereitung in der Gruppe höchsten 14 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
+  }
+  return '';
+}
+  
+
+sub pos40_plausi {
+  # Positionsnummer 40 darf die maximale Dauer von 10 Stunden nicht überschreiten
+    my ($posnr,$frau_id,$zeit_von,$zeit_bis) = @_;
+  return '' if $posnr ne '40';
+  # zunächst die bisherige Dauer berechnen
+  my $dauer=0;
+  $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
+  while (my($alt_zeit_von,$alt_zeit_bis)=$l->leistungsdaten_werte_next()) {
+    $dauer+=$d->dauer_m($alt_zeit_bis,$alt_zeit_von);
+  }
+  my $erfasst=sprintf "%3.2f",$dauer/60;
+  $erfasst =~ s/\./,/g;
+  $dauer += $d->dauer_m($zeit_bis,$zeit_von);
+  if ($dauer > (10*60)) {
+    return 'FEHLER: Rückbildungsgymnastik in der Gruppe höchsten 10 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
+  }
+  return '';
+}
+
+
+
+
+
+
 sub pos2458_plausi {
   # prüft für Positionsnummer 2,4,5,8 ob schon Positionsnummer 1 erfasst
   # wurde
@@ -808,6 +865,7 @@ sub loeschen {
       $werte .= ',' if ($werte ne '');
       $werte .= $poszus;
     }
+    $werte=$erg[1] if ($werte eq '');
     if ($l->leistungsdaten_werte($frau_id,"ID","(POSNR in ($werte) or POSNR=$erg[1]) and DATUM >= '".$d->convert($erg[4])."'",'DATUM')) {
       my ($id)=$l->leistungsdaten_werte_next();
       my @erg=$l->leistungsdaten_such_id($id);
@@ -835,7 +893,7 @@ sub loeschen {
       $werte .= ',' if ($werte ne '');
       $werte .= $poszus;
     }
-    if ($l->leistungsdaten_werte($frau_id,"ID","POSNR in ($werte)","DATUM")) {
+    if ($werte ne '' && $l->leistungsdaten_werte($frau_id,"ID","POSNR in ($werte)","DATUM")) {
       my ($id)=$l->leistungsdaten_werte_next();
       my @erg=$l->leistungsdaten_such_id($id);
       loeschen($id); # pos löschen und später erneut einfügen
@@ -852,7 +910,10 @@ sub loeschen {
 }
 
 sub aendern {
-  return if ($frau_id==0 || $leist_id ==0);
+  if ($frau_id==0 || $leist_id ==0) {
+    $hint='Keine Position zur Änderung ausgewählt,\nes wurde nicht geändert';
+    return;
+  }
   # Werte der zu löschenden Position holen, falls bei Speichern etwas
   # schief geht
   my @erg=$l->leistungsdaten_such_id($leist_id);
