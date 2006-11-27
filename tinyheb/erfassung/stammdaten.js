@@ -113,17 +113,69 @@ function ik_gueltig_check(ik_nummer) {
     // prüfen, ob 7-stellig erfasst wurde
     re =/^\d{7}$/;
     if (!re.test(ik_nummer.value)) {
-      alert("Bitte IK-Nummer 9 stellig numerisch erfassen");
+      alert("Bitte IK-Nummer 9-stellig numerisch erfassen");
       ik_nummer.focus();
       ik_nummer.select();
       return false;
     } else {
       ik_nummer.value = '10'+ik_nummer.value;
-      return true;
+      return luhn(ik_nummer.value);
     }
   }
-  return true;
+  return luhn(ik_nummer.value);
 }
+
+function luhn (ik) {
+  //alert("Übergeben "+ik);
+  var text=ik.toString();
+  var pruefziffer = Number(text.charAt(8));
+  var laenge=text.length;
+  if (laenge == 0) {
+    return true;
+  }
+  if (laenge != 9) {
+    alert("Prüfziffer konnte nicht berechnet werden.\nBitte IK-Nummer 9-stellig numerisch erfassen");
+    return false;
+  }
+  var erg=text.substring(0,2);
+  for (i=2;i<7;i+=2) {
+    //    alert("Bin bei Ziffer "+text.charAt(i)+"i ist"+i);
+    var zahl = Number(text.charAt(i));
+    zahl *= 2;
+    if(zahl > 9) {
+      zahl=quersum(zahl);
+    }
+    erg += zahl.toString();
+    erg += text.charAt(i+1);
+    //    alert("zwischenergebniss :"+erg);
+  }
+  var quer=quersum(erg.substring(2,8));
+  quer = quer % 10; // Rest berechnen
+  //  alert("quersumme ergebnis:"+quer+" 9 stelle"+pruefziffer);
+  if (quer != pruefziffer) {
+    alert("keine gültige IK-Nummer, Prüfziffer der IK Nummer falsch");
+    return false;
+  } else {
+    return true;
+  }
+}
+
+
+function quersum (sum) {
+  //alert("berechne quersumme für"+sum);
+  var text=sum.toString();
+  var laenge=text.length;
+  var erg=0;
+  var i=0;
+  for(i=0;i<laenge;i++) {
+    var zahl = Number(text.charAt(i));
+    erg+=zahl;
+    //    alert("quersumme zw"+erg);
+  }
+  //  alert("Quersumme "+erg);
+  return erg;
+}
+    
 
 function kvnr_gueltig_check(kvnr_gueltig) {
   //  alert("gueltig"+kvnr_gueltig.value);
