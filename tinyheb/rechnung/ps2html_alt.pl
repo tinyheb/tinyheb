@@ -46,7 +46,7 @@ if ($rechtyp == 1) {
       mkdir "/tmp/wwwrun";
     }
     unlink('/tmp/wwwrun/file.ps');
-    open AUSGABE,"/tmp/wwwrun/file.ps" or
+    open AUSGABE,">/tmp/wwwrun/file.ps" or
       die "konnte Datei nicht in pdf konvertieren, Schreibfehler für file.ps\n";
     print AUSGABE $rech;
     close AUSGABE;
@@ -54,7 +54,7 @@ if ($rechtyp == 1) {
       system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
     } elsif ($^O =~ /MSWin32/) {
       unlink('/tmp/wwwrun/file.pdf');
-      system('/gs/gs8.15/bin/gs32winc -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps');
+      system('/gs/gs8.15/bin/gswin32c -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps');
     } else {
       die "kein Konvertierungsprogramm ps2pdf gefunden\n";
     }
