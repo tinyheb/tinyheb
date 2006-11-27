@@ -923,7 +923,7 @@ sub enc {
   }
   if ($schl_flag == 3) {
     # DER verschlüsseln um später base64 encoden zu können
-    open NUTZ, "openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER $path/tmp/zik.pem |" or return ("Konnte Datei nicht DER verschlüsseln",0);
+    open NUTZ, "$openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER $path/tmp/zik.pem |" or return ("Konnte Datei nicht DER verschlüsseln",0);
   }
 
   $dateiname =~ s/\.sig//g;
