@@ -9,6 +9,15 @@ Die gesetzlichen Anforderungen nach §301a, resp. §302 SGB V werden eingehalten.
 In diesem Abschnitt ist die Installation für ein Win* System beschrieben,
 Linux Nutzer lesen bitte die Installationshinweise in der Datei README
 
+Für Windows Nutzer steht unter http://home.arcor.de/thomas.baum/tinyheb/source
+eine angepasste Version zur Verfügung. Sollte das hier entpackte Archiv
+von einer anderen Quelle stammen, ist es sinnvoll die Sourcen erneut 
+herunter zu laden.
+
+Heiner Alferink hat eine sehr ausführliche Dokumentation zur Installation
+von tinyHeb unter Windows XP erstellt. Diese findet sich an folgender Stelle:
+http://home.arcor.de/thomas.baum/tinyheb/Installation_tinyheb_win32.pdf
+
 << Schritt 1 >>
 Um tinyHeb unter Windows benutzen zu können müssen zunächst verschiedene 
 Programme aus dem Internet heruntergeladen werden. Der Download aus dem
