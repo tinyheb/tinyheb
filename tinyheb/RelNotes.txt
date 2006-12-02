@@ -1,3 +1,36 @@
+Release 0.9.0
+
+zusätzliche Plausiprüfung auf Prüfziffer der IK-Nummer
+
+privat Rechnungen für Bayern, Niedersachsen, Hessen und Hamburg.
+
+Eigene Erfassungsmaske für Angaben zur Hebamme.
+
+In Stammdatenerfassungsmaske wird sofort angezeigt, ob elektronischer Datenaustausch möglich ist.
+
+Neue Plausiprüfungen für Positionsnummer 7 (mehr als 14 Stunden) und Positionsnummer 40 (mehr als 10 Stunden)
+
+Bug fix:
+es konnte Mahnung ohne vorherige Rechnung generiert werden.
+
+Bug fix:
+Bei der Änderung von Rechnungsposten konnte es zu Fehler kommen, wenn abhängige Positionsnummern existierten.
+
+Bug fix:
+alte Rechnungen konnten unter Windows nicht angezeigt werden.
+temporäre Files wurden bei Anzeige alter Rechnungen nicht korrekt angelegt.
+
+neue Funktionalität bei Rechnungsbearbeitung:
+Rechnungen können auch auf erledigt gesetzt werden, wenn gezahlter Betrag größer oder kleiner des Rechnungsbetrages ist.
+
+Bug fix:
+In Rechnungsbearbeitung wurde nicht immer die korrekte Summe der offenen und erledigten Rechnungen angezeigt.
+
+Bug fix:
+bei elektronischen Rechnungen wurden temporäre Files unter Windows nicht korrekt angelegt.
+Pfad zu openssl wurde für Verschlüsselung auf Windows Systemen nicht korrekt angesprochen.
+
+------------------------------------------------------------------------------------
 Release 0.8.0
 
 Bug fix:
