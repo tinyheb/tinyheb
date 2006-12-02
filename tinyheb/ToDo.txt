@@ -1,7 +1,22 @@
 Offen:
+15.11.06
+Programm key.pl auf Win32 Systeme anpassen
+
+12.11.06
+Positionsnummer 8 muss gleiche Plausiprüfung haben, wie Positionsnummer 7
+
+Beschreibung der Maske Mahnungen generieren
+
+Beschreibung der Maske Angaben zur Hebamme
+
+11.11.06
+Daten aus Entfernung in Stammdaten soll in Maske Rechnungsposten Erfassung übernommen werden
+
+neue Maske in der Status von Rechnungen verändert werden kann.
+
+Temporäre Verzeichnisse für Win einheitlich.
+
 24.09.06
-Wenn gezahlter Betrag ungleich Rechnungsbetrag, muss es trotzdem 
-möglich sein, Rechnung auf erledigt zu setzen.
 Privat Rechnungen für andere Bundesländer als NRW
 
 23.09.06
@@ -9,18 +24,12 @@ Feiertage Bundeslandbezogen
 setup Script für Windows installation.
 
 26.08.06
-Es kann nur geändert werden, wenn vorher Positiosnummer ausgewählt wurde.
 Positionsnummer 6  mehr als 2 mal am selben Tag nur auf ärztliche Anordnung.
-Positionsnummer 7 nicht mehr als 14 Stunden
 
-Plausiprüfungen für Positionsnummer 40.
 
 25.08.06
 Doku für:
 - versandte Rechnungen bearbeiten
-
-13.08.06
-Druck alter Rechnungen muss auch für Windows funktionieren.
 
 12.08.06
 In Spec File ggf. mozplugger mit aufnehmen.
@@ -30,9 +39,6 @@ prüfen ob mit harten Fehlern in mysql richtig umgegangen wird.
 
 12.08.06
 - Installationshinweise für Windows aufnehmen.
-
-12.08.06
-eigene Ergassungs- und Bearbeitungsmaske für Stammdaten der Hebamme
 
 12.08.06
 Makefile.PL erstellen
@@ -64,6 +70,28 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+11.11.06
+Plausiprüfungen für Positionsnummer 40. Anforderung vom 26.08.06
+
+Positionsnummer 7 nicht mehr als 14 Stunden. Anforderung vom 26.08.06
+
+Es kann nur geändert werden, wenn vorher Positiosnummer ausgewählt wurde. Anforderung vom 26.08.06
+
+Wenn gezahlter Betrag ungleich Rechnungsbetrag, muss es trotzdem 
+möglich sein, Rechnung auf erledigt zu setzen. Anforderung vom 24.09.06
+
+privat Rechnungen für Bayern, Niedersachsen, Hessen und Hamburg. Anforderung vom 24.09.06.
+
+In die Maske Mahnung darf nur gesprungen werden, wenn vorher eine Rechnung ausgewählt wurde. Anforderung vom 05.11.06
+
+eigene Ergassungs- und Bearbeitungsmaske für Stammdaten der Hebamme. Anforderung vom 12.08.06
+
+Druck alter Rechnungen muss auch für Windows funktionieren. Anforderung vom 13.08.06
+
+
+
+
+
 24.09.06
 Plausiprüfungen bei Frauenauswahl müssen analog der Prüfungen in Stammdatenerfassung sein. Anforderung vom 12.08.06
 
