@@ -37,6 +37,7 @@ sub new {
   my($class) = @_;
   my $self = {};
   $dbh = Heb->connect;
+  $self->{dbh}=$dbh;
   bless $self, ref $class || $class;
   return $self;
 }
@@ -48,6 +49,13 @@ sub connect {
                        AutoCommit => 1 });
   die $DBI::errstr unless $dbh;
   return $dbh;
+}
+
+sub db_name {
+  my $self=shift;
+  my ($name,$host)=split ';',$dbh->{Name};
+  my ($dummy,$dbname)=split '=',$name;
+  return $dbname;
 }
 
 sub parm_such {
