@@ -59,7 +59,8 @@ sub krankenkasse_sel {
 
   my($werte,$ik) = @_;
 
-  return undef if($ik eq '');
+  return undef if(!defined($ik) or $ik eq '');
+
   # lesen aus Datenbank vorbereiten
   my $krankenkasse_get = $dbh->prepare("select $werte from Krankenkassen ".
 				       "where $ik = IK;")
@@ -102,6 +103,37 @@ sub krankenkasse_such {
 sub krankenkasse_such_next {
   return $krank_such->fetchrow_array();
 }
+
+
+
+sub da_such {
+  # sucht nach Datenannahmestellen unter den Krankenkassen
+  my $self=shift;
+  my %erg;
+  my @erg;
+
+  my $da_such =$dbh->prepare("select distinct zik from Krankenkassen ".
+			     "where zik_typ in (2,3) order by zik;")
+    or die $dbh->errstr();
+  $da_such->execute or die $dbh->errstr();
+  while (my ($da)=$da_such->fetchrow_array()) {
+    $erg{$da}=$da;
+  }
+
+  $da_such =$dbh->prepare("select distinct ik from Krankenkassen ".
+			     "where zik_typ=2 order by ik;")
+    or die $dbh->errstr();
+  $da_such->execute or die $dbh->errstr();
+  while (my ($da)=$da_such->fetchrow_array()) {
+    $erg{$da}=$da;
+  }
+
+  foreach my $key (sort keys %erg) {
+    push @erg,$key;
+  }
+  return @erg;
+}  
+
 
 
 sub krankenkassen_ins {
