@@ -42,7 +42,7 @@ my $debug=1;
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
 my @kinder = ('Einlinge','Zwillinge','Drillinge','Vierlinge');
-my @verstatus = ('1 1','3 1','privat');
+my @verstatus = ('1 1','3 1','privat','1 9','3 9','1 7','3 7');
 
 my $hint = '';
 
