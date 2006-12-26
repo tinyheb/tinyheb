@@ -7,7 +7,7 @@
 # Auswahl einer Krankenkasse
 
 # Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -99,6 +99,29 @@ print '<input type="button" name="zurueck" value="Zurück" onClick="self.close()"
 print '</tr>';
 print '</table>';
 
+print <<SCRIPTE;
+<script>
+  function zurueck() {
+    kassenauswahl.close();
+  }
+  function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse,status_edi) {
+    //  alert("gewählt"+name+plz_haus+ort+strasse+k_ik);
+    // in Parent Dokument übernehmen
+    // alert("parent"+opener.window.document.forms[0].name);
+    var formular=opener.window.document.forms[0];
+    if (formular.name == 'krankenkassen') {
+      opener.window.location="krankenkassenerfassung.pl?func=3&ik_krankenkasse="+k_ik;
+    } else {
+       formular.ik_krankenkasse.value=k_ik;
+       formular.name_krankenkasse.value=name;
+       formular.strasse_krankenkasse.value=strasse;
+       formular.ort_krankenkasse.value=plz_haus+' '+ort;
+       formular.status_edi_krankenkasse.value=status_edi;
+    }
+  }
+</script>
+SCRIPTE
+
 # Prüfen, ob gesucht werden soll
 if (defined($suchen)) {
   # alle Kassen ausgeben, die den Kriterien entsprechen
@@ -154,27 +177,5 @@ print '</form>';
 print '</tr>';
 print '</table>';
 
-print <<SCRIPTE;
-<script>
-  function zurueck() {
-    kassenauswahl.close();
-  }
-  function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse,status_edi) {
-    //  alert("gewählt"+name+plz_haus+ort+strasse+k_ik);
-    // in Parent Dokument übernehmen
-    // alert("parent"+opener.window.document.forms[0].name);
-    var formular=opener.window.document.forms[0];
-    if (formular.name == 'krankenkassen') {
-      opener.window.location="krankenkassenerfassung.pl?func=3&ik_krankenkasse="+k_ik;
-    } else {
-       formular.ik_krankenkasse.value=k_ik;
-       formular.name_krankenkasse.value=name;
-       formular.strasse_krankenkasse.value=strasse;
-       formular.ort_krankenkasse.value=plz_haus+' '+ort;
-       formular.status_edi_krankenkasse.value=status_edi;
-    }
-  }
-</script>
-SCRIPTE
 print "</body>";
 print "</html>";
