@@ -119,7 +119,7 @@ if ($name_krankenkasse ne '') {
   if (defined($zik) && $zik > 0) {
     $text.="Datenannahmestelle: $zik ($name_zik).\n";
   } else {
-    $text .= "keine zentral Datenannahmestelle vorhanden. ";
+    $text .= "keine zentrale Datenannahmestelle vorhanden. ";
   }
   my $empf_phys=$k->krankenkasse_empf_phys($zik);
   my ($name_phys)=$k->krankenkasse_sel("KNAME",$empf_phys);
@@ -165,6 +165,7 @@ if (defined($ik_krankenkasse) && $ik_krankenkasse ne '') {
 if ($text ne '' && $versichertenstatus ne 'privat') {
   print "<tr>";
   print "<td colspan='6'><textarea name='hinweise' cols='112' rows='2' class='disabled' disabled >$text</textarea>";
+# print "<td colspan='6'><textarea name='hinweise' cols='112' rows='2' class='disabled' >$text</textarea>";
   print "</td>";
   print "</tr>";
 }
