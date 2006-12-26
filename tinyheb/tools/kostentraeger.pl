@@ -5,7 +5,7 @@
 # extrahiert aus Kostenträger Dateien die benötigten Daten
 
 # Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -75,22 +75,27 @@ my $pfad = $option{p} || '';
 print "Einlesen der Daten von Datei: $eingabe\n" if $debug;
 
 my @dateien = split ' ',$eingabe;
+my $k_typ='';
 
 foreach my $file (@dateien) {
-  my $k_typ = substr($file,0,2); # Krankenkassentyp z.B. AO=AOK
+  $k_typ = substr($file,0,2); # Krankenkassentyp z.B. AO=AOK
   $file = $pfad.$file;
-# öffnen der Datei mit den Informationen
-open FILE, $file or die "Konnte Datei $file nicht zum Lesen öffnen $!\n";
+  # öffnen der Datei mit den Informationen
+  open (FILE, "<:raw",$file) or die "Konnte Datei $file nicht zum Lesen öffnen $!\n";
  
 my $line_counter = 0; 
 my $zeile = '';
 
 LINE:while ($zeile=<FILE>) {
-  chomp($zeile);
-  $zeile =~ s/\'\x0d//g;
-#  print "zeile1 $zeile\n" if $debug;
+  $zeile =~ s/\'\x0d\x0a//g;
   next LINE if ($zeile =~ /\AUNA/); # Beginn überspringen
-  next LINE if ($zeile =~ /\AUNB/); # Beginn überspringen
+  
+  if ($zeile =~ /\AUNB/) {
+    my @erg = split '\+',$zeile;
+    $k_typ = substr($erg[7],0,2);
+    print "K_TYP neu ermittelt: $k_typ\n" if $debug;
+    next LINE;
+  }
 
   if ($zeile =~ /UNH/) { # Krankenkasse kommt
     my $kasse=''; # ergebniss hier ablegen
@@ -141,11 +146,11 @@ LINE:while ($zeile=<FILE>) {
 	    ($erg[9]==00 || $erg[9]==50 || ($erg[9]==99 && $zik_typ < 3))) {
 	  # aok haben ring geschlossen über typ 2 Verbindungen, die dürfen
 	  # hier nicht berücksichtigt werden
-	  if (($k_typ eq 'AO' && $zik_typ < 3) ||
+	  if ((uc $k_typ eq 'AO' && $zik_typ < 3) ||
 	      # wenn keine aok und es ist schon kostenträger vorhanden,
 	      # darf nur mit datenannahmestelle überschrieben werden
 	      # wenn kostenträger die gleiche kasse ist
-	      (($k_typ ne 'AO') && $idk != $erg[2] && 
+	      ((uc $k_typ ne 'AO') && $idk != $erg[2] && 
 	       ($zentral_idk==$idk || $zentral_idk==0))) {
 	    $zentral_idk=$erg[2];
 	    $da=$zentral_idk;
@@ -220,6 +225,7 @@ LINE:while ($zeile=<FILE>) {
       if ($zeile =~ /\AANS\+/) {
 	my @erg = split '\+',$zeile;
 	if ($erg[1]==1) {
+	  $erg[4]='' if(!defined($erg[4]));
 	  print "Postanschrift strasse $erg[4]\n" if $debug;
 	  $ans_haus{plz}=$erg[2];
 	  $ans_haus{ort}=$erg[3];
@@ -237,6 +243,7 @@ LINE:while ($zeile=<FILE>) {
       }
       if ($zeile =~ /\AASP\+/) {
 	my @erg = split '\+',$zeile;
+	$erg[4]='' if(!defined($erg[4]));
 	$asp_name = $erg[4];
 	$asp_tel = $erg[2];
 	print "--> TEL $asp_tel\n" if $debug;
@@ -244,8 +251,8 @@ LINE:while ($zeile=<FILE>) {
       }
       print "$zeile\n" if $debug;
       $zeile=<FILE>;
-      chomp($zeile);
-      $zeile =~ s/\'\x0d//g;
+#      chomp($zeile);
+      $zeile =~ s/\'\x0d\x0a//g;
     }
     $kasse .= "$idk\t$kname\t$name\t";
     $kasse .= $ans_haus{strasse} if defined($ans_haus{strasse});
