@@ -6,7 +6,7 @@
 # Schlüssel
 
 # Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 use strict;
 use Date::Calc qw(This_Year Decode_Month Add_Delta_DHMS);
 use Getopt::Std;
+use File::Copy;
 
 use lib '../';
 use Heb_krankenkassen;
@@ -34,6 +35,22 @@ use Heb;
 
 my $k = new Heb_krankenkassen;
 my $h = new Heb;
+
+my $openssl ='openssl';
+
+$openssl = '/OpenSSL/bin/'.$openssl if ($^O =~ /MSWin32/);
+
+our $path = $ENV{HOME}; # für temporäre Dateien
+if ($^O =~ /MSWin32/) {
+  $path .='/tinyheb';
+} else {
+  $path .='/.tinyheb';
+}
+mkdir "$path" if(!(-d "$path"));
+if (!(-d "$path/tmp")) { # Zielverzeichnis anlegen
+  mkdir "$path/tmp";
+}
+
 
 my %option = ();
 getopts("vp:f:o:hu",\%option);
@@ -55,6 +72,10 @@ my $debug = $option{v} || 0;
 my $eingabe = $option{f} || '';
 my $pfad = $option{p} || '';
 my $o_pfad = $option{o} || 'keys/';
+
+if (!(-d "$o_pfad")) {
+  die "der Ausgabepfad: $o_pfad existiert nicht, bitte anlegen\n";
+}
 
 #$eingabe = 'kostentraeger/'.$eingabe;
 print "Einlesen der Daten von Datei: $eingabe\n" if $debug;
@@ -79,24 +100,26 @@ foreach my $file (@dateien) {
   print SCHREIB "-----BEGIN CERTIFICATE-----\n";
  LINE:while ($zeile=<FILE>) {
     my $ent = chomp($zeile);
-#    $zeile =~ s/\r\n//g;
-#    print "laenge:",length($zeile),"z$zeile\n" if $debug;
+    #    $zeile =~ s/\r\n//g;
+    #    print "laenge:",length($zeile),"z$zeile\n" if $debug;
     if (length($zeile)>1) {
       print SCHREIB $zeile."\n";
       $erg .= $zeile."\n";
     } else {
       print SCHREIB "-----END CERTIFICATE-----\n";
       close(SCHREIB);
-      system("openssl x509 -in $o_pfad/datei$file_counter.pem -dates -subject -noout") if $debug;
-      system("openssl x509 -in $o_pfad/datei$file_counter.pem -subject -noout > /tmp/key_temp.txt");
-      open LESNAME, "/tmp/key_temp.txt";
+      system("$openssl x509 -in $o_pfad/datei$file_counter.pem -dates -subject -noout") if $debug;
+      open LESNAME,"$openssl x509 -in $o_pfad/datei$file_counter.pem -subject -noout |" or 
+	die "konnte aus Zertifikat keine IK Nummer ermitteln\n";
       my $name=<LESNAME>;
       print "$file_counter --> $name";
       if ($name =~ /OU=IK(\d{9})/) {
 	$ik=$1;
 	print "IK Nummer :$1\n" if $debug;
-	system("mv $o_pfad/datei$file_counter.pem $o_pfad/$1.pem");
-	print "Verarbeitet: $1, $file_counter\n";
+	if (-e "$o_pfad/datei$file_counter.pem") {
+	  move("$o_pfad/datei$file_counter.pem","$o_pfad/$1.pem");
+	  print "Verarbeitet: $1, $file_counter\n";
+	}
       }
       close(LESNAME);
       $file_counter++;
