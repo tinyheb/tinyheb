@@ -5,7 +5,7 @@
 
 # Stammdaten der Hebamme erfassen, ändern, löschen
 
-# Copyright (C) 2006 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2006, 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 
 use lib "../";
@@ -40,6 +41,9 @@ my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my $TODAY_tmj = $d->convert_tmj($TODAY);
 my @aus = ('Anzeigen','Ändern');
 my @bund = $d->bundeslaender;
+my %tarifkz =('00' => 'bundeseinheitlicher Tarif',
+	       '24' => 'West Tarif',
+	       '25' => 'Ost Tarif');
 
 my $hint = '';
 
@@ -56,7 +60,7 @@ my $namebank = $q->param('namebank') || '';
 my $tel = $q->param('tel') || '';
 my $email = $q->param('email') || '';
 my $bundesland = $q->param('bundesland') || 'NRW';
-my $tarifkz = $q->param('tarifkz') || 24;
+my $tarifkz = $q->param('tarifkz') || '00';
 my $privat_faktor = $q->param('privat_faktor') || '1.8';
 
 my $speichern = $q->param('Speichern');
@@ -168,12 +172,12 @@ while ($j <= $#bund) {
 print '</td>';
 print '<td>';
 print "<select name='tarifkz' size=1>";
-if ($tarifkz == 25) {
-  print '<option selected value="25">Ost</option>';
-  print '<option value="24">West</option>';
-} else {
-  print '<option value="25">Ost</option>';
-  print '<option selected value="24">West</option>';
+foreach my $key (sort keys %tarifkz) {
+  print "<option value='$key' ";
+  print ' selected' if ($key eq $tarifkz);
+  print '>';
+  print $tarifkz{$key};
+  print "</option>\n";
 }
 print '</td>';
 print "<td><input type='text' name='privat_faktor' value='$privat_faktor' size='9' onChange='numerisch_check(this)'></td>";
