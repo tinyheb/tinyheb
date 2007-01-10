@@ -2,8 +2,8 @@
 
 # Package um Datümer zu verarbeiten
 
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ sub new {
 				 "BUNDESLAND LIKE ? and ".
 				 "DATUM LIKE ?;");
   $max_feiertag = Heb->parm_unique('KALENDER_ID');
-  push @{$self->{BUNDESLAENDER}},'NRW','Bayern','Hessen','Niedersachsen','Hamburg';
+  push @{$self->{BUNDESLAENDER}},'NRW','Bayern','Hessen','Niedersachsen','Hamburg','Rheinland-Pfalz';
   bless $self, ref $class || $class;
   return $self;
 }
