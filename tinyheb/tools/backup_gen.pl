@@ -24,6 +24,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 use Compress::Zlib;
 
@@ -40,9 +41,6 @@ my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my $umfang = $q->param('umfang') || 'alles';
 my $passwort = $q->param('passwort') || '';
 
-print $q->header ( -type => "application/octet-stream", -expires => "-1d",
-		   -Content_Disposition => "attachment; filename=tinyheb_backup$TODAY.sql.gz"
-		 );
 
 if ($passwort ne '') {
   $mysqldump .= " -u root -p=$passwort";
@@ -56,6 +54,32 @@ if ($umfang eq 'alles') {
 } else {
   $mysqldump .= " -a $dbname Krankenkassen";
 }
+
+if (!(-d "/tmp/wwwrun")) {
+  mkdir "/tmp" if (!(-d "/tmp"));
+  mkdir "/tmp/wwwrun";
+}
+
+unlink('/tmp/wwwrun/backup.sql');
+my $erg=system("$mysqldump > /tmp/wwwrun/backup.sql");
+if ($erg > 0) {
+  print $q->header ( -type => "text/html", -expires => "-1d");
+  print '<head>';
+  print '<title>Backup Error</title>';
+  print '</head>';
+  print '<body bgcolor=white>';
+  print '<h1>Es kann keine korrekte Sicherung angelegt werden,</br> Bitte Passwort und ggf. Error-Log des Webservers prüfen</br></h1>';
+  print '<input type="button" name="zurueck" value="Zurück" onclick=window.location="backup.pl">';
+
+  print "</body>";
+  print "</html>";
+  exit(1);
+}
+
+
+print $q->header ( -type => "application/octet-stream", -expires => "-1d",
+		   -Content_Disposition => "attachment; filename=tinyheb_backup$TODAY.sql.gz"
+		 );
 
 open(SICHER,"-|",$mysqldump) or die "Konnte Datenbank nicht sichern\n";
 my $zeile='';
@@ -74,6 +98,7 @@ while($zeile=<SICHER>) {
   $byteswritten2=$gz->gzwrite($zeile) or die "error writing: $gzerrno\n";
 }
 $gz->gzclose;
-warn "Achtung: es wurde keine korrekte Sicherung angelegt" if (!defined($byteswritten2));
+
+die "Achtung: es wurde keine korrekte Sicherung angelegt" if (!defined($byteswritten2));
 
 
