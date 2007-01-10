@@ -5,7 +5,7 @@
 
 # Einspielen eines Backups der tinyHeb Datenbank
 
-# Copyright (C) 2006 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 use Compress::Zlib;
 
@@ -82,7 +83,7 @@ print "\n";
 
 # Root Passwort
 print '<tr><td><table border="0" align="left">';
-print '<tr><td><b>Passwort des Datenbankadmin</b></td></tr>';
+print '<tr><td><b>Passwort des Datenbankadmin</b> (falls benötigt)</td></tr>';
 print '</tr>';
 print '<tr>';
 print "<td><input type='password' name='passwort' value='$passwort' size='15' maxlength='14'></td>";
@@ -160,7 +161,7 @@ sub restore {
   close RESTORE;
   my $exit_value=system("$mysql < /tmp/wwwrun/restore.sql");
   if ($exit_value > 0) {
-    $hint="Sicherung konnte nicht erfolgreich in Datenbank eingespielt werden, bitte Error-Log des Webserver überprüfen";
+    $hint="Sicherung konnte nicht erfolgreich in Datenbank eingespielt werden, bitte Passwort und Error-Log des Webserver überprüfen";
     return;
   }
     
