@@ -4,7 +4,7 @@
 
 # extrahiert aus Kostenträger Dateien die benötigten Daten
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -323,7 +323,7 @@ LINE:while ($zeile=<FILE>) {
 	  if ($aus_ungleich) {
 	    print "----geaenderte Kasse $k_ik $k_kname\n";
 	    print "war schon im Datenhaushalt neu aus Datei $file\n" if(defined($alle_kassen{$k_ik}));
-	    print "ALT\t\t\tNEU\n";
+	    print "ALT\t\t\t\tNEU\n";
 	    print "NAME $k_name\t\t$name_n\n" if(!($k_name eq $name_n));
 	    print "KNAME $k_kname\t\t$kname_n\n" if(!($k_kname eq $kname_n));
 	    print "$k_strasse\t\t$strasse_n\n" if(!($k_strasse eq $strasse_n));
@@ -333,11 +333,11 @@ LINE:while ($zeile=<FILE>) {
 	    print "POSTFACH $k_postfach\t\t$postfach_n\n" if(!($k_postfach eq $postfach_n));
 	    print "$k_asp_name\t\t$asp_name_n\n" if(!($k_asp_name eq $asp_name_n));
 	    print "$k_asp_tel\t\t$asp_tel_n\n" if(!($k_asp_tel eq $asp_tel_n));
-	    print "ZIK\t$k_zik\t\t$zik_n\n" if(!($k_zik eq $zik_n));
+	    print "ZIK\t\t$k_zik\t$zik_n\n" if(!($k_zik eq $zik_n));
 	    print "ZIK_TYP\t$k_zik_typ\t\t$zik_typ_n\n" if (!($k_zik_typ == $zik_typ_n));
 	    print "BELEG_IK\t$k_beleg_ik\t$beleg_ik_n\n" if (!($k_beleg_ik == $beleg_ik_n));
 	    print "EMAIL\t$k_email\t$email_n\n" if (!($k_email eq $email_n));
-	    print "BEM\t$k_bemerkung\t\t$bemerkung_n\n" if(!($k_bemerkung eq $bemerkung_n));
+	    print "BEM ALT $k_bemerkung\nBEM NEU $bemerkung_n\n" if(!($k_bemerkung eq $bemerkung_n));
 	  }
 	  # update auf Datenbank
 	  $k->krankenkassen_update($kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ,$beleg_ik_n,$email_n,$k_ik) if ($update);
