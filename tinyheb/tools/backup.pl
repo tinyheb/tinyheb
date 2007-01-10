@@ -5,7 +5,7 @@
 
 # Backup der tinyHeb Datenbank anlegen
 
-# Copyright (C) 2006 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 
 use lib "../";
@@ -55,6 +56,7 @@ print '<h1>Sichern der <i>tinyHeb</i> Datenbank</h1>';
 print '<hr width="90%">';
 print '</div><br>';
 # Formular ausgeben
+
 print '<form name="backup" action="backup_gen.pl" method="get" target=_top bgcolor=white>';
 print '<table border="0" width="700" align="left">';
 
@@ -90,7 +92,7 @@ print "\n";
 
 # Root Passwort
 print '<tr><td><table border="0" align="left">';
-print '<tr><td><b>Passwort des Datenbankadmin</b></td></tr>';
+print '<tr><td><b>Passwort des Datenbankadmin</b> (falls benötigt)</td></tr>';
 print '</tr>';
 print '<tr>';
 print "<td><input type='password' name='passwort' value='$passwort' size='15' maxlength='14'></td>";
