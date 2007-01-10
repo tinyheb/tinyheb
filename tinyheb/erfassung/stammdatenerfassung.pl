@@ -4,8 +4,8 @@
 #-d:DProf  
 
 # Stammdaten erfassen
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 
 use lib "../";
@@ -42,7 +43,7 @@ my $debug=1;
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
 my @kinder = ('Einlinge','Zwillinge','Drillinge','Vierlinge');
-my @verstatus = ('1 1','3 1','privat','1 9','3 9','1 7','3 7');
+my @verstatus = ('1 1','3 1','privat','1 9','3 9','1 7','3 7','1 8','3 8');
 
 my $hint = '';
 
