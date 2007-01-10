@@ -24,6 +24,7 @@ use PostScript::Simple;
 use Date::Calc qw(Today);
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 
 use lib "../";
 use Heb;
@@ -111,6 +112,8 @@ if ($versichertenstatus ne 'privat') {
     $p->text(2,19.7,"Gebührenabrechnung nach HebGO Hessen");
   } elsif (uc $heb_bundesland eq 'HAMBURG') {
     $p->text(2,19.7,"Gebührenabrechnung nach HebGO Hamburg");
+  } elsif (uc $heb_bundesland eq 'RHEINLAND-PFALZ') {
+    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Rheinland-Pfalz");
   } else {
     $p->text(2,19.7,"PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen");
   }
