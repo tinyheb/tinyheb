@@ -1,8 +1,8 @@
 /* script für Plausiprüfungen im Rahmen der
 # Rechnungserfassung/ Generierung und Navigation
 
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
     }
     if (geb_kind == '00.00.0000' || geb_kind == '') {
       alert("Geburtsdatum Kind wurde nicht erfasst\nes kann keine Rechnung produziert werden. \nRechnung wurde nicht gespeichert.");
+      return false;
     }
     if (kv_nummer == 0 || kv_nummer == '') {
       alert("Krankenversicherungsnummer wurde nicht erfasst\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert");
