@@ -19,4 +19,6 @@ update Parms set VALUE ='AOK Westfalen-Lippe <da@dta.aok.de>' where name='MAIL10
 update Parms set VALUE ='AOK Schleswig-Holstein <da@dta.aok.de>' where name='MAIL101317004';
 update Parms set VALUE ='AOK Hamburg <da@dta.aok.de>' where name='MAIL101519213';
 update Parms set VALUE ='AOK Mecklenburg-Vorpommern <da@dta.aok.de>' where name='MAIL100395611';
+update Leistungsart set zusatzgebuehren2='>5GK' where POSNR=24 and zusatzgebuehren2='>4GK';
+update Leistungsart set zusatzgebuehren4='<6GK' where POSNR=24 and zusatzgebuehren4='<5GK';
 
