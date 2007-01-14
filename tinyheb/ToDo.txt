@@ -1,6 +1,6 @@
 Offen:
-15.11.06
-Programm key.pl auf Win32 Systeme anpassen
+26.12.06
+Grund angeben, warum eine elektronische Rechnung nicht möglich ist.
 
 12.11.06
 Positionsnummer 8 muss gleiche Plausiprüfung haben, wie Positionsnummer 7
@@ -21,15 +21,10 @@ Privat Rechnungen für andere Bundesländer als NRW
 
 23.09.06
 Feiertage Bundeslandbezogen
-setup Script für Windows installation.
 
 26.08.06
 Positionsnummer 6  mehr als 2 mal am selben Tag nur auf ärztliche Anordnung.
 
-
-25.08.06
-Doku für:
-- versandte Rechnungen bearbeiten
 
 12.08.06
 In Spec File ggf. mozplugger mit aufnehmen.
@@ -39,12 +34,6 @@ prüfen ob mit harten Fehlern in mysql richtig umgegangen wird.
 
 12.08.06
 - Installationshinweise für Windows aufnehmen.
-
-12.08.06
-Makefile.PL erstellen
-
-06.08.06 
-eigene Erfassungs- und Bearbeitungsmaske für Datenannahmestellen
 
 06.08.06
 eigene Erfassungs- und Bearbeitungsmaske für Materialien
@@ -70,6 +59,33 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+14.01.07
+Anpassung Handbuch, Kapitel 4.5 bei E-Preis beschreiben, dass immer der HebGV Preis angezeigt wird. Anforderung vom 03.12.06
+
+13.01.07
+Erste Version eines setup Programms für Windows Systeme. 
+Anforderung vom 23.09.06.
+
+13.01.07
+privat Rechnungen für Rheinland-Pfalz. Anforderung vom 24.09.06
+
+26.12.06
+Programm key.pl auf Win32 Systeme anpassen. Anforderung vom 15.11.06
+
+eigene Erfassungs- und Bearbeitungsmaske für Datenannahmestellen. Anforderung vom 06.08.06
+
+update auf Postionsnummer 24 nötig, in >5GK und <6GK
+zusätzliche Versichertenstati. Anforderung vom 12.12.06
+
+Makefile erstellt. Anforderung vom 12.08.06 war Makefile.PL erstellen.
+Die Anforderung wird so nicht umgesetzt, Makefile muss reichen.
+
+
+
+02.12.06
+Doku für:
+- versandte Rechnungen bearbeiten Anforderung vom 25.08.06.
+
 11.11.06
 Plausiprüfungen für Positionsnummer 40. Anforderung vom 26.08.06
 
