@@ -109,7 +109,7 @@ sub rechnung_ins {
 				   "FK_STAMMDATEN,IK,RECH) ".
 				   "values (?,?,?,?,?,?,?,?,?,?);")
     or die $dbh->errstr();
-  $rechnung_ins->execute($rechnr,$rech_datum,'','',$gsumme,20,0,$fk_st,$ik,$text) or die $dbh->errstr();
+  $rechnung_ins->execute($rechnr,$rech_datum,'0000-00-00','0000-00-00',$gsumme,20,0,$fk_st,$ik,$text) or die $dbh->errstr();
   Heb->parm_up('RECHNR',$_[0]);
 }
 
