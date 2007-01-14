@@ -67,7 +67,7 @@ function datum_check(datum) {
 // prüft ob Datum im Format tt.mm.jjjj erfasst wurde, oder leer ist
   //  alert("datum value"+datum.value);
   if (datum.value == '') { return true; }
-  re=/^(\d{1,2})\.(\d{1,2})\.(\d{1,4})$/;
+  re=/^(\d{1,2})[\.,](\d{1,2})[\.,](\d{1,4})$/;
   var ret = re.exec(datum.value);
   var j = Number (RegExp.$3);
   var m = Number (RegExp.$2);
