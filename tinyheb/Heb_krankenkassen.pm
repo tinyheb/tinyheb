@@ -117,7 +117,7 @@ sub da_such {
     or die $dbh->errstr();
   $da_such->execute or die $dbh->errstr();
   while (my ($da)=$da_such->fetchrow_array()) {
-    $erg{$da}=$da;
+    $erg{$da}=$da if($da >0);
   }
 
   $da_such =$dbh->prepare("select distinct ik from Krankenkassen ".
@@ -125,7 +125,7 @@ sub da_such {
     or die $dbh->errstr();
   $da_such->execute or die $dbh->errstr();
   while (my ($da)=$da_such->fetchrow_array()) {
-    $erg{$da}=$da;
+    $erg{$da}=$da if($da >0);
   }
 
   foreach my $key (sort keys %erg) {
