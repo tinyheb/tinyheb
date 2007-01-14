@@ -130,25 +130,16 @@ Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 90%
 
 << Schritt 5 >>
 	ACHTUNG:
-	wenn Sie den Apache Webserver oder den MySQL Server schon vorher installiert
-	hatten, sind Sie quasi fertig mit der Installation und sollten die 
+	wenn Ihr den Apache Webserver oder den MySQL Server schon vorher installiert
+	hattet, sind Ihr quasi fertig mit der Installation und solltet die 
 	nächsten in Schritt 5 aufgeführten Schritte nicht durchführen, da
-	die Konfiguration des Webservers und des MySQL Servers überschrieben würden.
+	die Konfiguration des Webservers und des MySQL Servers ggf.
+	überschrieben werden.
 
-	Das Verzeichnis win32 und die Datei setup.bat existieren noch nicht,
-	da noch zu viele Fehler enthalten sind.
-	Bitte schickt mir eine Mail, ich schicke dann noch Hinweise und
-	einige fehlende Dateien. Selber probieren geht u.u. auch, dauert
-	aber wahrscheinlich 10x solange, wie eine Mail an mich.
+	Im Verzeichnis win32 existiert die Datei setup.pl, Doppelklick
+	auf den Dateinamen sollte die letzen Schritte der Installation
+	starten. Bitte beachtet, dass dieses Programm nur Alpha Status hat.
 	
-	Überprüfen Sie daher den Inhalt der Datei setup.bat und führen die 
-	einzelnen Schritte ggf. manuell durch.
-	
-	- jetzt müssen noch einige Dateien aus dem Internet geladen werden,
-	  dazu bitte eine Verbindung mit dem Internet gerstellen
-	- In das Verzeichnis c:\Programme\Apache Group\Apache2\cgi-bin\tinyheb\win32
-	  wechseln
-	- Doppelklick auf setup.bat
 
 Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 100%
 
