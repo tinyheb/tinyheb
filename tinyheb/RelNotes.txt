@@ -1,3 +1,28 @@
+Release 0.10.0
+
+Schlüsseldateien der Datenannahmestellen können auch auf Windows Systemen eingelesen werden
+
+Eigene Erfassung- und Bearbeitungsmaske für Datenannahmestellen
+
+update auf Positionsnummer 24, da Geburtstag des Kindes als Tag 1 berechnet wurde.
+
+neue Maske zur Erstellung einer Sicherung der tinyHeb Datenbank.
+neue Maske um Sicherung wieder einzuspielen.
+
+Bug fix, durch Einlesen der Kostenträgerdateien auf Windows-Systemen wurde der Datenhaushalt der
+Krankenkassen unbrauchbar.
+
+privat Rechnungen für Rheinland-Pfalz
+
+Neue Maskenstruktur für Wartungspunkte
+
+Neues Tarifkennzeichen "bundeseinheitlicher Tarif"
+
+Neue Versicherungsstatus: '1 9','3 9','1 7','3 7','1 8','3 8', '5 1'
+
+Bug fix: trotz fehlenden Geburtsdatum des Kindes wurde Rechnung generiert.
+
+
 Release 0.9.0
 
 zusätzliche Plausiprüfung auf Prüfziffer der IK-Nummer
