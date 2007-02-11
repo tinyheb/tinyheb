@@ -3,8 +3,8 @@
 # erstellen der Auftragsdatei mit GUI für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -308,7 +308,7 @@ RECH:  foreach (@sel) {
 
     # Nutzdatendatei lesen
     my $nutz='';
-    open NUTZ, "$path/tmp/$dateiname_ext" or die "Konnte Nutzdatendatei nicht öffnen $!";
+    open (NUTZ,"<:raw","$path/tmp/$dateiname_ext") or die "Konnte Nutzdatendatei nicht öffnen $!";
   LINE: while (my $zeile=<NUTZ>) {
     $nutz .= $zeile;
   }
