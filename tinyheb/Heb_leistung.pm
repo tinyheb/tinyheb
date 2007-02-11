@@ -2,8 +2,8 @@
 
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# Copyright (C) 2003,2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2003,2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -558,6 +558,7 @@ sub status_text {
   return '3.&nbsp;Mahnung' if($status==28);
   return '4.&nbsp;Mahnung' if($status==29);
   return 'erl.' if($status==30);
+  return 'Storniert' if($status==80);
   return "$status unbekannt";
 }
 
