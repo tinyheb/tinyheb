@@ -104,6 +104,7 @@ print '<tr>';
 
 print '<td><input type="submit" name="abschicken" value="Sicherung einspielen"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
+print '<td><input type="button" name="wartungsmenue" value="Wartungsmenue" onClick="window.location=\'../wartung.html\';"></td>';
 
 print '</tr>';
 print '</table>';
