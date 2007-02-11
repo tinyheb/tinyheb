@@ -55,14 +55,14 @@ if ($umfang eq 'alles') {
   $mysqldump .= " -a $dbname Krankenkassen";
 }
 
-if (!(-d "/tmp/wwwrun")) {
-  mkdir "/tmp" if (!(-d "/tmp"));
-  mkdir "/tmp/wwwrun";
+open(SICHER,"-|",$mysqldump) or die "Konnte Datenbank nicht sichern\n";
+my $anz_bytes=0;
+while(my $zeile=<SICHER>) {
+  $anz_bytes+=length($zeile);
 }
+close SICHER;
 
-unlink('/tmp/wwwrun/backup.sql');
-my $erg=system("$mysqldump > /tmp/wwwrun/backup.sql");
-if ($erg > 0) {
+if ($anz_bytes < 10) {
   print $q->header ( -type => "text/html", -expires => "-1d");
   print '<head>';
   print '<title>Backup Error</title>';
@@ -98,7 +98,7 @@ while($zeile=<SICHER>) {
   $byteswritten2=$gz->gzwrite($zeile) or die "error writing: $gzerrno\n";
 }
 $gz->gzclose;
-
+close SICHER;
 die "Achtung: es wurde keine korrekte Sicherung angelegt" if (!defined($byteswritten2));
 
 
