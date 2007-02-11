@@ -927,7 +927,7 @@ sub enc {
   }
 
   $dateiname =~ s/\.sig//g;
-  open AUS, ">$path/tmp/$dateiname.enc" or return ("konnte verschlüsselte Nutzdaten nicht schreiben",0);
+  open (AUS,">:raw","$path/tmp/$dateiname.enc") or return ("konnte verschlüsselte Nutzdaten nicht schreiben",0);
     
  LINE: while (my $zeile=<NUTZ>) {
     print AUS $zeile;
