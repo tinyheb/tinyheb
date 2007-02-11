@@ -1,8 +1,8 @@
 /* script für generelle Plausiprüfungen und Navigation
 # im Rahmen der Leistungserfassung
 
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,34 +74,40 @@ function datum_check(datum) {
   var t = Number (RegExp.$1);
   //alert("datum_check"+datum);
   if (!ret) {
-    alert("Bitte Datum im Format tt.mm.jjjj erfassen");
+    re=/^(\d{2})(\d{2})(\d{2})$/;
+    ret = re.exec(datum.value);
+    j = Number (RegExp.$3);
+    m = Number (RegExp.$2);
+    t = Number (RegExp.$1);   
+    if(!ret) {
+      alert("Bitte Datum im Format tt.mm.jjjj erfassen");
+      datum.select();
+      datum.focus();
+      return false;
+    }
+  } 
+
+  if (j>99 && j<1900) {
+    alert("Bitte gültiges Datum erfassen");
     datum.select();
     datum.focus();
     return false;
-  } else {
-
-    if (j>99 && j<1900) {
-      alert("Bitte gültiges Datum erfassen");
-      datum.select();
-      datum.focus();
-      return false;
     }
-    if (j<50 && j<100) {j += 2000;}
-    if (j>49 && j<100) {j += 1900;}
-    // prüfen ob Datum existiert, z.B. 31.2.05
-    if (t > 31 || m > 12 ||
-	m == 0 || t == 0 ||
-	(m == 2 && t > 29) ||  // Februar
-	(m == 2 && t > 28 && (!(j % 4)==0)) || // Februar ohne Schaltjahr
-       	((m==4 || m==6 || m==9 || m==11) && t > 30) // Monate mit 30 Tagen
-	) {
-      alert("Bitte gültiges Datum erfassen");
-      datum.select();
-      datum.focus();
-      return false;
-    }
-    datum.value=RegExp.$1+"."+RegExp.$2+"."+j;
+  if (j<50 && j<100) {j += 2000;}
+  if (j>49 && j<100) {j += 1900;}
+  // prüfen ob Datum existiert, z.B. 31.2.05
+  if (t > 31 || m > 12 ||
+      m == 0 || t == 0 ||
+      (m == 2 && t > 29) ||  // Februar
+      (m == 2 && t > 28 && (!(j % 4)==0)) || // Februar ohne Schaltjahr
+      ((m==4 || m==6 || m==9 || m==11) && t > 30) // Monate mit 30 Tagen
+      ) {
+    alert("Bitte gültiges Datum erfassen");
+    datum.select();
+    datum.focus();
+    return false;
   }
+  datum.value=RegExp.$1+"."+RegExp.$2+"."+j;
   return true;
 }
 
