@@ -5,8 +5,8 @@
 
 # Rechnungen bearbeiten
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 
 use lib "../";
@@ -44,6 +45,7 @@ my $speichern = $q->param('Speichern');
 
 my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
+my $sel_status = $q->param('sel_status') || 'ungleich erl.';
 my $func = $q->param('func') || 0;
 
 print $q->header ( -type => "text/html", -expires => "-1d");
@@ -62,10 +64,29 @@ print '<div align="center">';
 print '<h1>Rechnungsbearbeitung</h1>';
 print '<hr width="100%">';
 print '</div>';
+
+
+print '<table border="0" align="left">';
+print '<tr><td>';
 # Formular ausgeben
 print '<form name="rechbear" action="rechbear.pl" method="get" target=_top bgcolor=white>';
+print '<table border="0" align="left">';
+print '<tr><td style="font-size: 1.2em"><b>Anzeige Einschränken:</b></td>';
+print "<td>\n";
+print '<select name="sel_status" size="1" onChange="rufe_list_rech();">';
+print '<option';
+print ' selected' if ($sel_status eq 'alle Rechnungen');
+print '>alle</option>';
+print '<option';
+print ' selected' if ($sel_status eq 'ungleich erl.');
+print '>ungleich erl.</option>';
+print '</td></tr>';
 
+print '</table>';
+print '</td></tr>';
+print '</form>';
 # bisher erfasste Rechnungen angezeigen
+print '<tr><td>';
 print '<table style="margin-left: 0" border="0" width=800 align="left">';
 print '<tr>';
 print '<td style="width:6.6cm;text-align:right">RechNr.</td>';
@@ -80,22 +101,29 @@ print '<td style="width:0.6cm;text-align:left">Stat</td>';
 print "</tr>";
 print '</table>';
 print "\n";
+print '</td></tr>';
 
-
+print '<tr><td>';
 # die wirklichen Infos kommen aus einem Programm
 print "<iframe src='../blank.html' name='list_rech' width='840' height='250' scrolling='yes' frameborder='1' align='left'>";
 print "</iframe>";
-print '</form>';
+print '</td></td>';
 
 # Formular für eigentliche Bearbeitung ausgeben
-print "<iframe src='rechposbear.pl' name='rechposbear' width='840' height='250' scrolling='auto' frameborder='0'>";
+print '<tr><td>';
+print "<iframe src='rechposbear.pl?sel_status=$sel_status' name='rechposbear' width='840' height='260' scrolling='auto' frameborder='0'>";
 print "</iframe>";
-
+print '</td></tr>';
+print '</table>';
 
 
 print <<SCRIPTE;
 <script>
-//  auswahl_wechsel(document.rechnungsdaten);
+function rufe_list_rech() {
+var sel_status=document.rechbear.sel_status.value;
+//alert("status änderung"+sel_status);
+open("list_rech.pl?sel_status="+sel_status,"list_rech");
+}
 </script>
 SCRIPTE
 print "</body>";
