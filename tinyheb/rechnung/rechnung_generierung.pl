@@ -5,8 +5,8 @@
 
 # Rechnungen generieren und drucken
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 
 use lib "../";
@@ -95,7 +96,7 @@ print '<td><b>Geb. Kind:</b></td>';
 print '</tr>';
 print "\n";
 print '<tr>';
-#print "<td><input type='text' class='disabled' disabled name='frau_id' value='$frau_id' size='3' onchange='open(\"ps2html?frau_id=\"+frau_id.value,\"rechnung\");'></td>";
+
 print "<td><input type='text' size='3' class='disabled' disabled name='frau_id' value='$frau_id'></td>";
 $vorname = '' unless (defined($vorname));
 $nachname = '' unless (defined($nachname));
