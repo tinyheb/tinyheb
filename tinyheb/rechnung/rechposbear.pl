@@ -5,8 +5,8 @@
 
 # Rechnungen bearbeiten für einzelne Rechnungen
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today Day_of_Week);
 
 use lib "../";
@@ -56,7 +57,9 @@ my $betraggez = $q->param('betraggez') || 0;
 
 my $ignore = $q->param('ignore') || 0;
 my $abschicken = $q->param('abschicken');
+my $stornieren = $q->param('stornieren');
 my $func = $q->param('func') || 0;
+my $sel_status = $q->param('sel_status') or 'ungleich erl.';
 
 print $q->header ( -type => "text/html", -expires => "-1d");
 
@@ -75,6 +78,10 @@ $r_status=0 unless (defined($r_status));
 if (defined($abschicken)) {
   speichern();
 }
+if (defined($stornieren)) {
+  stornieren();
+}
+
 
 print '<head>';
 print '<title>Rechnungen Bearbeiten</title>';
@@ -113,6 +120,7 @@ print '<tr>';
 print "<input type='hidden'name='rechnungsnr' value='$r_rechnr'>";
 print "<input type='hidden'name='ignore' value='$ignore'>";
 print "<input type='hidden'name='status' value='$r_status'>";
+print "<input type='hidden'name='sel_status' value='$sel_status'>";
 
 print "<td><input type='text' class='disabled' disabled name='rechnungsnr2' value='$r_rechnr' size='9'></td>";
 print "<td><input type='text' class='disabled' disabled name='r_rech_datum' value='$r_rech_datum' size='9'></td>";
@@ -151,24 +159,26 @@ print '<td colspan 3>';
 print '<table border="0" align="left">';
 print '<tr>';
 print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
+print '<td><input type="submit" name="stornieren" value="Stornieren"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
 print "<td><input type='button' name='stammdaten' value='Stammdaten' onClick='stamm($r_fk_st,document.rechposbear);'></td>";
 print "<td><input type='button' name='mahnung' value='Mahnung generieren' onClick='mahn_gen(rechnungsnr)'></td>";
 print '</tr>';
 
-
 print '</table>';
 
 print '</td></tr>';
 print '</table>';
-print_summen();
 print '</form>';
+print_summen();
+
 
 print <<SCRIPTE;
 <script>
   document.rechposbear.zahl_datum.select();
   document.rechposbear.zahl_datum.focus();
-  open("list_rech.pl","list_rech");
+//  alert("parent"+window.parent.frames.document.rechbear.sel_status.value);
+  open("list_rech.pl?sel_status="+window.parent.frames.document.forms[0].sel_status.value,"list_rech");
 </script>
 SCRIPTE
 if ($hint ne '') {
@@ -184,16 +194,18 @@ sub print_summen {
 #--- neue Tabelle für Summen
 # summe der offenen und erledigten Rechnungen berechnen
   # Teilzahlung und erledigt
-  $l->rechnung_such('sum(betraggez)','status>=24');
+  $l->rechnung_such('sum(betraggez)','status>=24 and status<80');
   my $summe_gez = $l->rechnung_such_next();
   $summe_gez = sprintf "%.2f",$summe_gez;
+  $summe_gez =~ s/\./,/g;
   
   $l->rechnung_such('sum(betrag)-sum(betraggez)','status<=24');
   my $summe_offen = $l->rechnung_such_next();
   $summe_offen = sprintf "%.2f",$summe_offen;
+  $summe_offen =~ s/\./,/g;
   print '<table border="0">';
   print '<tr>';
-  print '<td><h3>Rechnungssummen</h3></td>';
+  print '<td colspan="2"><h3>Rechnungssummen</h3></td>';
   print '</tr>';
   print '<tr>';
   print '<td><b>erl.</b></td>';
@@ -253,4 +265,33 @@ sub speichern {
   }
 }
 
+
+sub stornieren {
+  # storniert eine Rechnung in der Datenbank
+  # d.h. Rechnung geht auf Status 80 (Storniert)
+  # die einzelnen Rechnungposten in Status 10 (Bearbeitung)
+
+  # erst Plausiprüfungen
+  if($r_rechnr eq '') {
+    $hint .= "Bitte Rechnung zum Stornieren auswählen, nichts gespeichert";
+    return;
+  }
+
+  if ($r_status == 30) {
+    $hint .= "Rechnung ist schon gezahlt, Storno nicht möglich";
+    return;
+  }
+
+  if ($r_status == 24) {
+    $hint .= "Rechnung ist schon zum Teil gezahlt, Storno nicht möglich";
+    return;
+  }
+  
+  $l->rechnung_up($r_rechnr,'0000-00-00',0,80);
+  # update auf einzelne Leistungspositionen muss noch erfolgen
+  $l->leistungsdaten_such_rechnr("ID",$r_rechnr);
+  while (my ($id)=$l->leistungsdaten_such_rechnr_next()) {
+    $l->leistungsdaten_up_werte($id,"STATUS=10,RECHNUNGSNR=''");
+  }
+}
 
