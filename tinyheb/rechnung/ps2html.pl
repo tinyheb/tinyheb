@@ -443,6 +443,7 @@ sub print_wegegeld {
     if ($versichertenstatus eq 'privat') {
       if (uc $heb_bundesland eq 'NIEDERSACHSEN' ||
 	  uc $heb_bundesland eq 'HESSEN' ||
+	  uc $heb_bundesland eq 'BAYERN' ||
 	  uc $heb_bundesland eq 'HAMBURG') {
 	$preis *= $h->parm_unique('PRIVAT_FAKTOR');
 	$preis = sprintf "%.2f",$preis;
