@@ -26,8 +26,9 @@ use strict;
 use Date::Calc qw(This_Year Decode_Month Add_Delta_DHMS);
 use Getopt::Std;
 
+
 my %option = ();
-getopts("vcoundp:f:h",\%option);
+getopts("vcoundtp:f:h",\%option);
 
 if ($option{h}) {
   print "
@@ -36,8 +37,9 @@ if ($option{h}) {
  -c <-> check (unbedingt notwendig, wenn update gemacht werden soll)
  -o <-> formatierte ausgabe
  -u <-> update
- -n <-> not equal ausgabe ungleiche kassen
- -d <-> delete (prüfen auf gelöschte kassen)
+ -n <-> not equal ausgabe ungleiche Kassen
+ -d <-> delete (prüfen auf gelöschte Kassen)
+ -t <-> hTml Ausgabe der ungleichen Kassen im HTML Format
  -p <-> path
  -f <-> file
  -h <-> help
@@ -55,12 +57,15 @@ my $ausgabe = 0; # formatierte ausgabe der kassen ein-/ausschalten
 my $update = 0; # soll update auf Datenbank gemacht werden
 my $aus_ungleich =0; # ungleiche KK ausgeben
 my $loeschen=0; # prüfen auf gelöschte kassen
+my $html=0; # Ausgabe der ungleichen Kassen in HTML
 $debug = 1 if($option{v});
 $check = 1 if($option{c});
 $ausgabe = 1 if($option{o});
 $update = 1 if($option{u});
 $aus_ungleich = 1 if($option{n});
 $loeschen = 1 if($option{d});
+$html = 1 if($option{t});
+
 
 my $c_gleich = 0; # wie viele kassen sind gleich geblieben
 my $c_ungleich = 0; # wie viele kassen geändert
@@ -339,6 +344,44 @@ LINE:while ($zeile=<FILE>) {
 	    print "EMAIL\t$k_email\t$email_n\n" if (!($k_email eq $email_n));
 	    print "BEM ALT $k_bemerkung\nBEM NEU $bemerkung_n\n" if(!($k_bemerkung eq $bemerkung_n));
 	  }
+
+	  # ausgabe in HTML
+	  if ($html) {
+	    print "<h2>&nbsp;</h2>\n";
+	    print '<table border="1" align="left" style="margin-bottom: +2em; width: 20cm; empty-cells: show">';
+	    print "<caption style='caption-side: top;'><h2>$k_ik $k_kname</h2></caption>\n";
+	    print "<tr>\n";
+	    print "<th style='width:2cm; text-align:left'>Feld</th><th style='width:9cm; text-align:left'>alter Wert</th><th style='width:9cm; text-align:left'>neuer Wert</th></tr>\n";
+	    my $name_aus_k=$k_name;
+	    my $name_aus_n=$name_n;
+	    $name_aus_k =~ s/'/&#145;/g;
+	    $name_aus_n =~ s/'/&#145;/g;
+	    print "<tr><td>NAME</td><td style='vertical-align:top'>$name_aus_k</td><td style='vertical-align:top'>$name_aus_n</td></tr>\n" if(!($k_name eq $name_n));
+	    my $kname_aus_k=$k_name;
+	    my $kname_aus_n=$name_n;
+	    $kname_aus_k =~ s/'/&#145;/g;
+	    $kname_aus_n =~ s/'/&#145;/g;
+	    print "<tr><td>KNAME</td><td style='vertical-align:top'>$kname_aus_k</td><td style='vertical-align:top'>$kname_aus_n</td></tr>\n" if(!($k_kname eq $kname_n));
+	    print "<tr><td>Strasse</td><td>$k_strasse</td><td>$strasse_n</td></tr>\n" if(!($k_strasse eq $strasse_n));
+	    print "<tr><td>PLZ_HAUS</td><td>$k_plz_haus</td><td>$plz_haus_n</td></tr>\n" if(!($k_plz_haus == $plz_haus_n));
+	    print "<tr><td>PLZ_POST</td><td>$k_plz_post</td><td>$plz_post_n</td></tr>\n" if(!($k_plz_post == $plz_post_n));
+	    print "<tr><td>Ort</td><td>$k_ort</td><td>$ort_n</td></tr>\n" if(!($k_ort eq $ort_n));
+	    print "<tr><td>POSTFACH</td><td>$k_postfach</td><td>$postfach_n</td></tr>\n" if(!($k_postfach eq $postfach_n));
+	    print "<tr><td>Ansprechpartner</td><td>$k_asp_name</td><td>$asp_name_n</td></tr>\n" if(!($k_asp_name eq $asp_name_n));
+	    print "<tr><td>Telefon</td><td>$k_asp_tel</td><td>$asp_tel_n</td></tr>\n" if(!($k_asp_tel eq $asp_tel_n));
+	    print "<tr><td>ZIK</td><td>$k_zik</td><td>$zik_n</td></tr>\n" if(!($k_zik eq $zik_n));
+	    print "<tr><td>ZIK_TYP</td><td>$k_zik_typ</td><td>$zik_typ_n</td></tr>\n" if (!($k_zik_typ == $zik_typ_n));
+	    print "<tr><td>BELEG_IK</td><td>$k_beleg_ik</td><td>$beleg_ik_n</td></tr>\n" if (!($k_beleg_ik == $beleg_ik_n));
+	    my $email_aus_k=$k_email;
+	    my $email_aus_n=$email_n;
+	    $email_aus_k =~ s/</&lt;/g;
+	    $email_aus_k =~ s/>/&gt;/g;
+	    $email_aus_n =~ s/</&lt;/g;
+	    $email_aus_n =~ s/>/&gt;/g;
+	    print "<tr><td>EMAIL</td><td>$email_aus_k</td><td>$email_aus_n</td></tr>\n" if (!($k_email eq $email_n));
+	    print "<tr><td>Bemerkung</td><td>$k_bemerkung</td><td>$bemerkung_n</td></tr>\n" if(!($k_bemerkung eq $bemerkung_n));
+	    print "</table><br/><br/>\n\n";
+	  }
 	  # update auf Datenbank
 	  $k->krankenkassen_update($kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ,$beleg_ik_n,$email_n,$k_ik) if ($update);
 	}
@@ -361,10 +404,17 @@ if ($loeschen) {
     }
   }
 }
-print "SUMMEN\n";
-print "gleiche Kassen: $c_gleich\n";
-print "ungleiche Kassen: $c_ungleich\n";
-print "neue Kassen: $c_neu\n";
-print "gelöschte Kassen: $c_geloescht\n";
-
+if (!$html) {
+  print "SUMMEN\n";
+  print "gleiche Kassen: $c_gleich\n";
+  print "ungleiche Kassen: $c_ungleich\n";
+  print "neue Kassen: $c_neu\n";
+  print "gelöschte Kassen: $c_geloescht\n";
+} else {
+  print "<br/><h2>SUMMEN</h2>\n";
+  print "gleiche Kassen: $c_gleich<br/>\n";
+  print "ungleiche Kassen: $c_ungleich<br/>\n";
+  print "neue Kassen: $c_neu<br/>\n";
+  print "gelöschte Kassen: $c_geloescht<br/>\n";
+}
 1;
