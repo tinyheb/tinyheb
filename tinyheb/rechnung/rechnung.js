@@ -125,7 +125,7 @@ function bearb_rech(rechnr,status) {
   if (status < 30) {
     open("rechposbear.pl?rechnungsnr="+rechnr,"rechposbear");
   } else {
-    alert("Rechnung ist schon gezahlt, keine weitere Bearbeitung");
+    alert("Rechnung ist schon gezahlt oder Storniert, keine weitere Bearbeitung");
   }
 }
 
@@ -134,9 +134,12 @@ function recherf(frau_id) {
   open("../erfassung/rechnungserfassung.pl?frau_id="+frau_id,"_top");
 }
 
-function anseh_rech(rech_id) {
+function anseh_rech(rech_id,status) {
   // neues Fenster mit Rechnung öffnen
   if (rech_id > 0) {
+    if (status == 80) {
+      alert("Achtung diese Rechnung wurde Storniert");
+    }
     open("druck_alt_rech.pl?rech_id="+rech_id,"rech_alt","scrollbars=yes,width=950,heigth=1100");
   } else {
     alert("Bitte Rechnung anwählen");
@@ -152,7 +155,7 @@ function save_rechposbear(form) {
   var betrag_gez=form.betraggez.value;
 
   if(form.status.value >= 30) {
-    alert("Rechnungs ist schon erledigt, es wurde nichts gespeichert");
+    alert("Rechnungs ist schon erledigt oder Storniert, es wurde nichts gespeichert");
     return false;
   }
 
