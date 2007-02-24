@@ -12,8 +12,6 @@ Beschreibung der Maske Angaben zur Hebamme
 11.11.06
 Daten aus Entfernung in Stammdaten soll in Maske Rechnungsposten Erfassung übernommen werden
 
-neue Maske in der Status von Rechnungen verändert werden kann.
-
 Temporäre Verzeichnisse für Win einheitlich.
 
 24.09.06
@@ -30,25 +28,16 @@ Positionsnummer 6  mehr als 2 mal am selben Tag nur auf ärztliche Anordnung.
 In Spec File ggf. mozplugger mit aufnehmen.
 
 12.08.06
-prüfen ob mit harten Fehlern in mysql richtig umgegangen wird.
-
-12.08.06
 - Installationshinweise für Windows aufnehmen.
 
 06.08.06
 eigene Erfassungs- und Bearbeitungsmaske für Materialien
-
-06.08.06
-Bei Rechnungsbearbeitung muss Einschränkung auf ungleich erl. möglich sein.
 
 01.08.06
 Mahnungen für privat Versicherte
 
 31.12.05
 Wenn es sich um Zwillinge handelt, muss Zuschlag gerechnet werden. Pro Kind
-
-23.07.05
-Plausiprüfung bei der Kilometer Erfassung, wann Tag und wann Nacht und nur eins von beiden.
 
 09.07.05 Dokumentation erstellen.
 
@@ -59,6 +48,23 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+24.02.07
+prüfen ob mit harten Fehlern in mysql richtig umgegangen wird. Anforderung vom 12.08.06.
+
+24.02.07
+Plausiprüfung bei der Kilometer Erfassung, wann Tag und wann Nacht und nur eins von beiden.
+Beides muss möglich sein! Anforderung vom 23.07.05.
+
+11.02.07
+Storno ist möglich. Damit:
+neue Maske in der Status von Rechnungen verändert werden kann. Anforderung vom 11.11.06.
+
+11.02.07
+Bei Rechnungsbearbeitung muss Einschränkung auf ungleich erl. möglich sein.
+Anforderung vom 06.08.06.
+
+
+
 14.01.07
 Anpassung Handbuch, Kapitel 4.5 bei E-Preis beschreiben, dass immer der HebGV Preis angezeigt wird. Anforderung vom 03.12.06
 
