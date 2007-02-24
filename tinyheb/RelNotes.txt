@@ -1,3 +1,37 @@
+Release 0.11.0
+
+Datum lässt sich im Format ttmmjj erfassen
+
+Bug fix: Verschüsselte Nutzdaten müssen binär eingelesen werden
+
+Neue Maske: Einlesen der Kostenträgerdateien
+Neue Maske: Einlesen der öffentlichen Schlüssel der Datenannahmestellen
+
+Plausiprüfungen der HebGO in Paket Heb_GO.pm ausgelagert
+
+In Maske Rechnungsbearbeitung lässt sich die Anzeige einschränken auf nicht erledigte Rechnungen
+
+Korrektur Hebammengebührenordnung Bayern, auch Wegegeld lässt sich mit Faktor (1,8) abrechnen
+
+Bug Fix:
+im Internet Explorer wurde Maske Rechnungsbearbeitung nicht korrekt angezeigt
+
+Rechnungen lassen sich jetzt stornieren.
+
+Aus der Backup Maske kann man direkt in das Wartungsmenue springen
+
+Aus der Restore Maske kann man direkt in das Wartungsmenue springen
+
+Restrukturierung der Kommandos key.pl, zusätzlicher Parameter -s nur wenn dieser gesetzt ist,
+werden die einzelnen Schlüssel abgespeichert
+
+Restrukturierung des Kommandos kostentraeger.pl, zusätzlicher Parameter -t, wenn dieser gesetzt ist,
+erfolgt Ausgabe in HTML
+
+Überarbeitung setup.pl, MySQL und Apache werden automatisch neu gestartet, nachdem die veränderte
+Konfiguration kopiert wurde (nur WinXP)
+
+
 Release 0.10.0
 
 Schlüsseldateien der Datenannahmestellen können auch auf Windows Systemen eingelesen werden
