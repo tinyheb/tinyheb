@@ -513,6 +513,8 @@ sub leistungsart_ins {
       $zus2,$zus3,$zus4,$g_v,$g_b,$kbez,$id_alt)=@_;
   $id = $id_alt if(defined($id_alt));
 
+  $dau=0 if (!defined($dau) || $dau eq '');
+  $begrue='n' if (!defined($begrue) || $begrue eq '');
   my $leistungsart_ins=
     $dbh->prepare("insert into Leistungsart ".
 		  "(ID,POSNR,BEZEICHNUNG,LEISTUNGSTYP,EINZELPREIS, ".
