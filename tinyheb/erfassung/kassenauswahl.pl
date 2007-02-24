@@ -119,6 +119,7 @@ print <<SCRIPTE;
        formular.status_edi_krankenkasse.value=status_edi;
     }
   }
+window.focus();
 </script>
 SCRIPTE
 
