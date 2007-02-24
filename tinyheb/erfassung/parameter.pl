@@ -173,6 +173,7 @@ print '<td>';
 print '<input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz_parms(document.parameter)"';
 print '</td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
+print '<td><input type="button" name="wartungsmenue" value="Wartungsmenue" onClick="window.location=\'../wartung.html\';"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
