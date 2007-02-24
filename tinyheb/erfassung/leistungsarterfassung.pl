@@ -136,7 +136,7 @@ print "\n";
 # Zeile Bezeichnung
 print '<tr><td><b>Bezeichnung:</b></td></tr>';
 print '<tr>';
-print "<td><textarea class='enabled' name='bezeichnung' rows='1' cols='75'>$bezeichnung</textarea></td>";
+print "<td><textarea class='enabled' name='bezeichnung' rows='2' cols='75'>$bezeichnung</textarea></td>";
 print '</tr>';
 print "\n";
 
@@ -247,7 +247,7 @@ print '<td>';
 print "<select name='auswahl' size=1 onChange='auswahl_wechsel(document.leistungsart)'>";
 my $i=0;
 while ($i <= $#aus) {
-  print '<option';
+  print "<option value='$aus[$i]'";
   print ' selected' if ($aus[$i] eq $auswahl);
   print '>';
   print $aus[$i];
@@ -264,7 +264,7 @@ print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
 print '<td><input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz_leistart(document.leistungsart)"></td>';
 print '<td><input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz_leistart(document.leistungsart)"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
-
+print '<td><input type="button" name="wartungsmenue" value="Wartungsmenue" onClick="window.location=\'../wartung.html\';"></td>';
 print '</tr>';
 print '</table>';
 print '</form>';
