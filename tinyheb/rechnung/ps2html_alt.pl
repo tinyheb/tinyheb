@@ -54,7 +54,8 @@ if ($rechtyp == 1) {
       system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
     } elsif ($^O =~ /MSWin32/) {
       unlink('/tmp/wwwrun/file.pdf');
-      system('/gs/gs8.15/bin/gswin32c -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps');
+      my $gswin=suche_gswin32();
+      system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
     } else {
       die "kein Konvertierungsprogramm ps2pdf gefunden\n";
     }
@@ -84,4 +85,26 @@ if ($rechtyp == 2) {
   print '</table>';
   print "</body>";
   print "</html>";
+}
+
+
+sub suche_gswin32 {
+  my $gswin32='';
+  my $i=0;
+  # Suche unterhalb /gs
+  while ($i<100) {
+    my $pfad="/gs/gs8.$i/bin/gswin32c";
+    $gswin32=$pfad if (-e "$pfad.exe");
+    $i++;
+  }
+
+  $i=0;
+  # Suche unterhalb /Programme/gs
+  while ($i<100) {
+    my $pfad="/Programme/gs/gs8.$i/bin/gswin32c";
+    $gswin32=$pfad if (-e "$pfad.exe");
+    $i++;
+  }
+
+  return $gswin32;
 }
