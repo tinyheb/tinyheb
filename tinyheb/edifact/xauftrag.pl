@@ -56,12 +56,24 @@ my $k = new Heb_krankenkassen;
 my $s = new Heb_stammdaten;
 
 my %prov=();
-$prov{localhost}{mailserver}='localhost';
-$prov{localhost}{user_name}='';
-$prov{localhost}{user_from}=$h->parm_unique('HEB_EMAIL');
-$prov{localhost}{user_pass}='';
+my @provider =();
 
-my @provider =('localhost');
+my $prov_sel=undef;
+my $user_sel='';
+my $user_pass='';
+my $user_from=$h->parm_unique('HEB_EMAIL');
+my $ignore = 22;
+
+if ($^O !~ /MSWin32/) {
+  $prov{localhost}{mailserver}='localhost';
+  $prov{localhost}{user_name}='';
+  $prov{localhost}{user_from}=$h->parm_unique('HEB_EMAIL');
+  $prov{localhost}{user_pass}='';
+  @provider=('localhost');
+  $prov_sel='localhost';
+}
+
+
 
 if (open RC,"$path/.xauftragrc") {
 LINE: while (my $zeile=<RC>) {
@@ -73,6 +85,7 @@ LINE: while (my $zeile=<RC>) {
     $prov{$parms[0]}{user_name}=$parms[1] || '';
     $prov{$parms[0]}{user_from}=$parms[2] || '';
     $prov{$parms[0]}{user_pass}=$parms[3] || '';
+    $prov_sel=$parms[0] if (!defined($prov_sel));
   }
 } else {
   if (open RC,">$path/.xauftragrc") {
@@ -83,13 +96,6 @@ LINE: while (my $zeile=<RC>) {
     close RC;
   }
 }
-
-my $prov_sel='localhost';
-my $user_sel='';
-my $user_pass='';
-my $user_from=$h->parm_unique('HEB_EMAIL');
-my $ignore = 22;
-
 
 my $mw = MainWindow->new(-title => 'Elektronische Rechnungen',
 			 -bg => 'white');
@@ -174,6 +180,7 @@ $z2_prov_f->Label(-text => 'Mail Provider')->pack(-side => 'top',
 my $prov = $z2_prov_f->BrowseEntry(#-label => 'Mail Server',
 				   -variable => \$prov_sel,
 				   -choices => \@provider,
+#				   -background => 'white',
 				   -browsecmd => \&prov_neu,
 				   -state => 'readonly')->pack(-side => 'left',
 							       -anchor => 'w',
@@ -197,6 +204,9 @@ $z1_frame->pack(-side => 'bottom',
 $h_frame->pack(-side => 'top',
 	       -expand => 1,
 	       -fill => 'both');
+
+prov_neu();
+
 MainLoop;
 
 
