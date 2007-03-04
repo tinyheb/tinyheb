@@ -3,8 +3,8 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -114,8 +114,10 @@ if ($versichertenstatus ne 'privat') {
     $p->text(2,19.7,"Gebührenabrechnung nach HebGO Hamburg");
   } elsif (uc $heb_bundesland eq 'RHEINLAND-PFALZ') {
     $p->text(2,19.7,"Gebührenabrechnung nach HebGO Rheinland-Pfalz");
+  } elsif (uc $heb_bundesland eq 'THüRINGEN' || $heb_bundesland eq 'Thüringen') {
+    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Thüringen");
   } else {
-    $p->text(2,19.7,"PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen");
+    $p->text(2,19.7,"PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen".uc $heb_bundesland);
   }
 }
 
@@ -192,6 +194,8 @@ if ($name_krankenkasse ne '' && $versichertenstatus ne 'privat') {
 
 # Abschlusstext ausgeben
 neue_seite(7);
+$p->text($x1,$y1, "Die abgerechneten Leistungen sind nach § 4 Nr. 14 UStG von der Umsatzsteuer befreit.");$y1-=$y_font;$y1-=$y_font;
+
 if ($versichertenstatus ne 'privat') {
   $p->text($x1,$y1,"Bitte überweisen Sie den Gesamtbetrag innerhalb der gesetzlichen Frist von drei Wochen nach");$y1-=$y_font;
   $p->text($x1,$y1,"Rechnungseingang (§5 Abs. 4 HebGV) unter Angabe der Rechnungsnummer.");
@@ -232,7 +236,8 @@ if ($q->user_agent =~ /Windows/) {
     system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
   } elsif ($^O =~ /MSWin32/) {
     unlink('/tmp/wwwrun/file.pdf');
-    system('/gs/gs8.15/bin/gswin32c -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps');
+    my $gswin=suche_gswin32();
+    system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
   } else {
     die "kein Konvertierungsprogramm ps2pdf gefunden\n";
   }
@@ -745,4 +750,26 @@ sub urbeleg {
   $y1-=$y_font;$y1-=$y_font;$y1-=$y_font;
   $p->text($x1,$y1,"Mit freundlichen Grüßen");
   fussnote(); # auf der ersten Seite explizit angeben
+}
+
+
+sub suche_gswin32 {
+  my $gswin32='';
+  my $i=0;
+  # Suche unterhalb /gs
+  while ($i<100) {
+    my $pfad="/gs/gs8.$i/bin/gswin32c";
+    $gswin32=$pfad if (-e "$pfad.exe");
+    $i++;
+  }
+
+  $i=0;
+  # Suche unterhalb /Programme/gs
+  while ($i<100) {
+    my $pfad="/Programme/gs/gs8.$i/bin/gswin32c";
+    $gswin32=$pfad if (-e "$pfad.exe");
+    $i++;
+  }
+
+  return $gswin32;
 }
