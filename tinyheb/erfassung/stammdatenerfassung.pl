@@ -31,12 +31,14 @@ use Heb_stammdaten;
 use Heb_krankenkassen;
 use Heb_leistung;
 use Heb_datum;
+use Heb;
 
 my $q = new CGI;
 my $s = new Heb_stammdaten;
 my $k = new Heb_krankenkassen;
 my $d = new Heb_datum;
 my $l = new Heb_leistung;
+my $h = new Heb;
 
 my $debug=1;
 
@@ -195,6 +197,9 @@ print "<tr>";
 print "<td><input type='text' name='plz' value='$plz' size='5' maxlength='5' onChange='plz_check(this)'></td>";
 print "<td><input type='text' name='ort' value='$ort' size='25' maxlength='25'></td>";
 print "<td><input type='text' name='strasse' value='$strasse' size='30' maxlength='30'></td>";
+print "<td><input type='button' name='route' value='Wegbeschreibung via Google' onClick=\"route_ber(form,'".$h->parm_unique("HEB_STRASSE")."','";
+print $h->parm_unique("HEB_PLZ")."','";
+print $h->parm_unique("HEB_ORT")."');\"></tr>";
 print '</tr>';
 print '</table>';
 print "\n";
