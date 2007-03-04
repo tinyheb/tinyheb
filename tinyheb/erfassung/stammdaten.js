@@ -34,6 +34,19 @@ function rechnung_erfassen(formular) {
   }
 }
 
+var fenster_route;
+
+function route_ber(formular,strasse_start,plz_start,ort_start) {
+  if (!(fenster_route instanceof Window) || fenster_route.closed) {
+    fenster_route=window.open("http://maps.google.de/maps?saddr="+plz_start+" "+ort_start+","+strasse_start+"&daddr="+formular.plz.value+" "+formular.ort.value+","+formular.strasse.value+"&f=d&hl=de&btnG=Route%20berechnen","route");
+    fenster_route.focus();
+  }
+  else {
+    fenster_route.location="http://maps.google.de/maps?saddr="+plz_start+" "+ort_start+","+strasse_start+"&daddr="+formular.plz.value+" "+formular.ort.value+","+formular.strasse.value+"&f=d&hl=de&btnG=Route%20berechnen";
+    fenster_route.focus();
+  }
+}
+
 function frausuchen(vorname,nachname,geb,formular) {
   // öffnet Fenster in dem eine Frau ausgewählt werden kann
   open("frauenauswahl.pl?vorname="+vorname.value+"&nachname="+nachname.value+"&geb_f="+geb.value+"&suchen=Suchen&sel_status=alle","frauenwahl","scrollbars=yes,width=700,height=400");
