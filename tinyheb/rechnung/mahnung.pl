@@ -140,19 +140,29 @@ $y1-=$y_font;
 
 # Abschlusstext ausgeben
 $y1-=$y_font;
-$p->text($x1,$y1,"Sehr geehrte Damen und Herren,");
-$y1-=$y_font;$y1-=$y_font;
-$p->text($x1,$y1,"bisher konnte ich keinen vollständigen Zahlungseingang feststellen. Nach §5 Absatz 4 HebGV sind");
-$y1-=$y_font;
-$p->text($x1,$y1,"Krankenkassen verpflichtet, Hebammenrechnungen spätestens innerhalb von drei Wochen zu");
-$y1-=$y_font;
-$p->text($x1,$y1,"begleichen. Ich bitte Sie, den ausstehenden Betrag unter Angabe der Rechnungsnummer umgehend");
-$y1-=$y_font;
-$p->text($x1,$y1,"zu begleichen.");
-$y1-=$y_font;$y1-=$y_font;
-$p->text($x1,$y1,"Falls Sie den offenstehenden Betrag bereits beglichen haben, betrachten Sie dieses Schreiben als");
-$y1-=$y_font;
-$p->text($x1,$y1,"gegenstandslos.");
+if ($versichertenstatus ne 'privat') {
+  # gesetzlich
+  $p->text($x1,$y1,"Sehr geehrte Damen und Herren,");
+  $y1-=$y_font;$y1-=$y_font;
+  $p->text($x1,$y1,"bisher konnte ich keinen vollständigen Zahlungseingang feststellen. Nach §5 Absatz 4 HebGV sind");
+  $y1-=$y_font;
+  $p->text($x1,$y1,"Krankenkassen verpflichtet, Hebammenrechnungen spätestens innerhalb von drei Wochen zu");
+  $y1-=$y_font;
+  $p->text($x1,$y1,"begleichen. Ich bitte Sie, den ausstehenden Betrag unter Angabe der Rechnungsnummer umgehend");
+  $y1-=$y_font;
+  $p->text($x1,$y1,"zu begleichen.");
+} else {
+  # Privat
+  $p->text($x1,$y1,"Sehr geehrte Frau ".$nachname.",");
+  $y1-=$y_font;$y1-=$y_font;
+  $p->text($x1,$y1,"bisher konnte ich keinen vollständigen Zahlungseingang feststellen. Ich bitte Sie, den");
+  $y1-=$y_font;
+  $p->text($x1,$y1,"ausstehenden Betrag unter Angabe der Rechnungsnummer umgehend zu begleichen.");
+}
+  $y1-=$y_font;$y1-=$y_font;
+  $p->text($x1,$y1,"Falls Sie den offenstehenden Betrag bereits beglichen haben, betrachten Sie dieses Schreiben als");
+  $y1-=$y_font;
+  $p->text($x1,$y1,"gegenstandslos.");
 
 $y1-=$y_font;$y1-=$y_font;$y1-=$y_font;
 $p->text($x1,$y1,"Mit freundlichen Grüßen");
