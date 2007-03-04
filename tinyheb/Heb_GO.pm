@@ -24,7 +24,7 @@
 package Heb_GO;
 
 use strict;
-use Date::Calc qw(Today Day_of_Week Delta_Days Add_Delta_Days);
+use Date::Calc qw(Today Day_of_Week Delta_Days Add_Delta_Days Day_of_Week);
 
 use lib "../";
 use Heb_leistung;
@@ -34,6 +34,8 @@ use Heb_stammdaten;
 my $s = new Heb_stammdaten;
 my $d = new Heb_datum;
 my $l = new Heb_leistung;
+
+our $HINT = '';
 
 sub new {
   my $class = shift;
@@ -49,15 +51,113 @@ sub new {
   $geb_kind = '' if ($geb_kind eq 'error');
   $geb_kind =~ s/-//g;
   $self->{geb_kind}=$geb_kind;
+  $self->{dow}=Day_of_Week($d->jmt($self->{datum_l}));  # 1 == Montag 2 == Dienstag, ..., 7 == Sonntag
   $self->{datum_l} =~ s/-//g;
-  ($self->{ltyp},$self->{begruendungspflicht},$self->{dauer})
-   =$l->leistungsart_such_posnr('LEISTUNGSTYP,BEGRUENDUNGSPFLICHT,DAUER',
-				$self->{posnr},$self->{datum_l});
 
-
-  $self->{dbh}=$dbh;
+  ($self->{ltyp},$self->{begruendungspflicht},$self->{dauer},
+   $self->{samstag},$self->{sonntag},$self->{nacht},$self->{zweitesmal})
+   =$l->leistungsart_such_posnr
+     ('LEISTUNGSTYP,BEGRUENDUNGSPFLICHT,DAUER,SAMSTAG,SONNTAG,NACHT,ZWEITESMAL',
+      $self->{posnr},$self->{datum_l});
+  $self->{zweitesmal}='' unless (defined($self->{zweitesmal}));
+#  $self->{dbh}=$dbh;
   bless $self,ref $class || $class;
   return $self;
+}
+
+sub ersetze_samstag {
+  # Wenn Samstag angegeben ist, prüfen ob posnr ersetzt werden muss
+  my $self=shift;
+
+  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $self->{zeit_von} >= 12) { # 
+    # Samstag nach 12 Uhr und ob es sich um andere Positionsnummer handelt
+    return $2 if ($1 ne '+');
+  }
+  return undef;
+}
+
+sub zuschlag_samstag {
+  # prüft ob Zuschlag für diese Positionsnummer an einem Samstag  existiert
+  my $self=shift;
+
+  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $self->{zeit_von} >= 12) { # 
+    # Samstag nach 12 Uhr und ob es sich um Zuschlags Positionsnummer handelt
+    return $2 if ($1 eq '+');
+  }
+  return undef;
+}
+
+
+sub ersetze_sonntag {
+  # Wenn Sonntag oder Feiertag angegeben ist, prüfen ob posnr ersetzt werden
+  # muss
+  my $self=shift;
+  if (($self->{dow} == 7 || ($d->feiertag_datum($self->{datum_l})>0)) && $self->{sonntag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    return $2 if ($1 ne '+');
+  }
+  return undef;
+}
+
+sub zuschlag_sonntag {
+  # prüft ob Zuschlag für diese Posnr an einem Sonntag oder Feiertag existiert
+  my $self=shift;
+
+  if (($self->{dow} == 7 || ($d->feiertag_datum($self->{datum_l})>0)) && $self->{sonntag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    return $2 if ($1 eq '+');
+  }
+  return undef;
+}
+
+
+sub ersetze_nacht {
+  # wenn Nacht angegeben ist, prüfen ob posnr ersetzt werden muss
+  my $self=shift;
+  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->{zeit_von}) <= 8 || $d->zeit_h($self->{zeit_von})>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    return $2 if($1 ne '+');
+  }
+  return undef;
+}
+
+sub zuschlag_nacht {
+  # prüfen, ob Zuschlag für diese Posnr Nachts existiert
+  my $self=shift;
+  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->{zeit_von}) <= 8 || $d->zeit_h($self->{zeit_von})>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    return $2 if($1 eq '+');
+  }
+  return undef;
+}
+
+
+sub zweitesmal {
+  # prüfen ob andere Positionsnummer w/ Zweitesmal genutzt werden muss
+  # wird genau dann gemacht, wenn die Positionsnummer am gleichen Tag
+  # schon erfasst ist
+  my $self=shift;
+
+  if ($self->{zweitesmal} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+    return $2 if ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR=$self->{posnr} AND DATUM='$self->{datum_l}'")>0);
+  }
+  return undef;
+}
+
+sub zuschlag_plausi {
+  # prüft ob eine Zuschlagspositionsnummer für einen Tag ausgewählt
+  # wurde, an dem kein Zuschlag gewählt werden darf
+  my $self=shift;
+  if ($l->leistungsart_pruef_zus($self->{posnr},'SONNTAG') && ($self->{dow}==7 || ($d->feiertag_datum($self->{datum_l})))) {
+    # alles ok
+  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') && $self->{dow}==6 && $d->zeit_h($self->{zeit_von}) >= 12) {
+    # alles ok
+  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'NACHT') && ($d->zeit_h($self->{zeit_von}) <= 8 || $d->zeit_h($self->{zeit_von}) >= 20)) {
+    # alles ok
+  } elsif (($l->leistungsart_pruef_zus($self->{posnr},'SONNTAG') || 
+	    $l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') || 
+	    $l->leistungsart_pruef_zus($self->{posnr},'NACHT')) && 
+	   ($self->{dow} < 6 || $self->{dow}==6 && $d->zeit_h($self->{zeit_von}) < 12) || 
+	   $d->zeit_h($self->{zeit_von})<8 && $d->zeit_h($self->{zeit_von}) > 20) {
+    return 1;
+  }
+  return undef;
 }
 
 
@@ -100,6 +200,29 @@ sub pos7_plausi {
   $dauer += $d->dauer_m($zeit_bis,$zeit_von);
   if ($dauer > (14*60)) {
     return 'FEHLER: Geburtsvorbereitung in der Gruppe höchsten 14 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
+  }
+  return '';
+}
+
+
+sub pos8_plausi {
+  # Positionsnummer 8 darf die maximale Dauer 14 Stunden nicht überschreiten
+  my $self=shift;
+  my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
+  my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
+
+  return '' if $posnr ne '8';
+  # zunächst die bisherige Dauer berechnen
+  my $dauer=0;
+  $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
+  while (my($alt_zeit_von,$alt_zeit_bis)=$l->leistungsdaten_werte_next()) {
+    $dauer+=$d->dauer_m($alt_zeit_bis,$alt_zeit_von);
+  }
+  my $erfasst=sprintf "%3.2f",$dauer/60;
+  $erfasst =~ s/\./,/g;
+  $dauer += $d->dauer_m($zeit_bis,$zeit_von);
+  if ($dauer > (14*60)) {
+    return 'FEHLER: Geburtsvorbereitung bei Einzelunterweisung höchsten 14 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
   }
   return '';
 }
