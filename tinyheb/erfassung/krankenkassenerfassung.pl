@@ -5,8 +5,8 @@
 
 # Krankenkassen erfassen, ändern, löschen
 
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 
 use lib "../";
@@ -301,20 +302,23 @@ sub hole_krank_daten {
   $ik = $k->krankenkasse_prev_ik($ik) if ($func==2);
   $ik=$ik_alt if (!defined($ik));
   ($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$pubkey,$zik_typ,$beleg_ik,$email)= $k->krankenkassen_krank_ik($ik);
+  $kname = '' unless(defined($kname));
+  $name = '' unless(defined($name));
+  $strasse = '' unless(defined($strasse));
   $kname =~ s/'/&#145;/g;
   $name =~ s/'/&#145;/g;
   $strasse =~ s/'/&#145;/g;
-  if ($plz_haus > 0) {
+  if (defined($plz_haus) && $plz_haus > 0) {
     $plz_haus = sprintf "%5.5u",$plz_haus;
   } else {
     $plz_haus = '';
   }
-  if ($plz_post > 0) {
+  if (defined($plz_post) && $plz_post > 0) {
     $plz_post = sprintf "%5.5u",$plz_post;
   } else {
     $plz_post = '';
   }
-  $beleg_ik='' if ($beleg_ik == 0);
-  $zik='' if ($zik == 0);
+  $beleg_ik='' if (!defined($beleg_ik) || $beleg_ik == 0);
+  $zik='' if (!defined($zik) || $zik == 0);
   return;
 }
