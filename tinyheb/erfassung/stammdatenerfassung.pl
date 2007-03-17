@@ -197,9 +197,9 @@ print "<tr>";
 print "<td><input type='text' name='plz' value='$plz' size='5' maxlength='5' onChange='plz_check(this)'></td>";
 print "<td><input type='text' name='ort' value='$ort' size='25' maxlength='25'></td>";
 print "<td><input type='text' name='strasse' value='$strasse' size='30' maxlength='30'></td>";
-print "<td><input type='button' name='route' value='Wegbeschreibung via Google' onClick=\"route_ber(form,'".$h->parm_unique("HEB_STRASSE")."','";
-print $h->parm_unique("HEB_PLZ")."','";
-print $h->parm_unique("HEB_ORT")."');\"></tr>";
+# Durch entfernen des # in der nächsten Zeile wird ein neuer Knopf erzeugt,
+# über den man sich eine Wegbeschreibung anzeigen lassen kann
+# print "<td><input type='button' name='route' value='Wegbeschreibung via Google' onClick=\"route_ber(form,'".$h->parm_unique("HEB_STRASSE")."','".$h->parm_unique("HEB_PLZ")."','".$h->parm_unique("HEB_ORT")."');\">";
 print '</tr>';
 print '</table>';
 print "\n";
