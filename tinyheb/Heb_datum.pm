@@ -127,6 +127,7 @@ sub dauer_m {
   # eingabe 2 zeiten im Format hh:mm es wird die Dauer in Minuten berechnet
   shift;
   my ($z1,$z2)= @_;
+  return undef if(!defined($z1) || !defined($z2));
   my ($h1,$m1) = split ':',$z1;
   my ($h2,$m2) = split ':',$z2;
   $h2 *=-1;
