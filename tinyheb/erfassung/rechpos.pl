@@ -548,8 +548,7 @@ sub speichern {
     $sieben_spaeter =~ s/-//g;
     while ($i<$anzahl_kurse) {
       $sieben_spaeter=sprintf "%4.4u%2.2u%2.2u",Add_Delta_Days(unpack('A4A2A2',$sieben_spaeter),7);
-      $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$sieben_spaeter,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
-      $i++;
+
       if ($hebgo->pos7_plausi ne '') {
 	$hint .= "Es wurden nur $i Kurse gespeichert.";
 	return $hint;
@@ -558,7 +557,8 @@ sub speichern {
 	$hint .= "Es wurden nur $i Kurse gespeichert.";
 	return $hint;
       }
-
+      $i++;
+      $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$sieben_spaeter,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
     }
   }
 
