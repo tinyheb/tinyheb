@@ -5,8 +5,8 @@
 
 # alte Rechnungen anzeigen
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 
 use lib "../";
 use Heb_leistung;

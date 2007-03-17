@@ -6,7 +6,7 @@
 
 # Auswahl einer Krankenkasse
 
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 
 use lib "../";
