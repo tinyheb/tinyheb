@@ -40,7 +40,7 @@ my $d = new Heb_datum;
 my $l = new Heb_leistung;
 my $k = new Heb_krankenkassen;
 
-my $sel_status=$q->param("sel_status") or "ungleich erl.";
+my $sel_status=$q->param("sel_status") || "ungleich erl.";
 
 my $debug=1;
 
