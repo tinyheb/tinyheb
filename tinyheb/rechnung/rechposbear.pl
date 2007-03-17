@@ -59,7 +59,7 @@ my $ignore = $q->param('ignore') || 0;
 my $abschicken = $q->param('abschicken');
 my $stornieren = $q->param('stornieren');
 my $func = $q->param('func') || 0;
-my $sel_status = $q->param('sel_status') or 'ungleich erl.';
+my $sel_status = $q->param('sel_status') || 'ungleich erl.';
 
 print $q->header ( -type => "text/html", -expires => "-1d");
 
@@ -196,11 +196,13 @@ sub print_summen {
   # Teilzahlung und erledigt
   $l->rechnung_such('sum(betraggez)','status>=24 and status<80');
   my $summe_gez = $l->rechnung_such_next();
+  $summe_gez=0 unless(defined($summe_gez));
   $summe_gez = sprintf "%.2f",$summe_gez;
   $summe_gez =~ s/\./,/g;
   
   $l->rechnung_such('sum(betrag)-sum(betraggez)','status<=24');
   my $summe_offen = $l->rechnung_such_next();
+  $summe_offen=0 unless(defined($summe_offen));
   $summe_offen = sprintf "%.2f",$summe_offen;
   $summe_offen =~ s/\./,/g;
   print '<table border="0">';
