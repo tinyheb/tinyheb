@@ -75,6 +75,7 @@ $plz_krankenkasse = 0 unless (defined($plz_krankenkasse));
 $plz_post_krankenkasse = 0 unless (defined($plz_post_krankenkasse));
 $strasse_krankenkasse = '' unless (defined($strasse_krankenkasse));
 $postfach_krankenkasse = '' unless (defined($postfach_krankenkasse));
+$ort_krankenkasse = '' unless (defined($ort_krankenkasse));
 $plz_krankenkasse = sprintf "%5.5u",$plz_krankenkasse;
 $plz_post_krankenkasse = sprintf "%5.5u",$plz_post_krankenkasse;
 
@@ -708,6 +709,7 @@ sub anschrift {
   $plz_post_krankenkasse_beleg = 0 unless (defined($plz_post_krankenkasse_beleg));
   $strasse_krankenkasse_beleg = '' unless (defined($strasse_krankenkasse_beleg));
   $postfach_krankenkasse_beleg = '' unless (defined($postfach_krankenkasse_beleg));
+  $ort_krankenkasse_beleg = '' unless (defined($ort_krankenkasse_beleg));
   
   $plz_krankenkasse_beleg = sprintf "%5.5u",$plz_krankenkasse_beleg;
   $plz_post_krankenkasse_beleg = sprintf "%5.5u",$plz_post_krankenkasse_beleg;
