@@ -112,7 +112,7 @@ sub zuschlag_sonntag {
 sub ersetze_nacht {
   # wenn Nacht angegeben ist, prüfen ob posnr ersetzt werden muss
   my $self=shift;
-  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->{zeit_von}) <= 8 || $d->zeit_h($self->{zeit_von})>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->{zeit_von}) < 8 || $d->zeit_h($self->{zeit_von})>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
     return $2 if($1 ne '+');
   }
   return undef;
@@ -121,7 +121,7 @@ sub ersetze_nacht {
 sub zuschlag_nacht {
   # prüfen, ob Zuschlag für diese Posnr Nachts existiert
   my $self=shift;
-  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->{zeit_von}) <= 8 || $d->zeit_h($self->{zeit_von})>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->{zeit_von}) < 8 || $d->zeit_h($self->{zeit_von})>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
     return $2 if($1 eq '+');
   }
   return undef;
@@ -148,7 +148,7 @@ sub zuschlag_plausi {
     # alles ok
   } elsif ($l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') && $self->{dow}==6 && $d->zeit_h($self->{zeit_von}) >= 12) {
     # alles ok
-  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'NACHT') && ($d->zeit_h($self->{zeit_von}) <= 8 || $d->zeit_h($self->{zeit_von}) >= 20)) {
+  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'NACHT') && ($d->zeit_h($self->{zeit_von}) < 8 || $d->zeit_h($self->{zeit_von}) >= 20)) {
     # alles ok
   } elsif (($l->leistungsart_pruef_zus($self->{posnr},'SONNTAG') || 
 	    $l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') || 
