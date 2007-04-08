@@ -2,8 +2,8 @@
 
 # Package um Stammdaten zu verarbeiten
 
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -103,12 +103,14 @@ sub stammdaten_ins {
      $geburtsdatum_kind,
      $naechste_hebamme,
      $begruendung_nicht_naechste_hebamme,
-     $datum) = @_;
+     $datum,$id_alt) = @_;
 
   # zunächst neue ID für Frau holen
   Heb->parm_such('STAMMDATEN_ID');
   my $id = Heb->parm_such_next;
   $id++;
+  $id = $id_alt if (defined($id_alt));
+
   # insert an Datenbank vorbereiten
   my $stammdaten_ins = $dbh->prepare("insert into Stammdaten ".
 				     "(ID,VORNAME,NACHNAME,GEBURTSDATUM_FRAU,".
@@ -141,7 +143,7 @@ sub stammdaten_ins {
 				     $datum)
     or die $dbh->errstr();
 
-  Heb->parm_up('STAMMDATEN_ID',$id);
+  Heb->parm_up('STAMMDATEN_ID',$id) if(!defined($id_alt));
   print "ergebnis ins_id $id<br>\n" if $debug;
   return $id;
 }
