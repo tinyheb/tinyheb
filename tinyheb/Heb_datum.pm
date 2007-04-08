@@ -127,9 +127,10 @@ sub dauer_m {
   # eingabe 2 zeiten im Format hh:mm es wird die Dauer in Minuten berechnet
   shift;
   my ($z1,$z2)= @_;
-  return undef if(!defined($z1) || !defined($z2));
+  return 0 if(!(defined($z1)) || !(defined($z2)) || $z1 eq '' || $z2 eq '');
   my ($h1,$m1) = split ':',$z1;
   my ($h2,$m2) = split ':',$z2;
+  return 0 if(!(defined($h2)) || !(defined($m2)));
   $h2 *=-1;
   $m2 *=-1;
   my ($y,$m,$d,$H,$M,$S)=Add_Delta_DHMS(1900,1,1,$h1,$m1,0,0,$h2,$m2,0);
@@ -237,7 +238,7 @@ sub feiertag_datum {
   my $feier_datum = $dbh->prepare("select * from Kalender where ".
 				  "DATUM = ?;")
     or die $dbh->errstr();
-  $datum=Heb_datum->convert($datum);
+#  $datum=Heb_datum->convert($datum);
   my $erg = $feier_datum->execute($datum) or die $dbh->errstr();
   return $erg if ($erg > 0);
   return 0;
