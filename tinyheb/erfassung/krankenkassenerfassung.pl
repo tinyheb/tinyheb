@@ -305,6 +305,8 @@ sub hole_krank_daten {
   $kname = '' unless(defined($kname));
   $name = '' unless(defined($name));
   $strasse = '' unless(defined($strasse));
+  $postfach = '' unless(defined($postfach));
+  $bemerkung = '' unless(defined($bemerkung));
   $kname =~ s/'/&#145;/g;
   $name =~ s/'/&#145;/g;
   $strasse =~ s/'/&#145;/g;
@@ -320,5 +322,6 @@ sub hole_krank_daten {
   }
   $beleg_ik='' if (!defined($beleg_ik) || $beleg_ik == 0);
   $zik='' if (!defined($zik) || $zik == 0);
+  $zik_typ='' if (!defined($zik_typ) || $zik_typ == 0);
   return;
 }
