@@ -43,7 +43,7 @@ my $abschicken = $q->param('abschicken');
 my $hint='';
 my $mysql = 'mysql';
 if ($passwort ne '') {
-  $mysql .= " -u root -p=$passwort ";
+  $mysql .= " -u root --password=$passwort ";
 } else {
   $mysql .= " -u root ";
 }
