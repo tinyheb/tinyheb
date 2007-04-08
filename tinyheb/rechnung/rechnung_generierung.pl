@@ -53,6 +53,13 @@ my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
 my $func = $q->param('func') || 0;
 
+my $rechnungsnr = 1+($h->parm_unique('RECHNR'));
+$l->rechnung_such('RECHNUNGSNR',"RECHNUNGSNR=$rechnungsnr");
+my ($rech_exists)=$l->rechnung_such_next();
+if (defined($rech_exists)) {
+  die "Die Datenbank ist korrupt, die nächste zu vergebende Rechnungsnummer $rechnungsnr existiert schon in der Datenbank, bitte Parameter RECHNR überprüfen\n";
+}
+
 # zunächst daten der Frau holen
 my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
     $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
