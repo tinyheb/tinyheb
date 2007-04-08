@@ -5,7 +5,7 @@
 
 # Backup der tinyHeb Datenbank anlegen
 
-# Copyright (C) 2006 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,10 @@ my $q = new CGI;
 my $h = new Heb;
 
 my $mysqldump = 'mysqldump';
+if ($^O =~ /MSWin32/) {
+  my $pfad='"/Programme/MySQL/MySQL Server 5.0/bin/mysqldump.exe"';
+  $mysqldump=$pfad if (-e "$pfad");
+}
 
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 
@@ -43,7 +47,7 @@ my $passwort = $q->param('passwort') || '';
 
 
 if ($passwort ne '') {
-  $mysqldump .= " -u root -p=$passwort";
+  $mysqldump .= " -u root --password=$passwort";
 } else {
   $mysqldump .= " -u root ";
 }
@@ -100,5 +104,4 @@ while($zeile=<SICHER>) {
 $gz->gzclose;
 close SICHER;
 die "Achtung: es wurde keine korrekte Sicherung angelegt" if (!defined($byteswritten2));
-
 
