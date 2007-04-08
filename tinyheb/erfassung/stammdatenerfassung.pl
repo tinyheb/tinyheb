@@ -113,6 +113,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 
 if (($auswahl eq 'Neu') && defined($abschicken)) {
   $frau_id = speichern();
+  $frau_id2=$frau_id;
   $auswahl = 'Anzeigen';
 }
 if (($auswahl eq 'Ändern') && defined($abschicken)) {
