@@ -47,9 +47,13 @@ print '</head>';
 print '<table border="0" align="left">';
 
 print "<tr>";
-print "<td><input type='button' name='pdruck' value='zurück' onclick='self.close()'</td>";
+
+print '<td>';
+print '<table border="0" align="left">';
+print '<tr>';
+print "<td align='left'><input type='button' name='pdruck' value='zurück' onclick='self.close()'</td>";
 if (defined($edi_datum) && $edi_datum ne '' && $edi_datum ne '0000-00-00 00:00:00') {
-  print '<td>';
+  print '<td align="left">';
   print "<select name='rechtyp' size=1 onChange='anzeige_wechsel();'>";
   print '<option selected value="1">Papier Rechnung</option>';
   print '<option value="2">elektronische Rechnung</option>';
@@ -57,13 +61,26 @@ if (defined($edi_datum) && $edi_datum ne '' && $edi_datum ne '0000-00-00 00:00:0
 }
 print '</tr>';
 print '</table>';
+print '</td>';
+print '</tr>';
 print "\n";
 
+print '<tr>';
+print '<td>';
 print "<iframe src='ps2html_alt.pl?rech_id=$rech_id' name='rechnung_alt' width='880' height='650' scrolling='auto' frameborder='1'>" if ($rech_id > 0);
 print "<iframe src='../blank.html' name='rechnung_alt' width='880' height='650' scrolling='yes' frameborder='1'>" if ($rech_id == 0);
 print "</iframe>";
+print '</td>';
+print '</tr>';
 
+print '<tr>';
+print '<td>';
 print "<br><input type='button' name='pdruck' value='zurück' onclick='self.close()'";
+print '</td>';
+print '</tr>';
+print '</table>';
+print "\n";
+
 print "</body>";
 
 print <<SCRIPTE;
