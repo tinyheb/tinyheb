@@ -29,7 +29,7 @@ CREATE TABLE Parms (
 --
 
 INSERT INTO Parms VALUES (12,'STAMMDATEN_ID','1','Zähler für Stammdaten');
-INSERT INTO Parms VALUES (2,'LEISTUNGSART_ID','143','Zähler für Leistungsarten');
+INSERT INTO Parms VALUES (2,'LEISTUNGSART_ID','144','Zähler für Leistungsarten');
 INSERT INTO Parms VALUES (3,'BEGRUENDUNG','Wehen','Begründungstext für Sonderfälle');
 INSERT INTO Parms VALUES (4,'BEGRUENDUNG','Stillschwierigkeiten','Begründungstext für Sonderfälle');
 INSERT INTO Parms VALUES (5,'BEGRUENDUNG','Nabelheilungsstörung','Begründungstext für Sonderfälle');
@@ -37,7 +37,7 @@ INSERT INTO Parms VALUES (6,'BEGRUENDUNG','verzögerte Rückbildung','Begründungst
 INSERT INTO Parms VALUES (7,'LEISTUNG_ID','1','Zähler für Leistungsdaten');
 INSERT INTO Parms VALUES (8,'RECHNR','20070000','Zähler für Rechnungsnummer (letzte vergebene Rechnungsnummer)');
 INSERT INTO Parms VALUES (9,'KALENDER_ID','43','Zähler für Feiertage');
-INSERT INTO Parms VALUES (0,'PARM_ID','166','Zähler für Parameter');
+INSERT INTO Parms VALUES (0,'PARM_ID','176','Zähler für Parameter');
 INSERT INTO Parms VALUES (14,'HEB_VORNAME','Vorname','Vorname der Hebamme');
 INSERT INTO Parms VALUES (23,'HEB_TEL','01234/45636','Telefonnumer der Hebamme');
 INSERT INTO Parms VALUES (15,'HEB_NACHNAME','Nachname','Nachname der Hebamme');
@@ -191,6 +191,16 @@ INSERT INTO Parms VALUES (163,'SCHL100395611','03','Verschlüsselung für diese Da
 INSERT INTO Parms VALUES (164,'SIG100395611','00','Signatur für diese Datenannahmestelle (AOK Mecklenburg-Vorpommern)');
 INSERT INTO Parms VALUES (165,'MAIL100395611','AOK Mecklenburg-Vorpommern <da@dta.aok.de>','Mail Adresse der Datenanname stelle (AOK Mecklenburg-Vorpommern)');
 INSERT INTO Parms VALUES (166,'HEB_BUNDESLAND','NRW','Bundesland aus dem die Hebamme kommt');
+INSERT INTO Parms VALUES (167,'IK100295017','00','Datenannahmestelle (hier ARGE-AOK IVZ Nord) Testindikator 0=Test, 1=Erprobungsphase, 2=Produktion');;
+INSERT INTO Parms VALUES (168,'MAIL100295017','','Mailadresse der Datenannahmestelle (hier ARGE-AOK IVZ Nord) zwingend im Format NAME<mail@blab.blub.d');
+INSERT INTO Parms VALUES (169,'SIG100295017','00','Signatur für diese Datenannahmestelle (hier ARGE-AOK IVZ Nord) 0=keine, 2=PEM, 3=PKCS#7');
+INSERT INTO Parms VALUES (170,'SCHL100295017','03','Verschlüsselung für diese Datenannahmestelle (hier ARGE-AOK IVZ Nord) 0=keine, 2=PEM, 3=PKCS#7');
+INSERT INTO Parms VALUES (171,'DTAUS100295017','1','Datenaustauschreferenz für diese Datenannahmestelle (hier ARGE-AOK IVZ Nord)');;
+INSERT INTO Parms VALUES (172,'IK0','00','Datenannahmestelle (hier ) Testindikator 0=Test, 1=Erprobungsphase, 2=Produktion');
+INSERT INTO Parms VALUES (173,'MAIL0','','Mailadresse der Datenannahmestelle (hier ) zwingend im Format NAME<mail@blab.blub.de>');
+INSERT INTO Parms VALUES (174,'SIG0','00','Signatur für diese Datenannahmestelle (hier ) 0=keine, 2=PEM, 3=PKCS#7');
+INSERT INTO Parms VALUES (175,'SCHL0','03','Verschlüsselung für diese Datenannahmestelle (hier ) 0=keine, 2=PEM, 3=PKCS#7');
+INSERT INTO Parms VALUES (176,'DTAUS0','1','Datenaustauschreferenz für diese Datenannahmestelle (hier )');
 
 -- MySQL dump 9.11
 --
@@ -362,6 +372,7 @@ INSERT INTO Leistungsart VALUES (103,'93','Einzelkilometer bei Entfernung von me
 INSERT INTO Leistungsart VALUES (141,'M004','Garmastan Salbe','M','4.75','0.00','','','','',0,'','','','','','','','','2004-01-01','9999-12-31','Garmastan Salbe');
 INSERT INTO Leistungsart VALUES (142,'M005','Thrombocutan Salbe','M','4.25','0.00','','','','',0,'','','','','','','','','2004-01-01','9999-12-31','Thrombocutan Salbe');
 INSERT INTO Leistungsart VALUES (143,'M006','Betaisodona Salbe','M','5.20','0.00','','','','',0,'','','','','','','','','2004-01-01','9999-12-31','Betaisodona Salbe');
+INSERT INTO Leistungsart VALUES (144,'M007','Wecesinpuder zur Nabelpflege 50 Gramm','M','6.62','0.00','','','','',0,'','','','','','','','','2004-01-01','9999-12-31','Wecesinpuder zur Nabelpflege (50 g)');
 
 -- MySQL dump 9.11
 --
@@ -2356,7 +2367,7 @@ INSERT INTO Krankenkassen VALUES (105501575,'IKK BW u.He.(vorm. IKK Hessen)','IK
 INSERT INTO Krankenkassen VALUES (105801590,'IKK BW u.He.(vorm. IKK Hessen) 45301','IKK Baden-Württemberg und Hess (vorm. IKK Hessen) Regionaldirektion Wiesbaden','Abraham-Lincoln-Str. 32',65189,65024,'Wiesbaden',' 3409','','',105801603,'Verweis auf zentralen Kostenträger w/ VKG+01+105801603+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (105801603,'IKK BW u.He.(vorm. IKK Hessen)','IKK Baden-Württemberg und Hess (vorm. IKK Hessen)','Abraham-Lincoln-Str. 32',65189,0,'Wiesbaden','','','',109900019,'Verweis auf zentralen Kostenträger w/ VKG+01+105801603+5++++++00\nZentral IK mit Entschlüsselungsbefugnis w/ VKG+03+109900019+5++07++++00\n',NULL,3,0,'');
 INSERT INTO Krankenkassen VALUES (105903116,'IKK Thüringen 89301','IKK Thüringen','Mittelhäuser Str. 68',99091,99003,'Erfurt',' 114','','',109900019,'Zentral IK mit Entschlüsselungsbefugnis w/ VKG+03+109900019+5++07++++00\nVerweis auf zentralen Kostenträger w/ VKG+01+105903116+5++++++00\n',NULL,3,0,'');
-INSERT INTO Krankenkassen VALUES (105903149,'IKK Niedersachsen Ost 89303','IKK Niedersachsen (Ost) Landesdirektion','Braustr. 8',37339,0,'Worbis','','','',109900019,'Zentral IK mit Entschlüsselungsbefugnis w/ VKG+03+109900019+5++07++++00\nVerweis auf zentralen Kostenträger w/ VKG+01+105903149+5++++++00\nBelegannahme w/ VKG+09+661430035+5++28++++50\n',NULL,3,661430035,'');
+INSERT INTO Krankenkassen VALUES (105903149,'IKK Niedersachsen Ost 89303','IKK Niedersachsen Landesdirektion','Brüderstr. 5',30159,0,'Hannover','','','',109900019,'Zentral IK mit Entschlüsselungsbefugnis w/ VKG+03+109900019+5++07++++00\nVerweis auf zentralen Kostenträger w/ VKG+01+105903149+5++++++00\nBelegannahme w/ VKG+09+661430035+5++28++++50\n',NULL,3,661430035,'');
 INSERT INTO Krankenkassen VALUES (105903150,'IKK Niedersachsen (Ost) 86303','IKK Niedersachsen (Ost) Service-Center Herzberg','Stollberger Str. 8',99734,0,'Nordhausen','','','',105903149,'Verweis auf zentralen Kostenträger w/ VKG+01+105903149+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (106003120,'IKK Thüringen 90301','IKK Thüringen','Puschkinplatz 4',7545,7504,'Gera',' 443','','',105903116,'Verweis auf zentralen Kostenträger w/ VKG+01+105903116+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (106103132,'IKK Thüringen 91301','IKK Thüringen','Werner-Seelenbinder-Str. 21',98529,98504,'Suhl',' 613','Abt. Verträge','03681-77770',105903116,'Verweis auf zentralen Kostenträger w/ VKG+01+105903116+5++++++00\n',NULL,1,0,'');
@@ -2434,14 +2445,14 @@ INSERT INTO Krankenkassen VALUES (109303301,'IKK Südw.-Direkt (vorm.IKK SL) 7331
 INSERT INTO Krankenkassen VALUES (109500253,'IKK-LV Brandenburg und Berlin','IKK-Landesverband Brandenburg und Berlin','Ordensmeisterstr. 15',12099,12063,'Berlin',' 420344','','',109500297,'Verweis auf zentralen Kostenträger w/ VKG+01+109500297+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (109500275,'IKK Brandenb. u. Berlin (West) 72301','IKK Brandenburg und Berlin (We RD Berlin','Keithstr. 9 - 11',10787,10722,'Berlin',' 301141','','',109500297,'Verweis auf zentralen Kostenträger w/ VKG+01+109500297+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (109500286,'IKK Brandenb. u. Berlin (West)','IKK Brandenburg und Berlin (We','Ziolkowstr. 6',14480,0,'Potsdam','','','',109500297,'Verweis auf zentralen Kostenträger w/ VKG+01+109500297+5++++++00\n',NULL,1,0,'');
-INSERT INTO Krankenkassen VALUES (109500297,'IKK Brandenb. u. Berlin (West) 72302','IKK Brandenburg und Berlin (We','Keithstr. 9 - 11',10787,10727,'Berlin',' 303540','','',109900019,'Verweis auf zentralen Kostenträger w/ VKG+01+109500297+5++++++00\nZentral IK mit Entschlüsselungsbefugnis w/ VKG+03+109900019+5++07++++00\n',NULL,3,0,'');
+INSERT INTO Krankenkassen VALUES (109500297,'IKK Brandenb. u. Berlin (West) 72302','IKK Brandenburg und Berlin RD Berlin (West)','Keithstr. 9 - 11',10787,10727,'Berlin',' 303540','','',109900019,'Verweis auf zentralen Kostenträger w/ VKG+01+109500297+5++++++00\nZentral IK mit Entschlüsselungsbefugnis w/ VKG+03+109900019+5++07++++00\n',NULL,3,0,'');
 INSERT INTO Krankenkassen VALUES (109500300,'IKK Brandenb. u. Berlin (West) 72302','IKK Brandenburg und Berlin (We','Keithstr. 9 - 11',10787,10727,'Berlin',' 303540','','',109500297,'Verweis auf zentralen Kostenträger w/ VKG+01+109500297+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (109702202,'IKK Brandenburg u.Berlin (Ost)','IKK Brandenburg und Berlin (Os','Keithstr. 9 - 11',10787,0,'Berlin','','','',100602360,'Verweis auf zentralen Kostenträger w/ VKG+01+100602360+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (109702213,'IKK Brandenburg u.Berlin (Ost)','IKK Brandenburg und Berlin (Os','Keithstr. 9 - 11',10787,0,'Berlin','','','',100602360,'Verweis auf zentralen Kostenträger w/ VKG+01+100602360+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (109702224,'IKK Brandenburg u.Berlin (Ost)','IKK Brandenburg und Berlin (Os','Keithstr. 9 - 11',10787,0,'Berlin','','','',100602360,'Verweis auf zentralen Kostenträger w/ VKG+01+100602360+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (109702235,'IKK Brandenburg u.Berlin (Ost) 00000','IKK Brandenburg und Berlin (Os','Keithstr. 9 - 11',10787,0,'Berlin','','','',100602360,'Verweis auf zentralen Kostenträger w/ VKG+01+100602360+5++++++00\n',NULL,1,0,'');
 INSERT INTO Krankenkassen VALUES (109702246,'IKK Brandenburg u.Berlin (Ost) 00000','IKK Brandenburg und Berlin (Os','Keithstr. 9 - 11',10787,0,'Berlin','','','',100602360,'Verweis auf zentralen Kostenträger w/ VKG+01+100602360+5++++++00\n',NULL,1,0,'');
-INSERT INTO Krankenkassen VALUES (109900019,'IKK-Bundesverband','IKK-Bundesverband','Friedrich-Ebert-Str.',51429,51401,'Bergisch Gladbach',' 100152','Heike Volkmann','02204/44-170',109989162,'Zentral IK ohne Entschlüsselungsbefugnis w/ VKG+02+109989162+5++07++++00\n','MIIDWDCCAkCgAwIBAgIBHTANBgkqhkiG9w0BAQUFADBJMQswCQYDVQQGEwJERTE6\r\nMDgGA1UEChMxSVRTRyBUcnVzdENlbnRlciBmdWVyIHNvbnN0aWdlIExlaXN0dW5n\r\nc2VyYnJpbmdlcjAeFw0wNTExMjkwMDAwMDBaFw0wODEyMzEyMzU5NTlaMIGVMQsw\r\nCQYDVQQGEwJERTE6MDgGA1UEChMxSVRTRyBUcnVzdENlbnRlciBmdWVyIHNvbnN0\r\naWdlIExlaXN0dW5nc2VyYnJpbmdlcjEaMBgGA1UECxMRSUtLIEJ1bmRlc3ZlcmJh\r\nbmQxFDASBgNVBAsTC0lLMTA5OTAwMDE5MRgwFgYDVQQDEw9BbmRyZWFzIE11ZWxs\r\nZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCADZz6EGJm0F9F4IWp\r\nyFKq2XEOfzcZuSFw+oVv7mO1oQ30pw7xP97lkCNKSBKXFfCsvlUmNDHwK/A4TYlr\r\nf3qlEB2y8xI7/hPxqO4EHj0B2LTUDiZuyIeov3dLYPiEbNyfBWDM9FKAJyMN92vL\r\nrpgFSJimfdLqW4J+iq4jgKSNeAyq+ur80vt+/cUKfykT+cA+w966Df4DzjRBMkvB\r\nziYnsBWf23DPEn3Xib7ZR5IL73xS/oB5nK73i+YtJqkEzdKS7uWZBGC7kXXA2k5g\r\np6VpxnzF1F6Avz6EEDHEgU3y63neVJMFRB1qbwGj9+mWq8OgY4FlM5HgWbCO384e\r\n8XCVAgMBAAEwDQYJKoZIhvcNAQEFBQADggEBAKrlEj7S8bJwN7OO1bmOyckzZ1ft\r\nh0p7I4xfj+cpvHJu7IdA8n7cEFXGY0BwsttCDbKqTIMORiROcoiaDQckrqMTeyeY\r\nsJrWvipxEpELd/8C1p2+Ab64SlpgXzzm6DavgoyHxbIK78QgVyb8TyOAsZwflY4R\r\nLw3ArUUP60D6c37yrjJ3YoghGq1zFZtuz3/hc/8g61cHZR3EqrhxxJnWUThLvpRM\r\nhc0ALqy5FmV86eBHFddFTalhGsFHTioxW4vQnjnkICo26hZ7j4hrE3t7mkL+Vr4j\r\nk/BPHB5GSF17bVemmqKHJv3dD0Jqor8AUS1ISWKwf69k2i/iMnogKUBBk5o=\r\n',2,0,'IKK-Bundesverband <le@gkv-daten.de>');
+INSERT INTO Krankenkassen VALUES (109900019,'IKK-Bundesverband','IKK-Bundesverband','Friedrich-Ebert-Str.',51429,51401,'Bergisch Gladbach',' 100152','Heike Volkmann','02204/44-170',109989162,'Zentral IK ohne Entschlüsselungsbefugnis w/ VKG+02+109989162+5++07+9+++00\n','MIIDWDCCAkCgAwIBAgIBHTANBgkqhkiG9w0BAQUFADBJMQswCQYDVQQGEwJERTE6\r\nMDgGA1UEChMxSVRTRyBUcnVzdENlbnRlciBmdWVyIHNvbnN0aWdlIExlaXN0dW5n\r\nc2VyYnJpbmdlcjAeFw0wNTExMjkwMDAwMDBaFw0wODEyMzEyMzU5NTlaMIGVMQsw\r\nCQYDVQQGEwJERTE6MDgGA1UEChMxSVRTRyBUcnVzdENlbnRlciBmdWVyIHNvbnN0\r\naWdlIExlaXN0dW5nc2VyYnJpbmdlcjEaMBgGA1UECxMRSUtLIEJ1bmRlc3ZlcmJh\r\nbmQxFDASBgNVBAsTC0lLMTA5OTAwMDE5MRgwFgYDVQQDEw9BbmRyZWFzIE11ZWxs\r\nZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCADZz6EGJm0F9F4IWp\r\nyFKq2XEOfzcZuSFw+oVv7mO1oQ30pw7xP97lkCNKSBKXFfCsvlUmNDHwK/A4TYlr\r\nf3qlEB2y8xI7/hPxqO4EHj0B2LTUDiZuyIeov3dLYPiEbNyfBWDM9FKAJyMN92vL\r\nrpgFSJimfdLqW4J+iq4jgKSNeAyq+ur80vt+/cUKfykT+cA+w966Df4DzjRBMkvB\r\nziYnsBWf23DPEn3Xib7ZR5IL73xS/oB5nK73i+YtJqkEzdKS7uWZBGC7kXXA2k5g\r\np6VpxnzF1F6Avz6EEDHEgU3y63neVJMFRB1qbwGj9+mWq8OgY4FlM5HgWbCO384e\r\n8XCVAgMBAAEwDQYJKoZIhvcNAQEFBQADggEBAKrlEj7S8bJwN7OO1bmOyckzZ1ft\r\nh0p7I4xfj+cpvHJu7IdA8n7cEFXGY0BwsttCDbKqTIMORiROcoiaDQckrqMTeyeY\r\nsJrWvipxEpELd/8C1p2+Ab64SlpgXzzm6DavgoyHxbIK78QgVyb8TyOAsZwflY4R\r\nLw3ArUUP60D6c37yrjJ3YoghGq1zFZtuz3/hc/8g61cHZR3EqrhxxJnWUThLvpRM\r\nhc0ALqy5FmV86eBHFddFTalhGsFHTioxW4vQnjnkICo26hZ7j4hrE3t7mkL+Vr4j\r\nk/BPHB5GSF17bVemmqKHJv3dD0Jqor8AUS1ISWKwf69k2i/iMnogKUBBk5o=\r\n',2,0,'IKK-Bundesverband <le@gkv-daten.de>');
 INSERT INTO Krankenkassen VALUES (660510132,'RZ HÜNXE','Rechenzentrum HÜNXE Inh. Staude GmbH','',0,46467,'Wesel',' 10 11 09','Herr Tilner','0281-9885-162',0,'',NULL,0,0,'');
 INSERT INTO Krankenkassen VALUES (660510256,'DDG GmbH','Deutsches Dienstleistungszentrum für das Gesundheitswesen','Grabenstraße 100-104',45141,0,'Essen','','Peter Numratzki','0201-8998-980',0,'',NULL,0,0,'');
 INSERT INTO Krankenkassen VALUES (660510278,'DDG','DDG-Rechnungsprüfstelle der Innungskrankenkassen','',0,45120,'Essen','','','',0,'',NULL,0,0,'');
