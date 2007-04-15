@@ -63,6 +63,8 @@ if ($rechtyp == 1) {
     
     open AUSGABE,"/tmp/wwwrun/file.pdf" or
       die "konnte Datei nicht konvertieren in pdf\n";
+    binmode AUSGABE;
+    binmode STDOUT;
     while (my $zeile=<AUSGABE>) {
       print $zeile;
     }
