@@ -118,6 +118,7 @@ system('ppm install dbi');
 system('ppm install DBD-mysql');
 system('ppm install PostScript-Simple');
 system('ppm install Mail-Sender');
+system('ppm install DBD-XBase');
 
 print "\nDie fehlenden Pakete sind jetzt initialisiert\n";
 print "Die Verbindung zum Internet wird nicht mehr benoetigt\n\n";
