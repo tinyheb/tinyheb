@@ -22,3 +22,5 @@ update Parms set VALUE ='AOK Mecklenburg-Vorpommern <da@dta.aok.de>' where name=
 update Leistungsart set zusatzgebuehren2='>5GK' where POSNR=24 and zusatzgebuehren2='>4GK';
 update Leistungsart set zusatzgebuehren4='<6GK' where POSNR=24 and zusatzgebuehren4='<5GK';
 
+alter table Leistungsart add index POSNR_INDEX(POSNR,GUELT_VON,GUELT_BIS);
+alter table Leistungsdaten add index FKST_INDEX(FK_STAMMDATEN);
