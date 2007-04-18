@@ -1,10 +1,9 @@
 Offen:
+
 26.12.06
 Grund angeben, warum eine elektronische Rechnung nicht möglich ist.
 
 12.11.06
-Positionsnummer 8 muss gleiche Plausiprüfung haben, wie Positionsnummer 7
-
 Beschreibung der Maske Mahnungen generieren
 
 Beschreibung der Maske Angaben zur Hebamme
@@ -25,16 +24,10 @@ Positionsnummer 6  mehr als 2 mal am selben Tag nur auf ärztliche Anordnung.
 
 
 12.08.06
-In Spec File ggf. mozplugger mit aufnehmen.
-
-12.08.06
 - Installationshinweise für Windows aufnehmen.
 
 06.08.06
 eigene Erfassungs- und Bearbeitungsmaske für Materialien
-
-01.08.06
-Mahnungen für privat Versicherte
 
 31.12.05
 Wenn es sich um Zwillinge handelt, muss Zuschlag gerechnet werden. Pro Kind
@@ -48,6 +41,20 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+08.04.07
+Sicherung erstellen muss auch unter Windows funktionieren, wenn mysqldump nicht im Path enthalten ist. Anforderung vom 02.04.07
+
+
+25.02.07
+Mahnungen für privat Versicherte. Anforderung vom 01.08.06.
+
+In Spec File ggf. mozplugger mit aufnehmen.
+Wird nicht umgesetzt, es gab keine Beschwerden. Anforderung vom 12.08.06.
+
+Positionsnummer 8 muss gleiche Plausiprüfung haben, wie Positionsnummer 7. Anforderung vom 12.11.06
+
+
+
 24.02.07
 prüfen ob mit harten Fehlern in mysql richtig umgegangen wird. Anforderung vom 12.08.06.
 

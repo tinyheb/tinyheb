@@ -1,3 +1,55 @@
+Release 0.12.0
+
+Bug fix:
+Es konnte keine Sicherung generiert werden, wenn das Passwort des DB-Admin benötigt wurde.
+
+mysqldump muss unter windows nicht mehr im Suchpfad des Systems liegen.
+
+Bug fix:
+Es konnte keine Sicherung eingespielt werden, wenn das Passwort des DB-Admin benötigt wurde.
+
+Bug fix:
+Unter Windows war es nicht möglich Mahnungen zu produzieren, w/ falschen Wert gswin32c
+
+Bug fix:
+von 08:00 bis 20:00 ist Tag, tinyHeb erkannte Tag von 09:00 bis 20:00
+
+Bug fix:
+Layout "Anzeige alte Rechnungen" war unter Internet Explorer nicht korrekt.
+
+Bug fix:
+PDF Dateien müssen im binmode an den Browser übertragen werden.
+
+Neuer Index auf Tabelle Leistungsarten.
+Neuer Index auf Tabelle Leistungsdaten.
+
+In der Maske "Rechnungsposten erfassen" können im Feld Posnr: nur noch solche Positionsnummern erfasst werden, die einen Preis größer Null haben. Andere Positionsnummern werden automatisch ausgewählt.
+
+weiteres CodeCleanup w/ neuer Gebührenordnung
+
+privat Gebührenordnung Thüringen
+
+unter Windows wird beim elektronischen Rechnungsversand localhost nicht mehr vorgegeben.
+
+Bug fix:
+In der Rechnungspostenerfassung wurde das Feld anzahl_frauen nicht immer korrekt initialisiert.
+
+Falls bei Rechnungspostenerfassung Pos 7 oder 40 angewählt wird, kann die Anzahl der Kurse vorgegeben
+werden, die einzelnen Rechnungsposten werden dann automatisch generiert.
+
+Neue Plausiprüfung für Positionsnummer 8, analog Positionsnummer 7
+
+Aus der Stammdatenerfassung kann Google Maps aufgerufen werden, es wird die Wegbeschreibung von der
+Adresse der Hebamme zur Kundin angezeigt.
+
+Mahnungen für privat Versicherte Kundinnen sind möglich.
+
+Zusätzlicher Hinweis auf Rechnung, dass Hebmammen Leistungen von der USt befreit sind.
+
+Es muss nicht mehr zwingend gs8.15 auf Windows Systemen genutzt werden. Der Pfad wird automatisch ermittelt
+
+
+
 Release 0.11.0
 
 Datum lässt sich im Format ttmmjj erfassen
