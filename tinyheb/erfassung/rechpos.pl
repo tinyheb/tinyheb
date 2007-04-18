@@ -5,8 +5,8 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -217,7 +217,6 @@ print '</table>';
 # //  auswahl_wechsel(document.rechpos);
 print <<SCRIPTE;
 <script>
-//  set_focus(document.krankenkassen);
   open("list_posnr.pl?frau_id=$frau_id","list_posnr");
   posnr_wechsel(document.rechpos); // funktion wurde dynamisch generiert.
   wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);
@@ -286,14 +285,17 @@ function kurs_knopf() {
 }
 
 function loesche_kurs_knopf() {
-//  alert("loesche Kurs ausgewählt");
+  // alert("loesche Kurs ausgewählt");
   var tab=document.getElementById("zeile1_tab");
   var ueberschrift=document.getElementById("ueberschrift_anz_kurse");
-//  alert("ueberschrift"+ueberschrift);
-  tab.removeChild(ueberschrift);
-  var tab2=document.getElementById("zeile2_tab");
-  var feld=document.getElementById("anz_kurse");
-  tab2.removeChild(feld);
+  // alert("ueberschrift"+ueberschrift);
+  // überschrift nur entfernen, wenn vorhanden
+  if (ueberschrift != null) {
+    tab.removeChild(ueberschrift);
+    var tab2=document.getElementById("zeile2_tab");
+    var feld=document.getElementById("anz_kurse");
+    tab2.removeChild(feld);
+  }
   
 }
 </script>
