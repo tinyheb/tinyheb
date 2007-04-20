@@ -69,7 +69,7 @@ sub ersetze_samstag {
   # Wenn Samstag angegeben ist, prüfen ob posnr ersetzt werden muss
   my $self=shift;
 
-  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $self->{zeit_von} >= 12) { # 
+  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($self->{zeit_von}) >= 12) { # 
     # Samstag nach 12 Uhr und ob es sich um andere Positionsnummer handelt
     return $2 if ($1 ne '+');
   }
@@ -80,7 +80,7 @@ sub zuschlag_samstag {
   # prüft ob Zuschlag für diese Positionsnummer an einem Samstag  existiert
   my $self=shift;
 
-  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $self->{zeit_von} >= 12) { # 
+  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($self->{zeit_von}) >= 12) { # 
     # Samstag nach 12 Uhr und ob es sich um Zuschlags Positionsnummer handelt
     return $2 if ($1 eq '+');
   }
