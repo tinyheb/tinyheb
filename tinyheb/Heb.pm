@@ -3,8 +3,8 @@
 
 # globales Package für die Hebammen Verarbeitung
 
-# Copyright (C) 2003,2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2003,2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -191,5 +191,41 @@ sub parm_such_werte {
 sub parm_such_werte_next {
   return $parm_such_werte->fetchrow_array();
 }
+
+
+sub win32_openssl {
+  my $openssl='';
+  my $pfad="/OpenSSL/bin/openssl";
+  return $pfad if (-e "$pfad.exe");
+  
+  
+  # Suche unterhalb /Programme/
+  $pfad="/Programme/OpenSSL/bin/openssl";
+  return $pfad if (-e "$pfad.exe");
+
+  return undef;
+}
+
+sub suche_gswin32 {
+  my $gswin32=undef;
+  my $i=0;
+  # Suche unterhalb /gs
+  while ($i<100) {
+    my $pfad="/gs/gs8.$i/bin/gswin32c";
+    $gswin32=$pfad if (-e "$pfad.exe");
+    $i++;
+  }
+
+  $i=0;
+  # Suche unterhalb /Programme/gs
+  while ($i<100) {
+    my $pfad="/Programme/gs/gs8.$i/bin/gswin32c";
+    $gswin32=$pfad if (-e "$pfad.exe");
+    $i++;
+  }
+
+  return $gswin32;
+}
+
 
 1;
