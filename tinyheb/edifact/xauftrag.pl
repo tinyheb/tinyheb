@@ -97,7 +97,7 @@ LINE: while (my $zeile=<RC>) {
   }
 }
 
-my $mw = MainWindow->new(-title => 'Elektronische Rechnungen',
+my $mw = MainWindow->new(-title => 'tinyHeb Elektronische Rechnungen',
 			 -bg => 'white');
 
 my $h_frame = $mw->Frame();
@@ -105,7 +105,7 @@ my $hlist = $h_frame->Scrolled('HList',
 			       -scrollbars => 'osoe',
 			       -columns => 7,
 			       -header => 1,
-			       -width => 95,
+			       -width => 115,
 			       -itemtype => 'text',
 			       -selectforeground => 'blue',
 			       -selectmode => 'extended');
@@ -348,7 +348,7 @@ RECH:  foreach (@sel) {
 	  move("$path/tmp/$dateiname$ext","$path/tmp/$empf_phys/$dateiname$ext");
 	}
       }
-      $mw->messageBox(-title => 'Rechnungsversandt',
+      $mw->messageBox(-title => 'Rechnungsversand',
 		      -type => 'OK',
 		      -message => "Rechnung $rechnr erfolgreich verschickt",
 		      -default => 'OK'
@@ -365,7 +365,7 @@ RECH:  foreach (@sel) {
 
 sub fehler {
   my ($text)=@_;
-  $mw->messageBox(-title => 'Rechnungsversandt',
+  $mw->messageBox(-title => 'Rechnungsversand',
 		  -type => 'OK',
 		  -message => "$text\n",
 		  -default => 'OK'
@@ -393,11 +393,11 @@ sub fill_hlist {
       $hlist->itemCreate($erg[0],0,-text => $erg[0]);
       $hlist->columnWidth(0,-char,9);
       $hlist->itemCreate($erg[0],1,-text => $erg_frau[1].','.$erg_frau[0]);
-      $hlist->columnWidth(1,-char,20);
+      $hlist->columnWidth(1,-char,30);
       $hlist->itemCreate($erg[0],2,-text => $name_kk);
-      $hlist->columnWidth(2,-char,15);
+      $hlist->columnWidth(2,-char,20);
       $hlist->itemCreate($erg[0],3,-text => $name_ktr);
-      $hlist->columnWidth(3,-char,15);
+      $hlist->columnWidth(3,-char,20);
       $hlist->itemCreate($erg[0],4,-text => $name_da);
       $hlist->columnWidth(4,-char,15);
       my $test_ind_name = 'Test';
