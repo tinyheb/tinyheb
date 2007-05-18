@@ -181,6 +181,19 @@ sub pos1_plausi {
 }
 
 
+sub pos6_plausi {
+  # Positionsnummer 6 mehr als 2 mal am selben Tag nur auf
+  # ärztliche Anordnung
+  my $self=shift;
+  
+  return undef if ($self->{posnr} ne '6');
+  
+  if ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR=$self->{posnr} AND DATUM='$self->{datum_l}'")>=2 && $self->{begruendung} !~ /Anordnung/ ) {
+    return '\nFEHLER: Position '.$self->{posnr}.' mehr als 2 mal am selben Tag nur auf ärztliche Anordnung\nEs wurde nichts gespeichert';
+  }
+  return undef;
+}
+
 
 sub pos7_plausi {
   # Positionsnummer 7 darf die maximale Dauer 14 Stunden nicht überschreiten

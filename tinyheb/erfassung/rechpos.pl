@@ -476,6 +476,12 @@ sub speichern {
     return $hint;
   }
 
+  # spezielle Prüfung für PosNr. 6
+  if ($hebgo->pos6_plausi) {
+    $hint .= $hebgo->pos6_plausi;
+    return $hint;
+  }
+
   # spezielle Prüfung für PosNr. 7 
   if ($hebgo->pos7_plausi ne '') {
     $hint .= $hebgo->pos7_plausi;
