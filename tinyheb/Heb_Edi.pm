@@ -2,8 +2,8 @@
 
 # Package für elektronische Rechnungen
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ my $delim = "'\x0d\x0a"; # Trennzeichen
 my $crlf = "\x0d\x0a";
 my $openssl ='openssl';
 
-$openssl = '/OpenSSL/bin/'.$openssl if ($^O =~ /MSWin32/);
+$openssl = $h->win32_openssl() if ($^O =~ /MSWin32/);
 
 our $path = $ENV{HOME}; # für temporäre Dateien
 if ($^O =~ /MSWin32/) {
@@ -61,6 +61,13 @@ sub new {
   my $rechnr = shift;
   my $self = {};
   $dbh = Heb->connect;
+
+  # prüfen auf openssl installation
+  if(!defined($openssl)) {
+    $ERROR="keine openssl Installation gefunden";
+    return undef;
+  }
+
   # Rahmendaten für Rechnung aus Datenbank holen
   $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
   my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
@@ -798,15 +805,13 @@ sub SLLA {
     my $posnr_wegegeld='';
     $leistdat[7] = sprintf "%.2f",$leistdat[7]; # w/ Rundungsfehlern
     $leistdat[8] = sprintf "%.2f",$leistdat[8]; # w/ Rundungsfehlern
-    $posnr_wegegeld='91' if ($leistdat[7] > 0 && $leistdat[7] <= 2);# Tag < 2
-    $posnr_wegegeld='92' if ($leistdat[8] > 0 && $leistdat[8] <= 2);# Nacht < 2
+    $posnr_wegegeld='91' if ($leistdat[7] > 0 && $leistdat[7] <= 2);# Tag <= 2
     $posnr_wegegeld='93' if ($leistdat[7] > 0 && $leistdat[7] > 2); # Tag > 2
-    $posnr_wegegeld='94' if ($leistdat[8] > 0 && $leistdat[8] > 2); # Nacht > 2
     if ($posnr_wegegeld ne '') { # es muss wegegeld gerechnet werden
       ($epreis)=$l->leistungsart_such_posnr("EINZELPREIS",$posnr_wegegeld,$leistdat[4]);
       my $anteilig='';
       $anteilig='a' if ($leistdat[9]>1);# anteiliges Wegegeld
-      if ($posnr_wegegeld eq '91' || $posnr_wegegeld eq '92') {
+      if ($posnr_wegegeld eq '91') {
 	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,1);
 	$lfdnr++;
 	$summe_km+=$epreis;
@@ -817,6 +822,21 @@ sub SLLA {
 	my $km_preis = sprintf "%.2f",$leistdat[7]*$epreis;
 	$summe_km+=$km_preis;
 	print "Wegegeld summe: $summe_km, $km_preis,km: $leistdat[7]\n" if ($debug > 1000);
+      } 
+    }
+
+    $posnr_wegegeld='';
+    $posnr_wegegeld='92' if ($leistdat[8] > 0 && $leistdat[8] <= 2);# Nacht <= 2
+    $posnr_wegegeld='94' if ($leistdat[8] > 0 && $leistdat[8] > 2); # Nacht > 2
+    if ($posnr_wegegeld ne '') { # es muss wegegeld gerechnet werden
+      ($epreis)=$l->leistungsart_such_posnr("EINZELPREIS",$posnr_wegegeld,$leistdat[4]);
+      my $anteilig='';
+      $anteilig='a' if ($leistdat[9]>1);# anteiliges Wegegeld
+      if ($posnr_wegegeld eq '92') {
+	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,1);
+	$lfdnr++;
+	$summe_km+=$epreis;
+	print "Wegegeld summe: $summe_km, $epreis\n" if ($debug > 1000);
       } elsif ($posnr_wegegeld eq '94') {
 	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[8]);
 	$lfdnr++;
@@ -824,8 +844,9 @@ sub SLLA {
 	$summe_km+=$km_preis;
 	print "Wegegeld summe: $summe_km, $km_preis\n" if ($debug > 1000);
       }
-      print "\n" if ($debug > 100);
     }
+    print "\n" if ($debug > 100);
+
   }
 
   # 6 ZUV Segment erzeugen
