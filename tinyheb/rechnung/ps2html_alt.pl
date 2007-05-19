@@ -26,11 +26,13 @@ use CGI;
 use CGI::Carp qw(fatalsToBrowser);
 
 use lib "../";
+use Heb;
 use Heb_leistung;
+
 
 my $l = new Heb_leistung;
 my $q = new CGI;
-
+my $h = new Heb;
 
 #print "Content-Type: application/postscript\n";
 my $rech_id = $q->param('rech_id') || -1;
@@ -55,7 +57,7 @@ if ($rechtyp == 1) {
       system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
     } elsif ($^O =~ /MSWin32/) {
       unlink('/tmp/wwwrun/file.pdf');
-      my $gswin=suche_gswin32();
+      my $gswin=$h->suche_gswin32();
       system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
     } else {
       die "kein Konvertierungsprogramm ps2pdf gefunden\n";
@@ -90,24 +92,3 @@ if ($rechtyp == 2) {
   print "</html>";
 }
 
-
-sub suche_gswin32 {
-  my $gswin32='';
-  my $i=0;
-  # Suche unterhalb /gs
-  while ($i<100) {
-    my $pfad="/gs/gs8.$i/bin/gswin32c";
-    $gswin32=$pfad if (-e "$pfad.exe");
-    $i++;
-  }
-
-  $i=0;
-  # Suche unterhalb /Programme/gs
-  while ($i<100) {
-    my $pfad="/Programme/gs/gs8.$i/bin/gswin32c";
-    $gswin32=$pfad if (-e "$pfad.exe");
-    $i++;
-  }
-
-  return $gswin32;
-}
