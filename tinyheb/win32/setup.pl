@@ -21,10 +21,11 @@
 
 use strict;
 use File::Copy;
+use Cwd;
 use Win32::Service qw/StopService StartService/;
 
 print "Setup für tinyHeb Copyright (C) 2007 Thomas Baum\n";
-print "Version of this setup programm 0.1.0 \n";
+print "Version of this setup programm 0.2.0 \n";
 print "The tinyHeb setup programm comes with ABSOLUTELY NO WARRANTY;\nfor details see the file gpl.txt\n";
 print "This is free software, and you are welcome to redistribute it\n";
 print "under certain conditions; for details see the file gpl.txt\n\n";
@@ -32,6 +33,27 @@ print "under certain conditions; for details see the file gpl.txt\n\n";
 
 print "Es wird zunaechst geprueft, ob alle Komponenten vorhanden sind\n";
 print "\n";
+
+print "Pruefe ob Windows Version installiert\n";
+
+open WIN,"../erfassung/krankenkassenerfassung.pl" or die "Konnte Datei krankenkassenerfassung.pl im Verzeichnis erfassung nicht öffnen $!\n";
+my $first_line = <WIN>;
+if ($first_line =~ /^#!perl -wT/) {
+  print "Windows Version installiert\n";
+} else {
+  print "Du hast Du Linux Version installiert, bitte lade Dir von http://www.tinyheb.de/source/ zunaechst die Windows Version herunter\n";
+  exit(1);
+}
+close WIN;
+
+print "Pruefe ob tinyHeb im richtigen Verzeichnis installiert\n";
+my $win_path=getcwd();
+if ($win_path =~ /Programme\/Apache Group\/Apache2\/cgi-bin\/tinyheb\/win32/) {
+  print "Ist im korrekten Verzeichnis installiert\n";
+} else {
+  print 'Bitte tinyHeb im Verzeichnis \Programme\Apache Group\Apache2\cgi-bin\ entpacken',"\n";
+  exit(1);
+}
 
 print "Pruefe auf Apache\n";
 my $pfad="/Programme/Apache Group/Apache2/bin/Apache.exe";
@@ -54,23 +76,22 @@ if (-e $pfad) {
 }
 
 print "Pruefe auf OpenSSL\n";
-$pfad="/OpenSSL/bin/openssl.exe";
-print "$pfad \t";
-if (-e $pfad) {
-  print "ist vorhanden\n";
+$pfad=win32_openssl();
+if (defined($pfad)) {
+  print "OpenSSL $pfad ist vorhanden\n";
 } else {
-  print "nicht vorhanden,\nBitte zunaechst OpenSSL Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  print "OpenSSL nicht vorhanden,\nBitte zunaechst OpenSSL Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
   exit(1);
 }
 
 
-print "Pruefe auf Ghostscript (Version 8.15)\n";
-$pfad="/gs/gs8.15/bin/gswin32c.exe";
-print "$pfad \t";
-if (-e $pfad) {
-  print "ist vorhanden\n";
+print "Pruefe auf Ghostscript\n";
+$pfad=suche_gswin32();
+
+if (defined($pfad)) {
+  print "Ghostscript $pfad ist vorhanden\n";
 } else {
-  print "nicht vorhanden,\nBitte zunaechst Ghostscript Version 8.15 Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  print "Ghostscript nicht vorhanden,\nBitte zunaechst Ghostscript Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
   exit(1);
 }
 
@@ -205,4 +226,38 @@ sub warte {
     sleep(1);
   }
   print "\n";
+}
+
+sub suche_gswin32 {
+  my $gswin32=undef;
+  my $i=0;
+  # Suche unterhalb /gs
+  while ($i<100) {
+    my $pfad="/gs/gs8.$i/bin/gswin32c";
+    $gswin32=$pfad if (-e "$pfad.exe");
+    $i++;
+  }
+
+  $i=0;
+  # Suche unterhalb /Programme/gs
+  while ($i<100) {
+    my $pfad="/Programme/gs/gs8.$i/bin/gswin32c";
+    $gswin32=$pfad if (-e "$pfad.exe");
+    $i++;
+  }
+
+  return $gswin32;
+}
+
+sub win32_openssl {
+  my $openssl='';
+  my $pfad="/OpenSSL/bin/openssl";
+  return $pfad if (-e "$pfad.exe");
+  
+  
+  # Suche unterhalb /Programme/
+  $pfad="/Programme/OpenSSL/bin/openssl";
+  return $pfad if (-e "$pfad.exe");
+
+  return undef;
 }
