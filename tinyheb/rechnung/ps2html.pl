@@ -176,7 +176,8 @@ $y1-=$y_font;
 neue_seite(7);
 
 # Prüfen ob auch elektronisch versand wird
-if ($name_krankenkasse ne '' && $versichertenstatus ne 'privat') {
+if ($name_krankenkasse ne '' && $versichertenstatus ne 'privat' 
+   && $versichertenstatus ne 'SOZ') {
   # prüfen ob zu ik Zentral IK vorhanden ist
   my $text='';
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
@@ -197,7 +198,7 @@ if ($name_krankenkasse ne '' && $versichertenstatus ne 'privat') {
 neue_seite(7);
 $p->text($x1,$y1, "Die abgerechneten Leistungen sind nach § 4 Nr. 14 UStG von der Umsatzsteuer befreit.");$y1-=$y_font;$y1-=$y_font;
 
-if ($versichertenstatus ne 'privat') {
+if ($versichertenstatus ne 'privat' && $versichertenstatus ne 'SOZ') {
   $p->text($x1,$y1,"Bitte überweisen Sie den Gesamtbetrag innerhalb der gesetzlichen Frist von drei Wochen nach");$y1-=$y_font;
   $p->text($x1,$y1,"Rechnungseingang (§5 Abs. 4 HebGV) unter Angabe der Rechnungsnummer.");
 } else {
@@ -237,7 +238,7 @@ if ($q->user_agent =~ /Windows/) {
     system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
   } elsif ($^O =~ /MSWin32/) {
     unlink('/tmp/wwwrun/file.pdf');
-    my $gswin=suche_gswin32();
+    my $gswin=$h->suche_gswin32();
     system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
   } else {
     die "kein Konvertierungsprogramm ps2pdf gefunden\n";
@@ -610,7 +611,11 @@ sub anschrift {
   if ($versichertenstatus ne 'privat') {
     $p->box($x1,25.1,$x2,26.4); # Kiste für Krankenkasse y=25.1 y2=26.4
     $p->setfont($font,8);
-    $p->text(12.7,$y1-3*$y_font,"Zahlungspflichtige Kasse (Rechnungsempfänger):");
+    if ($versichertenstatus ne 'SOZ') {
+      $p->text(12.7,$y1-3*$y_font,"Zahlungspflichtige Kasse (Rechnungsempfänger):");
+    } else {
+      $p->text(12.7,$y1-3*$y_font,"Rechnungsempfänger:");
+    }
     $p->setfont($font,10);
     $p->text(12.7,$y1-4*$y_font,"IK:");
     $p->setfont($font_b,10);
@@ -620,9 +625,10 @@ sub anschrift {
     $p->text(12.7,$y1-6*$y_font,$plz_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse > 0);
     $p->text(12.7,$y1-6*$y_font,$plz_post_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse == 0);
     
-    $p->box($x1,23.8,$x2,24.6);# Kiste für Mitglied y1=23.8 y2=24.6
+    $y1=24.6;
+    $p->box($x1,23.8,$x2,$y1);# Kiste für Mitglied y1=23.8 y2=24.6
     $p->setfont($font,8);
-    $y1=24.7;
+    $y1+=0.1;
     $p->text(12.7,$y1,"Mitglied");
     $p->setfont($font_b,10);
     $p->text(12.7,$y1-$y_font,$nachname.", ".$vorname);
@@ -630,27 +636,34 @@ sub anschrift {
     $p->text(12.7,$y1-2*$y_font,"geboren am");
     $p->text(15.1,$y1-2*$y_font,$geb_frau);
     
-    $p->box($x1,21.7,$x2,23.8);# Anschrift und Versichertenstatus y1=21.7 y2=23.8
+    $y1=23.8;
+    my $groesse_kiste = 2.1;
+    $groesse_kiste-=(2.9*$y_font) if($versichertenstatus eq 'SOZ');
+    $p->box($x1,$y1-$groesse_kiste,$x2,$y1);# Anschrift und Versichertenstatus y1=21.7 y2=23.8
     $y1=23.4;
     $p->text(12.7,$y1,$plz." ".$ort);
     $p->text(12.7,$y1-$y_font,$strasse);
-    $p->text(12.7,$y1-2*$y_font,"Mitgl-Nr.");
-    $p->setfont($font_b,10);
-    $p->text(15.1,$y1-2*$y_font,$kv_nummer);
-    $p->setfont($font,10);
-    $p->text(12.7,$y1-3*$y_font,"V-Status:");
-    $p->setfont($font_b,10);
-    $p->text(15.1,$y1-3*$y_font,$versichertenstatus);
-    $p->setfont($font,10);
-    $p->text(12.7,$y1-4*$y_font,"gült.bis:");
-    $p->setfont($font_b,10);
-    my ($m,$j) = unpack("A2A2",$kv_gueltig);
-    $p->text(15.1,$y1-4*$y_font,"$m/$j");
+    if($versichertenstatus ne 'SOZ') {
+      $p->text(12.7,$y1-2*$y_font,"Mitgl-Nr.");
+      $p->setfont($font_b,10);
+      $p->text(15.1,$y1-2*$y_font,$kv_nummer);
+      $p->setfont($font,10);
+      $p->text(12.7,$y1-3*$y_font,"V-Status:");
+      $p->setfont($font_b,10);
+      $p->text(15.1,$y1-3*$y_font,$versichertenstatus);
+      $p->setfont($font,10);
+      $p->text(12.7,$y1-4*$y_font,"gült.bis:");
+      $p->setfont($font_b,10);
+      my ($m,$j) = unpack("A2A2",$kv_gueltig);
+      $p->text(15.1,$y1-4*$y_font,"$m/$j");
+    }
     
-    
-    $p->box($x1,20.8,$x2,21.3);# Kiste für Kind y1=20.8 y2=21.3
+    $y1=21.3;
+    $y1+=(3*$y_font) if($versichertenstatus eq 'SOZ');
+    $p->box($x1,$y1-0.5,$x2,$y1);# Kiste für Kind y1=20.8 y2=21.3
     $p->setfont($font,8);
-    $y1=21.35;
+#    $y1=21.35;
+    $y1+=0.05;
     $p->text(12.7,$y1,"Kind:");
     $p->setfont($font,10);
     # prüfen ob ET oder Geburtsdatum
@@ -754,26 +767,4 @@ sub urbeleg {
   $y1-=$y_font;$y1-=$y_font;$y1-=$y_font;
   $p->text($x1,$y1,"Mit freundlichen Grüßen");
   fussnote(); # auf der ersten Seite explizit angeben
-}
-
-
-sub suche_gswin32 {
-  my $gswin32='';
-  my $i=0;
-  # Suche unterhalb /gs
-  while ($i<100) {
-    my $pfad="/gs/gs8.$i/bin/gswin32c";
-    $gswin32=$pfad if (-e "$pfad.exe");
-    $i++;
-  }
-
-  $i=0;
-  # Suche unterhalb /Programme/gs
-  while ($i<100) {
-    my $pfad="/Programme/gs/gs8.$i/bin/gswin32c";
-    $gswin32=$pfad if (-e "$pfad.exe");
-    $i++;
-  }
-
-  return $gswin32;
 }
