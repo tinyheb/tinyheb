@@ -59,7 +59,11 @@ print '</head>';
 print '<html>';
 print '<body>';
 # kommandozeilen programm kostentraeger.pl aufrufen
-open KTR,"./kostentraeger.pl $update -c -t -p /tmp/wwwrun/ -f ktr.dat |" or die "konnte Programm kostentraeger.pl nicht starten\n";
+if ($^O =~ /MSWin32/) {
+  open KTR,"kostentraeger.pl $update -c -t -p /tmp/wwwrun/ -f ktr.dat |" or die "konnte Programm kostentraeger.pl nicht starten\n";
+} else {
+  open KTR,"./kostentraeger.pl $update -c -t -p /tmp/wwwrun/ -f ktr.dat |" or die "konnte Programm kostentraeger.pl nicht starten\n";
+}
 while (my $line=<KTR>) {
   print $line;
 }
