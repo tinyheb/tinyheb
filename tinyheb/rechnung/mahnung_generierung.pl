@@ -112,6 +112,11 @@ print "<td><input type='text' class='disabled' disabled name='geburtsdatum_frau'
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind' value='$geb_kind' size='10'></td>";
 print "</tr>";
 
+print "</table>";
+print "</td>";
+print "</tr>";
+
+
 # Infos zur Rechnungsanschrift nur wenn Krankenkasse vorhanden ist
 my $text='';
 if (defined($ik_krankenkasse) && $ik_krankenkasse ne '') {
@@ -135,12 +140,10 @@ if (defined($ik_krankenkasse) && $ik_krankenkasse ne '') {
 
 if ($text ne '' && $versichertenstatus ne 'privat') {
   print "<tr>";
-  print "<td colspan='6'><textarea name='hinweise' cols='112' rows='1' class='disabled' disabled >$text</textarea>";
+  print "<td><textarea name='hinweise' cols='112' rows='1' class='disabled' disabled >$text</textarea>";
   print "</td>";
   print "</tr>";
 }
-
-print '</table>';
 
 # Zeile mit Knöpfen für unterschiedliche Funktionen
 print '<tr>';
