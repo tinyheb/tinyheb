@@ -38,7 +38,12 @@ my $h = new Heb;
 
 my $openssl ='openssl';
 
-$openssl = '/OpenSSL/bin/'.$openssl if ($^O =~ /MSWin32/);
+$openssl = $h->win32_openssl() if ($^O =~ /MSWin32/);
+
+
+if (!defined($openssl)) {
+  die "konnte openssl Installation nicht finden\n";
+}
 
 my %option = ();
 getopts("stvp:f:o:hu",\%option);
@@ -73,9 +78,11 @@ my $save = $option{s} || 0;
 our $path = $ENV{HOME}; # für temporäre Dateien
 if ($^O =~ /MSWin32/) {
   $path .='/tinyheb';
+  mkdir "$path" if (!(-d "$path")); # Zielverzeichnis anlegen
 } else {
   $path .='/.tinyheb';
 }
+		   
 
 
 mkdir "$path" if(!(-d "$path"));
@@ -89,6 +96,9 @@ if (!(-d "$o_pfad") && $save) {
   die "der Ausgabepfad: $o_pfad existiert nicht, bitte anlegen\n";
 }
 
+
+
+		     
 
 #$eingabe = 'kostentraeger/'.$eingabe;
 print "Einlesen der Daten von Datei: $eingabe\n" if $debug;
