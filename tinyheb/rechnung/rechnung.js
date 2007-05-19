@@ -29,7 +29,7 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
 
   var error_text = '';
 
-  if (versichertenstatus != 'privat') {
+  if (versichertenstatus != 'privat' && versichertenstatus != 'SOZ') {
     if (name_kk == '') {
       alert("Es wurde keine gültige Krankenkasse erfasst,\nes kann keine Rechnung produziert werden.\nRechnung wurde nicht gespeichert.");
       return false;
