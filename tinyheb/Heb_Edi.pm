@@ -59,7 +59,7 @@ our $ERROR = '';
 sub new {
   my $class = shift;
   my $rechnr = shift;
-  my $self = {};
+  my $self = {@_};
   $dbh = Heb->connect;
 
   # prüfen auf openssl installation
@@ -174,18 +174,28 @@ sub new {
     $ERROR= "Parameter für Signatur bei Datennahmestelle $zik fehlt.\nBitte Parameter SIG$zik pflegen\n";
     return undef;
   }
+  $self->{sig_flag}=$sig_flag;
+  if ($sig_flag > 0 && !defined($self->{sig_pass})) {
+    $ERROR ="Rechnung soll signiert werden, aber kein Passwort angegeben.\n";
+    return undef;
+  } 
 
   my $schl_flag = $h->parm_unique('SCHL'.$zik);
   if (!defined($schl_flag)) {
     $ERROR= "Parameter für Verschlüsselung bei Datennahmestelle $zik fehlt.\nBitte Parameter SCHL$zik pflegen\n";
     return undef;
   }
+  $self->{schl_flag}=$schl_flag;
 
   # signieren
   ($dateiname,$laenge_nutz)=$self->sig($dateiname,$sig_flag);
   if ($laenge_nutz == 0) {
-    $ERROR= "Nutzdaten konnten nicht signiert werden.\n$dateiname\nBitte OpenSSL Installation prüfen\n $!";
-    return undef;
+    if ($sig_flag == 0) {
+      $ERROR= "Nutzdaten konnten nicht signiert werden.\n$dateiname\nBitte OpenSSL Installation prüfen\n $!";
+    } else {
+      $ERROR= "Nutzdaten konnten nicht signiert werden.\n$dateiname\nBitte Passwort prüfen\n $!";
+    }
+      return undef;
   }
   # verschlüsseln
   ($dateiname,$laenge_nutz)=$self->enc($dateiname,$schl_flag);
@@ -905,13 +915,15 @@ sub sig {
   }
   if ($sig_flag == 3) {
     # DER signieren um später base64 encoden zu können
-    open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
+    open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/cert.pem -passin pass:$self->{sig_pass} -inkey $path/privkey/privkey.pem |" or
       return ("konnte Datei nicht DER signieren",0);
   }
 
   open AUS, ">$path/tmp/$dateiname.sig" or return ("Konnte Signierte Datei nicht schreiben",0);
     
  
+  binmode NUTZ;
+  binmode AUS;
  LINE: while (my $zeile=<NUTZ>) {
     print AUS $zeile;
   }
@@ -944,7 +956,7 @@ sub enc {
   }
   if ($schl_flag == 3) {
     # DER verschlüsseln um später base64 encoden zu können
-    open NUTZ, "$openssl smime -encrypt -in $path/tmp/$dateiname -des3 -outform DER $path/tmp/zik.pem |" or return ("Konnte Datei nicht DER verschlüsseln",0);
+    open NUTZ, "$openssl smime -encrypt -binary -in $path/tmp/$dateiname -des3 -outform DER $path/tmp/zik.pem |" or return ("Konnte Datei nicht DER verschlüsseln",0);
   }
 
   $dateiname =~ s/\.sig//g;
