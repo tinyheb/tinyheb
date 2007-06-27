@@ -27,6 +27,7 @@ use Tk;
 use Tk::BrowseEntry;
 use Tk::HList;
 use Tk::ItemStyle;
+use Tk::DialogBox;
 
 use Mail::Sender;
 use File::stat;
@@ -61,6 +62,7 @@ my @provider =();
 my $prov_sel=undef;
 my $user_sel='';
 my $user_pass='';
+my $sig_pass=undef; # Passwort zum privaten Schlüssel
 my $user_from=$h->parm_unique('HEB_EMAIL');
 my $ignore = 22;
 
@@ -99,6 +101,24 @@ LINE: while (my $zeile=<RC>) {
 
 my $mw = MainWindow->new(-title => 'tinyHeb Elektronische Rechnungen',
 			 -bg => 'white');
+
+my $menuebar = $mw->Menu;
+$mw->configure(-menu => $menuebar);
+
+my $datei = $menuebar->cascade(-label => '~Datei');
+$datei->command(
+		-label => 'Beenden',
+		-command => \&exit,
+	       );
+my $bearbeiten = $menuebar->cascade(-label => '~Bearbeiten');
+$bearbeiten->command(
+		     -label => 'Einstellungen',
+		     -command => \&einstellungen,
+		    );
+$bearbeiten->command(
+		     -label => 'Einstellungen Speichern',
+		     -command => \&einstellungen,
+		    );
 
 my $h_frame = $mw->Frame();
 my $hlist = $h_frame->Scrolled('HList',
@@ -217,9 +237,22 @@ RECH:  foreach (@sel) {
     my $rechnr=$_;
     print "Selektiert: $rechnr, baue Rechnung\n";
 
-    my $e = new Heb_Edi($rechnr);
+    $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
+    my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
+    # prüfen ob zu ik Zentral IK vorhanden ist
+    my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
+    my $test_ind = $k->krankenkasse_test_ind($ik);
+
+    if ($h->parm_unique('SIG'.$zik) > 0 && !defined($sig_pass)) {
+      print "passwort muss angegeben werden\n";
+      get_sig_pass();
+    }
+
+    my $e = new Heb_Edi($rechnr,
+		       sig_pass => $sig_pass);
     if (!defined($e)) {
       fehler($Heb_Edi::ERROR." versenden wird abgebrochen.");
+      $sig_pass=undef;
       last RECH;
     }
 
@@ -249,12 +282,6 @@ RECH:  foreach (@sel) {
     }
 #    print "SENDER\n";
 #    print Pretty $sender;
-
-    $l->rechnung_such("RECH_DATUM,BETRAG,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnr");
-    my ($rechdatum,$betrag,$frau_id,$ik)=$l->rechnung_such_next();
-    # prüfen ob zu ik Zentral IK vorhanden ist
-    my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
-    my $test_ind = $k->krankenkasse_test_ind($ik);
 
     if ($sender->OpenMultipart({to => $h->parm_unique('MAIL'.$zik),
 				bcc => $user_from,
@@ -373,6 +400,14 @@ sub fehler {
 }
 
 
+sub einstellungen {
+  $mw->messageBox(-title => 'NYI',
+		  -type => 'OK',
+		  -message => "leider noch nicht implementiert\n",
+		  -default => 'OK'
+		 );
+}
+
 
 sub fill_hlist {
   
@@ -435,3 +470,18 @@ sub HebLabEntry {
   return $n_f;
 }
 
+sub get_sig_pass {
+  my $db = $mw->DialogBox( -title => 'Zertifikat Passwort',
+			   -buttons => ['OK','Abbrechen'],
+			   -default_button => 'OK'
+			 );
+  $db->add('Label',
+	   -text => "Rechnung soll signiert werden,")->pack(-side => 'top',-anchor => 'w');
+ $db->add('Label',
+	   -text => "bitte Passwort des Schlüssels eingeben")->pack(-side => 'top',-anchor => 'w');
+  $db->add('Entry',
+	   -textvariable => \$sig_pass,
+	  -show => '*',
+	  -width => 40)->pack(-side => 'bottom',-anchor => 'w');
+  my $answer=$db->Show();
+}
