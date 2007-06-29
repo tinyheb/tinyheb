@@ -5,6 +5,9 @@
 
 # Einspielen von  Schlüsseldateien in tinyHeb Datenbank
 
+# $Id: key_ein.pl,v 1.2 2007-06-29 16:25:08 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -58,11 +61,17 @@ print '</head>';
 print '<html>';
 print '<body>';
 # kommandozeilen programm key.pl aufrufen
-  if (!(-d "/tmp/wwwrun/keys")) {
-    mkdir "/tmp/wwwrun" if (!(-d "/tmp"));
-    mkdir "/tmp/wwwrun/keys";
-  }
-open KEY,"./key.pl $update -t -p /tmp/wwwrun/ -o /tmp/wwwrun/keys/ -f key.dat |" or die "konnte Programm key.pl nicht starten\n";
+if (!(-d "/tmp/wwwrun/keys")) {
+  mkdir "/tmp/wwwrun" if (!(-d "/tmp"));
+  mkdir "/tmp/wwwrun/keys";
+}
+
+if ($^O =~ /MSWin32/) {
+  open KEY,"key.pl $update -t -p /tmp/wwwrun/ -o /tmp/wwwrun/keys/ -f key.dat |" or die "konnte Programm key.pl nicht starten\n";
+} else {
+  open KEY,"./key.pl $update -t -p /tmp/wwwrun/ -o /tmp/wwwrun/keys/ -f key.dat |" or die "konnte Programm key.pl nicht starten\n";
+}
+
 while (my $line=<KEY>) {
   print $line;
 }
