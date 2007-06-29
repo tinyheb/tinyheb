@@ -5,6 +5,9 @@
 # extrahiert aus Schlüsseldateien des Trust Center ITSG die einzelnen
 # Schlüssel
 
+# $Id: key.pl,v 1.8 2007-06-29 16:23:25 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -96,7 +99,7 @@ if (!(-d "$o_pfad") && $save) {
   die "der Ausgabepfad: $o_pfad existiert nicht, bitte anlegen\n";
 }
 
-
+print "<table>" if $html;
 
 		     
 
@@ -188,7 +191,7 @@ foreach my $file (@dateien) {
 }
 unlink("$path/tmpcert.pem");
 
-
+print "</table>" if $html;
 
 
 
@@ -319,8 +322,10 @@ sub print_html {
   my ($kname)=$k->krankenkasse_sel('KNAME',$ik);
   my $print_name = $kname;
   $print_name ='' unless(defined($kname));
+  print "<tr><td>";
+
   print "<h2>&nbsp;</h2>\n";
-  print '<table border="1" align="left" style="margin-bottom: +2em; width: 20cm; empty-cells: show">';
+  print '<table border="1" align="left" style="margin-bottom: +2em; width: 16cm; empty-cells: show">';
   print "<caption style='caption-side: top;'><h2>$ik $print_name</h2></caption>\n";
   print "<tr>\n";
   print "<th style='width:2cm; text-align:left'>Feld</th><th style='width:9cm; text-align:left'>Wert</th></tr>\n";
@@ -342,6 +347,7 @@ sub print_html {
   $status_edi='Echtbetrieb' if (defined($test_ind) && $test_ind == 2);
   print "<tr><td>Status Datenaustausch</td><td style='vertical-align:top'>$status_edi</td></tr>\n";
   print "</table><br/><br/>\n\n";
+  print "</td></tr>";
 }
 
 
