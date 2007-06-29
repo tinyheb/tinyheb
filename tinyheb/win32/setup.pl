@@ -2,6 +2,10 @@
 
 
 # Mini Setup für tinyHeb
+
+# $Id: setup.pl,v 1.5 2007-06-29 16:29:45 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -42,6 +46,8 @@ if ($first_line =~ /^#!perl -wT/) {
   print "Windows Version installiert\n";
 } else {
   print "Du hast Du Linux Version installiert, bitte lade Dir von http://www.tinyheb.de/source/ zunaechst die Windows Version herunter\n";
+  print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+  $eingabe=<STDIN>;
   exit(1);
 }
 close WIN;
@@ -52,6 +58,8 @@ if ($win_path =~ /Programme\/Apache Group\/Apache2\/cgi-bin\/tinyheb\/win32/) {
   print "Ist im korrekten Verzeichnis installiert\n";
 } else {
   print 'Bitte tinyHeb im Verzeichnis \Programme\Apache Group\Apache2\cgi-bin\ entpacken',"\n";
+  print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+  $eingabe=<STDIN>;
   exit(1);
 }
 
@@ -62,6 +70,8 @@ if (-e $pfad) {
   print "ist vorhanden\n";
 } else {
   print "nicht vorhanden,\nBitte zunaechst den Apache Webserver Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+  $eingabe=<STDIN>;
   exit(1);
 }
 
@@ -72,6 +82,8 @@ if (-e $pfad) {
   print "ist vorhanden\n";
 } else {
   print "nicht vorhanden,\nBitte zunaechst den MySQL Server Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+  $eingabe=<STDIN>;
   exit(1);
 }
 
@@ -81,6 +93,8 @@ if (defined($pfad)) {
   print "OpenSSL $pfad ist vorhanden\n";
 } else {
   print "OpenSSL nicht vorhanden,\nBitte zunaechst OpenSSL Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+  $eingabe=<STDIN>;
   exit(1);
 }
 
@@ -92,6 +106,8 @@ if (defined($pfad)) {
   print "Ghostscript $pfad ist vorhanden\n";
 } else {
   print "Ghostscript nicht vorhanden,\nBitte zunaechst Ghostscript Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+  $eingabe=<STDIN>;
   exit(1);
 }
 
@@ -125,6 +141,8 @@ if ($eingabe == 1) {
     my $erg=system ("/Perl/bin/pl2bat /Perl/bin/ppm");
     if ($erg > 0) {
       print "Es ist ein unbekannter Fehler aufgetreten, ggf. T. Baum benachrichtigen\nUnd Hardcopy der Bildschirmausgabe mitschicken\n";
+      print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+      $eingabe=<STDIN>;
       exit(1);
     }
     print "Der Paketmanager wurde neu generiert\n";
@@ -194,7 +212,7 @@ if ($os eq 'WinXP') {
   $eingabe = <STDIN>;
   chomp $eingabe;
   if ($eingabe =~ /ja/i || $eingabe eq '') {
-    open INIT,'"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" -u root -p < ../DATA/init.sql |' or die "konnte Datenbank nicht initialisieren $!\n";
+    open INIT,'"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" -p -u root < ../DATA/init.sql |' or die "konnte Datenbank nicht initialisieren $!\n";
     while (my $zeile=<INIT>) {};
     print "Habe die Datenbank initialisiert\n";
   }
@@ -207,7 +225,7 @@ if ($os eq 'WinXP') {
   print "folgenden Befehl in der Kommandozeile ausfuehren:\n";
   print "mysql -u root < init.sql\n";
   print "ODER falls Du bei der MySQL Installation ein Passwort fuer\n den Datenbankadmin angegeben hast:\n";
-  print "mysql -u root -p < init.sql\n\n";
+  print "mysql -p -u root < init.sql\n\n";
 }
   
   print "Jetzt kann tinyHeb in Deinem Browser unter dem Link\nhttp://localhost/tinyheb/hebamme.html aufgerufen werden\n";
