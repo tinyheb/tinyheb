@@ -92,6 +92,12 @@ sub new {
     return undef;
   }
 
+  $self->{HEB_IK}=$h->parm_unique('HEB_IK');
+  if (!defined($self->{HEB_IK})) {
+    $ERROR="IK-Nummer der Hebamme nicht bekannt,\nbitte in den Parametern nachpflegen\n";
+    return undef;
+  }
+
   # kostenträger ermitteln
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
   $self->{kostentraeger}=$ktr;
@@ -132,6 +138,7 @@ sub new {
   $self->{nachname}=$nachname;
   $self->{geb_frau}=$geb_frau;
   $self->{plz}=$plz;
+  $self->{versichertenstatus}=$versichertenstatus;
   bless $self, ref $class || $class;
 
   my ($hilf,$betrag_slla)=$self->SLLA($rechnr,$zik,$ktr);
@@ -671,12 +678,27 @@ sub SLGA {
     }
   }
   $erg .= $self->SLGA_GES($betrag_slla,'00');$lfdnr++;
-  $erg .= $self->SLGA_GES($betrag_slla,'11');$lfdnr++;
+
+  # 5. Schlüssel Summenstatus ermitteln und GES Segment erzeugen
+  my $summenstatus = '';
+  my ($kvs_1,$kvs_2) = split ' ',$self->{versichertenstatus};
+  # 1. Spalte
+  $summenstatus = '99'; # Default
+  $summenstatus = '11' if ($self->{versichertenstatus} eq '1 1'); # Mit. West
+  $summenstatus = '19' if ($self->{versichertenstatus} eq '1 9'); # Mit. Ost
+  $summenstatus = '31' if ($self->{versichertenstatus} eq '3 1'); # Ange West
+  $summenstatus = '39' if ($self->{versichertenstatus} eq '3 9'); # Ange Ost
+  $summenstatus = '51' if ($self->{versichertenstatus} eq '5 1'); # Rent West
+  $summenstatus = '59' if ($self->{versichertenstatus} eq '5 9'); # Rent West
+  $summenstatus = '07' if ($kvs_2 eq '7'); # Ausländer
+
+#  print "summenstatus: $summenstatus\n";
+  $erg .= $self->SLGA_GES($betrag_slla,$summenstatus);$lfdnr++;
   
-  # 4. NAM Segment erzeugen
+  # 6. NAM Segment erzeugen
   $erg .= $self->SLGA_NAM();$lfdnr++;
 
-  # 5. UNT Segment erzeugen
+  # 7. UNT Segment erzeugen
   $erg .= $self->UNT($lfdnr+1,$ref);
   
   return $erg;
@@ -910,12 +932,12 @@ sub sig {
   if ($sig_flag == 2) {
     # PEM signieren
     return("PEM Signierung  ist nicht implementiert, bitte nutzen sie pkcs7\n",0);
-    open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform PEM -signer $path/privkey/cert.pem -inkey $path/privkey/privkey.pem |" or
+    open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform PEM -signer $path/privkey/".$self->{HEB_IK}.".pem -inkey $path/privkey/privkey.pem |" or
       die "konnte Datei nicht PEM signieren\n";
   }
   if ($sig_flag == 3) {
     # DER signieren um später base64 encoden zu können
-    open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/cert.pem -passin pass:$self->{sig_pass} -inkey $path/privkey/privkey.pem |" or
+    open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem -passin pass:$self->{sig_pass} -inkey $path/privkey/privkey.pem |" or
       return ("konnte Datei nicht DER signieren",0);
   }
 
