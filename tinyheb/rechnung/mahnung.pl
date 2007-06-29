@@ -3,8 +3,11 @@
 
 # Erzeugen einer Mahnung und Druckoutput (Postscript)
 
-# Copyright (C) 2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# $Id: mahnung.pl,v 1.6 2007-06-29 16:18:04 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
+# Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -177,7 +180,9 @@ if ($q->user_agent !~ /Windows/) {
 
 if ($q->user_agent =~ /Windows/) {
   print $q->header ( -type => "application/pdf", -expires => "-1d");
+  mkdir "/tmp" if (!(-d "/tmp"));
   mkdir "/tmp/wwwrun" if(!(-d "/tmp/wwwrun"));
+  unlink('/tmp/wwwrun/file.ps');
   $p->output('/tmp/wwwrun/file.ps');
 
   if ($^O =~ /linux/) {
@@ -215,6 +220,7 @@ if ($speichern eq 'save') {
   }
 
 }
+
 
 #-----------------------------------------------------------------
 
@@ -256,7 +262,7 @@ sub anschrift {
     $p->text(12.7,$y1-4*$y_font,"IK:");
     $p->setfont($font_b,10);
     $p->text(15.1,$y1-4*$y_font,$ik_krankenkasse);
-    $p->text(12.7,$y1-5*$y_font,$name_krankenkasse);
+    $p->text(12.7,$y1-5*$y_font,$kname_krankenkasse);
     $p->setfont($font,10);
     $p->text(12.7,$y1-6*$y_font,$plz_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse > 0);
     $p->text(12.7,$y1-6*$y_font,$plz_post_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse == 0);
