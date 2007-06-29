@@ -4,6 +4,9 @@
 
 # extrahiert aus Kostenträger Dateien die benötigten Daten
 
+# $Id: kostentraeger.pl,v 1.14 2007-06-29 16:25:57 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -78,6 +81,8 @@ my $pfad = $option{p} || '';
 
 #$eingabe = 'kostentraeger/'.$eingabe;
 print "Einlesen der Daten von Datei: $eingabe\n" if $debug;
+
+print "<table>" if $html;
 
 my @dateien = split ' ',$eingabe;
 my $k_typ='';
@@ -347,8 +352,9 @@ LINE:while ($zeile=<FILE>) {
 
 	  # ausgabe in HTML
 	  if ($html) {
+	    print "<tr><td>";
 	    print "<h2>&nbsp;</h2>\n";
-	    print '<table border="1" align="left" style="margin-bottom: +2em; width: 20cm; empty-cells: show">';
+	    print '<table border="1" align="left" style="margin-bottom: +2em; width: 17cm; empty-cells: show">';
 	    print "<caption style='caption-side: top;'><h2>$k_ik $k_kname</h2></caption>\n";
 	    print "<tr>\n";
 	    print "<th style='width:2cm; text-align:left'>Feld</th><th style='width:9cm; text-align:left'>alter Wert</th><th style='width:9cm; text-align:left'>neuer Wert</th></tr>\n";
@@ -381,6 +387,7 @@ LINE:while ($zeile=<FILE>) {
 	    print "<tr><td>EMAIL</td><td>$email_aus_k</td><td>$email_aus_n</td></tr>\n" if (!($k_email eq $email_n));
 	    print "<tr><td>Bemerkung</td><td>$k_bemerkung</td><td>$bemerkung_n</td></tr>\n" if(!($k_bemerkung eq $bemerkung_n));
 	    print "</table><br/><br/>\n\n";
+	    print "</td></tr>";
 	  }
 	  # update auf Datenbank
 	  $k->krankenkassen_update($kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ,$beleg_ik_n,$email_n,$k_ik) if ($update);
@@ -411,6 +418,7 @@ if (!$html) {
   print "neue Kassen: $c_neu\n";
   print "gelöschte Kassen: $c_geloescht\n";
 } else {
+  print "</table>";
   print "<br/><h2>SUMMEN</h2>\n";
   print "gleiche Kassen: $c_gleich<br/>\n";
   print "ungleiche Kassen: $c_ungleich<br/>\n";
