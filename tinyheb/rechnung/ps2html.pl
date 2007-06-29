@@ -3,6 +3,9 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
+# $Id: ps2html.pl,v 1.43 2007-06-29 16:20:16 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -117,7 +120,9 @@ if ($versichertenstatus ne 'privat') {
     $p->text(2,19.7,"Gebührenabrechnung nach HebGO Rheinland-Pfalz");
   } elsif (uc $heb_bundesland eq 'THüRINGEN' || $heb_bundesland eq 'Thüringen') {
     $p->text(2,19.7,"Gebührenabrechnung nach HebGO Thüringen");
-  } else {
+  } elsif (uc $heb_bundesland eq 'SACHSEN-ANHALT') {
+    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Sachsen-Anhalt");
+  }  else {
     $p->text(2,19.7,"PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen".uc $heb_bundesland);
   }
 }
