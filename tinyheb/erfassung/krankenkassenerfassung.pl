@@ -5,6 +5,9 @@
 
 # Krankenkassen erfassen, ändern, löschen
 
+# $Id: krankenkassenerfassung.pl,v 1.15 2007-06-29 16:59:45 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -70,7 +73,7 @@ if (($auswahl eq 'Ändern') && defined($abschicken)) {
   $auswahl = 'Anzeigen';
 }
 if (($auswahl eq 'Neu') && defined($abschicken)) {
-  $ik = speichern();
+  speichern();
   $auswahl = 'Anzeigen';
 }
 
@@ -87,7 +90,7 @@ print '</head>';
 
 if (($auswahl eq 'Löschen') && defined($abschicken)) {
   loeschen();
-  print '<script>loeschen();</script>';
+  print '<script>window.location="krankenkassenerfassung.pl";</script>';
 }
 
 # Alle Felder zur Eingabe ausgeben
