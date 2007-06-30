@@ -19,10 +19,6 @@ Privat Rechnungen für andere Bundesländer als NRW
 23.09.06
 Feiertage Bundeslandbezogen
 
-26.08.06
-Positionsnummer 6  mehr als 2 mal am selben Tag nur auf ärztliche Anordnung.
-
-
 12.08.06
 - Installationshinweise für Windows aufnehmen.
 
@@ -41,6 +37,57 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+29.06.07
+Nach neuanlage einer Krankenkasse muss die IK Nummer erhalten bleiben.
+Anforderung vom 23.05.07
+
+29.06.07
+Maske für generierung eines Zertifkatrequest. Anforderung vom 20.05.07
+
+29.06.07
+Maske Schlüssel einlesen Layout unter Windows schlecht. Anforderung vom 27.06.07
+
+29.06.07
+GES und BES Segmente muss status in Abhängigkeit Versichertenstatus gefüllt werden. Anforderung vom 27.06.07
+
+29.06.07
+Schlüssel lassen sich unter Windows nicht einlesen. Anforderung vom 27.06.07
+
+27.06.07
+elektronischer Versand mit Signatur testen. Anforderung vom 19.05.07
+
+18.05.07
+Plausiprüfung w/ CTG Anforderung von Günther. Anforderung vom 26.08.06
+
+18.05.07
+xauftrag.pl muss breiter werden, damit auch bei langen Namen alles angezeigt wird. Anforderung vom 21.04.07
+
+17.05.07
+Rechnungen an Sozialamt müssen möglich sein. Anforderung vom 18.04.07
+
+17.05.07
+Maske Rechnungsgenerierung Layout im IE nicht korrekt, wenn Rechnung
+mit ausgegeben wird. Anforderung vom 17.05.07
+
+18.05.07
+Layout "Mahnungen generieren" ist im Internet Explorer nicht korrekt.
+Anforderung vom 18.04.07
+
+17.05.07
+In setup.pl Prüfung aufnehmen, ob tinyheb an der richtigen Stelle installiert ist.
+In setup.pl Prüfung aufnehmen, ob Windows Version installiert ist.
+Anforderung vom 11.05.07
+
+17.05.07
+Fehlerkorrektur: Kostenträgerdateien und öffentliche Schlüssel können unter Win nicht eingelesen werden. Anforderung vom 11.05.07
+
+17.05.07
+openssl kann an verschiedenen Stellen bei Win32 liegen, dies berücksichtigen. Anforderung vom 04.05.07
+
+19.04.07
+M001 bis M003 dürfen nicht mehr angezeigt werden, update.sql anpassen.
+Anforderung vom 18.04.07
+
 08.04.07
 Sicherung erstellen muss auch unter Windows funktionieren, wenn mysqldump nicht im Path enthalten ist. Anforderung vom 02.04.07
 
