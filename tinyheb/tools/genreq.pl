@@ -2,7 +2,7 @@
 
 # erstellen eines Zertifikatrequest und senden an die ITSG
 
-# $Id: genreq.pl,v 1.1 2007-06-29 16:41:11 baum Exp $
+# $Id: genreq.pl,v 1.2 2007-06-30 14:46:37 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -176,7 +176,7 @@ $z2_frame->Label(-text => 'Status der Generierung')->pack(-side => 'top',
 							  );
 my $erg = $z2_frame->Scrolled('Text',
 #			      -scrollbars => 'oeoe',
-			      -scrollbars => 'osoe',
+			      -scrollbars => 'se',
 			      -width => 80,
 			      -height => 20,
 			      )->pack(-side => 'bottom',
@@ -312,6 +312,7 @@ sub gen_cert {
   my $hilf=open PRIVKEY,"$openssl genrsa -passout pass:$priv_pass -des3 2048|";
   if (!defined($hilf)) {
     $erg->insert('end',"konnte privaten Schlüssel nicht generieren");
+    fehler("konnte privaten Schlüssel nicht generieren, Zertifikatgenerierung wird abgebrochen");
     exit(1);
   }
   
@@ -324,7 +325,7 @@ sub gen_cert {
   my $st=stat("$path/privkey.pem");
   if (!defined($st) || $st->size == 0) {
     fehler("konnte privaten Schlüssel nicht schreiben, Zertifikatgenerierung wird abgebrochen\n");
-    return;
+    exit(1);
   }
   
   $erg->insert('end',"Habe privaten Schlüssel generiert\n");
@@ -334,12 +335,13 @@ sub gen_cert {
   $hilf=undef;
   $hilf=open REQ,"$openssl req -new -key $path/privkey.pem -passin pass:$priv_pass -outform DER -subj \"/C=DE/O=ITSG TrustCenter fuer sonstige Leistungserbringer/OU=$name_hebamme/OU=$ik/CN=$ansprechpartner/\"|";
   if (!defined($hilf)) {
-    $erg->insert('end',"könnte Request nicht generieren");
+    $erg->insert('end',"konnte Request nicht generieren");
+    fehler("konnte Request nicht generieren, Zertifikatgenerierung wird abgebrochen");
     exit(1);
   }
   my $out_path=$path.'/'.substr($h->parm_unique('HEB_IK'),0,8).'.crq';
   #  print "OUT_PATH: $out_path\n";
-  open (AUS,">:raw","$out_path") or return (undef,"könnte Zertifikatrequest nicht schreiben");
+  open (AUS,">:raw","$out_path") or return (undef,"konnte Zertifikatrequest nicht schreiben");
   while (my $zeile=<REQ>) {
     print AUS $zeile;
   }
@@ -350,7 +352,7 @@ sub gen_cert {
   $st=stat("$out_path");
   if (!defined($st) || $st->size == 0) {
     fehler("konnte Zertifikatrequest nicht schreiben, Zertifikatgenerierung wird abgebrochen\n");
-    return;
+    exit(1);
   }
   
   
@@ -378,7 +380,7 @@ sub gen_cert {
   $st=stat("$path/pubkey.pem");
   if (!defined($st) || $st->size == 0) {
     fehler("konnte public Key  nicht schreiben, Zertifikatgenerierung wird abgebrochen\n");
-    return;
+    exit(1);
   }
   
   $erg->insert('end',"Habe öffentlichen Schlüssel extrahiert\n");
@@ -388,7 +390,7 @@ sub gen_cert {
   $hilf=undef;
   $hilf=open MD5,"$openssl asn1parse -in $path/pubkey.pem -offset 24 -length 270 -out $path/pubkey_itsg.der |";
   if (!defined($hilf)) {
-    $erg->insert('end',"konnte Prüfsumme nicht berechnen");
+    $erg->insert('end',"konnte Prüfsumme nicht berechnen, Zertifikatgenerierung wird abgebrochen");
     exit(1);
   }
   
@@ -401,7 +403,7 @@ sub gen_cert {
   $st=stat("$path/pubkey_itsg.der");
   if (!defined($st) || $st->size == 0) {
     fehler("konnte public Key  nicht schreiben, Zertifikatgenerierung wird abgebrochen\n");
-    return;
+    exit(1);
   }
 
   $hilf=open MD5,"$openssl dgst -md5 -c $path/pubkey_itsg.der |";
@@ -419,8 +421,8 @@ sub gen_cert {
   }
   close AUS;
   close MD5;
-  $erg->insert('end',"Habe MD5 Prüfsumme berechnet\n");
-  $erg->insert('end',"MD5 Prüfsumme des Zertifikates ist:\n");
+  $erg->insert('end',"Habe MD5 Signatur (Prüfsumme) berechnet\n");
+  $erg->insert('end',"MD5 Signatur (Prüfsumme) des Zertifikates ist:\n");
   $erg->insert('end',"$pruefsumme\n");
   
   
@@ -428,6 +430,7 @@ sub gen_cert {
   $hilf=open SHA1,"$openssl dgst -sha1 -c $path/pubkey_itsg.der |";
   if (!defined($hilf)) {
     $erg->insert('end',"konnte Prüfsumme nicht berechnen");
+    fehler("konnte Signatur (Prüfsumme) nicht berechnen");
     exit(1);
   }
   
@@ -440,12 +443,12 @@ sub gen_cert {
   }
   close AUS;
   close MD5;
-  $erg->insert('end',"Habe SHA1 Prüfsumme berechnet\n");
-  $erg->insert('end',"SHA1 Prüfsumme des Zertifikates ist:\n");
+  $erg->insert('end',"Habe SHA1 Signatur (Prüfsumme) berechnet\n");
+  $erg->insert('end',"SHA1 Signatur (Prüfsumme) des Zertifikates ist:\n");
   $erg->insert('end',"$pruefsumme\n");
 
   
-  fehler("Bitte die Prüfsummen mit Bezeichnung genau notieren, diese müssen an die ITSG geschickt werden");
+  fehler("Bitte die Signaturen (Prüfsummen) mit Bezeichnung genau notieren, diese müssen per Brief/Fax unterschrieben an die ITSG geschickt werden");
   
   my $mail_frage=$mw->Dialog(-title => 'Frage',
 			     -text => 'Soll das Zertifikat per E-Mail an die ITSG geschickt werden?',
