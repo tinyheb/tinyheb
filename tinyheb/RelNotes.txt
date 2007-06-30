@@ -1,3 +1,46 @@
+Release 0.13.0
+
+Bug fix:
+Bei elektronischen Rechnungen: Wegegeld bei Tag und Nacht Wegegeld wurde Tag nicht berücksichtigt.
+Bei elektronischen Rechnungen: Summenstatus wurde nicht korrekt übermittelt, führte zu Fehler bei Interforum
+Bei elektronischen Rechnungen: Signierte und Verschlüsselte Rechnungen konnten nicht korrekt entschlüsselt werden
+
+Neues Bundesland: Sachsen-Anhalt
+
+Bug fix:
+Bei Neuanlage einer Krankenkasse wurde nach dem Speichern in der Maske die IK-Nummer auf 1 gesetzt
+Bei Löschen einer Krankenkasse wurde nach dem Löschen in die Stammdatenerfassungsmaske gesprungen
+
+Openssl muss nicht mehr unbedingt unter /OpenSSL/bin/ liegen.
+
+neue Plausi für Positionsnummer 6, mehr als 2x nur auf ärztliche Anordnung.
+
+In xauftrag.pl:
+Name Krankenkasse, Kostenträger, Name der Frau werden breiter dargestellt.
+
+Neuer Versicherungsstatus SOZ für Rechnungen an Sozialämter
+Rechnungen an Sozialämter können generiert werden.
+
+Bug fix:
+Maskenlayout Mahnungsgenerierung wurde im IE nicht korrekt angezeigt
+Maskenlayout Rechnungsgenerierung wurde im IE nicht korrekt angezeigt
+Maskenlayout einlesen öffentliche Schlüssel wurde im IE nicht korrekt angezeigt
+Maskenlayout einlesen Kostenträgerdateien wurde im IE nicht korrekt angezeigt
+
+Bug fix:
+Kostenträgerdateien konnten unter Windows nicht eingelesen werden.
+
+Bug fix:
+öffentliche Schlüssel konnten unter Windows nicht eingelesen werden.
+
+Verbesserung Mini Setup, es wird geprüft, ob tinyHeb im richtigen Verzeichnis installiert ist.
+Verbesserung Mini Setup, es wird geprüft, ob die Windows Version installiert ist.
+
+
+Suche nach gs in zentrales Modul ausgelagert.
+
+Suche nach OpenSSL in zentrales Modul ausgelagert.
+
 Release 0.12.0
 
 Bug fix:
