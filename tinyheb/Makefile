@@ -11,16 +11,14 @@ USER=root
 INSTALL=install
 VERBOSE=
 
-DESTDIR=
-
 INST_DIR=$(DESTDIR)/srv/www/cgi-bin/tinyheb/
 APACHE_CONF=$(DESTDIR)/etc/apache2/conf.d/
 
 nix:
-	echo mache nix
+	@echo mache nix
 
 install:
-	echo Installiere nach $(INST_DIR)
+	@echo Installiere nach $(INST_DIR)
 	$(INSTALL) -d $(VERBOSE) -o $(USER) -m +x,+r,u+w,g-w,o-w -p $(INST_DIR)
 	$(INSTALL) $(VERBOSE) -o $(USER) -m -x,+r,u+w,g-w,o-w -p $(PM) $(INST_DIR)
 	$(INSTALL) $(VERBOSE) -o $(USER) -m -x,+r,u+w,g-w,o-w -p $(HTML) $(INST_DIR)
@@ -66,6 +64,6 @@ install:
 
 # MySQL DB inititalisieren
 	cd $(INST_DIR)/DATA
-	echo "mysql -u root < init.sql muss noch im Verzeichnis $(INST_DIR)/DATA ausgeführt werden"
+	@echo "mysql -u root < init.sql muss noch im Verzeichnis $(INST_DIR)/DATA ausgeführt werden"
 
 
