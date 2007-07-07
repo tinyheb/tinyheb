@@ -1,8 +1,8 @@
-#!/usr/bin/perl -wT
-
-
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
+
+# $Id: Heb_GO.pm,v 1.6 2007-07-07 17:15:51 baum Exp $
+# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany

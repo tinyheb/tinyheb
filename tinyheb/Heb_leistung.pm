@@ -1,6 +1,7 @@
-#!/usr/bin/perl -wT
-
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
+
+# $Id: Heb_leistung.pm,v 1.20 2007-07-07 17:17:04 baum Exp $
+# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany

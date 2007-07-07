@@ -1,7 +1,7 @@
-#!/usr/bin/perl -wT
-
-
 # globales Package für die Hebammen Verarbeitung
+
+# $Id: Heb.pm,v 1.9 2007-07-07 17:15:10 baum Exp $
+# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany

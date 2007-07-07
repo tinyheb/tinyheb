@@ -1,9 +1,10 @@
-#!/usr/bin/perl -wT
-
 # Package um Krankenkassen zu verarbeiten
 
+# $Id: Heb_krankenkassen.pm,v 1.15 2007-07-07 17:16:38 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

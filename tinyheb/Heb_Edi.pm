@@ -1,6 +1,7 @@
-#!/usr/bin/perl -wT
-
 # Package für elektronische Rechnungen
+
+# $Id: Heb_Edi.pm,v 1.35 2007-07-07 17:15:29 baum Exp $
+# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
