@@ -3,7 +3,7 @@
 
 # Mini Setup für tinyHeb
 
-# $Id: setup.pl,v 1.5 2007-06-29 16:29:45 baum Exp $
+# $Id: setup.pl,v 1.6 2007-07-07 17:28:25 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -26,7 +26,23 @@
 use strict;
 use File::Copy;
 use Cwd;
-use Win32::Service qw/StopService StartService/;
+use Win32::Service qw/StopService StartService GetStatus GetServices/;
+
+write_LOG("Starte setup ---------------------------------------------");
+
+my %statcodeHash = (
+                    '1' => 'stopped.',
+                    '2' => 'start pending.',
+                    '3' => 'stop pending.',
+                    '4' => 'running.',
+                    '5' => 'continue pending.',
+                    '6' => 'pause pending.',
+                    '7' => 'paused.'
+                   );
+my %statusHash;
+
+my $eingabe='';
+my $serv_erg='';
 
 print "Setup für tinyHeb Copyright (C) 2007 Thomas Baum\n";
 print "Version of this setup programm 0.2.0 \n";
@@ -39,14 +55,17 @@ print "Es wird zunaechst geprueft, ob alle Komponenten vorhanden sind\n";
 print "\n";
 
 print "Pruefe ob Windows Version installiert\n";
+write_LOG("Pruefe ob Windows Version installiert");
 
 open WIN,"../erfassung/krankenkassenerfassung.pl" or die "Konnte Datei krankenkassenerfassung.pl im Verzeichnis erfassung nicht öffnen $!\n";
 my $first_line = <WIN>;
 if ($first_line =~ /^#!perl -wT/) {
   print "Windows Version installiert\n";
+  write_LOG("Windows Version installiert");
 } else {
   print "Du hast Du Linux Version installiert, bitte lade Dir von http://www.tinyheb.de/source/ zunaechst die Windows Version herunter\n";
   print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+  write_LOG("Linux installiert");
   $eingabe=<STDIN>;
   exit(1);
 }
@@ -56,8 +75,10 @@ print "Pruefe ob tinyHeb im richtigen Verzeichnis installiert\n";
 my $win_path=getcwd();
 if ($win_path =~ /Programme\/Apache Group\/Apache2\/cgi-bin\/tinyheb\/win32/) {
   print "Ist im korrekten Verzeichnis installiert\n";
+  write_LOG("Im korrekten Verzeichnis");
 } else {
   print 'Bitte tinyHeb im Verzeichnis \Programme\Apache Group\Apache2\cgi-bin\ entpacken',"\n";
+  write_LOG("nicht im korrekten Verzeichnis");
   print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
   $eingabe=<STDIN>;
   exit(1);
@@ -68,8 +89,10 @@ my $pfad="/Programme/Apache Group/Apache2/bin/Apache.exe";
 print "$pfad \t";
 if (-e $pfad) {
   print "ist vorhanden\n";
+  write_LOG("Apache vorhanden");
 } else {
   print "nicht vorhanden,\nBitte zunaechst den Apache Webserver Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  write_LOG("Apache nicht vorhanden");
   print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
   $eingabe=<STDIN>;
   exit(1);
@@ -80,8 +103,10 @@ $pfad="/Programme/MySQL/MySQL Server 5.0/bin/mysql.exe";
 print "$pfad \t";
 if (-e $pfad) {
   print "ist vorhanden\n";
+  write_LOG("MySQL vorhanden");
 } else {
   print "nicht vorhanden,\nBitte zunaechst den MySQL Server Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  write_LOG("MySQL nicht vorhanden");
   print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
   $eingabe=<STDIN>;
   exit(1);
@@ -91,8 +116,10 @@ print "Pruefe auf OpenSSL\n";
 $pfad=win32_openssl();
 if (defined($pfad)) {
   print "OpenSSL $pfad ist vorhanden\n";
+  write_LOG("OpenSSL $pfad vorhanden");
 } else {
   print "OpenSSL nicht vorhanden,\nBitte zunaechst OpenSSL Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  write_LOG("OpenSSL nicht vorhanden");
   print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
   $eingabe=<STDIN>;
   exit(1);
@@ -104,8 +131,10 @@ $pfad=suche_gswin32();
 
 if (defined($pfad)) {
   print "Ghostscript $pfad ist vorhanden\n";
+  write_LOG("Ghostscript $pfad vorhanden");
 } else {
   print "Ghostscript nicht vorhanden,\nBitte zunaechst Ghostscript Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
+  write_LOG("Ghostscript nicht vorhanden");
   print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
   $eingabe=<STDIN>;
   exit(1);
@@ -115,18 +144,20 @@ if (defined($pfad)) {
 print "\n\nBis jetzt sieht alles gut aus\n\n";
 
 print "Es wird jetzt versucht die fehlenden Perl Pakete aus dem Internet zu laden\n";
-my $eingabe=0;
+$eingabe=0;
 my $os='';
 
 while ($eingabe < 1 or $eingabe > 3 or $eingabe !~ /\d{1}/) {
   print "Welches Betriebssystem wird genutzt?\n";
   print "(1) Win98\n";
   print "(2) WinXP\n";
-  print "(3) anderes Windows System\n";
+  print "(3) Vista\n";
+  print "(4) anderes Windows System\n";
   print "Eingabe :";
   $eingabe=<STDIN>;
   chomp $eingabe;
-  $os='WinXP' if ($eingabe==2);
+  $os='WinXP' if ($eingabe==2 || $eingabe==3);
+  write_LOG("OS:",$eingabe,$os);
 }
 if ($eingabe == 1) {
   print "Du benutzt Win98, der perl Paketmanager ist vermutlich kaputt\n";
@@ -141,6 +172,7 @@ if ($eingabe == 1) {
     my $erg=system ("/Perl/bin/pl2bat /Perl/bin/ppm");
     if ($erg > 0) {
       print "Es ist ein unbekannter Fehler aufgetreten, ggf. T. Baum benachrichtigen\nUnd Hardcopy der Bildschirmausgabe mitschicken\n";
+      write_LOG("unbekannte Fehler bei Neugenerierung ppm",$erg);
       print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
       $eingabe=<STDIN>;
       exit(1);
@@ -149,6 +181,7 @@ if ($eingabe == 1) {
   }
 }
 
+write_LOG("Perl Pakete installieren");
 print "Bitte Verbindung zum Internet aufbauen und die ENTER Taste druecken\n";
 $eingabe=<STDIN>;
 
@@ -159,6 +192,7 @@ system('ppm install PostScript-Simple');
 system('ppm install Mail-Sender');
 system('ppm install DBD-XBase');
 
+write_LOG("Perl Pakete installieren Ende");
 print "\nDie fehlenden Pakete sind jetzt initialisiert\n";
 print "Die Verbindung zum Internet wird nicht mehr benoetigt\n\n";
 
@@ -166,6 +200,7 @@ print "Die Verbindung zum Internet wird nicht mehr benoetigt\n\n";
 print "Soll ich die httpd.conf fuer den Webserver kopieren (ja/nein) [ja]";
 $eingabe = <STDIN>;
 chomp $eingabe;
+write_LOG("Frage httpd.conf copy",$eingabe);
 if ($eingabe =~ /ja/i || $eingabe eq '') {
   copy("httpd.conf","/Programme/Apache Group/Apache2/conf/httpd.conf") or die "konnte httpd.conf nicht kopieren $!\n";
   print "Habe die httpd.conf kopiert\n";
@@ -174,6 +209,7 @@ if ($eingabe =~ /ja/i || $eingabe eq '') {
 print "\nSoll ich die my.ini fuer den MySQL Server kopieren (ja/nein) [ja]";
 $eingabe = <STDIN>;
 chomp $eingabe;
+write_LOG("Frage my.ini copy",$eingabe);
 if ($eingabe =~ /ja/i || $eingabe eq '') {
   copy("my.ini","/Programme/MySQL/MySQL Server 5.0/my.ini") or die "konnte my.ini nicht kopieren $!\n";
   print "Habe die my.ini kopiert\n";
@@ -184,38 +220,82 @@ if ($os eq 'WinXP') {
   print "\nSoll ich den Apache Webserver neu starten, damit die Aenderungen wirksam werden (ja/nein) [ja]";
   $eingabe = <STDIN>;
   chomp $eingabe;
+  write_LOG("Frage Apache start",$eingabe);
   if ($eingabe =~ /ja/i || $eingabe eq '') {
     my $service='Apache2';
     my $s=StopService('',$service);
-    warte(7);
+    warte(7,$service);
     print "Habe $service gestoppt\n" if($s);
     $s=StartService('',$service);
+    warte(3,$service);
     print "Habe $service gestartet\n" if($s);
+    GetStatus('',$service,\%statusHash);
+    write_LOG("Apache status",%statusHash);
+    if ($statusHash{"CurrentState"} ne '4') {
+      print "Konnte Apache nicht starten\n";
+    }
   }
   
   
-  print "\nSoll ich die MySQL Datenbank neu starten, damit die Änderungen wirksam werden (ja/nein) [ja]";
+  print "\nSoll ich die MySQL Datenbank neu starten, damit die Aenderungen wirksam werden (ja/nein) [ja]";
   $eingabe = <STDIN>;
   chomp $eingabe;
   if ($eingabe =~ /ja/i || $eingabe eq '') {
     my $service='MySQL';
     my $s=StopService('',$service);
-    print "Habe $service gestoppt\n" if($s);
-    warte(5);
+    print "Stoppe $service\n" if($s);
+    warte(5,$service);
+    GetStatus('',$service,\%statusHash);
+    if ($statusHash{"CurrentState"} =~ /[1-7]/) {
+      print $service . " ist aktuell " . $statcodeHash{$statusHash{"CurrentState"}} . "\n";
+    }
+    
     $s=StartService('',$service);
-    warte(3);
-    print "Habe $service gestartet\n" if($s);
+    $serv_erg=warte(5,$service);
+    GetStatus('',$service,\%statusHash);
+    if ($statusHash{"CurrentState"} =~ /[1-7]/) {
+      print $service . " ist aktuell " . $statcodeHash{$statusHash{"CurrentState"}} . "\n";
+    }
+    if($statusHash{"CurrentState"} eq '4') {
+      print "Habe $service gestartet\n";
+    } else {
+      print $service . " ist aktuell " . $statcodeHash{$statusHash{"CurrentState"}} . "\n";
+    }
+    write_LOG("MySQL status",%statusHash);
+    
   }
   
   
   print "\nSoll ich die tinyHeb Datenbank initialisieren (ja/nein) [ja]";
   $eingabe = <STDIN>;
   chomp $eingabe;
+  write_LOG("Frage MySQL init",$eingabe);
+  
   if ($eingabe =~ /ja/i || $eingabe eq '') {
-    open INIT,'"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" -p -u root < ../DATA/init.sql |' or die "konnte Datenbank nicht initialisieren $!\n";
-    while (my $zeile=<INIT>) {};
-    print "Habe die Datenbank initialisiert\n";
+    if(warte(1,'MySQL') ne '4') {
+      print "Kann die Datenbank nicht initialisieren, weil der Server nicht gestartet werden konnte\nBitte manuell initialisieren\n";
+      print "\n\nJetzt muss ein Neustart des Rechners ausgefuehrt werden, damit\n";
+      print "die Aenderungen an der Konfiguration des Webservers und des\n";
+      print "MySQL Servers (Datenbank) wirksam werden\n\n";
+      
+      print "danach muss Du noch in das Verzeichnis DATA wechseln und\n";
+      print "folgenden Befehl in der Kommandozeile ausfuehren:\n";
+      print "mysql -u root < init.sql\n";
+      print "ODER falls Du bei der MySQL Installation ein Passwort fuer\n den Datenbankadmin angegeben hast:\n";
+      print "mysql -p -u root < init.sql\n\n";
+      write_LOG('MYSQL ist gestoppt, setup wird abgebrochen');
+      $eingabe=<STDIN>;
+      exit(1);
+    }
   }
+
+  # Datenbank Version dumpen
+  system('"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" --version >> setup.log');
+  open INIT,'"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" -p -u root < ../DATA/init.sql |' or die "konnte Datenbank nicht initialisieren $!\n";
+  while (my $zeile=<INIT>) {
+    print "Zeile $zeile\n";
+  };
+  print "Habe die Datenbank initialisiert\n";
 } else {
   print "\n\nJetzt muss ein Neustart des Rechners ausgefuehrt werden, damit\n";
   print "die Aenderungen an der Konfiguration des Webservers und des\n";
@@ -227,23 +307,29 @@ if ($os eq 'WinXP') {
   print "ODER falls Du bei der MySQL Installation ein Passwort fuer\n den Datenbankadmin angegeben hast:\n";
   print "mysql -p -u root < init.sql\n\n";
 }
-  
-  print "Jetzt kann tinyHeb in Deinem Browser unter dem Link\nhttp://localhost/tinyheb/hebamme.html aufgerufen werden\n";
+
+print "Jetzt kann tinyHeb in Deinem Browser unter dem Link\nhttp://localhost/tinyheb/hebamme.html aufgerufen werden\n";
 
 
 print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
 $eingabe=<STDIN>;
+write_LOG("Ende setup --------------------------------------------------");
 
 
 sub warte {
-  my ($dauer)=@_;
+  my ($dauer,$service)=@_;
   my $i=0;
   while ($i<$dauer) {
-    print ".\n";
+    GetStatus('',$service,\%statusHash);
+    if (defined($statusHash{"CurrentState"}) && $statusHash{"CurrentState"} =~ /[1-7]/) {
+      print $service . " Status ist aktuell " . $statcodeHash{$statusHash{"CurrentState"}} . "\n";
+    }
+    write_LOG("$service status",%statusHash);
     $i++;
     sleep(1);
   }
   print "\n";
+  return $statusHash{"CurrentState"};
 }
 
 sub suche_gswin32 {
@@ -279,3 +365,13 @@ sub win32_openssl {
 
   return undef;
 }
+
+
+sub write_LOG {
+  open (LOG,">>setup.log") or die "log Datei kann nicht geschrieben werden: $!\n";
+  my @log = @_;
+  my $print_log = join(':',@log);
+  my $time = join(':',localtime);
+  print LOG "LOG:$time\t$print_log\n";
+  close (LOG);
+};
