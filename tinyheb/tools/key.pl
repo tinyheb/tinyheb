@@ -5,7 +5,7 @@
 # extrahiert aus Schlüsseldateien des Trust Center ITSG die einzelnen
 # Schlüssel
 
-# $Id: key.pl,v 1.8 2007-06-29 16:23:25 baum Exp $
+# $Id: key.pl,v 1.9 2007-07-07 17:25:40 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -49,7 +49,7 @@ if (!defined($openssl)) {
 }
 
 my %option = ();
-getopts("stvp:f:o:hu",\%option);
+getopts("cstvp:f:o:hu",\%option);
 
 if ($option{h}) {
   print "
@@ -60,7 +60,8 @@ if ($option{h}) {
  -o <-> output path
  -u <-> update auf Datenbank
  -t <-> hTml formatierte Ausgabe
- -s <-> speichert die einzelnen Zertifikate ein eigener Datei
+ -s <-> speichert die einzelnen Zertifikate in jeweils eigener Datei
+ -c <-> speichert Zertifikat der Hebamme im korrekten Verzeichnis
  -h <-> help
 ";
   exit;
@@ -71,11 +72,13 @@ if ($option{h}) {
 
 use lib "../";
 my $debug = $option{v} || 0;
+my $save_cert = $option{c} || '';
 my $eingabe = $option{f} || '';
 my $pfad = $option{p} || '';
 my $o_pfad = $option{o} || 'keys/';
 my $html = $option{t} || '';
 my $save = $option{s} || 0;
+
 
 
 our $path = $ENV{HOME}; # für temporäre Dateien
@@ -86,7 +89,7 @@ if ($^O =~ /MSWin32/) {
   $path .='/.tinyheb';
 }
 		   
-
+my $orig_path = $path;
 
 mkdir "$path" if(!(-d "$path"));
 if (!(-d "$path/tmp")) { # Zielverzeichnis anlegen
@@ -153,6 +156,12 @@ foreach my $file (@dateien) {
 	copy("$path/tmpcert.pem","$o_pfad/$ik.pem") if (-e "$path/tmpcert.pem" && $save);
       } else {
 	print "keine IK Nummer im Zertifikat enthalten\n" if $debug;
+      }
+      if ($ik && $save_cert && $ik eq $h->parm_unique('HEB_IK')) {
+	if (-e "$path/tmpcert.pem") {
+	  copy("$path/tmpcert.pem","$orig_path/privkey/$ik.pem");
+	  print "Habe Zerfikat fuer $ik nach $orig_path/privkey/$ik.pem kopiert\n";
+	}
       }
 
       my($start,$ende)=get_dates("$path/tmpcert.pem");
