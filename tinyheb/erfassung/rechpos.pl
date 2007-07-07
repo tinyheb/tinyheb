@@ -5,6 +5,9 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
+# $Id: rechpos.pl,v 1.36 2007-07-07 17:22:56 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 

@@ -5,6 +5,9 @@
 
 # Feiertag erfassen, ändern, löschen
 
+# $Id: feiertagserfassung.pl,v 1.10 2007-07-07 17:19:50 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 

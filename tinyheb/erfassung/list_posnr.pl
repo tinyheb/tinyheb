@@ -5,6 +5,9 @@
 
 # erfasste Rechnungsposten ausgeben
 
+# $Id: list_posnr.pl,v 1.11 2007-07-07 17:21:47 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 

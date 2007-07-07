@@ -1,8 +1,11 @@
 /* script für Navigation 
 # im Rahmen der Parametererfassung
 
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# $Id: parameter.js,v 1.3 2007-07-07 17:21:58 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
+# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

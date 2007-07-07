@@ -1,8 +1,11 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Stammdatenerfassung
 
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
+
+# $Id: stammdaten.js,v 1.18 2007-07-07 17:23:11 baum Exp $
+# Tag $Name: not supported by cvs2svn $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

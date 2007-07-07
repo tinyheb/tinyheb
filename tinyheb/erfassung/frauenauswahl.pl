@@ -6,6 +6,9 @@
 
 # Auswahl einer Frau aus den Stammdaten
 
+# $Id: frauenauswahl.pl,v 1.11 2007-07-07 17:20:02 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 

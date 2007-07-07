@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 
+# $Id: auftrag.pl,v 1.11 2007-07-07 17:19:04 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # erstellen der Auftragsdatei für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
