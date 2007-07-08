@@ -1,3 +1,13 @@
+Release 0.13.2
+
+neuer Parameter -c bei Kommandozeilentool key.pl speichert das Zertifkat der Hebamme, falls es in der Eingabe
+enthalten ist.
+
+Bug fix:
+setup.pl war nicht lauffähig w/ nicht deklarierter Variable
+
+setup.pl schreibt zusätzlich Logfile und Fehler bei der Installation leichter erkennen zu können.
+
 Release 0.13.0
 
 Bug fix:
