@@ -26,5 +26,3 @@ update Leistungsart set GUELT_BIS = '2006-04-19' where POSNR='M001';
 update Leistungsart set GUELT_BIS = '2006-04-19' where POSNR='M002';
 update Leistungsart set GUELT_BIS = '2006-04-19' where POSNR='M003';
 
-alter table Leistungsart add index POSNR_INDEX(POSNR,GUELT_VON,GUELT_BIS);
-alter table Leistungsdaten add index FKST_INDEX(FK_STAMMDATEN);
