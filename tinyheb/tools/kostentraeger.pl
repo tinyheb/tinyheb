@@ -4,7 +4,7 @@
 
 # extrahiert aus Kostenträger Dateien die benötigten Daten
 
-# $Id: kostentraeger.pl,v 1.14 2007-06-29 16:25:57 baum Exp $
+# $Id: kostentraeger.pl,v 1.15 2007-07-14 05:54:50 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -124,6 +124,7 @@ LINE:while ($zeile=<FILE>) {
     my $email = ''; # E-Mail Adresse bei Datenannahmestellen
     my $ktr=0; # Kostenträger zu dieser Krankenkasse
     my $da=0; # Datenannahmestelle zu dieser Krankenkasse
+    my $erg9=0; # alter Abrechnungscode
     print "--------------KRANKENKASSE ANFANG\n" if $debug;
     until ($zeile =~ /\AUNT/) {
       print "ZEILE $zeile\n" if $debug;
@@ -153,19 +154,24 @@ LINE:while ($zeile=<FILE>) {
 	# 99 für nicht aufgeführte Gruppen
 	$erg[9]=-1 unless(defined($erg[9]));
 	if ($erg[1]==3 && $erg[5]==7 && 
-	    ($erg[9]==00 || $erg[9]==50 || ($erg[9]==99 && $zik_typ < 3))) {
+	    ($erg[9]==00 || $erg[9]==50 || 
+	     ($erg[9]==99 && $zik_typ < 3))) {
 	  # aok haben ring geschlossen über typ 2 Verbindungen, die dürfen
 	  # hier nicht berücksichtigt werden
 	  if ((uc $k_typ eq 'AO' && $zik_typ < 3) ||
+	      (uc $k_typ eq 'AO' && $erg9==99 && 
+	       ($erg[9] == 50 || $erg[9] == 00))  ||
 	      # wenn keine aok und es ist schon kostenträger vorhanden,
 	      # darf nur mit datenannahmestelle überschrieben werden
-	      # wenn kostenträger die gleiche kasse ist
+	      # wenn kostenträger die gleiche kasse ist,
+	      # das bedeutet dann ZIK ist DA und IK ist KTR
 	      ((uc $k_typ ne 'AO') && $idk != $erg[2] && 
 	       ($zentral_idk==$idk || $zentral_idk==0))) {
 	    $zentral_idk=$erg[2];
 	    $da=$zentral_idk;
 	    $bemerkung .= "Zentral IK mit Entschlüsselungsbefugnis w/ $zeile\n";
 	    $zik_typ=3; # Datenannamestelle mit Entschlüsselungsbefugnis
+	    $erg9=$erg[9]; # welcher Abrechnungscode hat zur DA geführt
 	  }
 	}
 
