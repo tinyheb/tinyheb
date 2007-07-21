@@ -2,7 +2,7 @@
 
 # erstellen eines Zertifikatrequest und senden an die ITSG
 
-# $Id: genreq.pl,v 1.2 2007-06-30 14:46:37 baum Exp $
+# $Id: genreq.pl,v 1.3 2007-07-21 05:23:07 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -11,7 +11,7 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
-# any later version.
+# (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -572,8 +572,8 @@ sub gen_mail {
     return undef;
   }
   
-#  if ($sender->OpenMultipart({to => 'baum@localhost',
-  if ($sender->OpenMultipart({to => ' itsg-crq@atosorigin.com',
+#  if ($sender->OpenMultipart({to => 'thomas.baum@arcor.de',
+  if ($sender->OpenMultipart({to => 'itsg-crq@atosorigin.com',
 			      bcc => $user_from,
 			      subject => 'Zertifikatsanfrage für '.$h->parm_unique('HEB_IK')}) < 0) {
     fehler("Fehler bei Mailverschicken der Zertifikatsanfrage $Mail::Sender::Error\nversenden wird abgebrochen ");
