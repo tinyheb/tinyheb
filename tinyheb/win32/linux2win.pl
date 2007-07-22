@@ -4,7 +4,7 @@
 # Zeilenende werden angepasst,
 # Shebang Zeile geändert
 
-# $Id: linux2win.pl,v 1.1 2007-07-22 11:08:51 baum Exp $
+# $Id: linux2win.pl,v 1.2 2007-07-22 11:18:42 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -31,7 +31,7 @@ my %option = ();
 getopts("f:",\%option);
 
 
-my $base_dir=$option{f} or die "Option -f muss angegeben werden\n";
+my $base_dir=$option{f} or '.';
 
 my @dirs =qw(apache2 edifact erfassung rechnung tools win32 .);
 
