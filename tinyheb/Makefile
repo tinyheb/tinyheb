@@ -1,6 +1,6 @@
 # Makefile für tinyHeb
 
-# $Id: Makefile,v 1.5 2007-07-22 11:42:00 baum Exp $
+# $Id: Makefile,v 1.6 2007-07-22 11:52:04 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 PM=*.pm
@@ -18,8 +18,8 @@ VERBOSE=
 
 #DESTDIR=
 
-INST_DIR=$(DESTDIR)/srv/www/cgi-bin/tinyheb/
-APACHE_CONF=$(DESTDIR)/etc/apache2/conf.d/
+INST_DIR=$(DESTDIR)/srv/www/cgi-bin/tinyheb
+APACHE_CONF=$(DESTDIR)/etc/apache2/conf.d
 
 nix:
 	@echo mache nix
@@ -78,8 +78,9 @@ install:
 
 # MySQL init
 	@echo jetzt muss noch die Datenbank initialisiert werden
-	cd $(INST_DIR)/DATA; \
--	@echo "mysql -u root < init.sql muss noch im Verzeichnis $(INST_DIR)/DATA ausgeführt werden"
+	cd $(INST_DIR)/DATA; 
+	@echo  'mysql -u root < init.sql muss noch im Verzeichnis $(INST_DIR)/DATA ausgeführt werden'
+
 
 
 
