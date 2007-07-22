@@ -1,10 +1,15 @@
+# Makefile für tinyHeb
+
+# $Id: Makefile,v 1.4 2007-07-22 11:39:58 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 PM=*.pm
 HTML=*.html
 TXT=*.txt README
 JS=*.js
 CSS=*.css
 
-SUB_DIRS=erfassung edifact rechnung tools
+SUB_DIRS=erfassung edifact rechnung tools DATA
 
 #USER=root
 
@@ -60,6 +65,9 @@ install:
 		$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p $$i/*.ini $(INST_DIR)/$$i/; \
 	fi; \
 	if [ -n "$$(ls $$i/*.conf 2>/dev/null)" ]; then \
+		$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p $$i/*.conf $(INST_DIR)/$$i/; \
+	fi; \
+	if [ -n "$$(ls $$i/*.sql 2>/dev/null)" ]; then \
 		$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p $$i/*.conf $(INST_DIR)/$$i/; \
 	fi; \
 	done
