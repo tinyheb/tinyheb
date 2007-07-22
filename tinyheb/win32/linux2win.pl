@@ -4,7 +4,7 @@
 # Zeilenende werden angepasst,
 # Shebang Zeile geändert
 
-# $Id: linux2win.pl,v 1.3 2007-07-22 11:21:22 baum Exp $
+# $Id: linux2win.pl,v 1.4 2007-07-22 11:28:29 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -37,15 +37,15 @@ my @dirs =qw(apache2 edifact erfassung rechnung tools win32 .);
 
 foreach my $dir (@dirs) {
   print "\nBearbeite Verzeichnis $dir\n";
-  opendir (DIR,"$base_dir../$dir") or die "konnte Verzeichnis $dir nicht lesen $!\n";
+  opendir (DIR,"$base_dir/../$dir") or die "konnte Verzeichnis $dir nicht lesen $!\n";
   my @allfiles = grep {$_ ne '.' and $_ ne '..'} readdir DIR;
 #  print "Dateien: @allfiles\n";
 
   foreach  my $file (@allfiles) {
-    if (-f "$base_dir../$dir/$file") {
+    if (-f "$base_dir/../$dir/$file") {
       print "Bearbeite Datei $file\n";
-      open FILE,"$base_dir../$dir/$file" or 
-	die "konnte Datei $base_dir../$dir/$file nicht lesen $!\n";
+      open FILE,"$base_dir/../$dir/$file" or 
+	die "konnte Datei $base_dir/../$dir/$file nicht lesen $!\n";
       my @alllines=<FILE>;
       close FILE;
       my @winlines = grep { chomp } @alllines;
@@ -54,13 +54,13 @@ foreach my $dir (@dirs) {
 	$winlines[$i] =~ s/!\/usr\/bin\/perl/!perl/i;
       }
       if ($^O =~ /linux/) {
-	open (FILE,">:raw","$base_dir../$dir/$file") or
-	  die "konnte Datei $base_dir../$dir/$file nicht schreiben $!\n";
+	open (FILE,">:raw","$base_dir/../$dir/$file") or
+	  die "konnte Datei $base_dir/../$dir/$file nicht schreiben $!\n";
 	print FILE join "\x0d\x0a",@winlines;
 	print FILE "\x0d\x0a";
       } else {
-	open FILE,">$base_dir../$dir/$file" or
-	  die "konnte Datei $base_dir../$dir/$file nicht schreiben $!\n";
+	open FILE,">$base_dir/../$dir/$file" or
+	  die "konnte Datei $base_dir/../$dir/$file nicht schreiben $!\n";
 	print FILE join "\n",@winlines;
 	print FILE "\n";
       }
