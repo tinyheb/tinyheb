@@ -1,6 +1,6 @@
 # Makefile für tinyHeb
 
-# $Id: Makefile,v 1.6 2007-07-22 11:52:04 baum Exp $
+# $Id: Makefile,v 1.7 2007-07-24 17:39:32 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 PM=*.pm
@@ -75,6 +75,12 @@ install:
 
 	$(INSTALL) -d $(VERBOSE)  -m +x,+r,u+w,g-w,o-w -p $(APACHE_CONF)/
 	$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p apache2/tinyheb.conf $(APACHE_CONF)/tinyheb.conf
+
+	# Doku kopieren, wenn vorhanden
+	if [ -d concept ]; then \
+		$(INSTALL) -d $(VERBOSE) -m +x,+r,u+w,g-w,o-w -p $(INST_DIR)/concept/; \
+		$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p concept/*.pdf $(INST_DIR)/concept/; \
+	fi;
 
 # MySQL init
 	@echo jetzt muss noch die Datenbank initialisiert werden
