@@ -1,3 +1,6 @@
+# $Id: README,v 1.4 2007-07-26 20:14:16 baum Exp $ 
+# Tag $Name: not supported by cvs2svn $
+
 << 0. Was ist tinyHeb >>
 
 tinyHeb ist eine Webapplikation mit der Hebammen die notwendigen Abrechnungen
@@ -23,57 +26,68 @@ Wenn die Installation auf Basis des Sources durchgeführt werden soll sind die
 folgenden Schritte notwendig.
 
 << Schritt 1 >>
-	wechsel in das Verzeichnis DATA wenn Installation aus Sourcen erfolgte
-	wechsel in das Verzeichnis tinyheb-mysql wenn Installation aus RPM erfolgte
-	Befehl mysql -u root < init.sql ausführen
-	damit werden die notwendigen user und Datenbanktabellen angelegt
+	Prüfen, ob die Basiskomponenten vorhanden sind, 
+	es muss MySQL Server und MySQL Client installiert sein,
+	und der Apache2 Webserver.
+	
+	Dann
 
-<< Schritt 2 >>
-	Setzen der Aliase in der Konfigurationsdatei des Webservers
-	In der Datei httpd.conf folgenden Alias einfügen:
-	Include /etc/apache2/conf.d/tinyheb.conf
+	su
+	make install
+
+	oder bei Debian (Ubuntu, Kubuntu, ...)
+	sudo make install
+
+<< Schritt 2 >> 
+	wechsel in das Verzeichnis DATA 
+
+	Befehl mysql -u root < init.sql ausführen
+	damit wird der notwendigen user und die Datenbanktabellen angelegt
 
 << Schritt 3 >>
-	Kopieren der Datei tinyheb.conf aus dem Verzeichnis apache2 nach 
-	/etc/apache2/conf.d/tinyheb.conf
-	su;cp apache2/tinyheb.conf /etc/apache2/conf.d/tinyheb.conf
-
-<< Schritt 4 >>
-	Rekursives Kopieren des gesamten tinyheb Verzeichnisses nach /srv/www/cgi-bin/tinyheb
-	oder alternativ, das tinyheb.tar in /srv/www/cgi-bin entpacken
-	su; cd /srv/www/cgi-bin/; tar -xf tinyheb.tar
-
-<< Schritt 5 >>
 	Webserver neu starten
 	cd /etc/init.d; ./apache2 restart
 
+<< Schritt 4 >>
+	benötigte perl Module installieren, das sind:
+	DBI,
+	DBD,
+	CGI,
+	Date::Calc
+	File::stat,
+	MIME::QuotedPrint,
+	Tk,
+	Mail::Sender,
+	PostScript::Simple
+
+	die gibt es als DEB oder RPM Pakete, was zu empfehlen ist,
+	oder bei www.cpan.org
+
+<< Schritt 5 >>
+
 fast fertig:
 im Browser kann jetzt über http://localhost/tinyheb/hebamme.html
-tinyHeb gestart werden.
-um elektronische Rechnungen zu verschicken existiert das Programm xauftrag.pl im Verzeichnis edifact.
+tinyHeb gestart werden. Um elektronische Rechnungen zu verschicken 
+existiert das Programm xauftrag.pl im Verzeichnis edifact.
 
-<< Schritt 6 >>
-	Jetzt ist es noch notwendig die Parameter wie in Kapitel 2.4 des Handbuches beschrieben
-	anzupassen, damit z.B. der wirkliche Name der Hebamme auf der Rechnung erscheint.
+
+	Jetzt ist es noch notwendig die Parameter wie in Kapitel 2.4 
+	des Handbuches beschrieben anzupassen, damit z.B. der 
+	wirkliche Name der Hebamme auf der Rechnung erscheint.
+
 
 
 << 2. Änderungshistorie >>
 Die Änderungshistorie befindet sich in der Datei RelNotes.txt
 
-<< 3. benötigte perl Module zur Laufzeit >>
-DBI,
-DBD,
-CGI,
-Date::Calc
-File::stat,
-MIME::QuotedPrint,
-Tk,
-Mail::Sender,
-PostScript::Simple
-
-<< 4. zusätzliche Programme >>
+<< 3. zusätzliche Programme >>
 OpenSSL muss installiert sein, wenn man verschlüsselte Rechnungen erzeugen möchte
 
-<< 5. Fragen >>
-wenn es Probleme bei der Installation geben sollte, schreibt mir einfach eine Mail:
+<< 4. Fragen >>
+wenn es Probleme bei der Installation geben sollte, schreibt mir eine Mail:
 thomas.baum@arcor.de
+
+Falls Ihr keine Probleme hattet, freue ich mich auch auf eine Mail ;-)
+oder wenn Ihr die tinyHeb Mailingliste aboniert:
+http://www.tinyheb.de/mailinglist.html
+
