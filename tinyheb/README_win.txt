@@ -137,9 +137,7 @@ Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 90%
 	überschrieben werden.
 
 	Im Verzeichnis win32 existiert die Datei setup.pl, Doppelklick
-	auf den Dateinamen sollte die letzen Schritte der Installation
-	starten. Bitte beachtet, dass dieses Programm nur Alpha Status hat.
-	
+	auf den Dateinamen startet die letzen Schritte der Installation.
 
 Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 100%
 
