@@ -1,0 +1,93 @@
+# $Id$ 
+# Tag $Name$
+
+<< 0. Was ist tinyHeb >>
+
+tinyHeb ist eine Webapplikation mit der Hebammen die notwendigen Abrechnungen
+gegenüber den gesetzlichen Krankenkassen durchführen können.
+tinyHeb kann sowohl Papier, wie auch elektronische Rechnungen produzieren.
+Die gesetzlichen Anforderungen nach §301a, resp. §302 SGB V werden eingehalten.
+
+<< 1. Installation >>
+In diesem Abschnitt ist die Installation für Linux Systeme beschrieben,
+Win* Nutzer lesen bitte die Installationshinweise in der Datei README.win
+
+Am einfachsten ist die Installation über RPM Pakete, die im Internet zum
+download zur Verfügung stehen. Die genaue Anleitung findet man im Internet
+unter: http://home.arcor.de/thomas.baum/tinyheb
+Abhängige Pakete werden automatisch installiert.
+
+Wer in den vollen Genuß der Rechnungvorschau kommen möchte, muss noch das Paket
+mozplugger installieren, dies ist leider seit SuSE 9.3 nicht mehr in der
+Distribution enthalten. Bei Packmann kann es heruntergeladen werden. Wer nicht
+weiss wie das funktioniert, schicke mir bitte eine Mail.
+
+Wenn die Installation auf Basis des Sources durchgeführt werden soll sind die
+folgenden Schritte notwendig.
+
+<< Schritt 1 >>
+	Prüfen, ob die Basiskomponenten vorhanden sind, 
+	es muss MySQL Server und MySQL Client installiert sein,
+	und der Apache2 Webserver.
+	
+	Dann
+
+	su
+	make install
+
+	oder bei Debian (Ubuntu, Kubuntu, ...)
+	sudo make install
+
+<< Schritt 2 >> 
+	wechsel in das Verzeichnis DATA 
+
+	Befehl mysql -u root < init.sql ausführen
+	damit wird der notwendigen user und die Datenbanktabellen angelegt
+
+<< Schritt 3 >>
+	Webserver neu starten
+	cd /etc/init.d; ./apache2 restart
+
+<< Schritt 4 >>
+	benötigte perl Module installieren, das sind:
+	DBI,
+	DBD,
+	CGI,
+	Date::Calc
+	File::stat,
+	MIME::QuotedPrint,
+	Tk,
+	Mail::Sender,
+	PostScript::Simple
+
+	die gibt es als DEB oder RPM Pakete, was zu empfehlen ist,
+	oder bei www.cpan.org
+
+<< Schritt 5 >>
+
+fast fertig:
+im Browser kann jetzt über http://localhost/tinyheb/hebamme.html
+tinyHeb gestart werden. Um elektronische Rechnungen zu verschicken 
+existiert das Programm xauftrag.pl im Verzeichnis edifact.
+
+
+	Jetzt ist es noch notwendig die Parameter wie in Kapitel 2.4 
+	des Handbuches beschrieben anzupassen, damit z.B. der 
+	wirkliche Name der Hebamme auf der Rechnung erscheint.
+
+
+
+<< 2. Änderungshistorie >>
+Die Änderungshistorie befindet sich in der Datei RelNotes.txt
+
+<< 3. zusätzliche Programme >>
+OpenSSL muss installiert sein, wenn man verschlüsselte Rechnungen erzeugen möchte
+
+<< 4. Fragen >>
+wenn es Probleme bei der Installation geben sollte, schreibt mir eine Mail:
+thomas.baum@arcor.de
+
+Falls Ihr keine Probleme hattet, freue ich mich auch auf eine Mail ;-)
+oder wenn Ihr die tinyHeb Mailingliste aboniert:
+http://www.tinyheb.de/mailinglist.html
+
