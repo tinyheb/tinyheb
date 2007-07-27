@@ -1,17 +1,19 @@
-Release 0.13.3
+Release 0.14.0
 
 Bug fix:
-Bei Einlesen der Kostenträgerdateien wurde falsche Annahmestelle bei AOK Niedersachsen in Datenhaushalt übernommen.
+Bei Einlesen der Kostenträgerdateien wurde falsche Annahmestelle bei 
+AOK Niedersachsen in Datenhaushalt übernommen.
 
 Bug fix:
-Bei Zertifikatsgenerierung konnte bei bestimmten Mailprovidern (T-Online) die Zertifikatsanfrage nicht an die ITSG gesendet werden.
+Bei Zertifikatsgenerierung konnte bei bestimmten Mailprovidern (T-Online) die 
+Zertifikatsanfrage nicht an die ITSG gesendet werden.
 
 Handbuch Erweiterung um Kapitel Danksagungen und Ein eigenes Zertifikat
 
 
 Release 0.13.2
 
-neuer Parameter -c bei Kommandozeilentool key.pl speichert das Zertifkat der Hebamme, falls es in der Eingabe
+neuer Parameter -c bei Kommandozeilentool key.pl speichert das Zertifikat der Hebamme, falls es in der Eingabe
 enthalten ist.
 
 Bug fix:
