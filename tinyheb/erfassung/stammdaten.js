@@ -4,13 +4,13 @@
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
-# $Id: stammdaten.js,v 1.18 2007-07-07 17:23:11 baum Exp $
+# $Id: stammdaten.js,v 1.19 2007-07-27 18:55:15 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
-# any later version.
+# (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of

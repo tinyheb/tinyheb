@@ -5,7 +5,7 @@
 
 # Einspielen eines Backups der tinyHeb Datenbank
 
-# $Id: restore.pl,v 1.5 2007-07-27 15:39:14 baum Exp $
+# $Id: restore.pl,v 1.6 2007-07-27 18:55:15 baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -14,7 +14,7 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
-# any later version.
+# (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
