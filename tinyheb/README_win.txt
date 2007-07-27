@@ -1,3 +1,6 @@
+# $Id: README_win.txt,v 1.6 2007-07-27 15:39:14 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 << 0. Was ist tinyHeb >>
 
 tinyHeb ist eine Webapplikation mit der Hebammen die notwendigen Abrechnungen

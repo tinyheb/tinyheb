@@ -5,6 +5,9 @@
 
 # Rechnungen bearbeiten
 
+# $Id: rechbear.pl,v 1.8 2007-07-27 15:39:14 baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
