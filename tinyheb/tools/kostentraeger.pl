@@ -4,7 +4,7 @@
 
 # extrahiert aus Kostenträger Dateien die benötigten Daten
 
-# $Id: kostentraeger.pl,v 1.16 2007-07-22 11:06:15 baum Exp $
+# $Id: kostentraeger.pl,v 1.17 2007-07-31 17:11:52 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -97,7 +97,9 @@ my $line_counter = 0;
 my $zeile = '';
 
 LINE:while ($zeile=<FILE>) {
-  $zeile =~ s/\'\x0d\x0a//g;
+  $zeile =~ s/\'\x0d\x0a$//g;
+  $zeile =~ s/\'\x0a$//g;
+
   next LINE if ($zeile =~ /\AUNA/); # Beginn überspringen
   
   if ($zeile =~ /\AUNB/) {
@@ -268,7 +270,8 @@ LINE:while ($zeile=<FILE>) {
       print "$zeile\n" if $debug;
       $zeile=<FILE>;
 #      chomp($zeile);
-      $zeile =~ s/\'\x0d\x0a//g;
+      $zeile =~ s/\'\x0d\x0a$//g;
+      $zeile =~ s/\'\x0a$//g;
     }
     $kasse .= "$idk\t$kname\t$name\t";
     $kasse .= $ans_haus{strasse} if defined($ans_haus{strasse});
