@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.36 2007-07-27 18:55:15 baum Exp $
+# $Id: Heb_Edi.pm,v 1.37 2007-08-11 11:53:47 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -938,7 +938,7 @@ sub sig {
   }
   if ($sig_flag == 3) {
     # DER signieren um später base64 encoden zu können
-    open NUTZ, "$openssl smime -sign -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem -passin pass:$self->{sig_pass} -inkey $path/privkey/privkey.pem |" or
+    open NUTZ, "$openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem -passin pass:$self->{sig_pass} -inkey $path/privkey/privkey.pem |" or
       return ("konnte Datei nicht DER signieren",0);
   }
 
@@ -1043,6 +1043,7 @@ sub edi_rechnung {
   # Nutzdatendatei schreiben
   open NUTZ, ">$path/tmp/$dateiname"
     or die "Konnte Nutzdatei nicht zum Schreiben öffnen $!\n";
+  binmode NUTZ;
   print NUTZ $erg_nutz;
   close NUTZ;
 
