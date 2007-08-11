@@ -1,7 +1,7 @@
 /* script für Plausiprüfungen im Rahmen der
 # Rechnungserfassung/ Generierung und Navigation
 
-# $Id: rechnung.js,v 1.18 2007-07-27 18:55:15 baum Exp $
+# $Id: rechnung.js,v 1.19 2007-08-11 11:56:08 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -143,7 +143,7 @@ function anseh_rech(rech_id,status) {
     if (status == 80) {
       alert("Achtung diese Rechnung wurde Storniert");
     }
-    open("druck_alt_rech.pl?rech_id="+rech_id,"rech_alt","scrollbars=yes,width=950,heigth=1100");
+    open("druck_alt_rech.pl?rech_id="+rech_id,"rech_alt","scrollbars=yes,width=950,heigth=1100,resizable=yes");
   } else {
     alert("Bitte Rechnung anwählen");
   }
