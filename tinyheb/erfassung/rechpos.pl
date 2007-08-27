@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.37 2007-07-27 18:55:15 baum Exp $
+# $Id: rechpos.pl,v 1.38 2007-08-27 17:52:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -313,15 +313,18 @@ sub printbox {
   $l->leistungsart_such($TODAY_jmt,$wahl);
   while (my @werte = $l->leistungsart_such_next() ) {  
     my $fuerzeit_flag='';
-    my ($l_posnr,$l_bez,$l_preis,$l_fuerzeit)=($werte[1],$werte[21],$werte[4],$werte[9]);
+    my ($l_posnr,$l_bez,$l_preis,$l_fuerzeit,$l_samstag,$l_nacht)=($werte[1],$werte[21],$werte[4],$werte[9],$werte[8],$werte[7]);
     ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
     if ($l_preis > 0) {
       print "<option value='$l_posnr' ";
       print ' selected' if ($posnr eq $l_posnr);
       print " >";
       $script .= "if(formular.posnr.value == '$l_posnr') {\nformular.preis.value=$l_preis;\n";
-      if (defined($l_fuerzeit) && $l_fuerzeit > 0 || $wahl eq 'B' ||
-	  $l_posnr eq '40') {
+      if (defined($l_fuerzeit) && $l_fuerzeit > 0 || 
+	  defined($l_samstag) && $l_samstag ne '' ||
+	  $l->leistungsart_pruef_zus($l_posnr,'SAMSTAG') ||
+	  $l->leistungsart_pruef_zus($l_posnr,'NACHT') ||
+	  defined($l_nacht) && $l_nacht ne '') {
 	$script .= "formular.zeit_von.disabled=false;\n";
 	$script .= "formular.zeit_bis.disabled=false;\n";
 	$script .= "var zl_tag = document.getElementsByName('zeit_von');\n";
@@ -338,7 +341,8 @@ sub printbox {
 	$script .= "zl_tag[0].className='disabled';\n";
 	$script .= "formular.entfernung_tag.focus();\n";
       }
-      if($l_posnr eq '7' || $l_posnr eq '40') {
+      if($l_posnr eq '7' || $l_posnr eq '40' ||
+	 $l_posnr eq '070' || $l_posnr eq '270') {
 	$script .= "kurs_knopf();\n";
 	$script .= "formular.anzahl_kurse.focus()\n";
       } else {
@@ -371,20 +375,7 @@ sub speichern {
     return $hint;
   }
 
-  # prüfen ob Uhrzeit erfasst wurde, wenn ja, muss es gültige Zeit sein
-  if ($zeit_von ne '' || $zeit_bis ne '') {
-    if (!($d->check_zeit($zeit_von))) {
-      $hint .= '\nFEHLER: keine gültige Uhrzeit von erfasst, nichts gespeichert';
-      $hscript = 'document.rechpos.zeit_von.focus();';
-      return $hint;
-    }
-    if (!($d->check_zeit($zeit_bis))) {
-      $hint .= '\nFEHLER: keine gültige Uhrzeit bis erfasst, nichts gespeichert';
-      $hscript = 'document.rechpos.zeit_bis.focus();';
-      return $hint;
-    }
-  }
-  
+
   # Datum konvertieren
   my $datum_l = $d->convert($datum);
   if ($datum_l eq 'error') {
@@ -392,6 +383,35 @@ sub speichern {
     $hscript = 'document.rechpos.datum.focus()';
     return $hint;
   }
+
+  # Prüfen ob Positionsnummer für dieses Datum eine gültige ist.
+  my ($kbez) = $l->leistungsart_such_posnr('KBEZ',$posnr,$datum_l);
+  if (!(defined($kbez))) {
+    $hint .= 'Fehler: Positionsnummer '.$posnr.' ist für '.$datum.' keine gültige Positionsnummer,\nes wurde nichts gespeichert.';
+    return $hint;
+  }
+
+
+  # prüfen ob Uhrzeit erfasst wurde, wenn ja, muss es gültige Zeit sein
+  if ($zeit_von ne '' || $zeit_bis ne '') {
+    if (!($d->check_zeit($zeit_von))) {
+      $hint .= '\nFEHLER: keine gültige Uhrzeit von erfasst, nichts gespeichert';
+      $hscript = 'document.rechpos.zeit_von.focus();';
+      return $hint;
+    }
+    my $fuerzeit_flag='';
+    my ($l_fuerzeit) = $l->leistungsart_such_posnr('FUERZEIT',$posnr,$datum_l);
+   ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
+    if (!($d->check_zeit($zeit_bis)) && 
+	defined($l_fuerzeit) && 
+	$l_fuerzeit > 0) {
+      $hint .= '\nFEHLER: keine gültige Uhrzeit bis erfasst, nichts gespeichert';
+      $hscript = 'document.rechpos.zeit_bis.focus();';
+      return $hint;
+    }
+  }
+
+
   # Entfernung konvertieren
   $entfernung_tag =~ s/,/\./g;
   $entfernung_nacht =~ s/,/\./g;
@@ -416,21 +436,21 @@ sub speichern {
 
   # Samstag ersetzen?
   if (my $posnr_neu=$hebgo->ersetze_samstag) {
-    $hint .= "Positionsnummer $posnr w/ Samstag ersetzt durch $posnr_neu";
+    $hint .= 'Positionsnummer '.$posnr.' w/ Samstag ersetzt durch '.$posnr_neu.'\n';
     $posnr=$posnr_neu;
   }
   $zuschlag = $hebgo->zuschlag_samstag if ($hebgo->zuschlag_samstag);
 
   # Sonn- oder Feiertag ersetzen?
   if (my $posnr_neu=$hebgo->ersetze_sonntag) {
-    $hint .= "Positionsnummer $posnr w/ Sonntag oder Feiertag ersetzt durch $posnr_neu";
+    $hint .= 'Positionsnummer '.$posnr.' w/ Sonntag oder Feiertag ersetzt durch '.$posnr_neu.'\n';
     $posnr=$posnr_neu;
   }
   $zuschlag = $hebgo->zuschlag_sonntag if ($hebgo->zuschlag_sonntag);   
 
   # Nacht
   if(my $posnr_neu=$hebgo->ersetze_nacht) {
-      $hint .= "Positionsnummer $posnr w/ Nacht ersetzt durch $posnr_neu ";
+      $hint .='Positionsnummer '.$posnr.' w/ Nacht ersetzt durch '.$posnr_neu.'\n';
       $posnr = $posnr_neu;
       # dann sind es auch Nachtkilometer
       $entfernung_nacht = $entfernung_tag;
@@ -455,7 +475,7 @@ sub speichern {
   
   # Prüfung ob Zuschlag für valides Datum gewählt wurde
   if($hebgo->zuschlag_plausi) {
-    $hint .= '\nFEHLER: Positionsnummer nur zu bestimmten Tagen und Zeiten, es wurde nichts gespeichert';
+    $hint .= '\nFEHLER: Positionsnummer '.$posnr.' nur zu bestimmten Tagen und Zeiten, es wurde nichts gespeichert';
     $hscript = 'document.rechpos.datum.select();document.rechpos.datum.focus()';
     return $hint;
   }
@@ -473,9 +493,28 @@ sub speichern {
     return $hint;
   }
 
+  # spezielle Prüfungen für PosNr. 010
+  if ($hebgo->pos010_plausi ne '') {
+    $hint .= $hebgo->pos010_plausi();
+    return $hint;
+  }
+
+  # spezielle Prüfungen für PosNr. 020
+  if ($hebgo->pos020_plausi) {
+    $hint .= $hebgo->pos020_plausi();
+    return $hint;
+  }
+
+
   # spezielle Prüfungen für PosNr. 2, 4, 5 und 8
   if ($hebgo->pos2458_plausi ne '') {
     $hint .= $hebgo->pos2458_plausi;
+    return $hint;
+  }
+
+  # spezielle Prüfungen für PosNr. 020, 030, 040, 050, 060 und 080
+  if ($hebgo->pos234568_plausi) {
+    $hint .= $hebgo->pos234568_plausi;
     return $hint;
   }
 
@@ -485,27 +524,57 @@ sub speichern {
     return $hint;
   }
 
+  # spezielle Prüfung für PosNr. 060
+  if ($hebgo->pos060_plausi) {
+    $hint .= $hebgo->pos060_plausi;
+    return $hint;
+  }
+
   # spezielle Prüfung für PosNr. 7 
-  if ($hebgo->pos7_plausi ne '') {
+  if ($hebgo->pos7_plausi) {
     $hint .= $hebgo->pos7_plausi;
     return $hint;
   }
 
-  # spezielle Prüfung für PosNr. 8 
-  if ($hebgo->pos8_plausi ne '') {
-    $hint .= $hebgo->pos8_plausi;
+  # spezielle Prüfung für PosNr. 070 
+  if ($hebgo->pos070_plausi) {
+    $hint .= $hebgo->pos070_plausi;
     return $hint;
   }
 
 
+  # spezielle Prüfung für PosNr. 8 
+  if ($hebgo->pos8_plausi) {
+    $hint .= $hebgo->pos8_plausi;
+    return $hint;
+  }
+
+  # spezielle Prüfung für PosNr. 080 
+  if ($hebgo->pos080_plausi) {
+    $hint .= $hebgo->pos080_plausi;
+    return $hint;
+  }
+
   # spezielle Prüfung für PosNr. 40 
-  if ($hebgo->pos40_plausi ne '') {
+  if ($hebgo->pos40_plausi) {
     $hint .= $hebgo->pos40_plausi;
+    return $hint;
+  }
+
+  # spezielle Prüfung für PosNr. 270 
+  if ($hebgo->pos270_plausi) {
+    $hint .= $hebgo->pos270_plausi;
     return $hint;
   }
 
   # spezielle Prüfung w/ Zeitesmal im Wochenbett
   if ($hebgo->Cd_plausi ne '') {
+    $hint .= $hebgo->Cd_plausi;
+    return $hint;
+  }
+
+  # spezielle Prüfung w/ Zeitesmal im Wochenbett
+  if ($hebgo->Cd_plausi_neu) {
     $hint .= $hebgo->Cd_plausi;
     return $hint;
   }
@@ -558,13 +627,28 @@ sub speichern {
     my $sieben_spaeter=$datum_l;
     $sieben_spaeter =~ s/-//g;
     while ($i<$anzahl_kurse) {
-      $sieben_spaeter=sprintf "%4.4u%2.2u%2.2u",Add_Delta_Days(unpack('A4A2A2',$sieben_spaeter),7);
-
-      if ($hebgo->pos7_plausi ne '') {
+      $sieben_spaeter=sprintf "%4.4u-%2.2u-%2.2u",Add_Delta_Days(unpack('A4A2A2',$sieben_spaeter),7);
+      
+      my $datum_l7s=  $sieben_spaeter;
+      $sieben_spaeter =~ s/-//g;
+      my $hebgo7s = Heb_GO->new(
+				posnr => $posnr,
+				frau_id => $frau_id,
+				datum_l => $datum_l7s,
+				begruendung => $begruendung,
+				zeit_von => $zeit_von,
+				zeit_bis => $zeit_bis,
+			       );
+      
+      if ($hebgo7s->pos7_plausi or $hebgo7s->pos070_plausi) {
 	$hint .= "Es wurden nur $i Kurse gespeichert.";
 	return $hint;
       }
-      if ($hebgo->pos40_plausi ne '') {
+      if ($hebgo7s->pos40_plausi or $hebgo7s->pos270_plausi) {
+	$hint .= "Es wurden nur $i Kurse gespeichert.";
+	return $hint;
+      }
+      if ($hebgo7s->ltyp_plausi) {
 	$hint .= "Es wurden nur $i Kurse gespeichert.";
 	return $hint;
       }
@@ -598,6 +682,7 @@ sub speichern {
   if ($zuschlag ne '' && $zuschlag > 0) {
     my ($prozent,$ze_preis) = $l->leistungsart_such_posnr('PROZENT,EINZELPREIS',$zuschlag,$datum_l);
     my $preis_neu = 0;
+    $prozent=0 if (!defined($prozent) || $prozent eq '');
     $preis_neu = $preis * $prozent if ($prozent > 0);
     $preis_neu = $ze_preis if ($ze_preis > 0);
     # Entfernung darf nicht 2mal gerechnet werden
@@ -615,8 +700,11 @@ sub speichern {
   if ($mat_zus2 eq '' && $mat_zus =~ /(\+[A-Z]?)(\d{1,3})/ && $2 > 0) {
     my $m_zus=$1.$2;$m_zus =~ s/\+//;
     # Entfernung nicht 2mal rechnen, deshalb im insert statement auf 0 setzen
+    # Begründungen müssen bei automatisch gewählen Auslagen nicht 
+    # angegeben werden, hier löschen
+    # keine Zeit von,bis
     my ($ze_preis,$kbez) = $l->leistungsart_such_posnr('EINZELPREIS,KBEZ',$m_zus,$datum_l);
-    $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',0,0,$anzahl_frauen,$ze_preis,'',10);
+    $l->leistungsdaten_ins($m_zus,$frau_id,'',$datum_l,'00:00:00','00:00:00',0,0,$anzahl_frauen,$ze_preis,'',10);
     $hint .= '\nAuslage '.$kbez.' wurde zusätzlich gespeichert';
   }
 
