@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.7 2007-07-27 18:55:15 baum Exp $
+# $Id: Heb_GO.pm,v 1.8 2007-08-27 17:45:09 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -55,12 +55,19 @@ sub new {
   $self->{datum_l} =~ s/-//g;
 
   ($self->{ltyp},$self->{begruendungspflicht},$self->{dauer},
-   $self->{samstag},$self->{sonntag},$self->{nacht},$self->{zweitesmal})
+   $self->{samstag},$self->{sonntag},$self->{nacht},$self->{zweitesmal},
+   $self->{fuerzeit})
    =$l->leistungsart_such_posnr
-     ('LEISTUNGSTYP,BEGRUENDUNGSPFLICHT,DAUER,SAMSTAG,SONNTAG,NACHT,ZWEITESMAL',
+     ('LEISTUNGSTYP,BEGRUENDUNGSPFLICHT,DAUER,SAMSTAG,SONNTAG,NACHT,ZWEITESMAL,FUERZEIT',
       $self->{posnr},$self->{datum_l});
   $self->{zweitesmal}='' unless (defined($self->{zweitesmal}));
-#  $self->{dbh}=$dbh;
+  $self->{samstag}='' unless(defined($self->{samstag}));
+  $self->{sonntag}='' unless(defined($self->{sonntag}));
+  $self->{nacht}='' unless(defined($self->{nacht}));
+  $self->{dauer}=0 unless(defined($self->{dauer}));
+  $self->{ltyp}='' unless(defined($self->{ltyp}));
+  $self->{begruendungspflicht}='n' unless(defined($self->{begruendungspflicht}));
+
   bless $self,ref $class || $class;
   return $self;
 }
@@ -148,12 +155,12 @@ sub zuschlag_plausi {
     # alles ok
   } elsif ($l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') && $self->{dow}==6 && $d->zeit_h($self->{zeit_von}) >= 12) {
     # alles ok
-  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'NACHT') && ($d->zeit_h($self->{zeit_von}) < 8 || $d->zeit_h($self->{zeit_von}) >= 20)) {
+  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'NACHT') && ($d->zeit_h($self->{zeit_von}) < 8 && $self->{zeit_von} ne '' || $d->zeit_h($self->{zeit_von}) >= 20)) {
     # alles ok
   } elsif (($l->leistungsart_pruef_zus($self->{posnr},'SONNTAG') || 
 	    $l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') || 
 	    $l->leistungsart_pruef_zus($self->{posnr},'NACHT')) && 
-	   ($self->{dow} < 6 || $self->{dow}==6 && $d->zeit_h($self->{zeit_von}) < 12) || 
+	   ($self->{dow} < 6 || $self->{dow}==6 && $self->{zeit_von} ne '' && $d->zeit_h($self->{zeit_von}) < 12) || 
 	   $d->zeit_h($self->{zeit_von})<8 && $d->zeit_h($self->{zeit_von}) > 20) {
     return 1;
   }
@@ -170,12 +177,51 @@ sub pos1_plausi {
     ($self->{posnr},$self->{frau_id},$self->{datum_l});
 
   return '' if $posnr ne '1';
-  if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr") > 12) {
+  if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr") >= 12) {
     return 'FEHLER: Position ist höchstens zwölfmal berechnungsfähig\nes wurde nichts gespeichert';
   }
   if ($l->leistungsdaten_werte($frau_id,"POSNR",
                                "POSNR in (2,4,5,8) and DATUM='$datum_l'")) {
     return 'FEHLER: Positionsnummer ist neben Leistungen nach 2,4,5 und 8\n an demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
+  }
+  return '';
+}
+
+sub pos010_plausi {
+  # prüft ob Positionsnummer 010 erfasst wurde
+
+  # liefert als Ergebnis '' wenn kein Fehler aufgetreten ist oder
+  # Fehlermeldung wenn Fehler aufgetreten ist
+  my $self = shift;
+  my ($posnr,$frau_id,$datum_l) = 
+    ($self->{posnr},$self->{frau_id},$self->{datum_l});
+
+  return '' if $posnr ne '010';
+  if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr") >= 12) {
+    return 'FEHLER: Position ist höchstens zwölfmal berechnungsfähig\nes wurde nichts gespeichert';
+  }
+  if ($l->leistungsdaten_werte($frau_id,"POSNR",
+                               "POSNR in (020,030,040,050,051,060,080) and DATUM='$datum_l'")) {
+    return 'FEHLER: Positionsnummer '.$posnr.' ist neben Leistungen nach 020,030,040,050,051,060 und 080\n an demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
+  }
+  return '';
+}
+
+
+sub pos020_plausi {
+  # prüft ob Positionsnummer 020 erfasst wurde
+
+  # liefert als Ergebnis '' wenn kein Fehler aufgetreten ist oder
+  # Fehlermeldung wenn Fehler aufgetreten ist
+  my $self = shift;
+  my ($posnr,$frau_id,$datum_l) = 
+    ($self->{posnr},$self->{frau_id},$self->{datum_l});
+
+  return '' if $posnr ne '020';
+
+  if ($l->leistungsdaten_werte($frau_id,"POSNR",
+                               "POSNR in (010,030,040,050,051,060,080) and DATUM='$datum_l'")) {
+    return 'FEHLER: Positionsnummer '.$posnr.' ist neben Leistungen nach 010,030,040,050,051,060 und 080\n an demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
   }
   return '';
 }
@@ -193,6 +239,21 @@ sub pos6_plausi {
   }
   return undef;
 }
+
+
+sub pos060_plausi {
+  # Positionsnummer 060 mehr als 2 mal am selben Tag nur auf
+  # ärztliche Anordnung
+  my $self=shift;
+  
+  return undef if ($self->{posnr} ne '060');
+  
+  if ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR=$self->{posnr} AND DATUM='$self->{datum_l}'")>=2 && $self->{begruendung} !~ /Anordnung/ ) {
+    return '\nFEHLER: Position '.$self->{posnr}.' mehr als 2 mal am selben Tag nur auf ärztliche Anordnung\nEs wurde nichts gespeichert';
+  }
+  return undef;
+}
+
 
 
 sub pos7_plausi {
@@ -218,6 +279,30 @@ sub pos7_plausi {
 }
 
 
+sub pos070_plausi {
+  # Positionsnummer 070 darf die maximale Dauer 14 Stunden nicht überschreiten
+  my $self=shift;
+  my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
+  my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
+
+  return '' if $posnr ne '070';
+  # zunächst die bisherige Dauer berechnen
+  my $dauer=0;
+  $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
+  while (my($alt_zeit_von,$alt_zeit_bis)=$l->leistungsdaten_werte_next()) {
+    $dauer+=$d->dauer_m($alt_zeit_bis,$alt_zeit_von);
+  }
+  my $erfasst=sprintf "%3.2f",$dauer/60;
+  $erfasst =~ s/\./,/g;
+  $dauer += $d->dauer_m($zeit_bis,$zeit_von);
+  if ($dauer > (14*60)) {
+    return 'FEHLER: Geburtsvorbereitung in der Gruppe höchsten 14 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
+  }
+  return '';
+}
+
+
+
 sub pos8_plausi {
   # Positionsnummer 8 darf die maximale Dauer 14 Stunden nicht überschreiten
   my $self=shift;
@@ -236,6 +321,40 @@ sub pos8_plausi {
   $dauer += $d->dauer_m($zeit_bis,$zeit_von);
   if ($dauer > (14*60)) {
     return 'FEHLER: Geburtsvorbereitung bei Einzelunterweisung höchsten 14 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
+  }
+  return '';
+}
+
+
+
+sub pos080_plausi {
+  # Positionsnummer 8 darf die maximale Dauer 
+  # höchstens 14 Unterichtseinheiten a 30 Minuten nicht überschreiten
+  my $self=shift;
+  my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
+  my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
+
+  return '' if $posnr ne '080';
+  # zunächst die bisherige Dauer berechnen
+  my $vk=0;
+  my $dauer_alt=0;
+  $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
+  while (my($alt_zeit_von,$alt_zeit_bis)=$l->leistungsdaten_werte_next()) {
+    my $dauer_akt=$d->dauer_m($alt_zeit_bis,$alt_zeit_von);
+    $vk = sprintf "%3.1u",($dauer_akt / $self->{fuerzeit});
+    $vk++ if ($vk*$self->{fuerzeit} < $dauer_akt);
+    $vk = sprintf "%1.1u",$vk;
+    $dauer_alt += $vk;
+  }
+
+  # aktuelle Zeit berechnen
+  my $dauer_akt=$d->dauer_m($self->{zeit_bis},$self->{zeit_von});
+  $vk = sprintf "%3.1u",($dauer_akt / $self->{fuerzeit});
+  $vk++ if ($vk*$self->{fuerzeit} < $dauer_akt);
+  $vk = sprintf "%1.1u",$vk;
+
+  if ($dauer_alt+$vk > 14) {
+    return 'FEHLER: Geburtsvorbereitung bei Einzelunterweisung höchsten 14 Unterichtseinheiten a 30 Minuten bis jetzt wurden '.$dauer_alt.' Einheiten erfasst\nes wurde nichts gespeichert\n';
   }
   return '';
 }
@@ -265,6 +384,29 @@ sub pos40_plausi {
 
 
 
+sub pos270_plausi {
+  # Positionsnummer 270 darf die maximale Dauer von 10 Stunden nicht überschreiten
+  my $self=shift;
+  my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
+  my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
+
+  return '' if $posnr ne '270';
+  # zunächst die bisherige Dauer berechnen
+  my $dauer=0;
+  $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
+  while (my($alt_zeit_von,$alt_zeit_bis)=$l->leistungsdaten_werte_next()) {
+    $dauer+=$d->dauer_m($alt_zeit_bis,$alt_zeit_von);
+  }
+  my $erfasst=sprintf "%3.2f",$dauer/60;
+  $erfasst =~ s/\./,/g;
+  $dauer += $d->dauer_m($zeit_bis,$zeit_von);
+  if ($dauer > (10*60)) {
+    return 'FEHLER: Rückbildungsgymnastik in der Gruppe höchsten 10 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
+  }
+  return '';
+}
+
+
 sub pos2458_plausi {
   # prüft für Positionsnummer 2,4,5,8 ob schon Positionsnummer 1 erfasst
   # wurde
@@ -279,6 +421,31 @@ sub pos2458_plausi {
   if ($l->leistungsdaten_werte($frau_id,"POSNR",
                                "POSNR=1 and DATUM='$datum_l'")) {
     return 'FEHLER: Positionsnummer '.$posnr.' ist neben Leistungen nach 1\nan demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
+  }
+  return '';
+}
+
+
+sub pos234568_plausi {
+  # prüft für Positionsnummer 010,020,030,040,050,051,060,080
+  # ob schon Positionsnummer 010 bzw. 020 erfasst
+  # wurde
+  # liefert Ergebnis '' wenn kein Fehler aufgetreten ist oder
+  # Fehlermeldung wenn Fehler aufgetreten ist
+  my $self=shift;
+  my ($posnr,$frau_id,$datum_l)=
+    ($self->{posnr},$self->{frau_id},$self->{datum_l});
+
+  return '' if ($posnr ne '020' && $posnr ne '030' && 
+		$posnr ne '040' && $posnr ne '050' &&
+		$posnr ne '051' && $posnr ne '010' && 
+                $posnr ne '060' && $posnr ne '080');
+  my $selpos='010,020';
+  $selpos = '010' if ($posnr eq '020');
+  $selpos = '020' if ($posnr eq '010');
+  if ($l->leistungsdaten_werte($frau_id,"POSNR",
+                               "POSNR in ($selpos) and DATUM='$datum_l'")) {
+    return 'FEHLER: Positionsnummer '.$posnr.' ist neben Leistungen nach '.$selpos.'\nan demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
   }
   return '';
 }
@@ -355,10 +522,45 @@ sub Cd_plausi {
   return '';
 }
 
+sub Cd_plausi_neu {
+  # prüft, ob Posnr 180 bis 211 innerhalb der ersten zehn Tage nach der Geburt
+  # abgerechnet werden --> OK
+  # mehr als 2 mal mit ärztlicher Anordnung --> OK
+  # oder ob Posnr 180 bis 211 nach zehn Tagen 
+  # innerhalb von 8 Wochen = 56 Tage mit Begründung --> OK
+  # oder nach 8 Wochen mit Begründung 'auf ärztliche Anordnung' --> OK
+  my $self=shift;
+  my ($posnr,$datum_l,$begruendung)=    
+    ($self->{posnr},$self->{datum_l},$self->{begruendung});
+
+  return '' if ($posnr ne '180' && $posnr ne '181' && 
+		$posnr ne '200' && $posnr ne '201' &&
+		$posnr ne '210' && $posnr ne '211');
+
+  my $geb_kind=$self->{geb_kind};
+  return '' if($geb_kind eq '');
+
+  my $anzahl=$l->leistungsdaten_werte($self->{frau_id},"POSNR",
+				      "POSNR in (180,181,200,201,210,211) and DATUM='$datum_l'");
+
+  my $days = Delta_Days(unpack('A4A2A2',$geb_kind),unpack('A4A2A2',$datum_l));
+  if ($days < 11 && $anzahl < 3) {
+    return '';
+  } elsif ($days < 11 && $anzahl > 2 && $begruendung !~ /Anordnung/) {
+    return '\nFEHLER: Position '.$posnr.' mehr als 2 mal pro Tag nur auf ärztliche Anordnung.\nEs wurde nichts gespeichert';
+  } elsif ($days < 57 && $begruendung eq '' && $anzahl > 1) {
+    return '\nFEHLER: Position '.$posnr.' nach 10 Tagen innerhalb 8 Wochen nur mit Begründung.\nEs wurde nichts gespeichert';
+  } elsif ($days > 56 && ($begruendung !~ /Anordnung/) && $anzahl > 1) {
+    return '\nFEHLER: Position '.$posnr.' nach 8 Wochen nur auf ärztliche Anordnung\nEs wurde nichts gespeichert';
+  }
+  return '';
+}
+
 
 sub Cc_plausi {
   # Leistungen nach 22,23,25 bis 33 und 35 sind nur mehr als 16 mal
   # abrechenbar, wenn ärztlich angeordnet
+  # Nach neuer GO Posnr 180 bis 230
   my $self=shift;
   my ($posnr,$datum_l,$begruendung)=   
     ($self->{posnr},$self->{datum_l},$self->{begruendung});
@@ -366,7 +568,11 @@ sub Cc_plausi {
   return '' if ($posnr ne '22' && $posnr ne '23' && $posnr ne '25' &&
                 $posnr ne '26' && $posnr ne '27' && $posnr ne '28' &&
                 $posnr ne '29' && $posnr ne '30' && $posnr ne '31' &&
-                $posnr ne '32' && $posnr ne '33' && $posnr ne '35');
+                $posnr ne '32' && $posnr ne '33' && $posnr ne '35' &&
+		$posnr ne '180' && $posnr ne '181' && 
+		$posnr ne '200' && $posnr ne '201' &&
+		$posnr ne '210' && $posnr ne '211' &&
+		$posnr ne '230');
 
 
   my $geb_kind=$self->{geb_kind};
@@ -375,11 +581,14 @@ sub Cc_plausi {
   my $zehn_spaeter=join('-',Add_Delta_Days(unpack('A4A2A2',$geb_kind),10));
   if ($days > 10 && 
       ($begruendung !~ /Anordnung/) &&
-      ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR in (22,23,25,26,28,29,30,31,32,33,35) AND DATUM>'$zehn_spaeter'") > 16) ) {
+      ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR in (22,23,25,26,28,29,30,31,32,33,35,180,181,200,201,210,211,230) AND DATUM>'$zehn_spaeter'") > 16) ) {
     return 'FEHLER: Position '.$posnr.' ist ab dem 11 Tag höchstens 16 mal berechnungsfähig\nohne ärztliche Anordnung\nes wurde nichts gespeichert';
   }
   return '';
 }
+
+
+
 
 
 sub Begruendung_plausi {
