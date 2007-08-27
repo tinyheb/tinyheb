@@ -1,6 +1,6 @@
 # Package um Datümer zu verarbeiten
 
-# $Id: Heb_datum.pm,v 1.21 2007-07-27 18:55:15 baum Exp $
+# $Id: Heb_datum.pm,v 1.22 2007-08-27 17:46:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -152,6 +152,7 @@ sub fuerzeit_check {
   shift;
   my ($fz) = @_;
   $fz = 0 unless(defined($fz));
+  $fz = 0 if($fz eq '');
   $fz =~ /(E{0,1})(\d{1,3})/;
   return ($1,$2);
 }
