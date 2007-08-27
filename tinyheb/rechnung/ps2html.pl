@@ -3,7 +3,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.44 2007-07-27 18:55:15 baum Exp $
+# $Id: ps2html.pl,v 1.45 2007-08-27 17:54:29 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -102,30 +102,35 @@ anschrift();
 
 # Betreff Zeile
 $p->setfont($font_b,10);
+my $betreff='Gebührenabrechnung nach';
 if ($versichertenstatus ne 'privat') {
-  $p->text(2,19.7,"Gebührenabrechnung nach HebGV");
+  $betreff.=" Hebammen-Vergütungsvereinbarung";
 } else {
   # Abfragen, welche privat Gebührenordnung wird genutzt
+  $betreff.=" Hebammen-Vergütungsvereinbarung ";
   if (uc $heb_bundesland eq 'NRW') {
-    $p->text(2,19.7,"Gebührenabrechnung nach HebGO NW");
+    $betreff.="NRW";
   } elsif (uc $heb_bundesland eq 'BAYERN') {
-    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Bayern");
+    $betreff.="Bayern";
   } elsif (uc $heb_bundesland eq 'NIEDERSACHSEN') {
-    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Niedersachsen");
+    $betreff.="Niedersachsen";
   } elsif (uc $heb_bundesland eq 'HESSEN') {
-    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Hessen");
+    $betreff.="Hessen";
   } elsif (uc $heb_bundesland eq 'HAMBURG') {
-    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Hamburg");
+    $betreff.= "Hamburg";
   } elsif (uc $heb_bundesland eq 'RHEINLAND-PFALZ') {
-    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Rheinland-Pfalz");
+    $betreff.="Rheinland-Pfalz";
   } elsif (uc $heb_bundesland eq 'THüRINGEN' || $heb_bundesland eq 'Thüringen') {
-    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Thüringen");
+    $betreff.="Thüringen";
   } elsif (uc $heb_bundesland eq 'SACHSEN-ANHALT') {
-    $p->text(2,19.7,"Gebührenabrechnung nach HebGO Sachsen-Anhalt");
+    $betreff.="Sachsen-Anhalt";
   }  else {
-    $p->text(2,19.7,"PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen".uc $heb_bundesland);
+    $betreff.="PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen".uc $heb_bundesland;
   }
 }
+
+$p->text(2,19.7,$betreff);
+
 
 fussnote(); # auf der ersten Seite explizit angeben
 
@@ -151,7 +156,7 @@ $gsumme += print_material('M') if ($l->leistungsdaten_offen($frau_id,'Leistungst
 if ($l->leistungsdaten_offen($frau_id,'(ENTFERNUNG_T > 0 or ENTFERNUNG_N > 0)')>0) {
   neue_seite(7,'');
   $p->setfont($font_b,10);
-  $p->text($x1,$y1,"Wegegeld (§4 HebGV)");$y1-=$y_font;
+  $p->text($x1,$y1,"Wegegeld");$y1-=$y_font;
   $p->setfont($font,10);
   $gsumme += print_wegegeld('N') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_N >0,ENTFERNUNG_N > 2','DATUM')>0);
   $gsumme += print_wegegeld('T') if ($l->leistungsdaten_offen($frau_id,'ENTFERNUNG_T >0, ENTFERNUNG_T > 2','DATUM')>0);
@@ -372,7 +377,7 @@ sub print_material {
   my $zus_posnr=-1;
   neue_seite(6);
   $p->setfont($font_b,10);
-  $p->text($x1,$y1,'Auslagen (§3 HebGV)');$y1-=$y_font;$y1-=$y_font;
+  $p->text($x1,$y1,'Auslagen');$y1-=$y_font;$y1-=$y_font;
   $p->setfont($font,10);
   NEXT: while (my @erg=$l->leistungsdaten_offen_next()) {
     my ($bez,$epreis,$zus1)=$l->leistungsart_such_posnr("KBEZ,EINZELPREIS,ZUSATZGEBUEHREN1 ",$erg[1],$erg[4]);
@@ -441,18 +446,25 @@ sub print_wegegeld {
   $p->text($x1,$y1,$text);$y1-=$y_font;
   while (my @erg=$l->leistungsdaten_offen_next()) {
     neue_seite(5,$tn);
-    if($tn eq 'N') {
-      ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'94',$erg[4]);
+    # richtige Positionsnummer Suchen
+    my $go_datum = $erg[4];
+    $go_datum =~ s/-//g;
+    my $posnr=0;
+    if ($go_datum < 20070801) {
+      # Gebührenordnung mit alten Posnr
+      $posnr = 94 if ($tn eq 'N');
+      $posnr = 93 if ($tn eq 'T');
+      $posnr = 91 if ($tn eq 'TK');
+      $posnr = 92 if ($tn eq 'NK');
+    } else {
+      # Gebührenordnung ab 01.08.2007 mit neuen PosNr
+      $posnr = 330 if ($tn eq 'N');
+      $posnr = 320 if ($tn eq 'T');
+      $posnr = 300 if ($tn eq 'TK');
+      $posnr = 310 if ($tn eq 'NK');
     }
-    if ($tn eq 'T') {
-      ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'93',$erg[4]);
-    }
-    if ($tn eq 'TK') {
-      ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'91',$erg[4]);
-    }
-    if ($tn eq 'NK') {
-      ($preis)=$l->leistungsart_such_posnr("EINZELPREIS",'92',$erg[4]);
-    }
+    ($preis)=$l->leistungsart_such_posnr("EINZELPREIS","$posnr",$erg[4]);
+
 
     if ($versichertenstatus eq 'privat') {
       if (uc $heb_bundesland eq 'NIEDERSACHSEN' ||
@@ -475,7 +487,7 @@ sub print_wegegeld {
     $preis =~s/\./,/g;
     $p->text({align => 'right'},7,$y1,"$entfp km") if ($entf>=2);
     $p->text(8,$y1,"(Anteil $erg[9] Besuche)") if ($erg[9]>1); # Anzahl Frauen
-    $p->text({align => 'right'},12.5,$y1,"á $preis");
+    $p->text({align => 'right'},12.5,$y1,"á $preis EUR");
     $preis =~ s/,/\./g;
     my $teilsumme = 0;
     $teilsumme = ($preis * $entf) if ($entf>=2);
@@ -522,11 +534,6 @@ sub print_teil {
 
     if ($versichertenstatus eq 'privat') {
       $epreis *= $h->parm_unique('PRIVAT_FAKTOR');
-      $epreis = sprintf "%.2f",$epreis;
-    }
-    if ($h->parm_unique('HEB_TARIFKZ') == 25) {
-      $epreis *= 0.9;
-      $epreis += 0.0005; # Rundungsfehler ausgleichen
       $epreis = sprintf "%.2f",$epreis;
     }
     
