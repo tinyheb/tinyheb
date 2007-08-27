@@ -1,6 +1,6 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.21 2007-07-27 18:55:15 baum Exp $
+# $Id: Heb_leistung.pm,v 1.22 2007-08-27 17:47:50 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -516,6 +516,7 @@ sub leistungsart_ins {
 
   $dau=0 if (!defined($dau) || $dau eq '');
   $begrue='n' if (!defined($begrue) || $begrue eq '');
+  $proz=0 if (!defined($proz) || $proz eq '');
   my $leistungsart_ins=
     $dbh->prepare("insert into Leistungsart ".
 		  "(ID,POSNR,BEZEICHNUNG,LEISTUNGSTYP,EINZELPREIS, ".
