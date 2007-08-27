@@ -5,7 +5,7 @@
 
 # Leistungsarten erfassen, ändern, löschen
 
-# $Id: leistungsarterfassung.pl,v 1.10 2007-07-27 18:55:15 baum Exp $
+# $Id: leistungsarterfassung.pl,v 1.11 2007-08-27 17:48:44 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -323,6 +323,9 @@ sub hole_leistart_daten {
    $kbez)= $l->leistungsart_id($leist_id);
   $guelt_von = $d->convert_tmj($guelt_von);
   $guelt_bis = $d->convert_tmj($guelt_bis);
+  $samstag = '' unless (defined($samstag));
+  $sonntag = '' unless (defined($sonntag));
+  $nacht = '' unless (defined($nacht));
   $zusatz1 = '' unless (defined($zusatz1));
   $zusatz2 = '' unless (defined($zusatz2));
   $zusatz3 = '' unless (defined($zusatz3));
