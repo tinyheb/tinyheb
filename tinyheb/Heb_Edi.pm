@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.37 2007-08-11 11:53:47 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.38 2007-08-27 17:39:46 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -779,19 +779,11 @@ sub SLLA {
     if($ltyp ne 'M') { 
       # keine Materialpauschale
       if($epreis > 0) { # hier wird nicht prozentual gerechnet
-	if ($h->parm_unique('HEB_TARIFKZ') == 25) { # gebühren ost
-	  $epreis *= 0.9;
-	  $epreis = sprintf "%.2f",$epreis;
-	}
 	$erg .= $self->SLLA_ENF($leistdat[1],$leistdat[4],$epreis,$anzahl);
 	$gesamtsumme += sprintf "%.2f",($epreis*$anzahl);
 	my $wert= sprintf "%.2f",($epreis*$anzahl);
 	$ges_sum{$ltyp} += $wert;
       } else {
-	if ($h->parm_unique('HEB_TARIFKZ') == 25) { # gebühren ost
-	  $leistdat[10] *= 0.9;
-	  $leistdat[10] = sprintf "%.2f",$leistdat[10]+0.0005;
-	}
 	$erg .= $self->SLLA_ENF($leistdat[1],$leistdat[4],$leistdat[10],$anzahl);
 	$gesamtsumme += sprintf "%.2f",($leistdat[10]*$anzahl);
 	$ges_sum{$ltyp} += (sprintf "%.2f",($leistdat[10]*$anzahl));
@@ -838,18 +830,27 @@ sub SLLA {
     my $posnr_wegegeld='';
     $leistdat[7] = sprintf "%.2f",$leistdat[7]; # w/ Rundungsfehlern
     $leistdat[8] = sprintf "%.2f",$leistdat[8]; # w/ Rundungsfehlern
-    $posnr_wegegeld='91' if ($leistdat[7] > 0 && $leistdat[7] <= 2);# Tag <= 2
-    $posnr_wegegeld='93' if ($leistdat[7] > 0 && $leistdat[7] > 2); # Tag > 2
+    
+    # Unterscheidung alte/neue Positionsnummern
+    if ($leistdat[4] < 20070801) {
+      $posnr_wegegeld='91' if ($leistdat[7] > 0 && $leistdat[7] <= 2);# Tag <= 2
+      $posnr_wegegeld='93' if ($leistdat[7] > 0 && $leistdat[7] > 2 ); # Tag > 2
+    } else {
+      $posnr_wegegeld='300' if ($leistdat[7] > 0 && $leistdat[7] <= 2);# Tag <= 2
+      $posnr_wegegeld='320' if ($leistdat[7] > 0 && $leistdat[7] > 2 ); # Tag > 2
+    }
+
     if ($posnr_wegegeld ne '') { # es muss wegegeld gerechnet werden
       ($epreis)=$l->leistungsart_such_posnr("EINZELPREIS",$posnr_wegegeld,$leistdat[4]);
       my $anteilig='';
-      $anteilig='a' if ($leistdat[9]>1);# anteiliges Wegegeld
-      if ($posnr_wegegeld eq '91') {
+      $anteilig='a' if ($leistdat[9] > 1 && 
+			$leistdat[4] < 20070801);# anteiliges Wegegeld
+      if ($posnr_wegegeld eq '91' || $posnr_wegegeld eq '300') {
 	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,1);
 	$lfdnr++;
 	$summe_km+=$epreis;
 	print "Wegegeld summe: $summe_km, $epreis\n" if ($debug > 1000);
-      } elsif ($posnr_wegegeld eq '93') {
+      } elsif ($posnr_wegegeld eq '93' || $posnr_wegegeld eq '320') {
 	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[7]);
 	$lfdnr++;
 	my $km_preis = sprintf "%.2f",$leistdat[7]*$epreis;
@@ -859,18 +860,26 @@ sub SLLA {
     }
 
     $posnr_wegegeld='';
-    $posnr_wegegeld='92' if ($leistdat[8] > 0 && $leistdat[8] <= 2);# Nacht <= 2
-    $posnr_wegegeld='94' if ($leistdat[8] > 0 && $leistdat[8] > 2); # Nacht > 2
+    # Unterscheidung alte/neue Positionsnummern
+    if ($leistdat[4] < 20070801) {
+      $posnr_wegegeld='92' if ($leistdat[8] > 0 && $leistdat[8] <= 2);# Nacht <= 2
+      $posnr_wegegeld='94' if ($leistdat[8] > 0 && $leistdat[8] > 2); # Nacht > 2
+    } else {
+      $posnr_wegegeld='310' if ($leistdat[8] > 0 && $leistdat[8] <= 2);# Nacht <= 2
+      $posnr_wegegeld='330' if ($leistdat[8] > 0 && $leistdat[8] > 2); # Nacht > 2
+    }
+
     if ($posnr_wegegeld ne '') { # es muss wegegeld gerechnet werden
       ($epreis)=$l->leistungsart_such_posnr("EINZELPREIS",$posnr_wegegeld,$leistdat[4]);
       my $anteilig='';
-      $anteilig='a' if ($leistdat[9]>1);# anteiliges Wegegeld
-      if ($posnr_wegegeld eq '92') {
+      $anteilig='a' if ($leistdat[9] > 1 &&
+			$leistdat[4] < 20070801);# anteiliges Wegegeld
+      if ($posnr_wegegeld eq '92' || $posnr_wegegeld eq '310') {
 	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,1);
 	$lfdnr++;
 	$summe_km+=$epreis;
 	print "Wegegeld summe: $summe_km, $epreis\n" if ($debug > 1000);
-      } elsif ($posnr_wegegeld eq '94') {
+      } elsif ($posnr_wegegeld eq '94' || $posnr_wegegeld eq '330') {
 	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[8]);
 	$lfdnr++;
 	my $km_preis = sprintf "%.2f",$leistdat[8]*$epreis;
