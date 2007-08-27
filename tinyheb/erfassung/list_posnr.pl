@@ -5,7 +5,7 @@
 
 # erfasste Rechnungsposten ausgeben
 
-# $Id: list_posnr.pl,v 1.12 2007-07-27 18:55:15 baum Exp $
+# $Id: list_posnr.pl,v 1.13 2007-08-27 17:50:29 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -73,7 +73,10 @@ while (my @erg=$l->leistungsdaten_such_next()) {
   print "<td style='width:1.3cm;text-align:left'>$erg[4]</td>"; # datum
   print "<td style='width:0.4cm;text-align:center'>$erg[1]</td>"; # posnr
   # Aus DB Gebührentext und E. Preis holen
-  my($l_bezeichnung,$l_preis)=$l->leistungsart_such_posnr('KBEZ,EINZELPREIS',$erg[1],$d->convert($erg[4]));
+  my($l_bezeichnung,$l_preis,$l_fuerzeit)=$l->leistungsart_such_posnr('KBEZ,EINZELPREIS,FUERZEIT',"$erg[1]",$d->convert($erg[4]));
+  my $fuerzeit_flag='';
+  ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
+
   print "<td style='width:5.0cm;text-align:left'>$l_bezeichnung</td>";
   $l_preis =~ s/\./,/g;
   print "<td style='width:1.0cm;text-align:right'>$l_preis</td>"; # e preis
@@ -86,13 +89,16 @@ while (my @erg=$l->leistungsdaten_such_next()) {
   my ($h2,$m2)= unpack('A2xA2',$erg[6]);
   $erg[6] =~ s/00:00//g;
   print "<td style='width:0.8cm;text-align:right'>$erg[6]</td>"; # zeit bis
+
   # Dauer berechnen
   $h1 *=-1;
   $m1 *=-1;
   my ($y,$m,$d,$H,$M,$S) = Add_Delta_DHMS(1900,1,1,$h2,$m2,0,0,$h1,$m1,0);
   my $dauer=sprintf "%2.2u:%2.2u",$H,$M;
+  $dauer = '00:00' if (!(defined($l_fuerzeit) && $l_fuerzeit > 0));
   $dauer =~ s/00:00//g;
   print "<td style='width:0.8cm;text-align:right'>$dauer</td>\n"; # Dauer
+
   my $beg='';
   $beg='ja' if (defined($erg[3]) && $erg[3] ne '');
   print "<td style='width:0.7cm;text-align:center'>$beg</td>"; # Begründung
