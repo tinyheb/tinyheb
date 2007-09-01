@@ -1,6 +1,6 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.22 2007-08-27 17:47:50 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.23 2007-09-01 06:49:50 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -259,7 +259,7 @@ sub leistungsart_zus {
   my $wert=shift;
   my $datum=shift;
   $zus = $dbh->prepare("select distinct POSNR from Leistungsart ".
-		       "where $wert='$posnr' and ?>= GUELT_VON and ? <= GUELT_BIS;")
+		       "where ($wert='$posnr' or $wert='+$posnr') and ?>= GUELT_VON and ? <= GUELT_BIS;")
     or die $dbh->errstr();
   my $erg = $zus->execute($datum,$datum) or die $dbh->errstr();
   return $erg if ($erg>0);
