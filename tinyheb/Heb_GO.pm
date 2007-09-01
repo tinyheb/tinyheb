@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.8 2007-08-27 17:45:09 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.9 2007-09-01 06:48:45 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -544,13 +544,13 @@ sub Cd_plausi_neu {
 				      "POSNR in (180,181,200,201,210,211) and DATUM='$datum_l'");
 
   my $days = Delta_Days(unpack('A4A2A2',$geb_kind),unpack('A4A2A2',$datum_l));
-  if ($days < 11 && $anzahl < 3) {
+  if ($days < 11 && $anzahl < 2) {
     return '';
-  } elsif ($days < 11 && $anzahl > 2 && $begruendung !~ /Anordnung/) {
+  } elsif ($days < 11 && $anzahl > 1 && $begruendung !~ /Anordnung/) {
     return '\nFEHLER: Position '.$posnr.' mehr als 2 mal pro Tag nur auf ärztliche Anordnung.\nEs wurde nichts gespeichert';
-  } elsif ($days < 57 && $begruendung eq '' && $anzahl > 1) {
+  } elsif ($days < 57 && $begruendung eq '' && $anzahl > 0) {
     return '\nFEHLER: Position '.$posnr.' nach 10 Tagen innerhalb 8 Wochen nur mit Begründung.\nEs wurde nichts gespeichert';
-  } elsif ($days > 56 && ($begruendung !~ /Anordnung/) && $anzahl > 1) {
+  } elsif ($days > 56 && ($begruendung !~ /Anordnung/) && $anzahl > 0) {
     return '\nFEHLER: Position '.$posnr.' nach 8 Wochen nur auf ärztliche Anordnung\nEs wurde nichts gespeichert';
   }
   return '';
@@ -581,7 +581,7 @@ sub Cc_plausi {
   my $zehn_spaeter=join('-',Add_Delta_Days(unpack('A4A2A2',$geb_kind),10));
   if ($days > 10 && 
       ($begruendung !~ /Anordnung/) &&
-      ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR in (22,23,25,26,28,29,30,31,32,33,35,180,181,200,201,210,211,230) AND DATUM>'$zehn_spaeter'") > 16) ) {
+      ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR in (22,23,25,26,28,29,30,31,32,33,35,180,181,200,201,210,211,230) AND DATUM>'$zehn_spaeter'") > 15) ) {
     return 'FEHLER: Position '.$posnr.' ist ab dem 11 Tag höchstens 16 mal berechnungsfähig\nohne ärztliche Anordnung\nes wurde nichts gespeichert';
   }
   return '';
