@@ -3,7 +3,7 @@
 
 # Erzeugen einer Mahnung und Druckoutput (Postscript)
 
-# $Id: mahnung.pl,v 1.7 2007-07-27 18:55:15 baum Exp $
+# $Id: mahnung.pl,v 1.8 2007-09-01 06:52:06 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -147,9 +147,9 @@ if ($versichertenstatus ne 'privat') {
   # gesetzlich
   $p->text($x1,$y1,"Sehr geehrte Damen und Herren,");
   $y1-=$y_font;$y1-=$y_font;
-  $p->text($x1,$y1,"bisher konnte ich keinen vollständigen Zahlungseingang feststellen. Nach §5 Absatz 4 HebGV sind");
+  $p->text($x1,$y1,"bisher konnte ich keinen vollständigen Zahlungseingang feststellen. Nach Hebammen-Vergütungsvereinbarung");
   $y1-=$y_font;
-  $p->text($x1,$y1,"Krankenkassen verpflichtet, Hebammenrechnungen spätestens innerhalb von drei Wochen zu");
+  $p->text($x1,$y1,"sind Krankenkassen verpflichtet, Hebammenrechnungen spätestens innerhalb von drei Wochen zu");
   $y1-=$y_font;
   $p->text($x1,$y1,"begleichen. Ich bitte Sie, den ausstehenden Betrag unter Angabe der Rechnungsnummer umgehend");
   $y1-=$y_font;
