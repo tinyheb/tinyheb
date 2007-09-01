@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.38 2007-08-27 17:52:30 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.39 2007-09-01 06:51:14 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -575,7 +575,7 @@ sub speichern {
 
   # spezielle Prüfung w/ Zeitesmal im Wochenbett
   if ($hebgo->Cd_plausi_neu) {
-    $hint .= $hebgo->Cd_plausi;
+    $hint .= $hebgo->Cd_plausi_neu;
     return $hint;
   }
 
@@ -881,7 +881,11 @@ sub loeschen {
       my $datum_id_loe=$d->convert($erg[4]);
       my $posnr=$erg[1];
       # Zuschlag für anderen Tag speichern
-      $hint=speichern($erg[2],$posnr,$begruendung,$datum_id_loe,$erg[5].':00',$erg[6].':00',$erg[7],$erg[8],$erg[9],'anteilig');
+      if ($erg[5] eq '00:00' && $erg[6] eq '00:00') {
+	$erg[5]='';
+	$erg[6]='';
+      }
+      $hint=speichern($erg[2],$posnr,$begruendung,$datum_id_loe,$erg[5],$erg[6],$erg[7],$erg[8],$erg[9],'anteilig');
     }
     $l->leistungsdaten_delete($frau_id,$leist_id_loe);
   }
@@ -921,6 +925,10 @@ sub hole_daten {
   $datum = $erg[4];
   $zeit_von = $erg[5] || '';
   $zeit_bis = $erg[6] || '';
+  if ($zeit_von eq '00:00' && $zeit_bis eq '00:00') {
+    $zeit_von='';
+    $zeit_bis='';
+  }
   $anzahl_frauen = $erg[9] || '1';
   $erg[7] = 0 unless (defined($erg[7]));
   $entfernung_tag = $erg[7]*$anzahl_frauen || 0;
