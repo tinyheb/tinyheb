@@ -1,3 +1,18 @@
+Release 0.15.0
+
+Kostenträgerdateien im Unix Dateiformat können verarbeitet werden.
+
+Neue Hebammengebührenordnung (Hebammen-Vergütungsvereinbarung)
+
+Rechnungen nach Gebührenordnung Ost (Tarif-Kennzeichen 25) sind nicht mehr möglich
+
+Zeit von muss erfasst werden, wenn "Nacht" Positionsnummer gewählt wurde
+an einem Wochentag oder Samstag.
+
+Bug fix:
+Bei elektronischen Rechnungen wurde unter Windows nicht immer korrektes Zeilenende generiert.
+Bei signieren und verschlüsselten elektronischen Rechnungen konnte es in seltenen Fällen zu Problemen komen.
+
 Release 0.14.0
 
 Bug fix:

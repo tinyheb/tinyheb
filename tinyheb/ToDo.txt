@@ -1,5 +1,17 @@
 Offen:
 
+31.08.07
+Plausiprüfung für Posnr. 280 bis 291
+
+31.08.07
+Pos. 260, 261 nur auf ärztliche Anordnung
+
+Pos. 280,281, 290 maximal 4 mal
+
+
+26.08.07
+Positionsnummer B. können nur am Geburtsdatum des Kindes erfasst werden.
+
 26.12.06
 Grund angeben, warum eine elektronische Rechnung nicht möglich ist.
 
@@ -37,6 +49,17 @@ In Rechnungsposten Erfassung (rechpos.pl):
 
 ----------------------------------------------------------------
 Erledigt:
+01.09.07
+neue Gebührenordnung. Anforderung vom 03.08.07
+dazu:
+Plausiprüfung für Posnr. 020 
+neue Positionsnummer importieren
+hart verdrahtete Punkte anpassen
+Anpassen, wann muss Uhrzeit erfasst werden
+Anpassen Positionsnummern w/ Kurse
+Posnr. 180 erwartet Uhrzeit bis, muss nicht erfasst werden
+Gebührenordnung OST ausbauen.
+
 29.06.07
 Nach neuanlage einer Krankenkasse muss die IK Nummer erhalten bleiben.
 Anforderung vom 23.05.07
