@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.8 2007-09-01 06:56:00 thomas_baum Exp $
+# $Id: update.sql,v 1.9 2007-09-09 11:52:01 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 # zunächst alte GO ungültig machen
@@ -204,18 +204,34 @@ WWWRUN	INSERT	Leistungsart	POSNR='290' and GUELT_VON='2007-08-01' and GUELT_BIS=
 #
 WWWRUN	INSERT	Leistungsart	POSNR='300' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'300','W','Wegegeld nicht mehr als 2 KM bei Tag',1.65,'Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung','2007-08-01','9999-12-31',0);
 #
+# PosNr 301 anteiliges Wegegeld nicht mehr als 2 KM Tag
+#
+WWWRUN	INSERT	Leistungsart	POSNR='301' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'301','W','ant. Wegegeld nicht mehr als 2 KM bei Tag',1.65,'anteiliges Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung','2007-08-01','9999-12-31',0);
+#
 # PosNr 310 Wegegeld nicht mehr als 2 KM Nacht
 #
 WWWRUN	INSERT	Leistungsart	POSNR='310' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'310','W','Wegegeld nicht mehr als 2 KM bei Nacht',2.33,'Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00','2007-08-01','9999-12-31',0);
+#
+# PosNr 311 anteiliges Wegegeld nicht mehr als 2 KM Nacht
+#
+WWWRUN	INSERT	Leistungsart	POSNR='311' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'311','W','ant. Wegegeld nicht mehr als 2 KM bei Nacht',2.33,'anteiliges Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00','2007-08-01','9999-12-31',0);
 #
 # PosNr 320 Wegegeld mehr als 2 KM Tag
 #
 WWWRUN	INSERT	Leistungsart	POSNR='320' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'320','W','Wegegeld von mehr als 2 KM bei Tag',0.58,'Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung, für jeden zurückgelegten Kilometer','2007-08-01','9999-12-31',0);
 #
+# PosNr 321 anteiliges Wegegeld mehr als 2 KM Tag
+#
+WWWRUN	INSERT	Leistungsart	POSNR='321' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'321','W','ant. Wegegeld von mehr als 2 KM bei Tag',0.58,'anteiliges Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung, für jeden zurückgelegten Kilometer','2007-08-01','9999-12-31',0);
+#
 # PosNr 330 Wegegeld mehr als 2 KM Nacht
 #
 WWWRUN	INSERT	Leistungsart	POSNR='330' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'330','W','Wegegeld von mehr als 2 KM bei Nacht',0.79,'Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00, für jeden zurückgelegten Kilometer','2007-08-01','9999-12-31',0);
 #
+#
+# PosNr 331 anteiliges Wegegeld mehr als 2 KM Nacht
+#
+WWWRUN	INSERT	Leistungsart	POSNR='331' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'331','W','ant. Wegegeld von mehr als 2 KM bei Nacht',0.79,'anteiliges Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00, für jeden zurückgelegten Kilometer','2007-08-01','9999-12-31',0);
 #
 # ------------- Auslagenersatz -------------
 #
@@ -251,6 +267,120 @@ WWWRUN	INSERT	Leistungsart	POSNR='390' and GUELT_VON='2007-08-01' and GUELT_BIS=
 WWWRUN	INSERT	Leistungsart	POSNR='400' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'400','M','Perinatalerhebung',7.5,'Perinatalerhebung bei einer außerklinischen Geburt nach vorgeschriebenem Formblatt einschließlich Versand- und Portokosten','2007-08-01','9999-12-31',0);
 #
 #
+#
+# ------------- sonstige Auslagen -------------
+#
+# sonstige Leistungen
+# Leistungsgruppe F in tinyHeb Leistungsgruppe M
+#
+# PosNr 500
+#
+WWWRUN	INSERT	Leistungsart	POSNR='500' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'500','M','Arzneimittel Wirkstoffgruppe Antidiarrhoika',0,'Arzneimittel aus der Wirkstoffgruppe Antidiarrhoika','2007-08-01','9999-12-31',0);
+#
+# PosNr 510
+#
+WWWRUN	INSERT	Leistungsart	POSNR='510' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'510','M','Arzneimittel Wirkstoffgruppe Antiemetika',0,'Arzneimittel aus der Wirkstoffgruppe Antiemetika','2007-08-01','9999-12-31',0);
+#
+#
+# PosNr 520
+#
+WWWRUN	INSERT	Leistungsart	POSNR='520' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'520','M','Arzneimittel Wirkstoffgruppe Antihypotonika',0,'Arzneimittel aus der Wirkstoffgruppe Antihypotonika','2007-08-01','9999-12-31',0);
+#
+#
+# PosNr 530
+#
+WWWRUN	INSERT	Leistungsart	POSNR='530' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'530','M','Arzneimittel Wirkstoffgruppe Dermatika',0,'Arzneimittel aus der Wirkstoffgruppe Dermatika','2007-08-01','9999-12-31',0);
+#
+#
+# PosNr 540
+#
+WWWRUN	INSERT	Leistungsart	POSNR='540' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'540','M','Arzneimittel Wirkstoffgruppe Ophtalmika',0,'Arzneimittel aus der Wirkstoffgruppe Ophtalmika','2007-08-01','9999-12-31',0);
+#
+#
+# PosNr 550
+#
+WWWRUN	INSERT	Leistungsart	POSNR='550' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'550','M','Arzneimittel Wirkstoffgruppe Vitamin D',0,'Arzneimittel aus der Wirkstoffgruppe Vitamin D - auch in Kombination mit Fluorsalzen','2007-08-01','9999-12-31',0);
+#
+#
+# PosNr 560
+#
+WWWRUN	INSERT	Leistungsart	POSNR='560' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'560','M','Arzneimittel Wirkstoffgruppe Vitamin K',0,'Arzneimittel aus der Wirkstoffgruppe Vitamin K','2007-08-01','9999-12-31',0);
+#
+#
+# PosNr 570
+#
+WWWRUN	INSERT	Leistungsart	POSNR='570' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'570','M','Arzneimittel Wirkstoffgruppe Antimykotika',0,'Arzneimittel aus der Wirkstoffgruppe Antimykotika','2007-08-01','9999-12-31',0);
+#
+#
+# PosNr 580
+#
+WWWRUN	INSERT	Leistungsart	POSNR='580' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'580','M','Arzneimittel Wirkstoffgruppe Carminativa',0,'Arzneimittel aus der Wirkstoffgruppe Carminativa','2007-08-01','9999-12-31',0);
+#
+# PosNr 590
+#
+WWWRUN	INSERT	Leistungsart	POSNR='590' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'590','M','Arzneimittel Wirkstoffgr. Galle- und Lebertherapeutika ',0,'Arzneimittel aus der Wirkstoffgruppe Galle- und Lebertherapeutika','2007-08-01','9999-12-31',0);
+#
+# PosNr 600
+#
+WWWRUN	INSERT	Leistungsart	POSNR='600' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'600','M','Arzneimittel Wirkstoffgruppe Phytotherapie',0,'Arzneimittel aus der Wirkstoffgruppe Phytotherapie','2007-08-01','9999-12-31',0);
+#
+# PosNr 610
+#
+WWWRUN	INSERT	Leistungsart	POSNR='610' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'610','M','Arzneimittel Wirkstoffgruppe Homöopathie',0,'Arzneimittel aus der Wirkstoffgruppe Homöopathie','2007-08-01','9999-12-31',0);
+#
+# PosNr 620
+#
+WWWRUN	INSERT	Leistungsart	POSNR='620' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'620','M','Arz. Wirkstoffgr. anthroposophische Medizin ',0,'Arzneimittel aus der Wirkstoffgruppe anthroposophische Medizin','2007-08-01','9999-12-31',0);
+#
+#
+# PosNr 800
+#
+WWWRUN	INSERT	Leistungsart	POSNR='800' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'800','M','sonstige Auslagen',0,'sonstige Auslagen','2007-08-01','9999-12-31',0);
+#
+# -------- eigene Positionsnummern w/ Materialien
+#
+# PosNr M006
+#
+WWWRUN	INSERT	Leistungsart	POSNR='M006' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M006','M','Betaisodona Salbe',5.2,'Betaisodona Salbe','2007-08-01','9999-12-31',0,'');
+#
+# PosNr M007
+#
+WWWRUN	INSERT	Leistungsart	POSNR='M007' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M007','M','Wecesinpuder zur Nabelpflege (50 g)',6.62,'Wecesinpuder zur Nabelpflege 50 Gramm','2007-08-01','9999-12-31',0,'');
+#
+#
+# PosNr M008
+#
+WWWRUN	INSERT	Leistungsart	POSNR='M008' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M008','M','Moronal Suspension (30 ml)',7.89,'Moronal Suspension (30 ml)','2007-08-01','9999-12-31',0,'570');
+#
+#
+# PosNr M009
+#
+WWWRUN	INSERT	Leistungsart	POSNR='M009' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M009','M','Paracetamol (30 Stück)',2.0,'Paracetamol (30 Stück)','2007-08-01','9999-12-31',0,'580');
+#
+#
+# PosNr M010
+#
+WWWRUN	INSERT	Leistungsart	POSNR='M010' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M010','M','Retterspitz äußerlich (350 ml)',7.77,'Retterspitz äußerlich (350 ml)','2007-08-01','9999-12-31',0,'600');
+#
+#
+# PosNr M011
+#
+WWWRUN	INSERT	Leistungsart	POSNR='M011' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M011','M','Calendula Urtinktur (20 ml)',10.36,'Calendula Urtinktur (20 ml)','2007-08-01','9999-12-31',0,'610');
+#
+#
+# PosNr M012
+#
+WWWRUN	INSERT	Leistungsart	POSNR='M012' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M012','M','Phytolacca D4 Globuli 10g',5.44,'Phytolacca D4 Globuli 10g','2007-08-01','9999-12-31',0,'610');
+#
+#
+# PosNr M013
+#
+WWWRUN	INSERT	Leistungsart	POSNR='M013' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M013','M','Phytolacca C30 Globuli 10g',6.97,'Phytolacca C30 Globuli 10g','2007-08-01','9999-12-31',0,'610');
+#
+#
+# PosNr M014
+#
+WWWRUN	INSERT	Leistungsart	POSNR='M014' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M014','M','Lanolin 10g',0.95,'Lanolin 10g','2007-08-01','9999-12-31',0,'530');
 #
 # -------- sonstige updates
 # 
