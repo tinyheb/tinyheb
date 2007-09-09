@@ -3,7 +3,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.45 2007-08-27 17:54:29 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.46 2007-09-09 11:53:43 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -346,7 +346,7 @@ sub neue_seite {
   $text = 'Wegegeld bei Tag' if ($teil eq 'T');
   $text = 'Wegegeld bei Tag Entfernung nicht mehr als 2 KM' if ($teil eq 'TK');
   $text = 'Wegegeld bei Nacht Entfernung nicht mehr als 2 KM' if ($teil eq 'NK');
-  $text = 'Auslagen (§3 HebGV)' if ($teil eq 'M');
+  $text = 'Auslagen' if ($teil eq 'M');
   if ($teil eq 'A' or $teil eq 'B' or $teil eq 'C' or $teil eq 'D' or $teil eq 'M') {
     $p->setfont($font_b,10);
     $p->text($x1,$y1,$text);$y1-=$y_font;$y1-=$y_font;
@@ -396,8 +396,14 @@ sub print_material {
       }
     } elsif($erg[1] =~ /^[A-Z]\d{1,3}$/) {
       # zugeordnete Posnr holen
-      $zus1=70 if (!defined($zus1) or $zus1 eq '');
-      my($bez_zus)=$l->leistungsart_such_posnr("KBEZ",$zus1,$erg[4]);
+      my $go_datum = $erg[4];
+      $go_datum =~ s/-//g;
+      $zus1=70 if ((!defined($zus1) or $zus1 eq '') and
+		   $go_datum < 20070801);
+      $zus1=800 if ((!defined($zus1) or $zus1 eq '') and
+		   $go_datum >= 20070801);
+
+      my($bez_zus)=$l->leistungsart_such_posnr("KBEZ","$zus1",$erg[4]);
       $bez_zus = substr($bez_zus,0,50);
       my $laenge_bez_zus = length($bez_zus)*0.2/2;
       if ($zus_posnr ne $zus1) {
@@ -439,6 +445,7 @@ sub print_wegegeld {
   my $text='';
   my $preis=0;
   my $summe=0;
+  neue_seite(5);
   $text ='Wegegeld bei Nacht' if ($tn eq 'N');
   $text ='Wegegeld bei Tag' if ($tn eq 'T');
   $text ='Wegegeld bei Tag Entfernung nicht mehr als 2 KM' if ($tn eq 'TK');
@@ -487,7 +494,7 @@ sub print_wegegeld {
     $preis =~s/\./,/g;
     $p->text({align => 'right'},7,$y1,"$entfp km") if ($entf>=2);
     $p->text(8,$y1,"(Anteil $erg[9] Besuche)") if ($erg[9]>1); # Anzahl Frauen
-    $p->text({align => 'right'},12.5,$y1,"á $preis EUR");
+    $p->text({align => 'right'},13.0,$y1,"á $preis EUR");
     $preis =~ s/,/\./g;
     my $teilsumme = 0;
     $teilsumme = ($preis * $entf) if ($entf>=2);
