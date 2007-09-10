@@ -5,7 +5,7 @@
 
 # Backup der tinyHeb Datenbank anlegen
 
-# $Id: backup_gen.pl,v 1.6 2007-07-27 18:55:15 baum Exp $
+# $Id: backup_gen.pl,v 1.7 2007-09-10 17:22:43 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -39,8 +39,8 @@ my $h = new Heb;
 
 my $mysqldump = 'mysqldump';
 if ($^O =~ /MSWin32/) {
-  my $pfad='"/Programme/MySQL/MySQL Server 5.0/bin/mysqldump.exe"';
-  $mysqldump=$pfad if (-e "$pfad");
+  my $pfad='/Programme/MySQL/MySQL Server 5.0/bin/mysqldump';
+  $mysqldump='"'.$pfad.'"' if (-e "$pfad.exe");
 }
 
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
