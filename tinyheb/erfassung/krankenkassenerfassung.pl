@@ -5,7 +5,7 @@
 
 # Krankenkassen erfassen, ändern, löschen
 
-# $Id: krankenkassenerfassung.pl,v 1.16 2007-07-27 18:55:15 baum Exp $
+# $Id: krankenkassenerfassung.pl,v 1.17 2007-09-14 13:01:58 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -282,7 +282,11 @@ sub print_color {
 
 sub speichern {
   # Speichert die Daten in der Krankenkassen Datenbank
+  $plz_post = 0 if($plz_post eq '');
+  $plz_haus = 0 if($plz_haus eq '');
   my $erg = $k->krankenkassen_ins($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik,$email);
+  $plz_post = '' if($plz_post == 0);
+  $plz_haus = '' if($plz_haus == 0);
   return $erg;
 }
 
@@ -294,7 +298,11 @@ sub loeschen {
 
 sub aendern {
   # Ändert die Daten zur angegebenen Krankenkassen in der Datenbank
+  $plz_post = 0 if($plz_post eq '');
+  $plz_haus = 0 if($plz_haus eq '');
   my $erg = $k->krankenkassen_update($kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik,$email,$ik);
+  $plz_post = '' if($plz_post == 0);
+  $plz_haus = '' if($plz_haus == 0);
   return $erg;
 }
 
