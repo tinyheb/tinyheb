@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.10 2007-09-14 12:57:44 thomas_baum Exp $
+# $Id: update.sql,v 1.11 2007-09-19 15:35:38 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 # zunächst alte GO ungültig machen
@@ -318,7 +318,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='580' and GUELT_VON='2007-08-01' and GUELT_BIS=
 #
 # PosNr 590
 #
-WWWRUN	INSERT	Leistungsart	POSNR='590' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'590','M','Arzneimittel Wirkstoffgr. Galle- und Lebertherapeutika ',0,'Arzneimittel aus der Wirkstoffgruppe Galle- und Lebertherapeutika','2007-08-01','9999-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='590' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'590','M','Arz. Wirkstoffgr. Galle- und Lebertherapeutika ',0,'Arzneimittel aus der Wirkstoffgruppe Galle- u. Lebertherapeutika','2007-08-01','9999-12-31',0);
 #
 # PosNr 600
 #
