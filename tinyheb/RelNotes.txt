@@ -1,3 +1,15 @@
+Release 0.15.1
+
+Aufnahme Positionsnummern für anteiliges Wegegeld und Materialien.
+
+Bug fix:
+Seitenumbruch bei Wegegeld war in seltenen Fällen nicht korrekt.
+Layout bei anteiligem Wegegeld war nicht korrekt.
+
+Bug fix:
+Backup konnte unter Windows nur angelegt werden, wenn mysqldump im Suchpfad lag.
+
+
 Release 0.15.0
 
 Kostenträgerdateien im Unix Dateiformat können verarbeitet werden.
