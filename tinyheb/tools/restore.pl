@@ -5,7 +5,7 @@
 
 # Einspielen eines Backups der tinyHeb Datenbank
 
-# $Id: restore.pl,v 1.6 2007-07-27 18:55:15 baum Exp $
+# $Id: restore.pl,v 1.7 2007-10-03 12:00:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -45,6 +45,10 @@ my $passwort = $q->param('passwort') || '';
 my $abschicken = $q->param('abschicken');
 my $hint='';
 my $mysql = 'mysql';
+if ($^O =~ /MSWin32/) {
+  my $pfad='/Programme/MySQL/MySQL Server 5.0/bin/mysql';
+  $mysql = '"'.$pfad.'"' if (-e "$pfad.exe");
+}
 if ($passwort ne '') {
   $mysql .= " -u root --password=$passwort ";
 } else {
