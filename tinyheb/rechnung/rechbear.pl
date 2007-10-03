@@ -5,7 +5,7 @@
 
 # Rechnungen bearbeiten
 
-# $Id: rechbear.pl,v 1.9 2007-07-27 18:55:15 baum Exp $
+# $Id: rechbear.pl,v 1.10 2007-10-03 11:57:11 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -90,17 +90,19 @@ print '</td></tr>';
 print '</form>';
 # bisher erfasste Rechnungen angezeigen
 print '<tr><td>';
-print '<table style="margin-left: 0" border="0" width=800 align="left">';
+print '<table style="margin-left:0;table-layout:fixed" border="0" width=930 align="left">';
 print '<tr>';
-print '<td style="width:6.6cm;text-align:right">RechNr.</td>';
-print '<td style="width:3.9cm;text-align:left">Name Frau</td>';
-print '<td style="width:3.0cm;text-align:left">Krankenkasse</td>';
-print '<td style="width:1.8cm;text-align:right">Rech. von</td>';
-print '<td style="width:1.4cm;text-align:right">Betrag</td>';
-print '<td style="width:1.6cm;text-align:right">Mahn.</td>';
-print '<td style="width:1.6cm;text-align:right">Eingang</td>';
-print '<td style="width:2.0cm;text-align:right">gez. Betrag</td>';
-print '<td style="width:0.6cm;text-align:left">Stat</td>';
+print '<td style="width:145pt;text-align:right">RechNr.</td>';
+print '<td style="width:42pt;text-align:center">EDI&nbsp;Ref</td>';
+print '<td style="width:96pt;text-align:left;padding:2pt">Name Frau</td>';
+print '<td style="width:80pt;text-align:left">Krankenkasse</td>';
+print '<td style="width:36pt;text-align:left">Rech.&nbsp;von</td>';
+print '<td style="width:46pt;text-align:right">Betrag</td>';
+print '<td style="width:40pt;text-align:center">Mahn.</td>';
+print '<td style="width:40pt;text-align:center">Eingang</td>';
+print '<td style="width:32pt;text-align:right">gez. Betrag</td>';
+print '<td style="width:46pt;text-align:left;padding:1pt">Status</td>';
+
 print "</tr>";
 print '</table>';
 print "\n";
@@ -108,7 +110,7 @@ print '</td></tr>';
 
 print '<tr><td>';
 # die wirklichen Infos kommen aus einem Programm
-print "<iframe src='../blank.html' name='list_rech' width='840' height='250' scrolling='yes' frameborder='1' align='left'>";
+print "<iframe src='../blank.html' name='list_rech' width='950' height='250' scrolling='yes' frameborder='1' align='left'>";
 print "</iframe>";
 print '</td></td>';
 

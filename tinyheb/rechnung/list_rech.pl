@@ -5,7 +5,7 @@
 
 # erfasste Rechnungen ausgeben
 
-# $Id: list_rech.pl,v 1.11 2007-07-27 18:55:15 baum Exp $
+# $Id: list_rech.pl,v 1.12 2007-10-03 11:58:13 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -60,22 +60,26 @@ print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 
 # Alle Felder zur Eingabe ausgeben 
-print '<table rules=rows style="margin-left:0" border="2" width="100%" align="left">';
+print '<table rules=rows style="margin:0em;table-layout:fixed" border="1" width="100%" align="left">';
 
 # jetzt Rechnungsposten ausgeben
-$l->rechnung_such("RECHNUNGSNR,DATE_FORMAT(RECH_DATUM,'%d.%m.%Y'),DATE_FORMAT(MAHN_DATUM,'%d.%m.%Y'),DATE_FORMAT(ZAHL_DATUM,'%d.%m.%Y'),BETRAG,STATUS,BETRAGGEZ,FK_STAMMDATEN,IK");
+$l->rechnung_such("RECHNUNGSNR,DATE_FORMAT(RECH_DATUM,'%d.%m.%Y'),DATE_FORMAT(MAHN_DATUM,'%d.%m.%Y'),DATE_FORMAT(ZAHL_DATUM,'%d.%m.%Y'),BETRAG,STATUS,BETRAGGEZ,FK_STAMMDATEN,IK,EDI_AUFTRAG",);
 while (my @erg=$l->rechnung_such_next()) {
   # Rechnung nur Anzeigen, wenn Status ok
   if ($sel_status eq 'alle' or $erg[5]<30) {
     print '<tr>';
-    print "<td style='width:1.5cm;margin-left:0em;margin-right:0em'>";
-    print "<input style='font-size:8pt' type='button' name='bearb' value='Bearbeiten' onclick='bearb_rech($erg[0],$erg[5]);'></td>\n";
-    print "<td style='width:1.5cm;margin-left:0em'><input style='font-size:8pt' type='button' name='anseh' value='Ansehen' onclick='anseh_rech($erg[0],$erg[5]);'></td>\n";
+    print "<td style='width:50pt;margin-left:0em;margin-right:0em'>";
+#    print "<td style='margin-left:0em;margin-right:0em'>";
+    print "<input style='width:50pt;font-size:8pt' type='button' name='bearb' value='Bearbeiten' onclick='bearb_rech($erg[0],$erg[5]);'></td>\n";
+    print "<td style='width:50pt;margin-left:0em;margin-right:0em'><input style='font-size:8pt' type='button' name='anseh' value='Ansehen' onclick='anseh_rech($erg[0],$erg[5]);'></td>\n";
     
-    print "<td style='width:0.7cm;text-align:right'>$erg[0]</td>"; # Rechnungsnr
+    print "<td style='width:35pt;text-align:right'>$erg[0]</td>"; # Rechnungsnr
+    my $aus_ref='';
+    $aus_ref=substr($erg[9],19,8) if ($erg[9]);
+    print "<td style='width:51pt;text-align:right;'>$aus_ref</td>"; # Datenaustauschreferenz
     # Name Frau holen
     my @erg_frau=$s->stammdaten_frau_id($erg[7]);
-    print "<td style='width:5.5cm;text-align:left'>$erg_frau[1], $erg_frau[0]</td>"; # Name Frau
+    print "<td style='width:100pt;text-align:left;padding:2pt'>$erg_frau[1], $erg_frau[0]</td>"; # Name Frau
     # Name Krankenkasse holen
     my ($name)=$k->krankenkasse_ik("NAME",$erg[8]);
     if (!(defined($name))) {
@@ -83,19 +87,19 @@ while (my @erg=$l->rechnung_such_next()) {
       $name='Privat Rechnung' if ($erg_frau[12] eq 'privat');
     }
     
-    print "<td style='width:4.0cm;text-align:left;padding-left:0.1cm'>$name</td>"; # Name Krankenkasse
-    print "<td style='width:1.6cm;text-align:right'>$erg[1]</td>"; # Datum Rech
+    print "<td style='width:80pt;text-align:left;padding:2pt'>$name</td>"; # Name Krankenkasse
+    print "<td style='width:40pt;text-align:right:padding:2pt'>$erg[1]</td>"; # Datum Rech
     my $g_preis = sprintf "%.2f",$erg[4];$g_preis =~ s/\./,/g;
-    print "<td style='width:1.0cm;text-align:right'>$g_preis</td>"; # Betrag
-    $erg[2] =~ s/00.00.0000//g;
-    print "<td style='width:1.6cm;text-align:right'>$erg[2]</td>"; # letzte Mahn
-    $erg[3] =~ s/00.00.0000//g;
-    print "<td style='width:1.6cm;text-align:right'>$erg[3]</td>"; # Eingang
+    print "<td style='width:40pt;text-align:right;padding:2pt'>$g_preis</td>"; # Betrag
+    $erg[2] =~ s/00.00.0000/&nbsp;/g;
+    print "<td style='width:46pt;text-align:right:padding:2pt'>$erg[2]</td>"; # letzte Mahn
+    $erg[3] =~ s/00.00.0000/&nbsp;/g;
+    print "<td style='width:46pt;text-align:right:padding:2pt'>$erg[3]</td>"; # Eingang
     my $betraggez = sprintf "%.2f",$erg[6];$betraggez=~ s/\./,/g;
-    print "<td style='width:2.2cm;text-align:right'>$betraggez</td>"; # Betrag
+    print "<td style='width:28pt;text-align:right;padding:2pt'>$betraggez</td>"; # Betrag
     
     my $status = $l->status_text($erg[5]);
-    print "<td style='width:1.5cm;text-align:left'>$status</td>"; # Status der Position
+    print "<td style='width:45pt;text-align:left;padding:1pt'>$status</td>"; # Status der Position
     print '</tr>';
     print "\n";
   }
