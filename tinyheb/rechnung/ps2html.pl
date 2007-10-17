@@ -3,7 +3,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.46 2007-09-09 11:53:43 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.47 2007-10-17 15:36:45 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -124,6 +124,8 @@ if ($versichertenstatus ne 'privat') {
     $betreff.="Thüringen";
   } elsif (uc $heb_bundesland eq 'SACHSEN-ANHALT') {
     $betreff.="Sachsen-Anhalt";
+  } elsif (uc $heb_bundesland eq 'SACHSEN') {
+    $betreff.="Sachsen";
   }  else {
     $betreff.="PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen".uc $heb_bundesland;
   }

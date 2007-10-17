@@ -1,6 +1,6 @@
 # Package um Datümer zu verarbeiten
 
-# $Id: Heb_datum.pm,v 1.22 2007-08-27 17:46:22 thomas_baum Exp $
+# $Id: Heb_datum.pm,v 1.23 2007-10-17 15:36:02 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -45,7 +45,7 @@ sub new {
 				 "BUNDESLAND LIKE ? and ".
 				 "DATUM LIKE ?;");
   $max_feiertag = Heb->parm_unique('KALENDER_ID');
-  push @{$self->{BUNDESLAENDER}},'NRW','Bayern','Hessen','Niedersachsen','Hamburg','Rheinland-Pfalz','Thüringen','Sachsen-Anhalt';
+  push @{$self->{BUNDESLAENDER}},'NRW','Bayern','Hessen','Niedersachsen','Hamburg','Rheinland-Pfalz','Thüringen','Sachsen-Anhalt','Sachsen';
   bless $self, ref $class || $class;
   return $self;
 }
