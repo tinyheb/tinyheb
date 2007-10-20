@@ -2,7 +2,7 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.1 2007-09-01 06:56:23 thomas_baum Exp $
+# $Id: update.pl,v 1.2 2007-10-20 07:55:50 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -23,14 +23,19 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 
-use DBI;
 use strict;
+use DBI;
+use Getopt::Long;
 
 my $dbh; # Verbindung zur Datenbank
 my $user='root';
 my $pass='';
 my $root_pass='';
 my $debug=0;
+
+my $rpm=undef;
+
+my $parms=GetOptions('rpm' => \$rpm);
 
 write_LOG("Starte update ----------------------------");
 
@@ -43,21 +48,21 @@ if (!defined($dbh) and ($DBI::err == 1044 || $DBI::err == 1045)) {
   chomp $root_pass;
   $dbh = connect_db('root',$root_pass);
   write_LOG("Habe mich mit root angemeldet $dbh");
-  die "unbekanntes Problem aufgetreten $DBI::errstr\n" unless (defined($dbh));
+  error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
   print "Fehler Text:",$DBI::errstr,"\n";
   print "Fehler Nummmer:",$DBI::err,"\n";
   print "State Nummmer:",$DBI::state,"\n";
 }
 
 write_LOG("oeffne update.sql");
-open SQL, "update.sql" or die "konnte update Datei nicht öffnen $!\n";
+open SQL, "update.sql" or error("konnte update Datei nicht öffnen $!\n");
 
 # alle Zeile der Update Datei Verarbeiten
 LINE:while (my $line=<SQL>) {
   chomp $line;
   next LINE if ($line eq '' or $line =~ /^#/);
   my ($muser,$tag,$tabelle,$dep,$sql) = split '\t',$line;
-  write_LOG("update.tql gelesen",$muser,$tag,$tabelle,$dep,$sql);
+  write_LOG("update.sql gelesen",$muser,$tag,$tabelle,$dep,$sql);
   if ($debug) {
     print "muser\t$muser\n";
     print "tag\t$tag\n";
@@ -75,14 +80,20 @@ LINE:while (my $line=<SQL>) {
 
 write_LOG("Beende update ----------------------------");
 
+unless($rpm) {
+  print "Bitte die ENTER Taste zum Beenden des Update druecken\n";
+  my $eingabe=<STDIN>;
+}
+
 sub do_update {
   my ($sql)=@_;
 
   my $dbh=connect_db('wwwrun','');
   write_LOG("update",$dbh);
-  die "unbekanntes Problem aufgetreten $DBI::errstr\n" unless (defined($dbh));
+  error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
 
-  $dbh->do($sql) or die $dbh->errstr();
+  $dbh->do($sql);
+  error("unbekanntes Problem aufgetreten $DBI::errstr\n") if ($DBI::errstr);
   $dbh->disconnect();
 }
 
@@ -92,23 +103,24 @@ sub do_insert {
 
   my $dbh=connect_db('wwwrun','');
   write_LOG("insert",$dbh,$sql,$tabelle,$dep);
-  die "unbekanntes Problem aufgetreten $DBI::errstr\n" unless (defined($dbh));
+  error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
 
   my $sdep = $dbh->prepare("select * from $tabelle where $dep;");
-  die "unbekanntes Problem aufgetreten $DBI::errstr\n" unless (defined($sdep));
+  error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($sdep));
 
   
-  my $erg=$sdep->execute() or die $dbh->errstr();
+  my $erg=$sdep->execute() or error($dbh->errstr());
   write_LOG("insert dep $erg $sdep");
   if (!defined($erg) or $erg == 0) {
     my ($name,$id)=get_parm($tabelle,$dbh);
-    $dbh->do($sql) or die $dbh->errstr();
+    $dbh->do($sql);
+    error("unbekanntes Problem aufgetreten $DBI::errstr\n") if ($DBI::errstr);
     # Hier muss noch update auf den Zähler in Parms gemacht werden
     $id++;
     write_LOG("Parm update $id $name");
     parm_up($name,$id,$dbh);
     my $id_up=$dbh->do("update $tabelle set id=$id where id=9999;");
-  die "unbekanntes Problem aufgetreten $DBI::errstr\n" unless (defined($id_up));
+    error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($id_up));
   }
   $sdep->finish;
   $dbh->disconnect();
@@ -119,7 +131,7 @@ sub do_create {
 
   my $dbh=connect_db('root',$root_pass);
   write_LOG("create",$dbh,$sql,$tabelle);
-  die "unbekanntes Problem aufgetreten $DBI::errstr\n" unless (defined($dbh));
+  error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
 
 #  $dbh->do($sql) or die $dbh->errstr();
   $dbh->disconnect();
@@ -131,16 +143,16 @@ sub do_alter {
 
   my $dbh=connect_db('root',$root_pass);
   write_LOG("alter",$dbh,$sql,$tabelle,$dep);
-  die "unbekanntes Problem aufgetreten $DBI::errstr\n" unless (defined($dbh));
+  error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
 
   # alter durchführen
   my $erg=$dbh->do($sql);
   if (!defined($erg)) {
       write_LOG("alter fehler",$DBI::err,$DBI::errstr);
-    if ($DBI::err == 1061) {
-    # ok, mache nix, INDEX war schon da
+    if ($DBI::err == 1061 || $DBI::err == 1060) {
+    # ok, mache nix, INDEX oder Spalte war schon da
     } else {
-      die "unbekanntes Problem aufgetreten $DBI::errstr\n";
+      error("unbekanntes Problem aufgetreten $DBI::errstr\n");
     }
   }
 
@@ -156,9 +168,9 @@ sub get_parm {
 
   my $parm_such=$dbh->prepare("select VALUE from Parms ".
 		"where NAME=?;")
-    or die $dbh->errstr();
+    or error($dbh->errstr());
 
-  $parm_such->execute($name) or die $dbh->errstr();
+  $parm_such->execute($name) or error($dbh->errstr());
 
   my ($erg) = $parm_such->fetchrow_array();
   $parm_such->finish;
@@ -172,7 +184,7 @@ sub parm_up {
   $dbh->prepare("update Parms set ".
 		"VALUE=? where ".
 		"NAME = ?;")->execute($value,$name)
-    or die $dbh->errstr();
+    or error($dbh->errstr());
 }
 
 
@@ -205,12 +217,23 @@ sub fehler {
   # Doppelter Index
   return 1 if ($erg[1]->err == 1061);
 
-  return 0;
+  # Doppelter Spaltenname
+  return 1 if ($erg[1]->err == 1060);
+
+  return 1;
 }
 
 
 sub write_LOG {
-  open (LOG,">>update.log") or die "log Datei kann nicht geschrieben werden: $!\n";
+  if(!open (LOG,">>update.log")) {
+    print "FEHLER log Datei kann nicht geschrieben werden: $!\n";
+    unless($rpm) {
+      print "Bitte die ENTER Taste zum Beenden des Update druecken\n";
+      my $eingabe=<STDIN>;
+    }
+    exit(1);
+  }
+
   my @log = @_;
   my $print_log = join(':',@log);
   my $time = join(':',localtime);
@@ -218,3 +241,13 @@ sub write_LOG {
   close (LOG);
 };
 
+sub error {
+  my ($error)=@_;
+  write_LOG($error);
+  print "FEHLER $error\n";
+  unless($rpm) {
+    print "Bitte die ENTER Taste zum Beenden des Update druecken\n";
+    my $eingabe=<STDIN>;
+  }
+  exit(1);
+}
