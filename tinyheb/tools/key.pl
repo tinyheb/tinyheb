@@ -5,7 +5,7 @@
 # extrahiert aus Schlüsseldateien des Trust Center ITSG die einzelnen
 # Schlüssel
 
-# $Id: key.pl,v 1.10 2007-07-27 18:55:15 baum Exp $
+# $Id: key.pl,v 1.11 2007-10-20 07:54:06 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -40,6 +40,7 @@ my $k = new Heb_krankenkassen;
 my $h = new Heb;
 
 my $openssl ='openssl';
+my $root_cert_counter=0;
 
 $openssl = $h->win32_openssl() if ($^O =~ /MSWin32/);
 
@@ -151,11 +152,13 @@ foreach my $file (@dateien) {
       }
 
 
-      print "Einlesen Schlüssel für IK: $ik\n" if $debug;
+      print "Einlesen Schlüssel für IK: $ik\n" if $debug && $ik;
       if ($ik) {
 	copy("$path/tmpcert.pem","$o_pfad/$ik.pem") if (-e "$path/tmpcert.pem" && $save);
       } else {
 	print "keine IK Nummer im Zertifikat enthalten\n" if $debug;
+	$root_cert_counter++;
+	copy("$path/tmpcert.pem","$o_pfad/root$root_cert_counter.pem") if (-e "$path/tmpcert.pem" && $save);
       }
       if ($ik && $save_cert && $ik eq $h->parm_unique('HEB_IK')) {
 	if (-e "$path/tmpcert.pem") {
