@@ -5,7 +5,7 @@
 
 # Stammdaten der Hebamme erfassen, ändern, löschen
 
-# $Id: heb_stammdaten.pl,v 1.4 2007-07-27 18:55:15 baum Exp $
+# $Id: heb_stammdaten.pl,v 1.5 2007-10-20 07:52:36 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006, 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -45,8 +45,8 @@ my $TODAY_tmj = $d->convert_tmj($TODAY);
 my @aus = ('Anzeigen','Ändern');
 my @bund = $d->bundeslaender;
 my %tarifkz =('00' => 'bundeseinheitlicher Tarif',
-	       '24' => 'West Tarif',
-	       '25' => 'Ost Tarif');
+	      '24' => 'West Tarif',
+	      '25' => 'Ost Tarif');
 
 my $hint = '';
 
@@ -57,6 +57,7 @@ my $strasse = $q->param('strasse') || '';
 my $plz = $q->param('plz') || '';
 my $ort = $q->param('ort') || '';
 my $ik = $q->param('ik') || '';
+my $ik_beleg_kkh = $q->param('ik_beleg_kkh') || '';
 my $konto = $q->param('konto') || '';
 my $blz = $q->param('blz') || '';
 my $namebank = $q->param('namebank') || '';
@@ -189,6 +190,21 @@ print '</table>';
 print "\n";
 
 
+# Zeile IK Nummer Krankenhaus falls Beleghebamme
+print '<tr>';
+print '<td>';
+print '<table border="0" align="left">';
+print '<tr>';
+print '<td><b>IK Nummer des Krankenhauses (falls Beleghebamme):</b></td>';
+print '</tr>';
+
+# Eingabe Felder
+print "<tr>";
+print "<td><input type='text' name='ik_beleg_kkh' size='10' value='$ik_beleg_kkh' maxlength='9' onChange='ik_gueltig_check(this)'></td>";
+print '</tr>';
+print '</table>';
+print "\n";
+
 # Zeile Bankeverbindung
 print '<tr>';
 print '<td>';
@@ -236,9 +252,8 @@ print "</body>";
 print "</html>";
 
 sub speichern {
-  # Speichert die Daten in der Stammdaten Datenbank
-  # print "Speichern in DB\n";
-  # Datümer konvertierten
+  # Speichert die Daten in der Parameter Tabelle
+
   $h->parm_up('HEB_STNR',$stnr);
   $h->parm_up('HEB_VORNAME',$vorname);
   $h->parm_up('HEB_NACHNAME',$nachname);
@@ -253,6 +268,7 @@ sub speichern {
   $h->parm_up('HEB_EMAIL',$email);
   $h->parm_up('HEB_BUNDESLAND',$bundesland);
   $h->parm_up('HEB_TARIFKZ',$tarifkz); 
+  $h->parm_up('HEB_IK_BELEG_KKH',$ik_beleg_kkh);
   $privat_faktor =~ s/,/\./g;
   $h->parm_up('PRIVAT_FAKTOR',$privat_faktor);
   return;
@@ -273,10 +289,14 @@ sub hole_heb_daten {
   $tel = $h->parm_unique('HEB_TEL');
   $email = $h->parm_unique('HEB_EMAIL');
   
-$bundesland = $h->parm_unique('HEB_BUNDESLAND');
+  $bundesland = $h->parm_unique('HEB_BUNDESLAND');
   $h->parm_ins('HEB_BUNDESLAND','NRW','Bundesland aus dem die Hebamme kommt') if(!defined($bundesland));
   $bundesland = $h->parm_unique('HEB_BUNDESLAND');
 
+  $ik_beleg_kkh = $h->parm_unique('HEB_IK_BELEG_KKH');
+  $h->parm_ins('HEB_IK_BELEG_KKH','','IK Nummer des Krankenhaus, falls Beleghebamme') if(!defined($ik_beleg_kkh));
+  $ik_beleg_kkh = $h->parm_unique('HEB_IK_BELEG_KKH');
+  
   $tarifkz = $h->parm_unique('HEB_TARIFKZ');
   $privat_faktor = $h->parm_unique('PRIVAT_FAKTOR');
   $privat_faktor =~ s/\./,/g;
