@@ -5,7 +5,7 @@
 
 # erfasste Rechnungen ausgeben
 
-# $Id: list_rech.pl,v 1.12 2007-10-03 11:58:13 thomas_baum Exp $
+# $Id: list_rech.pl,v 1.13 2007-10-21 17:52:48 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -88,13 +88,13 @@ while (my @erg=$l->rechnung_such_next()) {
     }
     
     print "<td style='width:80pt;text-align:left;padding:2pt'>$name</td>"; # Name Krankenkasse
-    print "<td style='width:40pt;text-align:right:padding:2pt'>$erg[1]</td>"; # Datum Rech
+    print "<td style='width:40pt;text-align:right;padding:2pt'>$erg[1]</td>"; # Datum Rech
     my $g_preis = sprintf "%.2f",$erg[4];$g_preis =~ s/\./,/g;
     print "<td style='width:40pt;text-align:right;padding:2pt'>$g_preis</td>"; # Betrag
     $erg[2] =~ s/00.00.0000/&nbsp;/g;
-    print "<td style='width:46pt;text-align:right:padding:2pt'>$erg[2]</td>"; # letzte Mahn
+    print "<td style='width:46pt;text-align:right;padding:2pt'>$erg[2]</td>"; # letzte Mahn
     $erg[3] =~ s/00.00.0000/&nbsp;/g;
-    print "<td style='width:46pt;text-align:right:padding:2pt'>$erg[3]</td>"; # Eingang
+    print "<td style='width:46pt;text-align:right;padding:2pt'>$erg[3]</td>"; # Eingang
     my $betraggez = sprintf "%.2f",$erg[6];$betraggez=~ s/\./,/g;
     print "<td style='width:28pt;text-align:right;padding:2pt'>$betraggez</td>"; # Betrag
     
