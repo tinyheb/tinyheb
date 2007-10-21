@@ -5,7 +5,7 @@
 
 # Rechnungen bearbeiten für einzelne Rechnungen
 
-# $Id: rechposbear.pl,v 1.14 2007-07-27 18:55:15 baum Exp $
+# $Id: rechposbear.pl,v 1.15 2007-10-21 17:53:47 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -245,6 +245,12 @@ sub speichern {
     $hint .= "Rechnung ist schon gezahlt, nichts gespeichert";
     return;
   }
+
+  if ($r_status == 80) {
+    $hint .= "Rechnung ist Storniert, nichts gespeichert";
+    return;
+  }
+
 #  $r_betraggez = sprintf "%.2f",$r_betraggez;
   if ($betraggez_s+$r_betraggez-$r_betrag > 0.001 && $ignore==0) {
     $hint .= "gez. Betrag zu groß, nichts gespeichert";
@@ -268,6 +274,7 @@ sub speichern {
   while (my ($id)=$l->leistungsdaten_such_rechnr_next()) {
     $l->leistungsdaten_up_werte($id,"STATUS=$status");
   }
+  $r_status=$status;
 }
 
 
@@ -298,5 +305,6 @@ sub stornieren {
   while (my ($id)=$l->leistungsdaten_such_rechnr_next()) {
     $l->leistungsdaten_up_werte($id,"STATUS=10,RECHNUNGSNR=''");
   }
+  $r_status=80;
 }
 
