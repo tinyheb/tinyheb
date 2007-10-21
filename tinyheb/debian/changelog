@@ -1,0 +1,6 @@
+tinyheb (0.15.1-1) unstable; urgency=low
+
+  * Initial release for debian/ubuntu
+
+ -- Robert Sailer <robert.sailer@tinyheb.de>  Sun, 30 Sep 2007 21:49:46 +0200
+

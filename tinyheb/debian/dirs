@@ -1,0 +1,5 @@
+srv/
+usr/
+usr/man/
+usr/man/man1/
+etc/apache2/conf.d/
