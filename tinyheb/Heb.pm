@@ -1,6 +1,6 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.10 2007-07-27 18:55:15 baum Exp $
+# $Id: Heb.pm,v 1.11 2007-10-22 16:41:58 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -227,5 +227,17 @@ sub suche_gswin32 {
   return $gswin32;
 }
 
+
+sub runden {
+  # runden auf 2 NK stellen genau, nur positive Zahlen
+  my $self=shift;
+  my ($zahl) = @_;
+  $zahl *= 100;
+  $zahl += 0.5;
+  return ($zahl/100) if($zahl !~ /\./g); # Fehler in perl ausgleichen
+  my $erg=int($zahl);
+  $erg = $erg / 100;
+  return $erg;
+}
 
 1;
