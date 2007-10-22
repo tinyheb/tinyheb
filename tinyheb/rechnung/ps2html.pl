@@ -3,7 +3,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.47 2007-10-17 15:36:45 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.48 2007-10-22 16:51:29 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -501,9 +501,9 @@ sub print_wegegeld {
     my $teilsumme = 0;
     $teilsumme = ($preis * $entf) if ($entf>=2);
     $teilsumme = $preis if($entf<2);
-    $teilsumme = sprintf "%.2f",$teilsumme;
+    $teilsumme = sprintf "%.2f",$h->runden($teilsumme);
     $summe += $teilsumme;
-    my $gpreis = sprintf "%.2f",$preis * $entf;
+    my $gpreis = sprintf "%.2f",$h->runden($preis * $entf);
     $gpreis = $preis if($entf<2);
     $gpreis =~s/\./,/g;
     $p->text({align => 'right'},17.3,$y1,$gpreis." EUR"); # Preis andrucken
@@ -511,11 +511,12 @@ sub print_wegegeld {
   }
   $y1+=$y_font-0.05;
   $p->line(17.4,$y1,15.1,$y1);$y1-=$y_font-0.1;
+
+  $summe = $h->runden($summe); # w/ Rundungsfehler-
   my $psumme = sprintf "%.2f",$summe;$psumme =~ s/\./,/g;
   $p->text({align => 'right'},17.3,$y1,$psumme." EUR"); # Gesamt Summe andrucken
   $p->text({align => 'right'},19.5,$y1,$psumme." EUR"); # Gesamt erneut Summe andrucken
   $y1-=$y_font;$y1-=$y_font;
-  $summe = sprintf "%.2f",$summe; # w/ Rundungsfehler-
   return $summe;
 }
 
