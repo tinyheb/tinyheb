@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.39 2007-09-09 11:51:05 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.40 2007-10-22 16:43:03 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -863,7 +863,7 @@ sub SLLA {
 	       $posnr_wegegeld eq '321') {
 	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[7]);
 	$lfdnr++;
-	my $km_preis = sprintf "%.2f",$leistdat[7]*$epreis;
+	my $km_preis = sprintf "%.2f",$h->runden($leistdat[7]*$epreis);
 	$summe_km+=$km_preis;
 	print "Wegegeld summe: $summe_km, $km_preis,km: $leistdat[7]\n" if ($debug > 1000);
       } 
@@ -899,7 +899,7 @@ sub SLLA {
 	       $posnr_wegegeld eq '331') {
 	$erg .= $self->SLLA_ENF($posnr_wegegeld.$anteilig,$leistdat[4],$epreis,$leistdat[8]);
 	$lfdnr++;
-	my $km_preis = sprintf "%.2f",$leistdat[8]*$epreis;
+	my $km_preis = sprintf "%.2f",$h->runden($leistdat[8]*$epreis);
 	$summe_km+=$km_preis;
 	print "Wegegeld summe: $summe_km, $km_preis\n" if ($debug > 1000);
       }
