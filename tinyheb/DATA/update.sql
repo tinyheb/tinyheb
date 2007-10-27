@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.11 2007-09-19 15:35:38 thomas_baum Exp $
+# $Id: update.sql,v 1.12 2007-10-27 16:41:39 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 # zunächst alte GO ungültig machen
@@ -382,7 +382,53 @@ WWWRUN	INSERT	Leistungsart	POSNR='800' and GUELT_VON='2007-08-01' and GUELT_BIS=
 #
 #WWWRUN	INSERT	Leistungsart	POSNR='M014' and GUELT_VON='2007-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'M014','M','Lanolin 10g',0.95,'Lanolin 10g','2007-08-01','9999-12-31',0,'530');
 #
-# -------- sonstige updates
+# -------- sonstige updates Indizes w/ Perfomance
 # 
 ROOT	ALTER	Leistungsart		alter table Leistungsart add index POSNR_INDEX(POSNR,GUELT_VON,GUELT_BIS);
 ROOT	ALTER	Leistungsdaten		alter table Leistungsdaten add index FKST_INDEX(FK_STAMMDATEN);
+
+# -------- neue Felder aufnehmen
+ROOT	ALTER	Stammdaten		alter table Stammdaten add KZETGT TINYINT UNSIGNED DEFAULT NULL AFTER DATUM;
+ROOT	ALTER	Stammdaten		alter table Stammdaten add GEBURTSZEIT_KIND TIME DEFAULT NULL AFTER KZETGT;
+ROOT	ALTER	Leistungsart		alter table Leistungsart add KILOMETER VARCHAR(5) DEFAULT 'J'  AFTER KBEZ;
+ROOT	ALTER	Leistungsart		alter table Leistungsart add PZN DECIMAL(7,0) DEFAULT NULL AFTER KILOMETER;
+ROOT	ALTER	Leistungsart		alter table Leistungsart add NICHT VARCHAR(100) DEFAULT NULL AFTER PZN;
+#
+# -------- update w/ neuer Felder
+#
+# Kilometer j/n
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where LEISTUNGSTYP = 'M';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '040';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '060';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '070';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '140';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '150';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '190';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '220';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '230';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '240';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '250';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '270';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '290';
+#
+# NICHT
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='020,030,040,050,051,060,080' where POSNR = '010' and NICHT IS NULL;
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='010,030,040,050,051,060,080' where POSNR = '020' and NICHT IS NULL;
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='010,020' where POSNR = '030' and NICHT IS NULL;
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='010,020' where POSNR = '040' and NICHT IS NULL;
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='010,020' where POSNR = '050' and NICHT IS NULL;
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='010,020' where POSNR = '051' and NICHT IS NULL;
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='010,020' where POSNR = '060' and NICHT IS NULL;
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='010,020' where POSNR = '080' and NICHT IS NULL;
+#
+# alte Positionsnummern NICHT
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='1' where POSNR in ('2','4','5','8') and NICHT IS NULL;
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='2,4,5,8' where POSNR = '1' and NICHT IS NULL;
+#
+#
+# Begründungspflicht POSNR 260,261
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set BEGRUENDUNGSPFLICHT='j' where POSNR in ('260','261');
