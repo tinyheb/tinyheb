@@ -3,7 +3,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.48 2007-10-22 16:51:29 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.49 2007-10-27 16:36:39 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -59,7 +59,9 @@ my $heb_bundesland = $h->parm_unique('HEB_BUNDESLAND') || 'NRW';
 my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
     $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
     $ik_krankenkasse,$naechste_hebamme,
-    $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
+    $begruendung_nicht_nae_heb,
+    $kzetgt,$uhr_kind) = $s->stammdaten_frau_id($frau_id);
+
 $entfernung_frau =~ s/\./,/g;
 $plz = sprintf "%5.5u",$plz;
 
@@ -693,7 +695,8 @@ sub anschrift {
     my $datum_jmt=$d->convert($datum);$datum_jmt =~ s/-//g;
     # zeilen nur ausgeben, wenn geb Kind gültig ist
     if ($geb_kind_et ne 'error') {
-      if ($datum_jmt >= $geb_kind_et) {
+      if ($datum_jmt >= $geb_kind_et && !$kzetgt ||
+	  $kzetgt == 1) {
 	$p->text(12.7,$y1-$y_font,"geboren am");
       } else {
 	$p->text(12.7,$y1-$y_font,"ET");
