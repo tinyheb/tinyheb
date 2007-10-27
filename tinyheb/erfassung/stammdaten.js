@@ -4,7 +4,7 @@
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
-# $Id: stammdaten.js,v 1.19 2007-07-27 18:55:15 baum Exp $
+# $Id: stammdaten.js,v 1.20 2007-10-27 16:43:54 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # This program is free software; you can redistribute it and/or modify
@@ -80,6 +80,9 @@ function frau_speicher(formular) {
   if (!datum_check(formular.geburtsdatum_kind)) {
     return false;
   }
+  if (!uhrzeit_check(formular.geburtszeit_kind)) {
+    return false;
+  }
   if (!plz_check(formular.plz)) {
     return false;
   }
@@ -99,6 +102,9 @@ function frau_speicher(formular) {
 function save_heb_stammdaten(formular) {
   // plausiprüfungen für angaben zur hebamme
   if (!ik_gueltig_check(formular.ik)) {
+    return false;
+  }
+  if (!ik_gueltig_check(formular.ik_beleg_kkh)) {
     return false;
   }
   if (!plz_check(formular.plz)) {
