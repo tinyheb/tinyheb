@@ -5,10 +5,10 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.36 2007-07-27 18:55:15 baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.37 2007-10-27 16:45:59 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -73,6 +73,8 @@ my $plz_krankenkasse = '';
 my $ort_krankenkasse = '';
 my $strasse_krankenkasse = '';
 my $geb_kind = $q->param('geburtsdatum_kind') || '';
+my $uhr_kind = $q->param('geburtszeit_kind') || '';
+my $kzetgt = $q->param('kzetgt') || 2;
 my $naechste_hebamme = $q->param('naechste_hebamme');
 my $begruendung_nicht_nae_heb = $q->param('nicht_naechste_heb') || '';
 my $datum = $q->param('datum') || '';
@@ -244,7 +246,7 @@ while ($j <= $#verstatus) {
   print ' selected' if ($verstatus[$j] eq $versichertenstatus);
   print '>';
   print $verstatus[$j];
-  print '</option>';
+  print "</option>\n";
   $j++;
 }
 print "</td>\n";
@@ -273,15 +275,29 @@ print '</tr>';
 print '</table>';
 print "\n";
 
-# Zeile mit Geburtsdatum Kind
+# leere Zeile 
+print '<tr><td>&nbsp;</td></tr>';
+
+# Zeile mit Geburtsdatum,Zeit Kind
 print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
 print '<td><b>Geburtsdatum Kind</b></td>';
+print '<td><b>Geburtszeit Kind</b></td>';
+print '<td><b>Kennzeichen Termin</b></td>';
 print '<td><b>Anzahl Kinder</b></td>';
 print '</tr>';
 print "<td><input type='text' name='geburtsdatum_kind' value='$geb_kind' size='10' maxlength='10' onChange='return datum_check(this)'></td>";
+print "<td><input type='text' name='geburtszeit_kind' value='$uhr_kind' size='5' maxlength='5' onChange='uhrzeit_check(this)'></td>";
+if ($kzetgt == 0 || $kzetgt == 2) {
+  print "<td><input type='radio' name='kzetgt' value='2' checked>errechneter Termin";
+  print "<input type='radio' name='kzetgt' value='1'>Geburtstermin";
+} else {
+  print "<td><input type='radio' name='kzetgt' value='2'>errechneter Termin";
+  print "<input type='radio' name='kzetgt' value='1' checked>Geburtstermin";
+}
+
 print '<td>';
 print "<select name='anz_kinder' size=1>";
 $j=0;
@@ -292,7 +308,7 @@ while ($j <= $#kinder) {
   print ' selected' if ($jh == $anz_kinder);
   print '>';
   print $kinder[$j];
-  print '</option>';
+  print "</option>\n";
   $j++;
 }
 print '</td>';
@@ -337,7 +353,7 @@ print "\n";
 
 # Zeile mit Knöpfen für unterschiedliche Funktionen
 print '<tr>';
-print '<td>';
+print "<td>\n";
 print '<table border="0" align="left">';
 print '<tr>';
 print '<td>';
@@ -348,7 +364,7 @@ while ($i <= $#aus) {
   print ' selected' if ($aus[$i] eq $auswahl);
   print '>';
   print $aus[$i];
-  print '</option>';
+  print "</option>\n";
   $i++;
 }
 print '</select>';
@@ -371,7 +387,7 @@ print '</tr>';
 print '</table>';
 print '</form>';
 print '</tr>';
-print '</table>';
+print "</table>\n";
 print <<SCRIPTE;
 <script>
   set_focus(document.stammdaten);
@@ -396,6 +412,8 @@ sub speichern {
   # Datümer konvertierten
   my $geb_f = $d->convert($geb_frau);
   my $geb_k = $d->convert($geb_kind);
+  my $uhr_k = $uhr_kind.':00';
+  $uhr_k = undef if ($uhr_kind eq '');
   my $ent_sp = $entfernung;
   $ent_sp =~ s/,/\./g;
   my $plz_sp = $plz; $plz_sp = 0 if (!defined($plz_sp) or $plz_sp eq '');
@@ -408,7 +426,9 @@ sub speichern {
   my $erg = $s->stammdaten_ins($vorname,$nachname,$geb_f,$strasse,$plz_sp,$ort,$tel,
 			       $ent_sp,$kv_nummer,$kv_gueltig,$versichertenstatus,
 			       $ik_sp,$anz_kinder,$geb_k,$naechste_hebamme,
-			       $begruendung_nicht_nae_heb,$TODAY);
+			       $begruendung_nicht_nae_heb,$TODAY,
+			       $kzetgt,$uhr_k
+			      );
   return $erg;
 }
 
@@ -434,13 +454,18 @@ sub aendern {
   my $ik_sp = $ik_krankenkasse; $ik_sp = 0 if (!defined($ik_sp) or $ik_sp eq '');
   $geb_k = '0000-00-00' if(!defined($geb_k) or $geb_k eq 'error');
   $geb_f = '0000-00-00' if(!defined($geb_f) or $geb_f eq 'error');
+  my $uhr_k = $uhr_kind.':00';
+  $uhr_k = undef if ($uhr_kind eq '');
   $ent_sp = 0 if(!defined($ent_sp) or $ent_sp eq '');
 
   # jetzt speichern
   my $erg = $s->stammdaten_update($vorname,$nachname,$geb_f,$strasse,$plz_sp,$ort,$tel,
-			      $ent_sp,$kv_nummer,$kv_gueltig,$versichertenstatus,
-			      $ik_sp,$anz_kinder,$geb_k,$naechste_hebamme,
-			      $begruendung_nicht_nae_heb,$TODAY,$frau_id);
+				  $ent_sp,$kv_nummer,$kv_gueltig,$versichertenstatus,
+				  $ik_sp,$anz_kinder,$geb_k,$naechste_hebamme,
+				  $begruendung_nicht_nae_heb,$TODAY,
+				  $kzetgt,
+				  $uhr_k,
+				  $frau_id);
   return $erg;
 }
 
@@ -452,7 +477,8 @@ sub hole_frau_daten {
   ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
    $anz_kinder,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
    $ik_krankenkasse,$naechste_hebamme,
-   $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
+   $begruendung_nicht_nae_heb,
+   $kzetgt,$uhr_kind) = $s->stammdaten_frau_id($frau_id);
   $frau_id2=$frau_id;
   $entfernung = '0.0' unless defined($entfernung);
   $entfernung =~ s/\./,/g;
@@ -461,6 +487,8 @@ sub hole_frau_daten {
   $plz = sprintf "%5.5u",$plz if ($plz ne '' && $plz > 0);
   $plz = '' if ($plz eq '' || $plz == 0);
   $ik_krankenkasse='' if (!defined($ik_krankenkasse) || $ik_krankenkasse eq '' || $ik_krankenkasse == 0);
+  $kzetgt =0 if(!$kzetgt);
+  $uhr_kind='' if (!($uhr_kind) || $uhr_kind eq '00:00:00');
   
   return;
 }
