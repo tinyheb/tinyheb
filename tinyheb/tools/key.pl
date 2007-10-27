@@ -1,11 +1,12 @@
 #!/usr/bin/perl -w
+# -d:DProf
 # -d:ptkdb
 # -wT
 
 # extrahiert aus Schlüsseldateien des Trust Center ITSG die einzelnen
 # Schlüssel
 
-# $Id: key.pl,v 1.11 2007-10-20 07:54:06 thomas_baum Exp $
+# $Id: key.pl,v 1.12 2007-10-27 16:35:34 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -134,18 +135,27 @@ foreach my $file (@dateien) {
     if (length($zeile)>1) {
       print SCHREIB $zeile."\n";
       $erg .= $zeile."\n";
-    } else {
+    } else {  
       print SCHREIB "-----END CERTIFICATE-----\n";
       close(SCHREIB);
+      
 
-      my $serial=get_serial("$path/tmpcert.pem") or 
-	die "konnte Seriennummer eines Zertifikates nicht ermittlen\n";
+      my ($ik,
+	  $organisation,
+	  $herausgeber,
+	  $ansprechpartner,
+	  $start,
+	  $ende,
+	  $serial,
+	  $algorithmus,
+	  $pubkey_laenge)=get_all("$path/tmpcert.pem");
+
+      die "konnte Seriennummer eines Zertifikates nicht ermittlen\n" unless ($serial);
       print "Seriennummer $serial\n" if $debug;
 
-      my ($pubkey_laenge,$algorithmus)=get_public_key("$path/tmpcert.pem");
+#      my ($pubkey_laenge,$algorithmus)=get_public_key("$path/tmpcert.pem");
       print "public key: $pubkey_laenge, algo: $algorithmus\n" if $debug;
 
-      $ik=get_ik("$path/tmpcert.pem");
       if ($pubkey_laenge < 2000) {
 	print "Schlüssel zu kurz für IK: $ik Schlüssellänge: $pubkey_laenge < 2000 entweder die Datei annahme-pkcs.key oder gesamt-pkcs.key einspielen, die Vearbeitung wird abgebrochen\n";
 	die;
@@ -167,10 +177,6 @@ foreach my $file (@dateien) {
 	}
       }
 
-      my($start,$ende)=get_dates("$path/tmpcert.pem");
-      my $organisation=get_organisation("$path/tmpcert.pem");
-      my $ansprechpartner=get_ansprechpartner("$path/tmpcert.pem");
-      my $herausgeber=get_herausgeber("$path/tmpcert.pem");
       if ($ik && 
 	  $herausgeber !~ /ITSG TrustCenter fuer sonstige Leistungserbringer/ && 
 	  $herausgeber !~ /DKTIG TrustCenter fuer Krankenhaeuser und Leistungserbringer PKC/) {
@@ -207,29 +213,22 @@ print "</table>" if $html;
 
 
 
-sub get_ik {
-  # holt ik Nummer aus Zertifikat
+sub get_all {
   my ($cert_name) = @_;
-  system("$openssl x509 -in $cert_name -subject -noout") if $debug;
-  open LESNAME,"$openssl x509 -in $cert_name -subject -noout |" or 
-    die "konnte aus Zertifikat keine IK Nummer ermitteln\n";
-  my $name=<LESNAME>;
-  close(LESNAME);
-  if ($name =~ /OU=IK(\d{9})/) {
-    return $1;
-  } else {
-    return undef;
-  }
-}
+  system("$openssl x509 -in $cert_name -subject -dates -serial -noout -certopt no_header -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_serial -certopt no_version -certopt no_issuer -certopt no_signame -text") if $debug;
+  open LESNAME,"$openssl x509 -in $cert_name -subject -dates -serial -noout -certopt no_header -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_serial -certopt no_version -certopt no_issuer -certopt no_signame -text |" or 
+    die "konnte aus Zertifikat keine Organisation ermitteln\n";
 
-sub get_dates {
-  # holt Gültigkeitszeitraum aus Zertifikat
-  my ($cert_name) = @_;
-  system("$openssl x509 -in $cert_name -dates -noout") if $debug;
-  open LESNAME,"$openssl x509 -in $cert_name -dates -noout |" or 
-    die "konnte aus Zertifikat keine Gültigkeitsdauer ermitteln\n";
   my $guelt_von=undef;
   my $guelt_bis=undef;
+  my $herausgeber=undef;
+  my $ansprechpartner=undef;
+  my $organisation=undef;
+  my $serial=undef;
+  my $ik=undef;
+  my $algorithmus=undef;
+  my $pubkey_laenge=undef;
+
   while (my $name=<LESNAME>) {
     if ($name =~ /^notBefore=(.*?)$/) {
       $guelt_von=$1;
@@ -237,94 +236,33 @@ sub get_dates {
     if ($name =~ /^notAfter=(.*?)$/) {
       $guelt_bis=$1;
     }
-  }
-  close(LESNAME);
-  return ($guelt_von,$guelt_bis);
-}
-
-sub get_serial {
-  # holt Serien-Nummer aus Zertifikat
-  my ($cert_name) = @_;
-  system("$openssl x509 -in $cert_name -serial -noout") if $debug;
-  open LESNAME,"$openssl x509 -in $cert_name -serial -noout |" or 
-    die "konnte aus Zertifikat keine Seriennummer ermitteln\n";
-  my $name=<LESNAME>;
-  close(LESNAME);
-  if ($name =~ /^serial=(.*?)$/) {
-    return hex($1);
-  } else {
-    return undef;
-  }
-}
-
-sub get_organisation {
-  # holt Organisation aus Zertifikat
-  my ($cert_name) = @_;
-  system("$openssl x509 -in $cert_name -subject -noout") if $debug;
-  open LESNAME,"$openssl x509 -in $cert_name -subject -noout |" or 
-    die "konnte aus Zertifikat keine Organisation ermitteln\n";
-  my $name=<LESNAME>;
-  close(LESNAME);
-  if ($name =~ /OU=(.*?)\/OU=/) {
-    return $1;
-  } else {
-    return undef;
-  }
-}
-
-
-sub get_ansprechpartner {
-  # holt Organisation aus Zertifikat
-  my ($cert_name) = @_;
-  system("$openssl x509 -in $cert_name -subject -noout") if $debug;
-  open LESNAME,"$openssl x509 -in $cert_name -subject -noout |" or 
-    die "konnte aus Zertifikat keinen Ansprechpartner ermitteln\n";
-  my $name=<LESNAME>;
-  close(LESNAME);
-  if ($name =~ /CN=(.*?)$/) {
-    return $1;
-  } else {
-    return undef;
-  }
-}
-
-sub get_herausgeber {
-  # holt Herausgeber aus Zertifikat
-  my ($cert_name) = @_;
-  system("$openssl x509 -in $cert_name -subject -noout") if $debug;
-  open LESNAME,"$openssl x509 -in $cert_name -subject -noout |" or 
-    die "konnte aus Zertifikat keinen Herausgeber (Issuer) ermitteln\n";
-  my $name=<LESNAME>;
-  close(LESNAME);
-  if ($name =~ /O=(.*?)\/OU/) {
-    return $1;
-  } else {
-    return undef;
-  }
-}
-
-
-sub get_public_key {
-  # holt länge des public key und algorithmus aus Zertifikat
-  my ($cert_name) = @_;
-  system("$openssl x509 -in $cert_name -certopt no_header -certopt no_serial -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_issuer -certopt no_signame -noout -text") if $debug;
-  open LESNAME,"$openssl x509 -in $cert_name -certopt no_header -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_serial -certopt no_version -certopt no_issuer -certopt no_signame -noout -text |" or 
-    die "konnte aus Zertifikat keinen Public key ermitteln\n";
-
-  my $pubkey_laenge=0;
-  my $algorithmus='';
-  while(my $zeile=<LESNAME>) {
-    if ($zeile =~ /Public Key Algorithm: (.*?)$/) {
+    if ($name =~ /OU=(.*?)\/OU=/) {
+      $organisation=$1;
+    }
+    if ($name =~ /O=(.*?)\/OU/) {
+      $herausgeber=$1;
+    }
+    if ($name =~ /CN=(.*?)$/) {
+      $ansprechpartner=$1;
+    }
+    if ($name =~ /^serial=(.*?)$/) {
+      $serial=hex($1);
+    }
+    if ($name =~ /OU=IK(\d{9})/) {
+      $ik=$1;
+    }
+    if ($name =~ /Public Key Algorithm: (.*?)$/) {
       $algorithmus = $1;
     }
-    if ($zeile =~ /Public Key: \((\d{1,4}) bit/) {
+    if ($name =~ /Public Key: \((\d{1,4}) bit/) {
       $pubkey_laenge = $1;
     }
   }
   close(LESNAME);
-  return ($pubkey_laenge,$algorithmus) if ($pubkey_laenge > 0 && $algorithmus ne '');
-  return undef;
+  return ($ik,$organisation,$herausgeber,$ansprechpartner,$guelt_von,$guelt_bis,$serial,$algorithmus,$pubkey_laenge);
+
 }
+
 
 
 sub print_html {
