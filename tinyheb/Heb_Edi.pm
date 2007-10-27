@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.40 2007-10-22 16:43:03 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.41 2007-10-27 16:37:59 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -23,7 +23,7 @@
 package Heb_Edi;
 
 use strict;
-use Date::Calc qw(Today_and_Now);
+use Date::Calc qw(Today_and_Now Today);
 use File::stat;
 use MIME::QuotedPrint qw(encode_qp);
 
@@ -62,6 +62,13 @@ sub new {
   my $rechnr = shift;
   my $self = {@_};
   $dbh = Heb->connect;
+
+  # prüfen, ob Version ok
+  my $TODAY_jmt = sprintf "%4.4u%2.2u%2.2u",Today();
+  if ($TODAY_jmt > 20080131) {
+    $ERROR="mit dieser Version kann keine elektronische Rechnung mehr nach dem 31.01.2008 erstellt werden";
+    return undef;
+  }
 
   # prüfen auf openssl installation
   if(!defined($openssl)) {
