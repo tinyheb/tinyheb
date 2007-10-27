@@ -1,6 +1,6 @@
 # Package um Stammdaten zu verarbeiten
 
-# $Id: Heb_stammdaten.pm,v 1.11 2007-07-27 18:55:15 baum Exp $
+# $Id: Heb_stammdaten.pm,v 1.12 2007-10-27 16:51:50 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -46,7 +46,9 @@ sub new {
 			     "VERSICHERTENSTATUS,".
 			     "IK,".
 			     "NAECHSTE_HEBAMME,".
-			     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME ".
+			     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME, ".
+			     "KZETGT, ".
+			     "TIME_FORMAT(GEBURTSZEIT_KIND,'%H:%i') ".
 			     "from Stammdaten where ".
 			     "VORNAME like ? and ".
 			     "NACHNAME like ? and ".
@@ -104,7 +106,10 @@ sub stammdaten_ins {
      $geburtsdatum_kind,
      $naechste_hebamme,
      $begruendung_nicht_naechste_hebamme,
-     $datum,$id_alt) = @_;
+     $datum,
+     $kzetgt,
+     $geburtszeit_kind,
+     $id_alt) = @_;
 
   # zunächst neue ID für Frau holen
   Heb->parm_such('STAMMDATEN_ID');
@@ -122,13 +127,18 @@ sub stammdaten_ins {
 				     "ANZ_KINDER,GEBURTSDATUM_KIND,".
 				     "NAECHSTE_HEBAMME,".
 				     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME,".
-				     "DATUM)".
+				     "DATUM,".
+				     "KZETGT,".
+				     "GEBURTSZEIT_KIND".
+				     ")".
 				     "values (?,?,?,?,".
 				     "?,?,?,?,?,".
 				     "?,".
 				     "?,".
 				     "?,?,".
 				     "?,?,".
+				     "?,".
+				     "?,".
 				     "?,".
 				     "?,".
 				     "?);")
@@ -141,7 +151,8 @@ sub stammdaten_ins {
 				     $anz_kinder,$geburtsdatum_kind,
 				     $naechste_hebamme,
 				     $begruendung_nicht_naechste_hebamme,
-				     $datum)
+				     $datum,$kzetgt,$geburtszeit_kind)
+#				     $datum,$kzetgt,undef)
     or die $dbh->errstr();
 
   Heb->parm_up('STAMMDATEN_ID',$id) if(!defined($id_alt));
@@ -161,8 +172,10 @@ sub stammdaten_update {
 				    "VERSICHERTENSTATUS=?,IK=?,".
 				    "ANZ_KINDER=?,GEBURTSDATUM_KIND=?,".
 				    "NAECHSTE_HEBAMME=?,".
-				     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME=?,".
-				    "DATUM=? ".
+				    "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME=?,".
+				    "DATUM=?, ".
+				    "KZETGT=?, ".
+				    "GEBURTSZEIT_KIND=? ".
 				    "where ID=?;")
     or die $dbh->errstr();
   my $erg = $stammdaten_up->execute(@_)
@@ -203,7 +216,9 @@ sub stammdaten_frau_id {
 			      "VERSICHERTENSTATUS,".
 			      "IK,".
 			      "NAECHSTE_HEBAMME,".
-			      "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME ".
+			      "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME, ".
+			      "KZETGT, ".
+			      "GEBURTSZEIT_KIND ".
 			      "from Stammdaten where ".
 			      "ID = $id;")
     or die $dbh->errstr();
