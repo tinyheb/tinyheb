@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.39 2007-09-01 06:51:14 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.40 2007-10-27 16:47:54 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -73,21 +73,31 @@ my $func = $q->param('func') || 0;
 
 print $q->header ( -type => "text/html", -expires => "-1d");
 
+if ($auswahl eq 'Anzeigen' && $frau_id > 0 &&
+    $entfernung_tag == 0 && $entfernung_nacht == 0) {
+  # entfernung aus den Stammdaten der Frau holen und Anzahl auf 1 setzen
+  my @dat_frau = $s->stammdaten_frau_id($frau_id);
+  $entfernung_tag = $dat_frau[9];
+  $entfernung_tag = 0 if (!$dat_frau[9]);
+  $entfernung_tag =~ s/\./,/g;
+  $anzahl_frauen=1;
+}
+
 if ($auswahl eq 'Neu' && defined($abschicken)) {
   $hint=speichern($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke);
-  $entfernung_tag=0;
-  $entfernung_nacht=0;
+#  $entfernung_tag=0;
+#  $entfernung_nacht=0;
   $begruendung='';
-  $anzahl_frauen=1;
+#  $anzahl_frauen=1;
 }
 
 if ($auswahl eq 'Ändern' && defined($abschicken)) {
   aendern();
   hole_daten() if($leist_id > 0);
-  $entfernung_tag=0;
-  $entfernung_nacht=0;
+#  $entfernung_tag=0;
+#  $entfernung_nacht=0;
   $begruendung='';
-  $anzahl_frauen=1;
+#  $anzahl_frauen=1;
   $auswahl='Neu';
 }
 
@@ -139,7 +149,7 @@ print "<td id='preis_id'><input type='text' class='disabled' disabled name='prei
 print "<td><input type='text' class='disabled' disabled name='wotag' value='' size='17'></td>";
 
 print '</tr>';
-print '</table>';
+print "</table>\n";
 
 
 print '<tr><td><table border="0" align="left">';
@@ -212,11 +222,11 @@ print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="ha
 print '<td><input type="button" name="stammdaten" value="Stammdaten" onClick="stamm(frau_id.value,document.rechpos);"></td>';
 print '<td><input type="button" name="Drucken" value="Rechnung generieren" onClick="druck(document.rechpos);"></td>';
 print '</tr>';
-print '</table>';
+print "</table>\n";
 print '</form>';
 print '</td>';
 print '</tr>';
-print '</table>';
+print "</table>\n";
 # //  auswahl_wechsel(document.rechpos);
 print <<SCRIPTE;
 <script>
@@ -248,7 +258,7 @@ sub printauswahlboxbegr {
      print ' selected' if($text eq $begruendung);
      print ' >';
      print "$text";
-     print '</option>';
+     print "</option>\n";
    }
    print "</select>";
 }
@@ -313,13 +323,36 @@ sub printbox {
   $l->leistungsart_such($TODAY_jmt,$wahl);
   while (my @werte = $l->leistungsart_such_next() ) {  
     my $fuerzeit_flag='';
-    my ($l_posnr,$l_bez,$l_preis,$l_fuerzeit,$l_samstag,$l_nacht)=($werte[1],$werte[21],$werte[4],$werte[9],$werte[8],$werte[7]);
+    my ($l_posnr,$l_bez,$l_preis,$l_fuerzeit,$l_samstag,$l_nacht,$l_kilometer)=($werte[1],$werte[21],$werte[4],$werte[9],$werte[8],$werte[7],$werte[22]);
     ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
     if ($l_preis > 0) {
-      print "<option value='$l_posnr' ";
+      print "<option value='$l_posnr'";
       print ' selected' if ($posnr eq $l_posnr);
-      print " >";
+      print ">\n";
       $script .= "if(formular.posnr.value == '$l_posnr') {\nformular.preis.value=$l_preis;\n";
+
+      # Script um Kilometer anzeige abzuschalten
+      if ($l_kilometer eq 'J') {
+	$script .= "formular.entfernung_tag.disabled=false;\n";
+	$script .= "formular.entfernung_nacht.disabled=false;\n";
+	$script .= "var zl_tag = document.getElementsByName('entfernung_tag');\n";
+	$script .= "zl_tag[0].className='enabled';\n";
+	$script .= "var zl_tag = document.getElementsByName('entfernung_nacht');\n";
+	$script .= "zl_tag[0].className='enabled';\n";
+	$script .= "var zl_tag = document.getElementsByName('anzahl_frauen');\n";
+	$script .= "zl_tag[0].className='enabled';\n";
+      } else {
+	$script .= "formular.entfernung_tag.disabled=true;\n";
+	$script .= "formular.entfernung_nacht.disabled=true;\n";
+	$script .= "var zl_tag = document.getElementsByName('entfernung_tag');\n";
+	$script .= "zl_tag[0].className='disabled';\n";
+	$script .= "var zl_tag = document.getElementsByName('entfernung_nacht');\n";
+	$script .= "zl_tag[0].className='disabled';\n";
+	$script .= "var zl_tag = document.getElementsByName('anzahl_frauen');\n";
+	$script .= "zl_tag[0].className='disabled';\n";
+      }
+
+      # Script um Zeitanzeige abzuschalten
       if (defined($l_fuerzeit) && $l_fuerzeit > 0 || 
 	  defined($l_samstag) && $l_samstag ne '' ||
 	  $l->leistungsart_pruef_zus($l_posnr,'SAMSTAG') ||
@@ -348,6 +381,7 @@ sub printbox {
       } else {
 	$script .= "loesche_kurs_knopf();\n";
       }
+
       $script.="}\n";
       print "$l_posnr&nbsp;$l_bez";
       print '</option>';
@@ -487,6 +521,12 @@ sub speichern {
     return $hint;
   }
 
+  # darf Positionsnummer nicht mit anderen erfasst werden
+  if ($hebgo->nicht_plausi) {
+    $hint .= $hebgo->nicht_plausi;
+    return $hint;
+  }
+
   # spezielle Prüfungen für PosNr. 1
   if ($hebgo->pos1_plausi ne '') {
     $hint .= $hebgo->pos1_plausi();
@@ -499,24 +539,6 @@ sub speichern {
     return $hint;
   }
 
-  # spezielle Prüfungen für PosNr. 020
-  if ($hebgo->pos020_plausi) {
-    $hint .= $hebgo->pos020_plausi();
-    return $hint;
-  }
-
-
-  # spezielle Prüfungen für PosNr. 2, 4, 5 und 8
-  if ($hebgo->pos2458_plausi ne '') {
-    $hint .= $hebgo->pos2458_plausi;
-    return $hint;
-  }
-
-  # spezielle Prüfungen für PosNr. 020, 030, 040, 050, 060 und 080
-  if ($hebgo->pos234568_plausi) {
-    $hint .= $hebgo->pos234568_plausi;
-    return $hint;
-  }
 
   # spezielle Prüfung für PosNr. 6
   if ($hebgo->pos6_plausi) {
@@ -564,6 +586,12 @@ sub speichern {
   # spezielle Prüfung für PosNr. 270 
   if ($hebgo->pos270_plausi) {
     $hint .= $hebgo->pos270_plausi;
+    return $hint;
+  }
+
+  # spezielle Prüfung für PosNr. 280 290
+  if ($hebgo->pos280_290_plausi) {
+    $hint .= $hebgo->pos280_290_plausi;
     return $hint;
   }
 
