@@ -1,6 +1,6 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.23 2007-09-01 06:49:50 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.24 2007-10-27 16:51:15 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -511,7 +511,8 @@ sub leistungsart_ins {
   my ($posnr,$bez,$ltyp,$epreis,$proz,
       $sonn,$nacht,$sam,$fuerz,$dau,$zwill,
       $zweites,$einm,$begrue,$zus1,
-      $zus2,$zus3,$zus4,$g_v,$g_b,$kbez,$id_alt)=@_;
+      $zus2,$zus3,$zus4,$g_v,$g_b,$kbez,
+      $kilometer,$pzn,$nicht,$id_alt)=@_;
   $id = $id_alt if(defined($id_alt));
 
   $dau=0 if (!defined($dau) || $dau eq '');
@@ -524,15 +525,15 @@ sub leistungsart_ins {
 		  "FUERZEIT,DAUER,ZWILLINGE, ".
 		  "ZWEITESMAL,EINMALIG,BEGRUENDUNGSPFLICHT,ZUSATZGEBUEHREN1,".
 		  "ZUSATZGEBUEHREN2,ZUSATZGEBUEHREN3,ZUSATZGEBUEHREN4,".
-		  "GUELT_VON,GUELT_BIS,KBEZ) ".		  
+		  "GUELT_VON,GUELT_BIS,KBEZ,KILOMETER,PZN,NICHT) ".		  
 		  "values (?,?,?,?,?,".
 		  "?,?,?,?,".
 		  "?,?,?,".
 		  "?,?,?,?,".
 		  "?,?,?,".
-		  "?,?,?);")
+		  "?,?,?,?,?,?);")
       or die $dbh->errstr();
-  $leistungsart_ins->execute($id,$posnr,$bez,$ltyp,$epreis,$proz,$sonn,$nacht,$sam,$fuerz,$dau,$zwill,$zweites,$einm,$begrue,$zus1,$zus2,$zus3,$zus4,$g_v,$g_b,$kbez) or die $dbh->errstr();
+  $leistungsart_ins->execute($id,"$posnr",$bez,$ltyp,$epreis,$proz,$sonn,$nacht,$sam,$fuerz,$dau,$zwill,$zweites,$einm,$begrue,$zus1,$zus2,$zus3,$zus4,$g_v,$g_b,$kbez,$kilometer,$pzn,$nicht) or die $dbh->errstr();
   Heb->parm_up('LEISTUNGSART_ID',$id) if(!defined($id_alt));
   return $id;
 }
