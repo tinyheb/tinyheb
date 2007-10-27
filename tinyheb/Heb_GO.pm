@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.9 2007-09-01 06:48:45 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.10 2007-10-27 16:50:37 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -24,7 +24,7 @@
 package Heb_GO;
 
 use strict;
-use Date::Calc qw(Today Day_of_Week Delta_Days Add_Delta_Days Day_of_Week);
+use Date::Calc qw(Today Day_of_Week Delta_Days Add_Delta_Days Day_of_Week Add_Delta_YM);
 
 use lib "../";
 use Heb_leistung;
@@ -56,9 +56,9 @@ sub new {
 
   ($self->{ltyp},$self->{begruendungspflicht},$self->{dauer},
    $self->{samstag},$self->{sonntag},$self->{nacht},$self->{zweitesmal},
-   $self->{fuerzeit})
+   $self->{fuerzeit},$self->{nicht})
    =$l->leistungsart_such_posnr
-     ('LEISTUNGSTYP,BEGRUENDUNGSPFLICHT,DAUER,SAMSTAG,SONNTAG,NACHT,ZWEITESMAL,FUERZEIT',
+     ('LEISTUNGSTYP,BEGRUENDUNGSPFLICHT,DAUER,SAMSTAG,SONNTAG,NACHT,ZWEITESMAL,FUERZEIT,NICHT',
       $self->{posnr},$self->{datum_l});
   $self->{zweitesmal}='' unless (defined($self->{zweitesmal}));
   $self->{samstag}='' unless(defined($self->{samstag}));
@@ -180,10 +180,6 @@ sub pos1_plausi {
   if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr") >= 12) {
     return 'FEHLER: Position ist höchstens zwölfmal berechnungsfähig\nes wurde nichts gespeichert';
   }
-  if ($l->leistungsdaten_werte($frau_id,"POSNR",
-                               "POSNR in (2,4,5,8) and DATUM='$datum_l'")) {
-    return 'FEHLER: Positionsnummer ist neben Leistungen nach 2,4,5 und 8\n an demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
-  }
   return '';
 }
 
@@ -200,31 +196,10 @@ sub pos010_plausi {
   if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr") >= 12) {
     return 'FEHLER: Position ist höchstens zwölfmal berechnungsfähig\nes wurde nichts gespeichert';
   }
-  if ($l->leistungsdaten_werte($frau_id,"POSNR",
-                               "POSNR in (020,030,040,050,051,060,080) and DATUM='$datum_l'")) {
-    return 'FEHLER: Positionsnummer '.$posnr.' ist neben Leistungen nach 020,030,040,050,051,060 und 080\n an demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
-  }
+
   return '';
 }
 
-
-sub pos020_plausi {
-  # prüft ob Positionsnummer 020 erfasst wurde
-
-  # liefert als Ergebnis '' wenn kein Fehler aufgetreten ist oder
-  # Fehlermeldung wenn Fehler aufgetreten ist
-  my $self = shift;
-  my ($posnr,$frau_id,$datum_l) = 
-    ($self->{posnr},$self->{frau_id},$self->{datum_l});
-
-  return '' if $posnr ne '020';
-
-  if ($l->leistungsdaten_werte($frau_id,"POSNR",
-                               "POSNR in (010,030,040,050,051,060,080) and DATUM='$datum_l'")) {
-    return 'FEHLER: Positionsnummer '.$posnr.' ist neben Leistungen nach 010,030,040,050,051,060 und 080\n an demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
-  }
-  return '';
-}
 
 
 sub pos6_plausi {
@@ -407,45 +382,57 @@ sub pos270_plausi {
 }
 
 
-sub pos2458_plausi {
-  # prüft für Positionsnummer 2,4,5,8 ob schon Positionsnummer 1 erfasst
-  # wurde
-  # liefert Ergebnis '' wenn kein Fehler aufgetreten ist oder
-  # Fehlermeldung wenn Fehler aufgetreten ist
-  my $self=shift;
-  my ($posnr,$frau_id,$datum_l)=
-    ($self->{posnr},$self->{frau_id},$self->{datum_l});
+sub pos280_290_plausi {
+  # prüft, ob Posnr 280,290 frühestens nach 8 Wochen
+  # maximal 4 mal
+  # abgerechnet werden --> OK
 
-  return '' if ($posnr ne '2' && $posnr ne '4' && 
-                $posnr ne '5' && $posnr ne '8');
-  if ($l->leistungsdaten_werte($frau_id,"POSNR",
-                               "POSNR=1 and DATUM='$datum_l'")) {
-    return 'FEHLER: Positionsnummer '.$posnr.' ist neben Leistungen nach 1\nan demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
+  my $self=shift;
+
+  return '' if ($self->{posnr} ne '280' && 
+		$self->{posnr} ne '281' && 
+		$self->{posnr} ne '290');
+  return '' if($self->{geb_kind} eq '');
+
+  # frühestens
+  my $days = Delta_Days(unpack('A4A2A2',$self->{geb_kind}),unpack('A4A2A2',$self->{datum_l}));
+  if ($days < 57) {
+    return '\nFEHLER: Position '.$self->{posnr}.' frühestens 8 Wochen nach der Geburt\nes wurde nicht gespeichert';
   }
+
+  # spätestens
+  my $neun_spaeter=sprintf "%4.4u%2.2u%2.2u",Add_Delta_YM(unpack('A4A2A2',$self->{geb_kind}),0,9);
+  if ($self->{datum_l} > $neun_spaeter) {
+    return '\nFEHLER: Position '.$self->{posnr}.' nur bis zum Ende 9. Monat nach Geburt,\nEs wurde nichts gespeichert';
+  }
+
+  # maximal 4 Mal
+  my $pruef_pos=$self->{posnr};
+  $pruef_pos .= ',281' if ($pruef_pos eq '280');
+  $pruef_pos .= ',280' if ($pruef_pos eq '281');
+
+   if ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR in ($pruef_pos)")>=4) {
+    return '\nFEHLER: Position '.$pruef_pos.' maximal 4 mal berechnungsfähig\nEs wurde nichts gespeichert';
+  }
+  
   return '';
 }
 
 
-sub pos234568_plausi {
-  # prüft für Positionsnummer 010,020,030,040,050,051,060,080
-  # ob schon Positionsnummer 010 bzw. 020 erfasst
-  # wurde
+sub nicht_plausi {
+  # prüft ob Positionsnummer nicht mit anderen Positionsnummern 
+  # erfasst werden darf
   # liefert Ergebnis '' wenn kein Fehler aufgetreten ist oder
   # Fehlermeldung wenn Fehler aufgetreten ist
   my $self=shift;
   my ($posnr,$frau_id,$datum_l)=
     ($self->{posnr},$self->{frau_id},$self->{datum_l});
 
-  return '' if ($posnr ne '020' && $posnr ne '030' && 
-		$posnr ne '040' && $posnr ne '050' &&
-		$posnr ne '051' && $posnr ne '010' && 
-                $posnr ne '060' && $posnr ne '080');
-  my $selpos='010,020';
-  $selpos = '010' if ($posnr eq '020');
-  $selpos = '020' if ($posnr eq '010');
+  return '' unless ($self->{nicht});
+
   if ($l->leistungsdaten_werte($frau_id,"POSNR",
-                               "POSNR in ($selpos) and DATUM='$datum_l'")) {
-    return 'FEHLER: Positionsnummer '.$posnr.' ist neben Leistungen nach '.$selpos.'\nan demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
+                               "POSNR in ($self->{nicht}) and DATUM='$self->{datum_l}'")) {
+    return 'FEHLER: Positionsnummer '.$self->{posnr}.' ist neben Leistungen nach '.$self->{nicht}.'\nan demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
   }
   return '';
 }
