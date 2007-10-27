@@ -5,7 +5,7 @@
 
 # Leistungsarten erfassen, ändern, löschen
 
-# $Id: leistungsarterfassung.pl,v 1.11 2007-08-27 17:48:44 thomas_baum Exp $
+# $Id: leistungsarterfassung.pl,v 1.12 2007-10-27 16:42:45 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -43,7 +43,6 @@ my $debug=1;
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my $TODAY_tmj = $d->convert_tmj($TODAY);
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
-my @bund = ('NRW','Bayern','Rheinlandpfalz','Hessen');
 
 my $hint = '';
 
@@ -67,6 +66,9 @@ my $zusatz1 = $q->param('zusatz1') || '';
 my $zusatz2 = $q->param('zusatz2') || '';
 my $zusatz3 = $q->param('zusatz3') || '';
 my $zusatz4 = $q->param('zusatz4') || '';
+my $nicht = $q->param('nicht') || '';
+my $kilometer = $q->param('kilometer') || 'J';
+my $pzn = $q->param('pzn') || '';
 my $guelt_von = $q->param('guelt_von') || $TODAY_tmj;
 my $guelt_bis = $q->param('guelt_bis') || '31.12.9999';
 my $speichern = $q->param('Speichern');
@@ -148,10 +150,10 @@ print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
-print '<td><b>Einzelpreis:</b></td>';
-print '<td><b>Prozentpreis:</b></td>';
-print '<td><b>Fürzeit:</b></td>';
-print '<td><b>Dauer:</b></td>';
+print '<td><b>Einzelpreis</b></td>';
+print '<td><b>Prozentpreis</b></td>';
+print '<td><b>Fürzeit</b></td>';
+print '<td><b>Dauer</b></td>';
 print '</tr>';
 
 # Eingabe Felder
@@ -168,7 +170,7 @@ print "\n";
 print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
-print '<tr><td><b>Samstag:</b></td>';
+print '<tr><td><b>Samstag</b></td>';
 print '<td><b>Sonntag</b></td>';
 print '<td><b>Nacht</b></td>';
 print '</tr>';
@@ -212,12 +214,30 @@ print '<td><b>Zusatzgeb. 1</b></td>';
 print '<td><b>Zusatzgeb. 2</b></td>';
 print '<td><b>Zusatzgeb. 3</b></td>';
 print '<td><b>Zusatzgeb. 4</b></td>';
+print '<td><b>nicht mit Positionsnummern</b></td>';
 
 print '</tr>';
 print "<td><input type='text' name='zusatz1' value='$zusatz1' size='6'></td>";
 print "<td><input type='text' name='zusatz2' value='$zusatz2' size='6'></td>";
 print "<td><input type='text' name='zusatz3' value='$zusatz3' size='6'></td>";
 print "<td><input type='text' name='zusatz4' value='$zusatz4' size='6'></td>";
+print "<td><input type='text' name='nicht' value='$nicht' size='30'></td>";
+print '</tr>';
+print '</table>';
+print "\n";
+
+
+# Zeile mit Kilometer und Pharmazentralnummer
+print '<tr>';
+print '<td>';
+print '<table border="0" align="left">';
+print '<tr>';
+print '<td><b>Kilometer</b></td>';
+print '<td><b>Pharmazentralnummer</b></td>';
+
+print '</tr>';
+print "<td><input type='text' name='kilometer' value='$kilometer' size='1' maxlength='1'></td>";
+print "<td><input type='text' name='pzn' value='$pzn' size='7' maxlength='7'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
@@ -289,10 +309,14 @@ sub speichern {
  
   my $g_von = $d->convert($guelt_von);
   my $g_bis = $d->convert($guelt_bis);
+  $kilometer = 'J' if ($kilometer eq '');
+  $kilometer = uc $kilometer;
+  my $g_pzn = $pzn;
+  $g_pzn=undef if ($pzn eq '');
   if (defined($leist_id_alt)) {
-    $leist_id=$l->leistungsart_ins($posnr,$bezeichnung,$leistungstyp,$einzelpreis,$prozent,$sonntag,$nacht,$samstag,$fuerzeit,$dauer,$zwillinge,$zweitesmal,$einmalig,$begruendungspflicht,$zusatz1,$zusatz2,$zusatz3,$zusatz4,$g_von,$g_bis,$kbez,$leist_id_alt);
+    $leist_id=$l->leistungsart_ins($posnr,$bezeichnung,$leistungstyp,$einzelpreis,$prozent,$sonntag,$nacht,$samstag,$fuerzeit,$dauer,$zwillinge,$zweitesmal,$einmalig,$begruendungspflicht,$zusatz1,$zusatz2,$zusatz3,$zusatz4,$g_von,$g_bis,$kbez,$kilometer,$g_pzn,$nicht,$leist_id_alt);
   } else {
-    $leist_id=$l->leistungsart_ins($posnr,$bezeichnung,$leistungstyp,$einzelpreis,$prozent,$sonntag,$nacht,$samstag,$fuerzeit,$dauer,$zwillinge,$zweitesmal,$einmalig,$begruendungspflicht,$zusatz1,$zusatz2,$zusatz3,$zusatz4,$g_von,$g_bis,$kbez);
+    $leist_id=$l->leistungsart_ins($posnr,$bezeichnung,$leistungstyp,$einzelpreis,$prozent,$sonntag,$nacht,$samstag,$fuerzeit,$dauer,$zwillinge,$zweitesmal,$einmalig,$begruendungspflicht,$zusatz1,$zusatz2,$zusatz3,$zusatz4,$g_von,$g_bis,$kbez,$kilometer,$g_pzn,$nicht);
   }
 }
 
@@ -320,7 +344,7 @@ sub hole_leistart_daten {
    $fuerzeit,$dauer,$zwillinge,$zweitesmal,$einmalig,
    $begruendungspflicht,$zusatz1,$zusatz2,$zusatz3,$zusatz4,
    $guelt_von,$guelt_bis,
-   $kbez)= $l->leistungsart_id($leist_id);
+   $kbez,$kilometer,$pzn,$nicht)= $l->leistungsart_id($leist_id);
   $guelt_von = $d->convert_tmj($guelt_von);
   $guelt_bis = $d->convert_tmj($guelt_bis);
   $samstag = '' unless (defined($samstag));
@@ -337,4 +361,7 @@ sub hole_leistart_daten {
   $begruendungspflicht = '' unless (defined($begruendungspflicht));
   $einzelpreis = '' unless (defined($einzelpreis));
   $kbez =~ s/'/&#145/g;
+  $kilometer = 'J' unless($kilometer);
+  $nicht = '' unless($nicht);
+  $pzn = '' unless($pzn);
 }
