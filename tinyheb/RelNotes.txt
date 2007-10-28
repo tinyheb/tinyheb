@@ -1,3 +1,34 @@
+Release 0.16.0
+In Maske Rechnungsbearbeitung wird die Datenaustauschreferenz angezeigt.
+
+Bug Fix:
+Restore konnte unter Windows nur durchgeführt werden, wenn mysql im Suchpfad lag.
+
+Code Cleanup als Vorbereitung für Version 6.0 der Spezifikation zum Datenaustausch.
+
+IK Nummer des Belegkrankenhauses in Datenhaushalt aufgenommen
+Uhrzeit Geburt Kind in Datenhaushalt aufgenommen
+Pharmazentralnummer in Datenhaushalt aufgenommen
+Schalter ET/ Geburtstermin in Datenhaushalt aufgenommen.
+
+Schalter Kilometer erfassbar (j/n) in Datenhaushalt aufgenommen
+Entsprechend sind in Maske Rechnungsposten erfassen die Kilometer freigeschaltet oder nicht.
+
+Plausiprüfung Pos. 260, 261 nur auf ärztliche Anordnung
+
+Plausiprüfung Pos. 280,281, 290 maximal 4 mal
+
+Verbessertes Fehlerhandling bei Update der Datenbank.
+
+Daten aus Entfernung in Stammdaten soll in Maske Rechnungsposten Erfassung übernommen werden
+
+Neues Bundesland Sachsen
+
+Bug fix: Rundungsfehler konnte bei Kilometergeld auftreten
+
+Performance Verbesserung bei Einlesen der öffentlichen Schlüssel
+
+
 Release 0.15.1
 
 Aufnahme Positionsnummern für anteiliges Wegegeld und Materialien.

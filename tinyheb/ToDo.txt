@@ -1,13 +1,9 @@
 Offen:
+21.10.07
+Bei bestimmten Zuschlägen muss die BIS Zeit genutzt werden.
 
-31.08.07
-Plausiprüfung für Posnr. 280 bis 291
-
-31.08.07
-Pos. 260, 261 nur auf ärztliche Anordnung
-
-Pos. 280,281, 290 maximal 4 mal
-
+20.10.07
+Version 6.0 elektronischer Datenaustausch
 
 26.08.07
 Positionsnummer B. können nur am Geburtsdatum des Kindes erfasst werden.
@@ -20,35 +16,57 @@ Beschreibung der Maske Mahnungen generieren
 
 Beschreibung der Maske Angaben zur Hebamme
 
-11.11.06
-Daten aus Entfernung in Stammdaten soll in Maske Rechnungsposten Erfassung übernommen werden
-
-Temporäre Verzeichnisse für Win einheitlich.
-
 24.09.06
 Privat Rechnungen für andere Bundesländer als NRW
 
 23.09.06
 Feiertage Bundeslandbezogen
 
-12.08.06
-- Installationshinweise für Windows aufnehmen.
-
 06.08.06
 eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
-31.12.05
-Wenn es sich um Zwillinge handelt, muss Zuschlag gerechnet werden. Pro Kind
 
 09.07.05 Dokumentation erstellen.
-
-In Rechnungsposten Erfassung (rechpos.pl):
-- es soll nur dann KM erfassbar sein, wenn wirklich KM erfasst werden müssen.
-
 
 
 ----------------------------------------------------------------
 Erledigt:
+27.10.07
+Plausiprüfung für Posnr. 280 bis 291. Anforderung vom 31.08.07
+
+03.10.07
+Temporäre Verzeichnisse für Win einheitlich. Anforderung vom 11.11.06
+Wird nicht umgesetzt, da Initialisierungsroutinen sauber sind.
+
+Wenn es sich um Zwillinge handelt, muss Zuschlag gerechnet werden. Pro Kind.
+Anforderung vom 31.12.05
+Wird nicht umgesetzt, da ggf. ein Teil der Kiner noch KK ist
+
+Plausiprüfung für Posnr. 280 bis 291. Anforderung vom 31.08.07
+
+
+29.09.07
+Pos. 260, 261 nur auf ärztliche Anordnung. Anforderung vom 31.08.07
+Pos. 280,281, 290 maximal 4 mal. Anforderung vom 31.08.07
+
+In Rechnungsposten Erfassung (rechpos.pl):
+- es soll nur dann KM erfassbar sein, wenn wirklich KM erfasst werden müssen.
+Anforderung aus dem Jahr 2004
+Schalter Kilometer erfassbar (j/n) in Datenhaushalt aufnehmen. Anforderung aus dem Jahr 2004
+
+Daten aus Entfernung in Stammdaten soll in Maske Rechnungsposten Erfassung übernommen werden. Anforderung vom 11.11.06
+
+Pharmazentralnummer in Datenhaushalt aufnehmen. Anforderung vom 20.09.07
+
+IK Nummer des Belegkrankenhauses in Datenhaushalt aufnehmen. Anforderung vom 20.09.07
+
+In Maske Rechnungsbearbeitung die Datenaustauschreferenz anzeigen. Anforderung vom 20.09.07
+
+Uhrzeit Geburt Kind in Datenhaushalt aufnehmen. Anforderung vom 20.09.07
+
+Kennzeichen ET/Geburtstermin in Datenhaushalt aufnehmen. Anforderung vom 20.09.07
+
+
 01.09.07
 neue Gebührenordnung. Anforderung vom 03.08.07
 dazu:
@@ -60,12 +78,15 @@ Anpassen Positionsnummern w/ Kurse
 Posnr. 180 erwartet Uhrzeit bis, muss nicht erfasst werden
 Gebührenordnung OST ausbauen.
 
+Installationshinweise für Windows aufnehmen. Anforderung vom 12.08.07
+
+
 29.06.07
 Nach neuanlage einer Krankenkasse muss die IK Nummer erhalten bleiben.
 Anforderung vom 23.05.07
 
 29.06.07
-Maske für generierung eines Zertifkatrequest. Anforderung vom 20.05.07
+Maske für Generierung eines Zertifkatrequest. Anforderung vom 20.05.07
 
 29.06.07
 Maske Schlüssel einlesen Layout unter Windows schlecht. Anforderung vom 27.06.07
