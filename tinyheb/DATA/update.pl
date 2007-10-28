@@ -2,7 +2,7 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.2 2007-10-20 07:55:50 thomas_baum Exp $
+# $Id: update.pl,v 1.3 2007-10-28 16:00:55 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -47,11 +47,11 @@ if (!defined($dbh) and ($DBI::err == 1044 || $DBI::err == 1045)) {
   $root_pass=<STDIN>;
   chomp $root_pass;
   $dbh = connect_db('root',$root_pass);
-  write_LOG("Habe mich mit root angemeldet $dbh");
   error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
-  print "Fehler Text:",$DBI::errstr,"\n";
-  print "Fehler Nummmer:",$DBI::err,"\n";
-  print "State Nummmer:",$DBI::state,"\n";
+  print "Fehler Text:",$DBI::errstr,"\n" if($DBI::errstr);
+  print "Fehler Nummmer:",$DBI::err,"\n" if($DBI::err);
+  print "State Nummmer:",$DBI::state,"\n" if($DBI::state);
+  write_LOG("Habe mich mit root angemeldet $dbh");
 }
 
 write_LOG("oeffne update.sql");
@@ -81,7 +81,7 @@ LINE:while (my $line=<SQL>) {
 write_LOG("Beende update ----------------------------");
 
 unless($rpm) {
-  print "Bitte die ENTER Taste zum Beenden des Update druecken\n";
+  print "Update erfolgreich durchgeführt,\nBitte die ENTER Taste zum Beenden des Update druecken\n";
   my $eingabe=<STDIN>;
 }
 
