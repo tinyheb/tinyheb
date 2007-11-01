@@ -1,6 +1,6 @@
 # Makefile für tinyHeb
 
-# $Id: Makefile,v 1.7 2007-07-24 17:39:32 baum Exp $
+# $Id: Makefile,v 1.8 2007-11-01 17:37:27 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 PM=*.pm
@@ -26,6 +26,9 @@ nix:
 
 clean:
 	@echo mache nix
+
+deb:
+	dpkg-buildpackage -rfakeroot -k$(PGP_KEY)
 
 install:
 	@echo Installiere nach $(INST_DIR)
