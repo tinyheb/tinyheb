@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.37 2007-10-27 16:45:59 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.38 2007-11-05 19:04:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -396,14 +396,6 @@ print <<SCRIPTE;
 SCRIPTE
 print "</body>";
 print "</html>";
-
-sub print_color {
-  my ($bezeichnung,$variable) = @_;
-  
-  print '<font color=red>' if ($variable eq '');
-  print "<b>$bezeichnung</b>";
-  print '<font color=black>';
-}
 
 
 sub speichern {
