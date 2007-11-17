@@ -1,0 +1,20 @@
+This package was debianized by Robert Sailer <robert.sailer@tinyheb.de> on
+Sun, 30 Sep 2007 21:49:46 +0200.
+
+It was downloaded from <http://www.tinyheb.de/source/tinyheb-0.15.1.tar.bz2>
+
+Copyright Holder: <Thomas Baum thomas.baum@arcor.de>
+This software is copyright (c) by Thomas Baum Rubensstr.3 42719 Solingen
+
+License:
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 2, June 1991
+
+ Copyright (C) 1989, 1991 Free Software Foundation, Inc., 
+                            51 Franklin St, Fifth Floor, Boston,
+                            MA 02110-1301, USA.
+
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+For details see gpl.txt in /usr/share/doc/tinyheb

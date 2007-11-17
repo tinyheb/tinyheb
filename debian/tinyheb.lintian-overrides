@@ -1,0 +1,2 @@
+# define things which should be as they are
+# tinheb binary: non-stadndard-dir-perm var/tinheb/backups/ 0770 != 0755

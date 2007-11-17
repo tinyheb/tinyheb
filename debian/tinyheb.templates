@@ -1,0 +1,45 @@
+Template: tinyheb/webserver
+Type: select
+_Choices: Apache, Apache-SSL, Apache2, NONE
+Default: Apache2
+_Description: Select a Webserver
+ Select a webserver from the list you plan to use for tinyheb, use NONE for
+ manual configuration
+
+Template: tinyheb/mysql_server
+Type: string
+_Default: localhost
+_Description: Database host
+ Please enter the hostname of the MySQL server which will host the tinyheb
+ database.
+
+Template: tinyheb/mysql_port
+Type: string
+_Default: 3306
+_Description: MySQL listening port
+ Please enter the port MySQL listens to
+
+Template: tinyheb/mysql_root
+Type: string
+_Default: root
+_Description: Username of the MySQL administrator
+ Please enter the username of MySQL administrator (needed for creating the
+ tinyheb database structure).
+
+Template: tinyheb/mysql_password
+Type: password
+_Default: none
+_Description: Administrator password
+ Enter "none" if there is no password for MySQL administration.
+
+Template: tinyheb/confirm
+Type: password
+_Default: none
+_Description: Administrator password confirmation
+ Enter "none" if there is no password for MySQL administration.
+
+Template: tinyheb/mismatch
+Type: note
+_Description: Password mismatch
+ The password and the confirmed password are different. Please enter the
+ password again.
