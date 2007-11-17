@@ -1,3 +1,9 @@
+tinyheb (0.16.0-1) unstable; urgency=low
+
+  * upstream update for the package
+
+ -- Robert Sailer <robert.sailer@tinyheb.de>  Thu, 01 Nov 2007 21:49:46 +0200
+
 tinyheb (0.15.1-1) unstable; urgency=low
 
   * Initial release for debian/ubuntu

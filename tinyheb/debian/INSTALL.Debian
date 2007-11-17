@@ -1,0 +1,49 @@
+Installation des Pakets tinyheb_0.16.0-1_all.deb
+
+Es gibt zwei Möglichkeiten das Paket zu installieren
+konventionell runterladen und mit dpkg -i paket installieren
+oder 
+www.tinyheb.de als source im file /etc/apt/sources.list eintragen
+
+Beschreibung von Fall 1
+-----------------------
+Das Paket erstmal runterladen mit wget http://www.tinyheb.de/download/tinyheb_0.16.0_all.deb
+
+Das Paket enthält eine Liste von anhängigen Paketen, die möglichst vor der Installation des Tinyheb Pakets vorhanden sein sollten.
+Die Liste kann mit 
+apt-get install gs perl apache2 openssl libdbi-perl libcgi-perl libdate-calc-perl libemail-mime-encodings-perl perl-tk libmail-sender-perl mysql-server libdbd-mysql-perl
+vorinstalliert werden.
+Dabei werden ggf. auch noch abhängige Pakete mit runtergeladen.
+
+Bei dem Postscript Paket "libpostscript-simple-perl" gibt es auf Ubuntu 6.06.1 das Problem, dass das Paket zu alt ist und es für diese Version kein neues geben wird. 
+Das Paket ab der Version 0.7 funktioniert einwandfrei. Bitte das Paket von der tinyheb Seite mit runterladen und zusammen mit tinyheb installieren. 
+
+Jetzt ist es soweit, dass das tinyheb Paket mit dpkg -i tinyheb_0.16.0-1_all.deb libpostscript-simple-perl_0.07-1_all.deb
+installiert werden kann. 
+
+Wenn da immernoch ein Dependency-Fehler auftreten sollte, dann einfach ein apt-get install -f aufrufen, der wird die abhängigen Pakete dann runterladen und konfigurieren.
+
+Die MySQL-Datenbank für Tinyheb wird via Dialog im Paket abgefragt und vom Paket während der Installation angelegt.
+
+Das Paket installiert sich nach /srv/www/cgi-bin/tinyheb. Die Doku liegt wie bei Debian und Ubuntu üblich unter /usr/share/doc/tinyheb.
+
+Das Configfile für den Apache2 liegt unter /etc/apache2/conf.d. Das Paket startet den Apache2 bei der Installation automatisch neu.
+
+Jetzt sollte der Zugriff auf tinyheb mit http://localhost/tinyheb/ funktionieren.
+
+PS: Ich benutze Tinyheb in einer virtuellen Maschine mit dem kostenlosen VMPlayer auf einem WindowsXP Rechner. 
+Das ist eine prima Sache und man muss sich nicht mit der Installation auf Windows rumärgern. Wer genaueres dazu wissen möchte oder Hilfe zum Thema VMPlayer in Verbindung mit Tinyheb und oder Ubuntu braucht schicke mir eine Mail an robert.sailer@tinyheb.de
+
+
+Beschreibung von Fall 2
+Das ist der einfachere Fall, weil man eigentlich fast garnix machen muss.
+In der /etc/apt/sources.list folgende Zeile eintragen
+
+deb http://www.tinyheb.de/download/debian ./
+
+danach "apt-get update" machen damit die Paketliste eingelesen wird
+anschliessend
+installieren wie gewohnt mit "apt-get install tinyheb"
+
+Das sollte es dann schon gewesen sein.
+
