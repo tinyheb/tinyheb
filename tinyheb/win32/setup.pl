@@ -3,7 +3,7 @@
 
 # Mini Setup für tinyHeb
 
-# $Id: setup.pl,v 1.7 2007-07-27 18:55:15 baum Exp $
+# $Id: setup.pl,v 1.8 2007-11-18 16:20:16 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -43,9 +43,10 @@ my %statusHash;
 
 my $eingabe='';
 my $serv_erg='';
+my $id='$Id: setup.pl,v 1.8 2007-11-18 16:20:16 thomas_baum Exp $';
 
-print "Setup für tinyHeb Copyright (C) 2007 Thomas Baum\n";
-print "Version of this setup programm 0.2.0 \n";
+print "Setup fuer tinyHeb Copyright (C) 2007 Thomas Baum\n";
+print "Version of this setup programm $id\n";
 print "The tinyHeb setup programm comes with ABSOLUTELY NO WARRANTY;\nfor details see the file gpl.txt\n";
 print "This is free software, and you are welcome to redistribute it\n";
 print "under certain conditions; for details see the file gpl.txt\n\n";
@@ -57,13 +58,14 @@ print "\n";
 print "Pruefe ob Windows Version installiert\n";
 write_LOG("Pruefe ob Windows Version installiert");
 
-open WIN,"../erfassung/krankenkassenerfassung.pl" or die "Konnte Datei krankenkassenerfassung.pl im Verzeichnis erfassung nicht öffnen $!\n";
+open WIN,"../erfassung/krankenkassenerfassung.pl" or error("Konnte Datei krankenkassenerfassung.pl im Verzeichnis erfassung nicht öffnen $!\n");
 my $first_line = <WIN>;
 if ($first_line =~ /^#!perl -wT/) {
   print "Windows Version installiert\n";
   write_LOG("Windows Version installiert");
 } else {
   print "Du hast Du Linux Version installiert, bitte lade Dir von http://www.tinyheb.de/source/ zunaechst die Windows Version herunter\n";
+  print "Oder starte das Programm linux2win.pl aus dem Verzeichnis win32\n";
   print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
   write_LOG("Linux installiert");
   $eingabe=<STDIN>;
@@ -202,7 +204,7 @@ $eingabe = <STDIN>;
 chomp $eingabe;
 write_LOG("Frage httpd.conf copy",$eingabe);
 if ($eingabe =~ /ja/i || $eingabe eq '') {
-  copy("httpd.conf","/Programme/Apache Group/Apache2/conf/httpd.conf") or die "konnte httpd.conf nicht kopieren $!\n";
+  copy("httpd.conf","/Programme/Apache Group/Apache2/conf/httpd.conf") or error("konnte httpd.conf nicht kopieren $!\n");
   print "Habe die httpd.conf kopiert\n";
 }
 
@@ -211,7 +213,7 @@ $eingabe = <STDIN>;
 chomp $eingabe;
 write_LOG("Frage my.ini copy",$eingabe);
 if ($eingabe =~ /ja/i || $eingabe eq '') {
-  copy("my.ini","/Programme/MySQL/MySQL Server 5.0/my.ini") or die "konnte my.ini nicht kopieren $!\n";
+  copy("my.ini","/Programme/MySQL/MySQL Server 5.0/my.ini") or error("konnte my.ini nicht kopieren $!\n");
   print "Habe die my.ini kopiert\n";
 }
 
@@ -291,11 +293,24 @@ if ($os eq 'WinXP') {
 
   # Datenbank Version dumpen
   system('"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" --version >> setup.log');
+  print "wenn kein Passwort fuer die MySQL Datenbank vergeben wurde,\nbei der Frage nach dem Passwort bitte ENTER druecken\n";
   open INIT,'"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" -p -u root < ../DATA/init.sql |' or die "konnte Datenbank nicht initialisieren $!\n";
   while (my $zeile=<INIT>) {
     print "Zeile $zeile\n";
   };
-  print "Habe die Datenbank initialisiert\n";
+  my $cl=close(INIT);
+  if ($? == 0) { 
+    print "Habe die Datenbank initialisiert\n";
+    print "Jetzt kann tinyHeb in Deinem Browser unter dem Link\nhttp://localhost/tinyheb/hebamme.html aufgerufen werden\n";
+  } else {
+    print "\nDie Datenbank konnte vermutlich nicht initialisiert werden\n";
+    print "Du musst noch in das Verzeichnis DATA wechseln und\n";
+    print "folgenden Befehl in der Kommandozeile ausfuehren:\n";
+    print "mysql -u root < init.sql\n";
+    print "ODER falls Du bei der MySQL Installation ein Passwort fuer\n den Datenbankadmin angegeben hast:\n";
+    print "mysql -p -u root < init.sql\n\n";
+  }
+
 } else {
   print "\n\nJetzt muss ein Neustart des Rechners ausgefuehrt werden, damit\n";
   print "die Aenderungen an der Konfiguration des Webservers und des\n";
@@ -308,7 +323,6 @@ if ($os eq 'WinXP') {
   print "mysql -p -u root < init.sql\n\n";
 }
 
-print "Jetzt kann tinyHeb in Deinem Browser unter dem Link\nhttp://localhost/tinyheb/hebamme.html aufgerufen werden\n";
 
 
 print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
@@ -368,10 +382,26 @@ sub win32_openssl {
 
 
 sub write_LOG {
-  open (LOG,">>setup.log") or die "log Datei kann nicht geschrieben werden: $!\n";
+
+  if(!open (LOG,">>update.log")) {
+    print "FEHLER log Datei kann nicht geschrieben werden: $!\n";
+    print "Bitte die ENTER Taste zum Beenden des Update druecken\n";
+    my $eingabe=<STDIN>;
+    exit(1);
+  }
+
   my @log = @_;
   my $print_log = join(':',@log);
   my $time = join(':',localtime);
   print LOG "LOG:$time\t$print_log\n";
   close (LOG);
 };
+
+sub error {
+  my ($error)=@_;
+  write_LOG($error);
+  print "FEHLER $error\n";
+  print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+  my $eingabe=<STDIN>;
+  exit(1);
+}
