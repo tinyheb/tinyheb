@@ -5,7 +5,7 @@
 
 # Rechnungen bearbeiten für einzelne Rechnungen
 
-# $Id: rechposbear.pl,v 1.15 2007-10-21 17:53:47 thomas_baum Exp $
+# $Id: rechposbear.pl,v 1.16 2007-11-19 20:22:37 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -203,7 +203,7 @@ sub print_summen {
   $summe_gez = sprintf "%.2f",$summe_gez;
   $summe_gez =~ s/\./,/g;
   
-  $l->rechnung_such('sum(betrag)-sum(betraggez)','status<=24');
+  $l->rechnung_such('sum(betrag)-sum(betraggez)','status<30');
   my $summe_offen = $l->rechnung_such_next();
   $summe_offen=0 unless(defined($summe_offen));
   $summe_offen = sprintf "%.2f",$summe_offen;
