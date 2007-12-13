@@ -1,6 +1,6 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.24 2007-10-27 16:51:15 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.25 2007-12-13 11:20:16 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -33,11 +33,15 @@ my $d = new Heb_datum;
 
 my  @gruppen = ('A. Mutterschaftsvorsorge','B. Geburtshilfe','C. Wochenbett','D. Sonstige','Wegegeld');
 
+our %zeit_ende=(); # Posnr bei denen die Zeit nach Ende der Leistung berechnet wird
+
+$zeit_ende{$_}=1 for qw(050 051 260 261 280 281 310);
+
 our $leistung_such; # Suchen von Leistunsarten
 our $leistungsdaten_ins; # Speichern von Leistungsdaten
 our $leistungsdaten_such; # suchen von Leistungsdaten nach Frau
 our $leistungsdaten_offen; # suchen nach (Status 10) Leistungsdaten bei Frau
-our $rech_such; # sucht nach Rechnungen in der Datenbank
+#our $rech_such; # sucht nach Rechnungen in der Datenbank
 our $leistungsdaten_such_rechnr; # Sucht Leistungsdaten einer bestimmten Rechnung
 our $leistungsdaten_werte; # sucht werte für Frau
 our $pruef_zus; # zuschlagspflichtige Posnr
@@ -132,7 +136,7 @@ sub rechnung_up {
 
 sub rechnung_such {
   # sucht nach Rechnungen in der Datenbank
-  shift;
+  my $self=shift;
   my $werte = shift;
   my $sel = shift;
   if (!defined($sel)) {
@@ -140,20 +144,21 @@ sub rechnung_such {
   } else {
     $sel = "where $sel";
   }
-  $rech_such = $dbh->prepare("select $werte from Rechnung ".
+  $self->{rech_such} = $dbh->prepare("select $werte from Rechnung ".
 			     "$sel order by RECHNUNGSNR;") 
     or die $dbh->errstr();
-  return $rech_such->execute() or die $dbh->errstr();
+  return $self->{rech_such}->execute() or die $dbh->errstr();
 }
 
 sub rechnung_such_next {
-  return $rech_such->fetchrow_array() or die $dbh->errstr();
+  my $self=shift;
+  return $self->{rech_such}->fetchrow_array() or die $dbh->errstr();
 } 
 
 
 sub rechnung_up_werte {
   # ändert vorgegebene Werte in der Rechnungsdatenbank
-  shift;
+  my $self=shift;
   my $rech_id=shift;
   my $werte=shift;
   my $rech_up = $dbh->prepare("update Rechnung ".
@@ -166,27 +171,28 @@ sub rechnung_up_werte {
 
 sub leistungsdaten_such_rechnr {
   # sucht Leistungsdaten zu gegebener Rechnungsnr
-  shift;
+  my $self=shift;
   my $werte=shift;
   my $rechnr=shift;
 
-  $leistungsdaten_such_rechnr 
+  $self->{leistungsdaten_such_rechnr}
     = $dbh->prepare("select $werte from Leistungsdaten ".
 		    "where RECHNUNGSNR = $rechnr;")
       or die $dbh->errstr();
-  return $leistungsdaten_such_rechnr->execute() or die $dbh->errstr();
+  return $self->{leistungsdaten_such_rechnr}->execute() or die $dbh->errstr();
 }
 
 
 sub leistungsdaten_such_rechnr_next {
-  return $leistungsdaten_such_rechnr->fetchrow_array() or die $dbh->errstr();
+  my $self=shift;
+  return $self->{leistungsdaten_such_rechnr}->fetchrow_array() or die $dbh->errstr();
 }
 
 sub leistungsdaten_up {
   # ändert Leistungsdaten in der Datenbank;
-  shift;
+  my $self=shift;
   my $leist_id=shift;
-  Heb_leistung->leistungsdaten_delete($_[1],$leist_id);
+  $self->leistungsdaten_delete($_[1],$leist_id);
   my $erg = $leistungsdaten_ins->execute($leist_id,@_)
     or die $dbh->errstr();
 }
@@ -194,7 +200,7 @@ sub leistungsdaten_up {
 
 sub leistungsdaten_up_werte {
   # ändert vorgegebene Werte in Leistungsdatenbank
-  shift;
+  my $self=shift;
   my $leist_id=shift;
   my $werte=shift;
   my $leist_up = $dbh->prepare("update Leistungsdaten ".
@@ -206,7 +212,7 @@ sub leistungsdaten_up_werte {
 
 sub leistungsdaten_delete {
   # löscht Datensatz zu einer Frau und ID aus der Leistungsdatenbank,
-  shift;
+  my $self=shift;
   my ($frau_id,$id)=@_;
   my $leistungsdaten_delete = 
     $dbh->prepare("delete from Leistungsdaten ".
@@ -549,6 +555,16 @@ sub leistungsart_delete {
   $leistungsart_delete->execute($id) or die $dbh->errstr();
 }
 
+
+sub zeit_ende {
+  # liefert true, wenn die Zeit nach Beendigung der Leistung berechnet wird
+  # undef sonst
+  my $self=shift;
+  my $posnr=shift;
+  
+  return $zeit_ende{$posnr};
+}
+  
 
 sub status_text {
   # ermittelt zu gegebenem Status den Text
