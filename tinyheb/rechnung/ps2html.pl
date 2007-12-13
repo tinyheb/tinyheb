@@ -3,7 +3,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.49 2007-10-27 16:36:39 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.50 2007-12-13 11:26:21 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -559,17 +559,23 @@ sub print_teil {
       $posnr=$erg[1];
       $p->text($x1+2,$y1,$bez);
 #      print "fuerzeit $fuerzeit\n";
-      $y1-=$y_font if (defined($fuerzeit) && $fuerzeit > 0);
+      $y1-=$y_font if ($fuerzeit || 
+		       $l->leistungsart_pruef_zus($erg[1],'SAMSTAG') ||
+		       $l->leistungsart_pruef_zus($erg[1],'NACHT')
+		      );
     } else {
       # Hochkomma ausgeben, wenn keine Zeitangabe notwendig
-      if (!(defined($fuerzeit) && $fuerzeit > 0)) {
+      if (!$fuerzeit && 
+	  !$l->leistungsart_pruef_zus($erg[1],'SAMSTAG') &&
+	  !$l->leistungsart_pruef_zus($erg[1],'NACHT')
+	 ) {
 	$p->text({align => 'center'},$x1+2+$laenge_bez,$y1,"\"");
       }
     }
     
     # prüfen ob Zeitangabe notwendig 
     my $vk = 1;
-    if (defined($fuerzeit) && $fuerzeit > 0) {
+    if ($fuerzeit) {
       # fuerzeit ausgeben
       $p->text($x1+2,$y1,$erg2[5].'-'.$erg2[6]); # Zeit von bis
       # prüfen, ob Minuten genau abgerechnet werden muss
@@ -589,8 +595,17 @@ sub print_teil {
 	$vk =~ s/\./,/g;
 	$p->text($x1+5.5,$y1,$dauer." min = ".$vk." h á ".$epreis." EUR");
       }
+    } elsif ($l->leistungsart_pruef_zus($erg[1],'SAMSTAG') ||
+	     $l->leistungsart_pruef_zus($erg[1],'NACHT')) {
+      if(!$d->ist_saona($erg[4],$erg[2]) || $d->wotagnummer($erg[4])==8) {
+	my $wotag=$d->wotag($erg[4]);
+	$wotag .= " in $heb_bundesland" if($d->wotagnummer($erg[4])==8);
+	$p->text($x1+2,$y1,$wotag);
+      } else {
+	$p->text($x1+2,$y1,$d->wotag($erg[4]));
+	$p->text($x1+5,$y1,$erg2[5].'-'.$erg2[6]);
+      }
     }
-
     # datum 4
     my $datum = $d->convert_tmj($erg[4]);
     my $gpreis = 0;
