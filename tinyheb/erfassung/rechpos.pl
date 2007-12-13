@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.40 2007-10-27 16:47:54 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.41 2007-12-13 11:25:04 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -421,7 +421,7 @@ sub speichern {
   # Prüfen ob Positionsnummer für dieses Datum eine gültige ist.
   my ($kbez) = $l->leistungsart_such_posnr('KBEZ',$posnr,$datum_l);
   if (!(defined($kbez))) {
-    $hint .= 'Fehler: Positionsnummer '.$posnr.' ist für '.$datum.' keine gültige Positionsnummer,\nes wurde nichts gespeichert.';
+    $hint .= 'FEHLER: Positionsnummer '.$posnr.' ist für '.$datum.' keine gültige Positionsnummer,\nes wurde nichts gespeichert.';
     return $hint;
   }
 
@@ -430,6 +430,11 @@ sub speichern {
   if ($zeit_von ne '' || $zeit_bis ne '') {
     if (!($d->check_zeit($zeit_von))) {
       $hint .= '\nFEHLER: keine gültige Uhrzeit von erfasst, nichts gespeichert';
+      $hscript = 'document.rechpos.zeit_von.focus();';
+      return $hint;
+    }
+    if (!($d->check_zeit($zeit_bis))) {
+      $hint .= '\nFEHLER: keine gültige Uhrzeit bis erfasst, nichts gespeichert';
       $hscript = 'document.rechpos.zeit_von.focus();';
       return $hint;
     }
