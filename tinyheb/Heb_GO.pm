@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.10 2007-10-27 16:50:37 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.11 2007-12-13 11:17:37 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -76,7 +76,7 @@ sub ersetze_samstag {
   # Wenn Samstag angegeben ist, prüfen ob posnr ersetzt werden muss
   my $self=shift;
 
-  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($self->{zeit_von}) >= 12) { # 
+  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($self->zeit) >= 12) { # 
     # Samstag nach 12 Uhr und ob es sich um andere Positionsnummer handelt
     return $2 if ($1 ne '+');
   }
@@ -87,7 +87,7 @@ sub zuschlag_samstag {
   # prüft ob Zuschlag für diese Positionsnummer an einem Samstag  existiert
   my $self=shift;
 
-  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($self->{zeit_von}) >= 12) { # 
+  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($self->zeit) >= 12) { # 
     # Samstag nach 12 Uhr und ob es sich um Zuschlags Positionsnummer handelt
     return $2 if ($1 eq '+');
   }
@@ -119,7 +119,7 @@ sub zuschlag_sonntag {
 sub ersetze_nacht {
   # wenn Nacht angegeben ist, prüfen ob posnr ersetzt werden muss
   my $self=shift;
-  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->{zeit_von}) < 8 || $d->zeit_h($self->{zeit_von})>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
     return $2 if($1 ne '+');
   }
   return undef;
@@ -128,7 +128,7 @@ sub ersetze_nacht {
 sub zuschlag_nacht {
   # prüfen, ob Zuschlag für diese Posnr Nachts existiert
   my $self=shift;
-  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->{zeit_von}) < 8 || $d->zeit_h($self->{zeit_von})>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
     return $2 if($1 eq '+');
   }
   return undef;
@@ -155,13 +155,13 @@ sub zuschlag_plausi {
     # alles ok
   } elsif ($l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') && $self->{dow}==6 && $d->zeit_h($self->{zeit_von}) >= 12) {
     # alles ok
-  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'NACHT') && ($d->zeit_h($self->{zeit_von}) < 8 && $self->{zeit_von} ne '' || $d->zeit_h($self->{zeit_von}) >= 20)) {
+  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'NACHT') && ($d->zeit_h($self->zeit) < 8 && $self->zeit ne '' || $d->zeit_h($self->zeit) >= 20)) {
     # alles ok
   } elsif (($l->leistungsart_pruef_zus($self->{posnr},'SONNTAG') || 
 	    $l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') || 
 	    $l->leistungsart_pruef_zus($self->{posnr},'NACHT')) && 
-	   ($self->{dow} < 6 || $self->{dow}==6 && $self->{zeit_von} ne '' && $d->zeit_h($self->{zeit_von}) < 12) || 
-	   $d->zeit_h($self->{zeit_von})<8 && $d->zeit_h($self->{zeit_von}) > 20) {
+	   ($self->{dow} < 6 || $self->{dow}==6 && $self->zeit ne '' && $d->zeit_h($self->zeit) < 12) || 
+	   $d->zeit_h($self->zeit)<8 && $d->zeit_h($self->zeit) > 20) {
     return 1;
   }
   return undef;
@@ -590,6 +590,17 @@ sub Begruendung_plausi {
     return 'FEHLER: Bei Position '.$posnr.' ist eine Begründung notwendig\n es wurde nichts gespeichert';
   }
   return '';
+}
+
+
+
+sub zeit {
+  # liefert die Zeit zu der alternative Positionsnummern ausgewählt werden
+  # müssen
+  my $self=shift;
+
+  return $self->{zeit_bis} if($l->zeit_ende($self->{posnr}));
+  return $self->{zeit_von};
 }
 
 
