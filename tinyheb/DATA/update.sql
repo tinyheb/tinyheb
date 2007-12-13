@@ -1,6 +1,6 @@
 # Updates f¸r tinyHeb
 #
-# $Id: update.sql,v 1.12 2007-10-27 16:41:39 thomas_baum Exp $
+# $Id: update.sql,v 1.13 2007-12-13 11:23:03 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 # zun‰chst alte GO ung¸ltig machen
@@ -432,3 +432,50 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='2,4,5,8' where POSNR 
 # Begr¸ndungspflicht POSNR 260,261
 #
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set BEGRUENDUNGSPFLICHT='j' where POSNR in ('260','261');
+
+
+# ----------- Bug fix f¸r Materialpauschale -----------
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set ZUSATZGEBUEHREN2='<5GK',ZUSATZGEBUEHREN4='>4GK' where POSNR = '190';
+
+
+
+# ----------- neue Positionsnummern ab 01.02.2008 ---------------------
+#
+# PosNr 162
+#
+WWWRUN	INSERT	Leistungsart	POSNR='162' and GUELT_VON='2008-02-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'162','B','nicht vollendete Geburt zu Hause',140,'Hilfe bei einer nicht vollendeten Geburt zu Hause','2008-02-01','9999-12-31',0,'+360','163','163','163',0);
+#
+# PosNr 163
+#
+WWWRUN	INSERT	Leistungsart	POSNR='163' and GUELT_VON='2008-02-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'163','B','nicht vollendete Geburt zu Hause Nacht,Sa,So',168,'Hilfe bei einer nicht vollendeten Geburt zu Hause mit Zuschlag gem‰ﬂ ß5 Abs. 1','2008-02-01','9999-12-31',0,'+360','','','',0);
+#
+#
+# PosNr 164
+#
+WWWRUN	INSERT	Leistungsart	POSNR='164' and GUELT_VON='2008-02-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'164','B','nicht vollendete Geburt auﬂerkl. Leit. Heb.',140,'Hilfe bei einer nicht vollendeten Geburt in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen','2008-02-01','9999-12-31',0,'+360','165','165','165',0);
+#
+# PosNr 165
+#
+WWWRUN	INSERT	Leistungsart	POSNR='165' and GUELT_VON='2008-02-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'165','B','nicht voll. Geburt auﬂerkl. Leit. Heb. Nacht,Sa,So',168,'Hilfe bei einer nicht vollendeten Geburt in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen mit Zuschlag gem‰ﬂ ß5 Abs. 1','2008-02-01','9999-12-31',0,'+360','','','',0);
+#
+#
+# PosNr 166
+#
+WWWRUN	INSERT	Leistungsart	POSNR='166' and GUELT_VON='2008-02-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'166','B','nicht vollendete Geburt auﬂerkl. ‰rzt.Leit.',140,'Hilfe bei einer nicht vollendeten Geburt in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung','2008-02-01','9999-12-31',0,'+360','167','167','167',0);
+#
+# PosNr 167
+#
+WWWRUN	INSERT	Leistungsart	POSNR='167' and GUELT_VON='2008-02-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'167','B','nicht voll. Geburt auﬂerkl. ‰rzt.Leit. Nacht,Sa,So',168,'Hilfe bei einer nicht vollendeten Geburt in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2008-02-01','9999-12-31',0,'+360','','','',0);
+#
+# 
+# ------ update auf Positionsnummer 160,161 -----------------
+#
+# PosNr 160
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KBEZ="nicht vollendete Geburt im K'haus", BEZEICHNUNG="Hilfe bei einer nicht vollendeten Geburt im Krankenhaus" where POSNR='160';
+#
+#
+# PosNr 161
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KBEZ="nicht vollendete Geburt im K'haus Nacht,Sa,So", BEZEICHNUNG="Hilfe bei einer nicht vollendeten Geburt im Krankenhaus mit Zuschlag gem‰ﬂ ß5 Abs. 1" where POSNR='161';
