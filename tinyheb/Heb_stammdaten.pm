@@ -1,6 +1,6 @@
 # Package um Stammdaten zu verarbeiten
 
-# $Id: Heb_stammdaten.pm,v 1.12 2007-10-27 16:51:50 thomas_baum Exp $
+# $Id: Heb_stammdaten.pm,v 1.13 2007-12-13 11:20:48 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -218,7 +218,7 @@ sub stammdaten_frau_id {
 			      "NAECHSTE_HEBAMME,".
 			      "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME, ".
 			      "KZETGT, ".
-			      "GEBURTSZEIT_KIND ".
+			      "TIME_FORMAT(GEBURTSZEIT_KIND,'%H:%i') ".
 			      "from Stammdaten where ".
 			      "ID = $id;")
     or die $dbh->errstr();
