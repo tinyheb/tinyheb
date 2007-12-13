@@ -1,6 +1,6 @@
 # Package um Datümer zu verarbeiten
 
-# $Id: Heb_datum.pm,v 1.23 2007-10-17 15:36:02 thomas_baum Exp $
+# $Id: Heb_datum.pm,v 1.24 2007-12-13 11:19:00 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -25,7 +25,7 @@ package Heb_datum;
 
 use strict;
 use DBI;
-use Date::Calc qw(check_date Add_Delta_DHMS check_time Today);
+use Date::Calc qw(check_date Add_Delta_DHMS check_time Today Day_of_Week);
 
 use Heb;
 
@@ -103,6 +103,46 @@ sub zeit_h {
   return 0 if (!(defined($h)));
   return $h;
 }
+
+sub ist_saona {
+  # prüft ob Samstag nach 12:00 oder Nacht ist
+  my $self=shift;
+  my($datum,$zeit)=@_;
+
+#  $datum =~ s/-//g;
+  my $dow=Day_of_Week($self->jmt($datum));
+  return 1 if ($dow == 6 && $self->zeit_h($zeit) >= 12);
+  return 1 if ($dow < 6 && ($self->zeit_h($zeit) >= 20 || 
+			    $self->zeit_h($zeit) < 8));
+  return undef;
+}
+
+
+sub wotag {
+  my $self=shift;
+  my ($datum)=@_;
+  my $dow=Day_of_Week($self->jmt($datum));
+  return 'Feiertag' if($self->feiertag_datum($datum));
+  return 'Montag' if($dow == 1);
+  return 'Dienstag' if($dow == 2);
+  return 'Mittwoch' if($dow == 3);
+  return 'Donnerstag' if($dow == 4);
+  return 'Freitag' if($dow == 5);
+  return 'Samstag' if($dow == 6);
+  return 'Sonntag' if($dow == 7);
+  return undef;
+}
+
+sub wotagnummer {
+  my $self=shift;
+  my ($datum)=@_;
+  my $dow=Day_of_Week($self->jmt($datum));
+  return 8 if($self->feiertag_datum($datum));
+  return $dow;
+}
+
+
+
 
 sub convert_zeit {
   shift;
