@@ -1,9 +1,28 @@
 Offen:
-21.10.07
-Bei bestimmten Zuschlägen muss die BIS Zeit genutzt werden.
+13.12.07
+Beschreibung welche Zwischendateien bei der Rechnungsgenerierung erzeugt werden
 
-20.10.07
-Version 6.0 elektronischer Datenaustausch
+13.12.07
+Hinweise zur Sicherheit von tinyHeb
+
+13.12.07
+Position 160 ist nicht neben 090 bis 130 abrechnungsfähig
+
+13.12.07
+Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
+
+07.12.07
+Positionsnummer 270 nur nach der Geburt
+
+18.11.07
+Bei unzulässiger Änderung von Positionsnummer 180 wird manchmal nach Änderung und Fehlerhinweis Positionsnummer 181 gespeichert
+
+10.11.07
+Plausiprüfungen Positionsnummer 020
+
+10.11.07
+bei Zuschlägen, wenn sowohl vor wie auch nacher Stichzeitpunkt Leistung erbracht wird, ggf. 2 Positionen speichern.
+
 
 26.08.07
 Positionsnummer B. können nur am Geburtsdatum des Kindes erfasst werden.
@@ -31,6 +50,19 @@ eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
 ----------------------------------------------------------------
 Erledigt:
+11.12.07
+Neue Positionsnummern 161 bis 167. Anforderung vom 10.12.07
+
+11.12.07
+Bei bestimmten Zuschlägen muss die BIS Zeit genutzt werden. Anforderung vom 21.10.07
+
+11.12.07
+Version 6.0 elektronischer Datenaustausch. Anforderung vom 20.10.07
+
+11.12.07
+Plausiprüfung, wenn Rechnung signiert werden soll, muss Zertifikat und privater Schlüssel vorhanden sein. Anforderung vom 11.11.07
+
+
 27.10.07
 Plausiprüfung für Posnr. 280 bis 291. Anforderung vom 31.08.07
 
