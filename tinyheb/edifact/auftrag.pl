@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: auftrag.pl,v 1.12 2007-07-27 18:55:15 baum Exp $
+# $Id: auftrag.pl,v 1.13 2007-12-13 11:24:02 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # erstellen der Auftragsdatei für den Datenaustausch mit den
@@ -116,7 +116,7 @@ if ($sendmail) {
 my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
 my $empf_phys=$k->krankenkasse_empf_phys($zik);
 print "Rechnung erfolgreich verschickt\n";
-$e->edi_update($rechnr,1,$dateiname,$erstell_auf);
+#$e->edi_update($rechnr,1,$dateiname,$erstell_auf);
 if (!(-d "$path/tmp/$empf_phys")) { # Zielverzeichnis anlegen
   mkdir "$path/tmp/$empf_phys";
 }
