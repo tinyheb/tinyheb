@@ -1,3 +1,45 @@
+Release 0.17.0
+
+Datenaustauschversion 6.0 in wesentlichen Teilen umgesetzt. 
+Allerdings im ZHB Segment werden fast ausschließlich default Werte übertragen.
+Im EHB Segment werden keine Ortsangaben übertragen.
+DIA Segment wird nicht übertragen.
+Pharmazentralnummer wird nur übertragen, wenn vorhanden.
+
+Bei bestimmten Positionsnummern (050,051,260,261,280,281) wird in Abhängigkeit der Endezeit der Zuschlag
+ausgewählt.
+
+Rechnungssuchen im Modul Heb_leistung in Teilen auf Objektorientierung umgestellt.
+
+Bug fix: Geburtszeit des Kindes wurde im Format HH:MM:SS statt HH:MM geliefert
+
+Bug fix: in auftrag.pl wurde in jedem Fall update auf Datenbank gemacht, auch wenn der Schalter
+nicht gesetzt war.
+
+Wenn Zeiten erfasst werden, müssen von und bis Zeit erfasst werden, w/ Abhängigkeit der Endezeit
+
+Bug fix: Fehler wurde bei nicht existierender Positionsnummer nicht korrekt angezeigt.
+
+Bug fix: Fehlerhinweis bei KV Nummer muss auf 9-stellig hinweisen, nicht 10-stellig
+
+Bei Positionsnummern mit Nacht oder Samstagzuschlag wird in der Rechnung die Uhrzeit mit angedruckt.
+
+Bei Positionsnummern mit Nacht oder Samstagzuschlag wird in der elektronischen Rechnung die Uhrzeit
+mit übertragen.
+
+Beim Signieren einer Rechnung wird geprüft, ob eigenes Zertifikat und eigener privater Schlüssel
+vorhanden sind.
+
+Bug fix: Nachdem eine Mahnung erstellt wurde, war der Rechnungsbetrag nicht mehr in den offenen Rechnungen enthalten.
+
+Bug fix: bei Materialpauschale vor/nach 4 Tag p.p. wurde am 5 Tag falsch ausgewählt.
+
+Neue Positionsnummern 161 bis 167 ab 01.02.2008
+
+Verbessertes Fehlerhandlung bei setup.pl.
+
+
+
 Release 0.16.0
 In Maske Rechnungsbearbeitung wird die Datenaustauschreferenz angezeigt.
 
