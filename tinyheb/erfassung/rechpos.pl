@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.41 2007-12-13 11:25:04 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.42 2007-12-14 12:06:03 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -719,7 +719,8 @@ sub speichern {
     $preis_neu = $preis * $prozent if ($prozent > 0);
     $preis_neu = $ze_preis if ($ze_preis > 0);
     # Entfernung darf nicht 2mal gerechnet werden
-    $l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',0,0,$anzahl_frauen,$preis_neu,'',10);
+    # Uhrzeit muss bei Zuschlag auch nicht angegeben sein
+    $l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,'00:00:00','00:00:00',0,0,$anzahl_frauen,$preis_neu,'',10);
     $hint .= '\nZuschlag prozentual wurde zusätzlich gespeichert' if ($prozent > 0);
     $hint .= '\nZuschlag wurde zusätzlich gespeichert' if ($ze_preis > 0);
   }
@@ -820,9 +821,9 @@ sub matpausch {
     
     if ($comp) { # es muss gespeichert werden
       # Entfernung nicht 2mal rechnen bei Materialpauschale, daher
-      # mit Entfernung 0 aufrufen
+      # mit Entfernung 0 aufrufen und Zeit 0
       my ($ze_preis,$kbez) = $l->leistungsart_such_posnr('EINZELPREIS,KBEZ',$m_zus,$datum_l);
-      $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',0,0,$anzahl_frauen,$ze_preis,'',10);
+      $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,'00:00:00','00:00:00',0,0,$anzahl_frauen,$ze_preis,'',10);
       $hint .= '\nAuslage '.$kbez.' wurde zusätzlich gespeichert';
     }
   }
