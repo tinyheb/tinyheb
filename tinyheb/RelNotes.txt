@@ -38,6 +38,8 @@ Neue Positionsnummern 161 bis 167 ab 01.02.2008
 
 Verbessertes Fehlerhandlung bei setup.pl.
 
+Bug fix: bei Zuschlägen und Pauschalen wurde Uhrzeit mit gespeichert
+
 
 
 Release 0.16.0
