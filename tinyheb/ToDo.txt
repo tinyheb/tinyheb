@@ -1,4 +1,10 @@
 Offen:
+14.12.07
+Wenn Zuschlag zusätzlich gespeichert, wird nicht angegeben, welcher Zuschlag.
+
+13.12.07
+Plausiprüfung ob Zeiten von erfassten Rechnungposten sich überschneiden.
+
 13.12.07
 Beschreibung welche Zwischendateien bei der Rechnungsgenerierung erzeugt werden
 
