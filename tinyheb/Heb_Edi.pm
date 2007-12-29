@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.42 2007-12-13 11:16:35 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.43 2007-12-29 09:51:55 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -1366,12 +1366,11 @@ sub sig {
   }
   if ($sig_flag == 3) {
     # DER signieren um später base64 encoden zu können
-#    return ("Kein eigenes Zertifikat vorhanden, die Rechnung kann nicht signiert werden",0) if (!(-e "hugo"));
-    return ("Kein eigenes Zertifikat vorhanden, die Rechnung kann nicht signiert werden",0) if (!(-e "$path/privkey/".$self->{HEB_IK}.".pem"));
+    return ("Kein eigenes Zertifikat unter $path/privkey/".$self->{HEB_IK}.".pem  vorhanden, die Rechnung kann nicht signiert werden",0) if (!(-e "$path/privkey/".$self->{HEB_IK}.".pem"));
     
     return ("Kein eigener privater Schlüssel vorhanden, die Rechnung kann nicht signiert werden",0) if (!(-e "$path/privkey/privkey.pem"));
 
-    open NUTZ, "$openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem -passin pass:$self->{sig_pass} -inkey $path/privkey/privkey.pem |" or
+    open NUTZ, "$openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem -passin pass:\"$self->{sig_pass}\" -inkey $path/privkey/privkey.pem |" or
       return ("konnte Datei nicht DER signieren",0);
   }
 
