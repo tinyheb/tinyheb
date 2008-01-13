@@ -1,9 +1,9 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.43 2007-12-29 09:51:55 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.44 2008-01-13 07:52:56 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -1415,8 +1415,10 @@ sub enc {
   }
 
   $dateiname =~ s/\.sig//g;
-  open (AUS,">:raw","$path/tmp/$dateiname.enc") or return ("konnte verschlüsselte Nutzdaten nicht schreiben",0);
+  open AUS,">$path/tmp/$dateiname.enc" or return ("konnte verschlüsselte Nutzdaten nicht schreiben",0);
     
+  binmode NUTZ;
+  binmode AUS;
  LINE: while (my $zeile=<NUTZ>) {
     print AUS $zeile;
   }
