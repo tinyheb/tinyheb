@@ -248,8 +248,14 @@ RECH:  foreach (@sel) {
       get_sig_pass();
     }
 
+    if(!$h->parm_unique('MAIL'.$zik)) {
+      fehler("Fehler bei Mailverschicken von Rechnung $rechnr:\nE-Mail Adresse der Datenannahmestelle unbekannt,\n bitte in den Parametern der Datenannahmestellen nachpflegen \nversenden wird abgebrochen ");
+      last RECH;
+    }
+
     my $e = new Heb_Edi($rechnr,
 		       sig_pass => $sig_pass);
+
     if (!defined($e)) {
       fehler($Heb_Edi::ERROR." versenden wird abgebrochen.");
       $sig_pass=undef;
