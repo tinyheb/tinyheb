@@ -5,10 +5,10 @@
 
 # Leistungsarten erfassen, ändern, löschen
 
-# $Id: leistungsarterfassung.pl,v 1.12 2007-10-27 16:42:45 thomas_baum Exp $
+# $Id: leistungsarterfassung.pl,v 1.13 2008-01-27 09:02:56 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -221,7 +221,7 @@ print "<td><input type='text' name='zusatz1' value='$zusatz1' size='6'></td>";
 print "<td><input type='text' name='zusatz2' value='$zusatz2' size='6'></td>";
 print "<td><input type='text' name='zusatz3' value='$zusatz3' size='6'></td>";
 print "<td><input type='text' name='zusatz4' value='$zusatz4' size='6'></td>";
-print "<td><input type='text' name='nicht' value='$nicht' size='30'></td>";
+print "<td><input type='text' name='nicht' value='$nicht' size='40'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
