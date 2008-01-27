@@ -5,10 +5,10 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.38 2007-11-05 19:04:22 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.39 2008-01-27 09:01:32 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ my $debug=1;
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
 my @kinder = ('Einlinge','Zwillinge','Drillinge','Vierlinge');
-my @verstatus = ('1 1','3 1','privat','1 9','3 9','1 7','3 7','1 8','3 8','5 1','SOZ');
+my @verstatus = ('1 1','3 1','privat','1 9','3 9','1 7','3 7','1 8','3 8','5 1','SOZ','5 9');
 
 my $hint = '';
 
