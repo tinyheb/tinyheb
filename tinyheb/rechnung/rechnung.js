@@ -1,7 +1,7 @@
 /* script für Plausiprüfungen im Rahmen der
 # Rechnungserfassung/ Generierung und Navigation
 
-# $Id: rechnung.js,v 1.19 2007-08-11 11:56:08 thomas_baum Exp $
+# $Id: rechnung.js,v 1.20 2008-01-27 08:59:46 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -64,6 +64,11 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
     if (kv_gueltig == 0 || kv_gueltig == '') {
       error_text=error_text+"Gültigkeitsdatum Krankenversicherungsnummer wurde nicht erfasst\n";
     }
+  }
+
+  if (versichertenstatus == 'privat' && name_kk != '') {
+    alert("Privat versichert und IK-Nummer Krankenkasse angegeben\nRechnung wird nicht produziert\nBitte Stammdaten korrigieren\nRechnung wurde nicht gespeichert");
+    return false;
   }
 
   // weiche Plausiprüfungen
