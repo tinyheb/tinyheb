@@ -3,10 +3,10 @@
 
 # Erzeugen einer Mahnung und Druckoutput (Postscript)
 
-# $Id: mahnung.pl,v 1.8 2007-09-01 06:52:06 thomas_baum Exp $
+# $Id: mahnung.pl,v 1.9 2008-01-27 08:59:09 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@ use PostScript::Simple;
 use Date::Calc qw(Today);
 use strict;
 use CGI;
+use CGI::Carp qw(fatalsToBrowser);
 
 use lib "../";
 use Heb_stammdaten;
@@ -98,10 +99,12 @@ my $y1=0;
 
 $p->newpage;
 wasserzeichen();
-anschrift();
 
 my $mahnnr=1;
 $mahnnr = $status - 24 if ($status > 25);
+
+anschrift();
+
 
 # Betreff Zeile
 $p->setfont($font_b,12);
@@ -251,6 +254,18 @@ sub anschrift {
   # gibt Anschrift, Rechnungsnummer, etc. aus
   my $x1=12.6; # x werte für kisten
   my $x2=19.4;
+
+  $p->setfont($font, 10);
+  $p->box($x1,27.2,$x2,28.2);# Kiste für Rechnung y1=28.2 y2=27.2
+  $p->setfont($font_b, 12);
+  $p->text(12.7,27.8,"Mahnung");
+
+  $p->setfont($font,10);
+  $p->text(15.1,27.8,"zu Rechnung");
+#  $p->text(15.1+2.4,27.8,$mahnnr);
+  $p->text(15.1+2.4,27.8,$rechnr);
+  $p->text(15.1,27.8-$y_font,"Datum");
+  $p->text(15.1+2.4,27.8-$y_font,$d->convert_tmj($datum));
 
   my $y1=27.7;
   # Kiste für Krankenkassen nur ausgeben, wenn keine privat Rechnung
