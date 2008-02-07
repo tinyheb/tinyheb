@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.44 2008-01-13 07:52:56 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.45 2008-02-07 18:05:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -690,7 +690,7 @@ sub SLLA_ZHB {
   $erg .= '+'; # Betriebsstättennummer kann Feld
   # $erg .= '999999999+'; # Vertragsarztnummer default angeben, bis Beschw.
   $erg .= '+'; # Vertragsarztnummer kann Feld
-  $erg .= $self->{kzetgt}.$self->{geb_kind}.'+'; # Geburtsdatum kind
+  $erg .= $self->{kzetgt}.':'.$self->{geb_kind}.'+'; # Geburtsdatum kind
   $erg .= $self->{geb_zeit}.'+'; # Geburtszeit
   $erg .= '+'; # Anordnungsdatum kann Feld
   $erg .= $self->{anz_kinder};
