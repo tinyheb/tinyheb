@@ -6,10 +6,10 @@
 # extrahiert aus Schlüsseldateien des Trust Center ITSG die einzelnen
 # Schlüssel
 
-# $Id: key.pl,v 1.12 2007-10-27 16:35:34 thomas_baum Exp $
+# $Id: key.pl,v 1.13 2008-02-10 13:29:33 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# author: Thomas Baum
-# datum : 03.10.2005
 
 use strict;
 use Date::Calc qw(This_Year Decode_Month Add_Delta_DHMS);
@@ -82,6 +80,7 @@ my $html = $option{t} || '';
 my $save = $option{s} || 0;
 
 
+my $counter=0; # Zählt die eingelesenen Zertifikate
 
 our $path = $ENV{HOME}; # für temporäre Dateien
 if ($^O =~ /MSWin32/) {
@@ -153,6 +152,7 @@ foreach my $file (@dateien) {
       die "konnte Seriennummer eines Zertifikates nicht ermittlen\n" unless ($serial);
       print "Seriennummer $serial\n" if $debug;
 
+      $counter++;
 #      my ($pubkey_laenge,$algorithmus)=get_public_key("$path/tmpcert.pem");
       print "public key: $pubkey_laenge, algo: $algorithmus\n" if $debug;
 
@@ -175,6 +175,9 @@ foreach my $file (@dateien) {
 	  copy("$path/tmpcert.pem","$orig_path/privkey/$ik.pem");
 	  print "Habe Zerfikat fuer $ik nach $orig_path/privkey/$ik.pem kopiert\n";
 	}
+      }
+      if ($save_cert && $counter % 100 == 0) {
+	print "verarbeitete Zertifikate $counter\r";
       }
 
       if ($ik && 
