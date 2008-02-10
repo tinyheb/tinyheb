@@ -1,6 +1,6 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.11 2007-10-22 16:41:58 thomas_baum Exp $
+# $Id: Heb.pm,v 1.12 2008-02-10 13:23:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -33,6 +33,13 @@ my $debug = 1;
 my $parm_such = '';
 my $parm_such_werte = '';
 
+# verbindung zur Datenbank aufbauen
+$dbh = DBI->connect("DBI:mysql:database=Hebamme;host=localhost",$user,$pass,
+		    {RaiseError => 1,
+		     AutoCommit => 1 });
+die $DBI::errstr unless $dbh;
+
+
 sub new {
   my($class) = @_;
   my $self = {};
@@ -44,10 +51,6 @@ sub new {
 
 sub connect {
   # verbindung zur Datenbank aufbauen
-  $dbh = DBI->connect("DBI:mysql:database=Hebamme;host=localhost",$user,$pass,
-                      {RaiseError => 1,
-                       AutoCommit => 1 });
-  die $DBI::errstr unless $dbh;
   return $dbh;
 }
 
