@@ -1,9 +1,9 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.25 2007-12-13 11:20:16 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.26 2008-02-12 18:33:27 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2003,2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -67,19 +67,21 @@ sub new {
 				      "BEGRUENDUNG,DATUM,ZEIT_VON, ".
 				      "ZEIT_BIS,ENTFERNUNG_T, ".
 				      "ENTFERNUNG_N,ANZAHL_FRAUEN, ".
-				      "PREIS, RECHNUNGSNR,STATUS)" .
+				      "PREIS, RECHNUNGSNR,STATUS, ".
+				      "DIA_SCHL, DIA_TEXT)" .
 				      "values (?,?,?,".
 				      "?,?,?,".
 				      "?,?,".
 				      "?,?,".
-				      "?,?,?);")
+				      "?,?,?,".
+				      "?,?);")
     or die $dbh->errstr();
   $leistungsdaten_such
     = $dbh->prepare("select ID,POSNR,FK_STAMMDATEN,BEGRUENDUNG," .
 		    "DATE_FORMAT(DATUM,'%d.%m.%Y'),".
 		    "TIME_FORMAT(ZEIT_VON,'%H:%i'),".
 		    "TIME_FORMAT(ZEIT_BIS,'%H:%i'),ENTFERNUNG_T,ENTFERNUNG_N,".
-		    "ANZAHL_FRAUEN,PREIS,STATUS,cast(POSNR as unsigned) as sort ".
+		    "ANZAHL_FRAUEN,PREIS,STATUS,DIA_SCHL,DIA_TEXT,cast(POSNR as unsigned) as sort ".
 		    "from Leistungsdaten ".
 		    "where FK_STAMMDATEN=? ".
 		    "order by DATUM,sort, ZEIT_VON;")
@@ -91,7 +93,7 @@ sub new {
 
 sub leistungsdaten_ins {
   # fügt Leistungsdaten in Datenbank ein
-  shift;
+  my $self=shift;
 #  print "Leistungsdaten einfügen";
   
   # zunächst neue ID für Leistungsdaten holen
@@ -106,7 +108,7 @@ sub leistungsdaten_ins {
 
 sub rechnung_ins {
   # fügt neue Rechnung in Datenbank ein
-  shift;
+  my $self=shift;
   my ($rechnr,$rech_datum,$gsumme,$fk_st,$ik,$text) = @_;
   my $rechnung_ins = $dbh->prepare("insert into Rechnung " .
 				   "(RECHNUNGSNR,RECH_DATUM,MAHN_DATUM,".
@@ -121,7 +123,7 @@ sub rechnung_ins {
 
 sub rechnung_up {
   # update auf einzelne Rechnung
-  shift;
+  my $self=shift;
   my ($rechnr,$zahl_datum,$betraggez,$status) = @_;
   $zahl_datum = $d->convert($zahl_datum);
   my $rechnung_up = $dbh->prepare("update Rechnung ".
@@ -225,7 +227,7 @@ sub leistungsdaten_delete {
 
 sub leistungsdaten_such {
   # sucht nach allen Rechnungspositionen, die zu einer Frau existieren
-  shift;
+  my $self=shift;
   my ($frau_id) = @_;
   my $erg=$leistungsdaten_such->execute($frau_id)
     or die $dbh->errstr();
@@ -240,14 +242,14 @@ sub leistungsdaten_such_next {
 
 
 sub leistungsdaten_such_id {
-  shift;
+  my $self=shift;
   my ($id) = @_;
   my  $leistungsdaten_such_id
     = $dbh->prepare("select ID,POSNR,FK_STAMMDATEN,BEGRUENDUNG," .
 		    "DATE_FORMAT(DATUM,'%d.%m.%Y'),".
 		    "TIME_FORMAT(ZEIT_VON,'%H:%i'),".
 		    "TIME_FORMAT(ZEIT_BIS,'%H:%i'),ENTFERNUNG_T,ENTFERNUNG_N,".
-		    "ANZAHL_FRAUEN,PREIS,STATUS ".
+		    "ANZAHL_FRAUEN,PREIS,STATUS,DIA_SCHL,DIA_TEXT ".
 		    "from Leistungsdaten ".
 		    "where ID=?; ")
       or die $dbh->errstr();
@@ -260,7 +262,7 @@ sub leistungsdaten_such_id {
 
 sub leistungsart_zus {
   # holt alle Positionsnummer, die auf bestimmten Wert verweisen
-  shift;
+  my $self=shift;
   my $posnr=shift;
   my $wert=shift;
   my $datum=shift;
@@ -279,7 +281,7 @@ sub leistungsart_zus_next {
 
 sub leistungsart_pruef_zus {
   # prüft ob Positionsnummer zuschlagspflichtig ist
-  shift;
+  my $self=shift;
   my $posnr=shift;
   my $wert=shift;
   $pruef_zus = $dbh->prepare("select distinct $wert from Leistungsart ".
@@ -300,7 +302,7 @@ sub leistungsart_pruef_zus_next {
 sub leistungsart_such {
   # Sucht gültige Leistungsarten in der Datenbank
   
-  shift;
+  my $self=shift;
   my ($datum,$ltyp) = @_;
   $leistung_such->execute($datum,$datum,$ltyp) or die $dbh->errstr();
 }
@@ -313,7 +315,7 @@ sub leistungsart_such_next {
 
 sub leistungsart_such_posnr {
   # sucht Werte zu einer bestimmten Positionsnummer
-  shift;
+  my $self=shift;
   my ($werte,$posnr,$datum) = @_;
   my $leistungsart_such_posnr 
     = $dbh->prepare("select $werte from Leistungsart ".
@@ -401,7 +403,7 @@ sub leistungsart_prev_id {
 
 sub leistungsart_id {
   # holt zur gegebenen ID die Daten
-  shift;
+  my $self=shift;
   my ($id) = @_;
   my $leistungsart_id =
     $dbh->prepare("select * from Leistungsart where ID = ?;")
@@ -416,7 +418,7 @@ sub leistungsdaten_werte {
   # sucht nach Positionen für eine Frau
   # liefert werte
   # für bestimmtes Kriterium: where
-  shift;
+  my $self=shift;
   my ($frau_id,$werte,$where,$order) = @_;
   if (defined($where) && $where ne '') {
     $where = ' and '.$where;
@@ -447,7 +449,7 @@ sub leistungsdaten_werte_next {
 sub leistungsdaten_offen {
   # sucht nach Positionen die noch in Bearbeitung sind
   # für einen vorgebenen Leistungstyp und Frau
-  shift;
+  my $self=shift;
   my ($frau_id,$where,$order) = @_;
 
   $order = 'sort,DATUM' if (!defined($order) || $order eq '');
@@ -482,7 +484,7 @@ sub leistungsdaten_offen_next {
 
 sub leistungsart_such_werte {
   # sucht nach leistungsarten
-  shift;
+  my $self=shift;
   my ($posnr,$ltyp,$kbez,$guelt) = @_;
  
   my $where='';
@@ -547,7 +549,7 @@ sub leistungsart_ins {
 
 sub leistungsart_delete {
   # löscht Leistungsart aus Tabelle
-  shift;
+  my $self=shift;
   my $id=shift;
   my $leistungsart_delete = $dbh->prepare("delete from Leistungsart where ".
 					 "ID = ?;")
