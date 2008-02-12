@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.45 2008-02-07 18:05:22 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.46 2008-02-12 18:29:04 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -161,6 +161,11 @@ sub new {
   $self->{kv_nummer}=$kv_nummer;
   $self->{kv_gueltig}=$kv_gueltig;
   $self->{versichertenstatus}=$versichertenstatus;
+  if (lc $versichertenstatus eq 'privat' ||
+      lc $versichertenstatus eq 'soz') {
+    $ERROR="Für $versichertenstatus Versicherte kann keine elektronische Rechnung generiert werden\nBitte Stammdaten korrigieren\n";
+    return undef;
+  }
   $self->{anz_kinder}=$anz_kinder || 1;
   bless $self, ref $class || $class;
 
@@ -682,6 +687,7 @@ sub SLLA_ZHB {
   # nur in Version 6 vorhanden
 
   my $self=shift;
+  my ($dia_datum)=@_;
 
   my $erg = 'ZHB+';
   $erg .= $self->{HEB_IK}.'+'; # IK der behandelnden Hebamme
@@ -692,10 +698,29 @@ sub SLLA_ZHB {
   $erg .= '+'; # Vertragsarztnummer kann Feld
   $erg .= $self->{kzetgt}.':'.$self->{geb_kind}.'+'; # Geburtsdatum kind
   $erg .= $self->{geb_zeit}.'+'; # Geburtszeit
-  $erg .= '+'; # Anordnungsdatum kann Feld
+  $erg .= $dia_datum ? $dia_datum.'+' : '+'; # Anordnungsdatum falls vorhanden
   $erg .= $self->{anz_kinder};
   $erg .= $delim;
   
+  return $erg;
+}
+
+
+
+sub SLLA_DIA {
+  # generiert SLLA DIA Segment Diagnose Fall Hebammen
+  # nur in Version 6 vorhanden
+
+  my $self=shift;
+  my ($dia_schl,$dia_text)=@_;
+
+  return if(!$dia_schl && !$dia_text); # nix erzeugen, wenn keine Diagnose
+
+  my $erg = 'DIA+';
+  $erg .= $dia_schl ? $dia_schl.'+' : '+'; # Diagnose Schlüssel
+  $erg .= $dia_text ? $dia_text : ''; # Diagnose Text
+  $erg .= $delim;
+
   return $erg;
 }
 
@@ -1084,6 +1109,11 @@ sub SLLA6 {
   my $erg=''; # komplettes Ergebniss
   my $summe_km=0; # summe des Kilometergeldes
 
+  # angaben zur Diagnose merken, falls vorhanden
+  my $dia_schl = '';
+  my $dia_text = '';
+  my $dia_datum = '';
+
   # Kopfsegment UNH produzieren
   $erg .= $self->UNH($ref,'SLLA');$lfdnr++;
   
@@ -1224,6 +1254,13 @@ sub SLLA6 {
       # b. Begründungstexte ausgeben
       if ($leistdat[3] ne '') { # Begründung ausgeben
 	$erg .= $self->SLLA_TXT($leistdat[3]);$lfdnr++;
+	# prüfen ob später DIA Segment ausgegeben werden muss
+	if ($leistdat[3] =~ /Attest/ && 
+	    !$dia_schl && !$dia_text && !$dia_datum &&
+	    ($leistdat[13] || $leistdat[14])) {
+	  ($dia_datum,$dia_schl,$dia_text) = 
+	    ($leistdat[4],$leistdat[13],$leistdat[14]);
+	}
       }
 
       # d. Kilometergeld ausgeben
@@ -1305,18 +1342,24 @@ sub SLLA6 {
 	}
       }
       print "\n" if ($debug > 100);
-      
+
     }
   }
 
   # 6 ZHB Segment erzeugen
-  $erg .= $self->SLLA_ZHB;$lfdnr++;
+  $erg .= $self->SLLA_ZHB($dia_datum);$lfdnr++;
+  
+  # 7 DIA Segment erzeugen
+  if ($dia_schl || $dia_text) {
+    $erg .= $self->SLLA_DIA($dia_schl,$dia_text);
+    $lfdnr++;
+  }
 
-  # 7. BES Segment ausgeben
+  # 8. BES Segment ausgeben
   $gesamtsumme += $summe_km;
   $erg .= $self->SLLA_BES($gesamtsumme);
 
-  # 8. UNT Endesegment ausgeben
+  # 9. UNT Endesegment ausgeben
   $erg .= $self->UNT($lfdnr+1,$ref);
   print "$gesamtsumme, $summe_km\n" if ($debug > 10);
   return ($erg,$gesamtsumme);
