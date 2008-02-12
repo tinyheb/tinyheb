@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen
 
-# $Id: rechnungserfassung.pl,v 1.10 2007-07-27 18:55:15 baum Exp $
+# $Id: rechnungserfassung.pl,v 1.11 2008-02-12 18:36:36 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -148,7 +148,7 @@ print "</tr>\n";
 
 # Formular für eigentliche Erfassung ausgeben
 print "<tr>\n<td>\n";
-print "<iframe src='rechpos.pl?frau_id=$frau_id' name='rechpos' width='800' height='250' scrolling='no' frameborder='0'>";
+print "<iframe src='rechpos.pl?frau_id=$frau_id' name='rechpos' width='800' height='350' scrolling='no' frameborder='0'>";
 print "</iframe>";
 print "</td>\n";
 print "</tr>\n";
