@@ -3,10 +3,10 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.50 2007-12-13 11:26:21 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.51 2008-02-12 18:41:49 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -189,6 +189,8 @@ print_begruendung() if ($l->leistungsdaten_offen($frau_id,'BEGRUENDUNG <> ""')>0
 $y1-=$y_font;
 neue_seite(7);
 
+
+
 # Prüfen ob auch elektronisch versand wird
 if ($name_krankenkasse ne '' && $versichertenstatus ne 'privat' 
    && $versichertenstatus ne 'SOZ') {
@@ -368,6 +370,14 @@ sub print_begruendung {
       my ($bez,$fuerzeit,$epreis)=$l->leistungsart_such_posnr("KBEZ",$erg[1],$erg[4]);
       my $datum = $d->convert_tmj($erg[4]);
       $p->text($x1,$y1,"Begründung für $bez am $datum : $erg[3]");$y1-=$y_font;
+      if ($erg[3] =~ /Attest/) {
+	if ($erg[13]) {
+	  $p->text($x1,$y1,"Diagnose Schlüssel: $erg[13]");$y1-=$y_font;
+	}
+	if ($erg[14]) {
+	  $p->text($x1,$y1,"Diagnose Text: $erg[14]");$y1-=$y_font;
+	}	
+      }
       neue_seite(4);
     }
     $y1-=$y_font;
