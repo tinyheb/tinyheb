@@ -1,3 +1,54 @@
+Release 0.18.0
+
+Bug fix: Positionsnummern mit Zuschlägen konnten Samstag ohne Angabe der Uhrzeit gespeichert werden.
+
+Bug fix: ZHB Segment wurde falsch aufgebaut
+
+Performance der Anwendung verbessert.
+
+Neuer Versichertenstatus 5 9
+
+Bei Mahnungen wird das aktuelle Datum mit angedruckt.
+
+zusätzliche Plausiprüfung, falls Versichertenstatus privat und IK-Nummer Krankenkasse angegeben ist, kann keine Rechnung produziert werden.
+
+zusätzliche Plausiprüfung, erfasste Zeiten dürfen sich innerhalb einer Positionsnummer nicht überschneiden
+bei Materialien muss Pharmazentralnummer vorhanden sein.
+
+DIA Segment wird übertragen
+
+elektronische Rechnungen können auch mit alten Perl Versionen generiert werden
+
+Neue Felder für Diagnoseschlüssel und -Text in Datenhaushalt aufgenommen
+
+bei Klinikgeburten darf nicht Pauschale 360 gerechnet werden
+
+Positionsnummern 16x sind nicht neben den Positionsnummern 090 bis 130 abrechenbar
+
+Diagnose Text und Schlüssel werden bei Rechnungserfassung automatisch eingeblendet, wenn
+Begründung Attest ausgewählt wird
+
+In der Leistungsartenerfassung Feld NICHT größer
+
+Bug fix: Bei unzulässiger Änderung von Positionsnummer 180 wurde manchmal nach Änderung und Fehlerhinweis 
+Positionsnummer 181 gespeichert
+
+Neues Hilfsprogramm zum zurücksetzen des MySQL root Passwortes für Windows Systeme
+
+Handbuch um Kapitel Beschreibung welche Zwischendateien bei der Rechnungsgenerierung erzeugt werden erweitert
+Handbuch um Kapitel Sicherheit in tinyheb erweitert.
+
+Bug fix: Wenn Zuschlag zusätzlich gespeichert, wurde nicht angegeben, welcher Zuschlag.
+
+
+Es wird vor Generierung der elektronischen Rechnung geprüft, ob die E-Mail Adresse der Datenannahmestelle bekannt ist.
+
+Handbuch überarbeitet.
+
+Bug fix: Uhrzeiten brauchen bei Materialzuschlägen nicht gespeichert zu werden.
+
+
+
 Release 0.17.0
 
 Datenaustauschversion 6.0 in wesentlichen Teilen umgesetzt. 
