@@ -5,10 +5,10 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.42 2007-12-14 12:06:03 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.43 2008-02-12 18:40:47 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,8 @@ my $zeit_von = $q->param('zeit_von') || '';
 $zeit_von = $d->convert_zeit($zeit_von);
 my $zeit_bis = $q->param('zeit_bis') || '';
 $zeit_bis = $d->convert_zeit($zeit_bis);
+my $dia_schl = $q->param('dia_schl') || '';
+my $dia_text = $q->param('dia_text') || '';
 my $entfernung_tag = $q->param('entfernung_tag') || 0;
 my $entfernung_nacht = $q->param('entfernung_nacht') || 0;
 my $leist_id = $q->param('leist_id') || 0;
@@ -84,7 +86,7 @@ if ($auswahl eq 'Anzeigen' && $frau_id > 0 &&
 }
 
 if ($auswahl eq 'Neu' && defined($abschicken)) {
-  $hint=speichern($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke);
+  $hint=speichern($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke,$dia_schl,$dia_text);
 #  $entfernung_tag=0;
 #  $entfernung_nacht=0;
   $begruendung='';
@@ -129,6 +131,7 @@ print '<form name="rechpos" action="rechpos.pl" method="get" target=rechpos onsu
 # z1 s1
 print '<h3>Leistungspositionen</h3>';
 print '<table border="0" align="left">';
+print '<tbody id="haupt_tab">';
 print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
@@ -152,14 +155,15 @@ print '</tr>';
 print "</table>\n";
 
 
-print '<tr><td><table border="0" align="left">';
+print '<tr><td>';
+print '<table border="0" align="left">';
+print '<tbody id="tab2">';
+print '<tr>';
 print '<td><b>Uhrzeit von</b></td>';
 print '<td><b>Uhrzeit bis</b></td>';
 print '<td><b>Dauer</b></td>';
 print '<td><b>Begründung</b></td>';
-#print '<td><b>ID Leistung</b></td>';
-#print '<td><b>ID Frau</b></td>';
-print '<tr>';
+print '</tr>';
 
 print '<tr>';
 print "<td><input type='text' disabled class='disabled' name='zeit_von' value='$zeit_von' size='5' maxlength='5' onchange='uhrzeit_check(this);wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);'></td>";
@@ -169,8 +173,29 @@ printauswahlboxbegr();
 print "<td><input type='hidden' name='leist_id' value='$leist_id' size='5'></td>";
 print "<td><input type='hidden' name='frau_id' value='$frau_id' size='5'></td>";
 print '</tr>';
+print '</tbody>';
+print '</table>';
 
-print '<tr>';
+
+if ($begruendung =~ /Attest/ ) {
+  # Zeile mit Diagnose Angaben ausgeben
+  print "<tr id='dia_felder'>";
+  print "<td><table>";
+  print "<tr><td colspan='2'>";
+  print "<b>Diagnose Angaben</b></td></tr>";
+  print "<tr><td><b>Schlüssel</b></td><td><b>Text</b></td></tr>";
+  print "<tr>";
+  print "<td><input type='text' name='dia_schl' value='$dia_schl' size='12' maxlength='12'></td>";
+  print "<td><input type='text' name='dia_text' value='$dia_text' size='80' maxlength='70'></td></tr></table>";
+  print "</td>";
+  print "</tr>";
+}
+
+print '<tr id="zeile3_tab">';
+print '<td>';
+print '<table border="0" align="left">';
+print '<tbody id="tab3">';
+print '<tr id="km_tab">';
 print '<td><b>Kilometer Tag</b></td>';
 print '<td><b>Kilometer Nacht</b></td>';
 print '<td><b>Anzahl Frauen</b></td>';
@@ -190,6 +215,7 @@ if ($strecke eq 'gesamt') {
 }
 print "</td>";
 print "</tr>";
+print '</tbody>';
 print '</table>';
 
 
@@ -226,6 +252,7 @@ print "</table>\n";
 print '</form>';
 print '</td>';
 print '</tr>';
+print '</tbody>';
 print "</table>\n";
 # //  auswahl_wechsel(document.rechpos);
 print <<SCRIPTE;
@@ -249,7 +276,7 @@ print "</html>";
 #---------------------------------------------------------------------
 
 sub printauswahlboxbegr {
-   print "<td><select name='begruendung' size=1>";
+   print "<td id='begruend_feld_id'><select name='begruendung' onchange='dia(document.rechpos)' size=1>";
    $h->parm_such('BEGRUENDUNG');
    print "<option value=''> </option>";
    while(my $text=$h->parm_such_next()) {
@@ -269,11 +296,8 @@ sub printauswahlboxposnr {
   print "<td><select id='posnr_id' name='posnr' onchange='posnr_wechsel(document.rechpos)' size=1>";
   print "<option value=''> </option>";
   $script .= "if(formular.posnr.value == '') {formular.preis.value='';}\n";
-  printbox('A');
-  printbox('B');
-  printbox('C');
-  printbox('D');
-  printbox('M');
+  printbox($_) foreach qw(A B C D M);
+
   $script .= "}\n</script>";
   print "</select>";
   print $script;
@@ -395,13 +419,13 @@ sub printbox {
 # Routinen zum Speichern und Ändern
 sub speichern {
 
-  my ($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke)=@_;
+  my ($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke,$dia_schl,$dia_text)=@_;
 
   my $zuschlag='';
   my $hint='';
 
   if ($frau_id == 0) {
-    $hint .= "Bitte Frau auswählen";
+    $hint .= "FEHLER: Bitte Frau auswählen";
     return $hint;
   }
   if ($posnr eq '') {
@@ -521,108 +545,62 @@ sub speichern {
   
   
   # Leistungstyp Plausi
-  if ($hebgo->ltyp_plausi ne '') {
-    $hint .= $hebgo->ltyp_plausi();
-    return $hint;
-  }
+  return $hint .= $hebgo->ltyp_plausi if ($hebgo->ltyp_plausi);
 
   # darf Positionsnummer nicht mit anderen erfasst werden
-  if ($hebgo->nicht_plausi) {
-    $hint .= $hebgo->nicht_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->nicht_plausi if ($hebgo->nicht_plausi);
 
   # spezielle Prüfungen für PosNr. 1
-  if ($hebgo->pos1_plausi ne '') {
-    $hint .= $hebgo->pos1_plausi();
-    return $hint;
-  }
+  return $hint .= $hebgo->pos1_plausi if ($hebgo->pos1_plausi);
 
   # spezielle Prüfungen für PosNr. 010
-  if ($hebgo->pos010_plausi ne '') {
-    $hint .= $hebgo->pos010_plausi();
-    return $hint;
-  }
-
+  return $hint .= $hebgo->pos010_plausi if ($hebgo->pos010_plausi);
 
   # spezielle Prüfung für PosNr. 6
-  if ($hebgo->pos6_plausi) {
-    $hint .= $hebgo->pos6_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->pos6_plausi if ($hebgo->pos6_plausi);
 
   # spezielle Prüfung für PosNr. 060
-  if ($hebgo->pos060_plausi) {
-    $hint .= $hebgo->pos060_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->pos060_plausi if ($hebgo->pos060_plausi);
 
   # spezielle Prüfung für PosNr. 7 
-  if ($hebgo->pos7_plausi) {
-    $hint .= $hebgo->pos7_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->pos7_plausi if ($hebgo->pos7_plausi);
 
   # spezielle Prüfung für PosNr. 070 
-  if ($hebgo->pos070_plausi) {
-    $hint .= $hebgo->pos070_plausi;
-    return $hint;
-  }
-
+  return $hint .= $hebgo->pos070_plausi if ($hebgo->pos070_plausi);
 
   # spezielle Prüfung für PosNr. 8 
-  if ($hebgo->pos8_plausi) {
-    $hint .= $hebgo->pos8_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->pos8_plausi if ($hebgo->pos8_plausi);
 
   # spezielle Prüfung für PosNr. 080 
-  if ($hebgo->pos080_plausi) {
-    $hint .= $hebgo->pos080_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->pos080_plausi if ($hebgo->pos080_plausi);
 
   # spezielle Prüfung für PosNr. 40 
-  if ($hebgo->pos40_plausi) {
-    $hint .= $hebgo->pos40_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->pos40_plausi if ($hebgo->pos40_plausi);
 
   # spezielle Prüfung für PosNr. 270 
-  if ($hebgo->pos270_plausi) {
-    $hint .= $hebgo->pos270_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->pos270_plausi if ($hebgo->pos270_plausi);
 
   # spezielle Prüfung für PosNr. 280 290
-  if ($hebgo->pos280_290_plausi) {
-    $hint .= $hebgo->pos280_290_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->pos280_290_plausi if ($hebgo->pos280_290_plausi);
 
   # spezielle Prüfung w/ Zeitesmal im Wochenbett
-  if ($hebgo->Cd_plausi ne '') {
-    $hint .= $hebgo->Cd_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->Cd_plausi if ($hebgo->Cd_plausi);
 
   # spezielle Prüfung w/ Zeitesmal im Wochenbett
-  if ($hebgo->Cd_plausi_neu) {
-    $hint .= $hebgo->Cd_plausi_neu;
-    return $hint;
-  }
+  return $hint .= $hebgo->Cd_plausi_neu if ($hebgo->Cd_plausi_neu);
 
   # spezielle Prüfung w/ wie viele Wochenbettbesuche
-  if ($hebgo->Cc_plausi ne '') {
-    $hint .= $hebgo->Cc_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->Cc_plausi if ($hebgo->Cc_plausi);
 
   # Prüfung auf Begründungspflicht
-  if ($hebgo->Begruendung_plausi ne '') {
-    $hint .= $hebgo->Begruendung_plausi;
-    return $hint;
-  }
+  return $hint .= $hebgo->Begruendung_plausi if ($hebgo->Begruendung_plausi);
+
+  # Gibt es schon Rechnungsposten zu dieser Uhrzeit
+  return $hint .= $hebgo->zeit_plausi if ($hebgo->zeit_plausi);
+
+  # Ist PZN hinterlegt bei Material
+  return $hint .= $hebgo->pzn_plausi if ($hebgo->pzn_plausi);
+
 
   # Preis berechnen in Abhängigkeit der Dauer
   my $preis=0;
@@ -637,10 +615,8 @@ sub speichern {
       $hscript = 'document.rechpos.zeit_von.focus();';
       return $hint;
     }
-    if ($hebgo->dauer_plausi ne '') {
-      $hint .= $hebgo->dauer_plausi;
-      return $hint;
-    }
+    return $hint .= $hebgo->dauer_plausi if ($hebgo->dauer_plausi);
+
     $preis = sprintf "%3.3u",($dauer / $l_fuerzeit) if ($fuerzeit_flag ne 'E');
     $preis = sprintf "%3.2f",($dauer / $l_fuerzeit) if ($fuerzeit_flag eq 'E');
     $preis++ if ($preis*$l_fuerzeit < $dauer && $fuerzeit_flag ne 'E');
@@ -652,7 +628,7 @@ sub speichern {
 
 
   # einfügen in Datenbank
-  $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
+  $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$datum_l,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10,$dia_schl,$dia_text);
 
   # prüfen, ob Anzahl Kurse übergeben wurde, wenn ja die auch einfügen
   if ($anzahl_kurse) {
@@ -686,7 +662,7 @@ sub speichern {
 	return $hint;
       }
       $i++;
-      $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$sieben_spaeter,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10);
+      $leist_id=$l->leistungsdaten_ins($posnr,$frau_id,$begruendung,$sieben_spaeter,$zeit_von.':00',$zeit_bis.':00',$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$preis,'',10,$dia_schl,$dia_text);
     }
   }
 
@@ -713,16 +689,17 @@ sub speichern {
 
   # prüfen ob Zuschlag gespeichert werden muss
   if ($zuschlag ne '' && $zuschlag > 0) {
-    my ($prozent,$ze_preis) = $l->leistungsart_such_posnr('PROZENT,EINZELPREIS',$zuschlag,$datum_l);
+    my ($prozent,$ze_preis,$ze_kbez) = $l->leistungsart_such_posnr('PROZENT,EINZELPREIS,KBEZ',$zuschlag,$datum_l);
     my $preis_neu = 0;
     $prozent=0 if (!defined($prozent) || $prozent eq '');
     $preis_neu = $preis * $prozent if ($prozent > 0);
     $preis_neu = $ze_preis if ($ze_preis > 0);
     # Entfernung darf nicht 2mal gerechnet werden
-    # Uhrzeit muss bei Zuschlag auch nicht angegeben sein
-    $l->leistungsdaten_ins($zuschlag,$frau_id,$begruendung,$datum_l,'00:00:00','00:00:00',0,0,$anzahl_frauen,$preis_neu,'',10);
+    # Uhrzeit muss bei Zuschlag auch nicht angegeben sein,
+    # keine Begründung
+    $l->leistungsdaten_ins($zuschlag,$frau_id,'',$datum_l,'00:00:00','00:00:00',0,0,$anzahl_frauen,$preis_neu,'',10,'','');
     $hint .= '\nZuschlag prozentual wurde zusätzlich gespeichert' if ($prozent > 0);
-    $hint .= '\nZuschlag wurde zusätzlich gespeichert' if ($ze_preis > 0);
+    $hint .= '\n'.$ze_kbez.' wurde zusätzlich gespeichert' if ($ze_preis > 0);
   }
 
   # prüfen, ob Materialpauschale gerechnet werden muss
@@ -738,7 +715,7 @@ sub speichern {
     # angegeben werden, hier löschen
     # keine Zeit von,bis
     my ($ze_preis,$kbez) = $l->leistungsart_such_posnr('EINZELPREIS,KBEZ',$m_zus,$datum_l);
-    $l->leistungsdaten_ins($m_zus,$frau_id,'',$datum_l,'00:00:00','00:00:00',0,0,$anzahl_frauen,$ze_preis,'',10);
+    $l->leistungsdaten_ins($m_zus,$frau_id,'',$datum_l,'00:00:00','00:00:00',0,0,$anzahl_frauen,$ze_preis,'',10,'','');
     $hint .= '\nAuslage '.$kbez.' wurde zusätzlich gespeichert';
   }
 
@@ -821,9 +798,9 @@ sub matpausch {
     
     if ($comp) { # es muss gespeichert werden
       # Entfernung nicht 2mal rechnen bei Materialpauschale, daher
-      # mit Entfernung 0 aufrufen und Zeit 0
+      # mit Entfernung 0 aufrufen und Zeit 0, keine begründung
       my ($ze_preis,$kbez) = $l->leistungsart_such_posnr('EINZELPREIS,KBEZ',$m_zus,$datum_l);
-      $l->leistungsdaten_ins($m_zus,$frau_id,$begruendung,$datum_l,'00:00:00','00:00:00',0,0,$anzahl_frauen,$ze_preis,'',10);
+      $l->leistungsdaten_ins($m_zus,$frau_id,'',$datum_l,'00:00:00','00:00:00',0,0,$anzahl_frauen,$ze_preis,'',10,'','');
       $hint .= '\nAuslage '.$kbez.' wurde zusätzlich gespeichert';
     }
   }
@@ -889,7 +866,7 @@ sub loeschen {
       my $posnr=$erg[1];
       $posnr=$wert_neu if($wert_neu ne '');
       # Erneut speichern
-      $hint=speichern($erg[2],$posnr,$begruendung,$datum_id_loe,$erg[5].':00',$erg[6].':00',$erg[7],$erg[8],$erg[9],'anteilig');
+      $hint=speichern($erg[2],$posnr,$begruendung,$datum_id_loe,$erg[5].':00',$erg[6].':00',$erg[7],$erg[8],$erg[9],'anteilig',$erg[12],$erg[13]);
     }
     $l->leistungsdaten_delete($frau_id,$leist_id_loe);
   }
@@ -919,7 +896,7 @@ sub loeschen {
 	$erg[5]='';
 	$erg[6]='';
       }
-      $hint=speichern($erg[2],$posnr,$begruendung,$datum_id_loe,$erg[5],$erg[6],$erg[7],$erg[8],$erg[9],'anteilig');
+      $hint=speichern($erg[2],$posnr,$begruendung,$datum_id_loe,$erg[5],$erg[6],$erg[7],$erg[8],$erg[9],'anteilig',$erg[12],$erg[13]);
     }
     $l->leistungsdaten_delete($frau_id,$leist_id_loe);
   }
@@ -938,11 +915,14 @@ sub aendern {
   my @erg=$l->leistungsdaten_such_id($leist_id);
   loeschen($leist_id);
   $leist_id=0;
-  $hint=speichern($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke);
+  $hint=speichern($frau_id,$posnr,$begruendung,$datum,$zeit_von,$zeit_bis,$entfernung_tag,$entfernung_nacht,$anzahl_frauen,$strecke,$dia_schl,$dia_text);
   if ($hint=~/FEHLER/g) {
     # jetzt alte Daten wieder speichern
     my $datum=$d->convert($erg[4]);
-    speichern($erg[2],$erg[1],$erg[3],$datum,$erg[5].':00',$erg[6].':00',$erg[7],$erg[8],$erg[9],'anteilig');
+    # falls keine Uhrzeit erfasst wurde muss dies auf wieder so gespeichert
+    # werden
+    ($erg[5],$erg[6])=('','') if ($erg[5] eq '00:00' and $erg[6] eq '00:00');
+    speichern($erg[2],$erg[1],$erg[3],$datum,$erg[5],$erg[6],$erg[7],$erg[8],$erg[9],'anteilig',$erg[12],$erg[13]);
     $hint='Änderung konnte nicht durchdeführt werden, wegen'.$hint;
   } else {
     $hint = '';
@@ -973,4 +953,6 @@ sub hole_daten {
   $entfernung_nacht = sprintf "%.2f",$entfernung_nacht;
   $entfernung_nacht =~ s/\./,/g;
   $strecke = 'gesamt';
+  $dia_schl = $erg[12] || '';
+  $dia_text = $erg[13] || '';
 }
