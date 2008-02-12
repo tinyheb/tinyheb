@@ -1,18 +1,34 @@
 Offen:
-14.12.07
-Wenn Zuschlag zusätzlich gespeichert, wird nicht angegeben, welcher Zuschlag.
+10.02.08
+Rückbau alte Version Datenaustausch
 
-13.12.07
-Plausiprüfung ob Zeiten von erfassten Rechnungposten sich überschneiden.
+09.02.08
+Prüfung in Heb_Edi, sind die Zertifikate noch gültig.
 
-13.12.07
-Beschreibung welche Zwischendateien bei der Rechnungsgenerierung erzeugt werden
+09.02.08
+Kurs_knopf scripte nach javascript auslagern von rechpos.pl
 
-13.12.07
-Hinweise zur Sicherheit von tinyHeb
+09.02.08
+Layout der erfassten Positionen in Rechnungsposten erfassen, verbessern
 
-13.12.07
-Position 160 ist nicht neben 090 bis 130 abrechnungsfähig
+09.02.08
+Kennzeichen in Krankenkassendaten, damit Werte einer einzelnen Kasse nicht überschrieben werden.
+
+09.02.08
+GUI für das Einlesen des eigenen Zertifikates
+
+27.01.08
+Config File für tinyHeb
+
+26.01.08
+Feld privat-Faktor in die Stammdaten mit aufnehmen. Ist dies belegt gilt dieses, sonst der Default aus den Parametern
+
+29.12.07
+Uhrzeit muss nur bei Geburtshilfe angegeben werden, nicht bei anderen Positionsnummern
+
+29.12.07
+Ggf. nur den IK Krankenhaus übertragen, wenn wirklich als Beleghebamme
+
 
 13.12.07
 Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
@@ -20,8 +36,6 @@ Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
 07.12.07
 Positionsnummer 270 nur nach der Geburt
 
-18.11.07
-Bei unzulässiger Änderung von Positionsnummer 180 wird manchmal nach Änderung und Fehlerhinweis Positionsnummer 181 gespeichert
 
 10.11.07
 Plausiprüfungen Positionsnummer 020
@@ -56,6 +70,40 @@ eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
 ----------------------------------------------------------------
 Erledigt:
+10.01.08
+Hinweise zur Sicherheit von tinyHeb. Anforderung vom 13.12.08
+
+Hat es schon Teilrechnungen gegeben, wird bei der zweiten Teilrechnung erneut Zuschlag 1. Besuch nach Geburt ausgewählt, das ist falsch. Anforderung vom 27.01.08
+--> Problem tritt nur auf, bei wechsel von HebGO nach HebGV. Daher keine Umsetzung.
+
+Handbuch überarbeiten w/ geänderter erweiterter Plausiprüfungen. Anforderung vom 02.02.08
+
+Positionsnummer 181 lässt sich Samstags ohne Angabe der Uhrzeit erfassen. Anforderung vom 09.02.08
+
+
+26.01.08
+Bei Versichertenstatus SOZ und privat darf keine elektronische Rechnung generiert werden können. Anforderung vom 21.01.08
+
+DIA Informationen auf Papierrechnung ausgeben. Anforderung vom 19.01.08
+
+
+19.01.08
+DIA Segment umsetzen. Anforderung vom 29.12.07
+
+Bei Klinikgeburten darf nicht Pauschale 360 berechnet werden. Anforderung vom 14.12.07
+
+Wenn Zuschlag zusätzlich gespeichert, wird nicht angegeben, welcher Zuschlag. Anforderung vom 14.12.07
+
+Plausiprüfung ob Zeiten von erfassten Rechnungposten sich überschneiden. Anforderung vom 13.12.07
+
+Beschreibung welche Zwischendateien bei der Rechnungsgenerierung erzeugt werden. Anforderung vom 13.12.07
+
+Position 160 ist nicht neben 090 bis 130 abrechnungsfähig. Anforderung vom 13.12.07
+
+Bei unzulässiger Änderung von Positionsnummer 180 wird manchmal nach Änderung und Fehlerhinweis Positionsnummer 181 gespeichert. Anforderung vom 18.11.07
+
+
+
 11.12.07
 Neue Positionsnummern 161 bis 167. Anforderung vom 10.12.07
 
