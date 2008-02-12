@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.13 2007-12-13 11:23:03 thomas_baum Exp $
+# $Id: update.sql,v 1.14 2008-02-12 18:34:56 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 # zunächst alte GO ungültig machen
@@ -479,3 +479,25 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set KBEZ="nicht vollendete Gebur
 # PosNr 161
 #
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set KBEZ="nicht vollendete Geburt im K'haus Nacht,Sa,So", BEZEICHNUNG="Hilfe bei einer nicht vollendeten Geburt im Krankenhaus mit Zuschlag gemäß §5 Abs. 1" where POSNR='161';
+#
+# 
+#
+# ------ Neuerungen nach 0.17.0
+# 
+# ------ update bei Klinikgeburten darf nicht Pauschale 360 gerechnet werden
+#
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set ZUSATZGEBUEHREN1="" where POSNR in ('090','091','160','161');
+#
+#
+# ----- update Position 16* ist nicht neben Gebühr 090 bis 130 abrechnungsfähig
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='090,091,100,101,110,111,120,121,130,131' where POSNR in ('160','161','162','163','164','165','166','167');
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='160,161,162,163,164,165,166,167' where POSNR in ('090','091','100','101','110','111','120','121','130','131');
+#
+#
+# ------- Neue Felder für Diagnose Schlüssel und Text
+#
+ROOT	ALTER	Leistungsdaten		alter table Leistungsdaten add DIA_SCHL VARCHAR(12) DEFAULT '' AFTER STATUS;
+ROOT	ALTER	Leistungsdaten		alter table Leistungsdaten add DIA_TEXT VARCHAR(70) DEFAULT '' AFTER DIA_SCHL;
