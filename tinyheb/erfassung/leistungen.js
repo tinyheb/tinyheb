@@ -1,10 +1,10 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Leistungserfassung
 
-# $Id: leistungen.js,v 1.11 2007-07-27 18:55:15 baum Exp $
+# $Id: leistungen.js,v 1.12 2008-02-12 18:35:42 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,34 @@
 */
 
 //alert("leistung.js wird geladen");
+
+
+function dia(form) {
+  var begruendung = form.begruendung.value;
+  //  alert("DIA"+begruendung);
+  if (begruendung == 'Attest (auf ärztliche Anordnung)') {
+    //   alert("Attest");
+    // jetzt neues Feld aufnehmen
+    var ueberschrift=document.createElement("TR");
+    ueberschrift.id='dia_felder';
+    //  alert("überschrift-Id"+ueberschrift.id);
+    var tab=document.getElementById("haupt_tab");
+    var km_node=document.getElementById("zeile3_tab");
+    tab.insertBefore(ueberschrift,km_node);
+    ueberschrift.innerHTML="<td><table><tr><td colspan='2'><b>Diagnose Angaben</b></td></tr><tr><td><b>Schlüssel</b></td><td><b>Text</b></td></tr><tr><td><input type='text' name='dia_schl' size='12' maxlength='12'></td><td><input type='text' name='dia_text' size='80' maxlength='70'></td></tr></table></td>";
+  } else {
+    // Felder müssen entfernt werden, falls vorhanden
+    var tab=document.getElementById("haupt_tab");
+    var ueberschrift=document.getElementById("dia_felder");
+    // alert("ueberschrift"+ueberschrift);
+    // überschrift nur entfernen, wenn vorhanden
+    if (ueberschrift != null) {
+      tab.removeChild(ueberschrift);
+    }
+  }
+}
+
+
 
 function leistartsuchen (posnr) {
   open("leistungsartauswahl.pl?suchen=Suchen&posnr="+posnr,"leistungsartauswahl","scrollbars=yes,width=700,height=400");
