@@ -1,10 +1,10 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.11 2007-12-13 11:17:37 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.12 2008-02-12 18:32:18 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -56,9 +56,9 @@ sub new {
 
   ($self->{ltyp},$self->{begruendungspflicht},$self->{dauer},
    $self->{samstag},$self->{sonntag},$self->{nacht},$self->{zweitesmal},
-   $self->{fuerzeit},$self->{nicht})
+   $self->{fuerzeit},$self->{nicht},$self->{pzn})
    =$l->leistungsart_such_posnr
-     ('LEISTUNGSTYP,BEGRUENDUNGSPFLICHT,DAUER,SAMSTAG,SONNTAG,NACHT,ZWEITESMAL,FUERZEIT,NICHT',
+     ('LEISTUNGSTYP,BEGRUENDUNGSPFLICHT,DAUER,SAMSTAG,SONNTAG,NACHT,ZWEITESMAL,FUERZEIT,NICHT,PZN',
       $self->{posnr},$self->{datum_l});
   $self->{zweitesmal}='' unless (defined($self->{zweitesmal}));
   $self->{samstag}='' unless(defined($self->{samstag}));
@@ -160,8 +160,17 @@ sub zuschlag_plausi {
   } elsif (($l->leistungsart_pruef_zus($self->{posnr},'SONNTAG') || 
 	    $l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') || 
 	    $l->leistungsart_pruef_zus($self->{posnr},'NACHT')) && 
-	   ($self->{dow} < 6 || $self->{dow}==6 && $self->zeit ne '' && $d->zeit_h($self->zeit) < 12) || 
-	   $d->zeit_h($self->zeit)<8 && $d->zeit_h($self->zeit) > 20) {
+	   # zuschlagpflichtig und Montag bis Freitag -> Fehler
+	   ($self->{dow} < 6 || 
+	    # Samstag ohne Uhrzeit -> Fehler
+	    $self->{dow}==6 && !$self->zeit ||
+	    # Samstag vor 12 -> Fehler 
+	    $self->{dow}==6 && $self->zeit && $d->zeit_h($self->zeit) < 12)# || 
+	   # alle anderen Tag vor 8 und vor 20
+#	   $d->zeit_h($self->zeit)<8 && $d->zeit_h($self->zeit) > 20) 
+	   )
+    {
+    # Fehler
     return 1;
   }
   return undef;
@@ -592,6 +601,46 @@ sub Begruendung_plausi {
   return '';
 }
 
+
+sub zeit_plausi {
+  # prüft ob es überschneidende Rechnungsposten gibt
+  my $self=shift;
+  
+  return undef if(!$self->{zeit_von} && !$self->{zeit_bis});
+
+  if($self->{zeit_von} &&
+     $l->leistungsdaten_werte($self->{frau_id},"ID",
+			      "DATUM='$self->{datum_l}' ".
+			      "and ZEIT_VON <= '$self->{zeit_von}' ".
+			      "and '$self->{zeit_von}' <= ZEIT_BIS ".
+			      "and POSNR='$self->{posnr}'")>0) {
+    return 'FEHLER: zu dieser Zeit ist schon eine Rechnungsposition erfasst\n es wurde nichts gespeichert';
+  }
+
+  if($self->{zeit_bis} &&
+     $l->leistungsdaten_werte($self->{frau_id},"ID",
+			      "DATUM='$self->{datum_l}' ".
+			      "and ZEIT_VON <= '$self->{zeit_bis}' ".
+			      "and '$self->{zeit_bis}' <= ZEIT_BIS ".
+			      "and POSNR='$self->{posnr}';")>0) {
+    return 'FEHLER: zu dieser Zeit ist schon eine Rechnungsposition erfasst\n es wurde nichts gespeichert';
+  }
+  return undef;
+}
+
+
+sub pzn_plausi {
+  # prüft, ob bei einer erfassten Materialie die PZN gepflegt ist
+  my $self=shift;
+  
+  return undef if(uc $self->{ltyp} ne 'M');
+  
+  if ( ($self->{posnr} =~ /[A-Z]\d{1,3}/i) &&
+       !$self->{pzn}) {
+    return 'FEHLER: Keine Pharmazentralnummer in den Leistungsarten hinterlegt\nBitte nachpflegen\nes wurde nichts gespeichert';
+  }
+  return undef;
+}
 
 
 sub zeit {
