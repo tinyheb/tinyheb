@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.46 2008-02-12 18:29:04 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.47 2008-02-13 18:16:55 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -434,6 +434,7 @@ sub SLGA_GES {
   my $self=shift;
 
   my ($gesamtsumme,$status) = @_;
+  $gesamtsumme = sprintf "%.2f",$gesamtsumme;
   $gesamtsumme =~ s/\./,/g;
 
   my $erg = 'GES+';
