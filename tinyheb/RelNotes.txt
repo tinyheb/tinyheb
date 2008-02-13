@@ -3,6 +3,7 @@ Release 0.18.0
 Bug fix: Positionsnummern mit Zuschlägen konnten Samstag ohne Angabe der Uhrzeit gespeichert werden.
 
 Bug fix: ZHB Segment wurde falsch aufgebaut
+Bug fix: GES Segment Nachkommastellen fehlten bei Beträgen.
 
 Performance der Anwendung verbessert.
 
