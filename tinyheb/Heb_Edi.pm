@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.47 2008-02-13 18:16:55 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.48 2008-03-14 16:25:31 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -1228,6 +1228,7 @@ sub SLLA6 {
 	  $erg .= $self->SLLA_EHB($zus1,
 				  $leistdat[10],
 				  1,
+				  undef,
 				  undef,
 				  undef,
 				  $pzn);
