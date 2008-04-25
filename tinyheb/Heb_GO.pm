@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.12 2008-02-12 18:32:18 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.13 2008-04-25 15:10:54 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -31,20 +31,21 @@ use Heb_leistung;
 use Heb_datum;
 use Heb_stammdaten;
 
+my $h = new Heb;
 my $s = new Heb_stammdaten;
 my $d = new Heb_datum;
 my $l = new Heb_leistung;
 
 our $HINT = '';
+my $dbh = $h->connect;
 
 sub new {
   my $class = shift;
   my $self = {@_,};
   
-  return undef unless(defined($self->{posnr}));
-  return undef unless(defined($self->{frau_id}));
-  return undef unless(defined($self->{datum_l}));
-  my $dbh = Heb->connect;
+  return undef unless($self->{posnr});
+  return undef unless($self->{frau_id});
+  return undef unless($self->{datum_l});
 
   my @dat_frau = $s->stammdaten_frau_id($self->{frau_id});
   my $geb_kind=$d->convert($dat_frau[3]);
@@ -60,13 +61,13 @@ sub new {
    =$l->leistungsart_such_posnr
      ('LEISTUNGSTYP,BEGRUENDUNGSPFLICHT,DAUER,SAMSTAG,SONNTAG,NACHT,ZWEITESMAL,FUERZEIT,NICHT,PZN',
       $self->{posnr},$self->{datum_l});
-  $self->{zweitesmal}='' unless (defined($self->{zweitesmal}));
-  $self->{samstag}='' unless(defined($self->{samstag}));
-  $self->{sonntag}='' unless(defined($self->{sonntag}));
-  $self->{nacht}='' unless(defined($self->{nacht}));
-  $self->{dauer}=0 unless(defined($self->{dauer}));
-  $self->{ltyp}='' unless(defined($self->{ltyp}));
-  $self->{begruendungspflicht}='n' unless(defined($self->{begruendungspflicht}));
+  $self->{zweitesmal}='' unless ($self->{zweitesmal});
+  $self->{samstag}='' unless($self->{samstag});
+  $self->{sonntag}='' unless($self->{sonntag});
+  $self->{nacht}='' unless($self->{nacht});
+  $self->{dauer}=0 unless($self->{dauer});
+  $self->{ltyp}='' unless($self->{ltyp});
+  $self->{begruendungspflicht}='n' unless($self->{begruendungspflicht});
 
   bless $self,ref $class || $class;
   return $self;
@@ -119,7 +120,7 @@ sub zuschlag_sonntag {
 sub ersetze_nacht {
   # wenn Nacht angegeben ist, prüfen ob posnr ersetzt werden muss
   my $self=shift;
-  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+  if ($self->zeit && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
     return $2 if($1 ne '+');
   }
   return undef;
@@ -128,7 +129,7 @@ sub ersetze_nacht {
 sub zuschlag_nacht {
   # prüfen, ob Zuschlag für diese Posnr Nachts existiert
   my $self=shift;
-  if ($self->{zeit_von} ne '' && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
+  if ($self->zeit  && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
     return $2 if($1 eq '+');
   }
   return undef;
@@ -151,11 +152,12 @@ sub zuschlag_plausi {
   # prüft ob eine Zuschlagspositionsnummer für einen Tag ausgewählt
   # wurde, an dem kein Zuschlag gewählt werden darf
   my $self=shift;
+#  warn "ZEIT :",$self->zeit,":",$l->zeit_ende($self->{posnr});
   if ($l->leistungsart_pruef_zus($self->{posnr},'SONNTAG') && ($self->{dow}==7 || ($d->feiertag_datum($self->{datum_l})))) {
     # alles ok
-  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') && $self->{dow}==6 && $d->zeit_h($self->{zeit_von}) >= 12) {
+  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') && $self->{dow}==6 && $d->zeit_h($self->zeit) >= 12) {
     # alles ok
-  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'NACHT') && ($d->zeit_h($self->zeit) < 8 && $self->zeit ne '' || $d->zeit_h($self->zeit) >= 20)) {
+  } elsif ($l->leistungsart_pruef_zus($self->{posnr},'NACHT') && ($d->zeit_h($self->zeit) < 8 && $self->zeit || $d->zeit_h($self->zeit) >= 20)) {
     # alles ok
   } elsif (($l->leistungsart_pruef_zus($self->{posnr},'SONNTAG') || 
 	    $l->leistungsart_pruef_zus($self->{posnr},'SAMSTAG') || 
@@ -182,10 +184,11 @@ sub pos1_plausi {
   # liefert als Ergebnis '' wenn kein Fehler aufgetreten ist oder
   # Fehlermeldung wenn Fehler aufgetreten ist
   my $self = shift;
+  return '' if $self->{posnr} ne '1';
+
   my ($posnr,$frau_id,$datum_l) = 
     ($self->{posnr},$self->{frau_id},$self->{datum_l});
 
-  return '' if $posnr ne '1';
   if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr") >= 12) {
     return 'FEHLER: Position ist höchstens zwölfmal berechnungsfähig\nes wurde nichts gespeichert';
   }
@@ -198,10 +201,11 @@ sub pos010_plausi {
   # liefert als Ergebnis '' wenn kein Fehler aufgetreten ist oder
   # Fehlermeldung wenn Fehler aufgetreten ist
   my $self = shift;
+  return '' if $self->{posnr} ne '010';
+
   my ($posnr,$frau_id,$datum_l) = 
     ($self->{posnr},$self->{frau_id},$self->{datum_l});
 
-  return '' if $posnr ne '010';
   if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr") >= 12) {
     return 'FEHLER: Position ist höchstens zwölfmal berechnungsfähig\nes wurde nichts gespeichert';
   }
@@ -216,7 +220,7 @@ sub pos6_plausi {
   # ärztliche Anordnung
   my $self=shift;
   
-  return undef if ($self->{posnr} ne '6');
+  return if ($self->{posnr} ne '6');
   
   if ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR=$self->{posnr} AND DATUM='$self->{datum_l}'")>=2 && $self->{begruendung} !~ /Anordnung/ ) {
     return '\nFEHLER: Position '.$self->{posnr}.' mehr als 2 mal am selben Tag nur auf ärztliche Anordnung\nEs wurde nichts gespeichert';
@@ -230,7 +234,7 @@ sub pos060_plausi {
   # ärztliche Anordnung
   my $self=shift;
   
-  return undef if ($self->{posnr} ne '060');
+  return if ($self->{posnr} ne '060');
   
   if ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR=$self->{posnr} AND DATUM='$self->{datum_l}'")>=2 && $self->{begruendung} !~ /Anordnung/ ) {
     return '\nFEHLER: Position '.$self->{posnr}.' mehr als 2 mal am selben Tag nur auf ärztliche Anordnung\nEs wurde nichts gespeichert';
@@ -243,10 +247,11 @@ sub pos060_plausi {
 sub pos7_plausi {
   # Positionsnummer 7 darf die maximale Dauer 14 Stunden nicht überschreiten
   my $self=shift;
+  return '' if $self->{posnr} ne '7';
+
   my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
   my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
 
-  return '' if $posnr ne '7';
   # zunächst die bisherige Dauer berechnen
   my $dauer=0;
   $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
@@ -266,10 +271,11 @@ sub pos7_plausi {
 sub pos070_plausi {
   # Positionsnummer 070 darf die maximale Dauer 14 Stunden nicht überschreiten
   my $self=shift;
+  return '' if $self->{posnr} ne '070';
+
   my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
   my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
-
-  return '' if $posnr ne '070';
+  
   # zunächst die bisherige Dauer berechnen
   my $dauer=0;
   $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
@@ -290,10 +296,11 @@ sub pos070_plausi {
 sub pos8_plausi {
   # Positionsnummer 8 darf die maximale Dauer 14 Stunden nicht überschreiten
   my $self=shift;
+  return '' if $self->{posnr} ne '8';
+
   my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
   my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
 
-  return '' if $posnr ne '8';
   # zunächst die bisherige Dauer berechnen
   my $dauer=0;
   $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
@@ -315,10 +322,11 @@ sub pos080_plausi {
   # Positionsnummer 8 darf die maximale Dauer 
   # höchstens 14 Unterichtseinheiten a 30 Minuten nicht überschreiten
   my $self=shift;
+  return '' if $self->{posnr} ne '080';
+
   my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
   my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
 
-  return '' if $posnr ne '080';
   # zunächst die bisherige Dauer berechnen
   my $vk=0;
   my $dauer_alt=0;
@@ -347,10 +355,10 @@ sub pos080_plausi {
 sub pos40_plausi {
   # Positionsnummer 40 darf die maximale Dauer von 10 Stunden nicht überschreiten
   my $self=shift;
-  my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
+  return '' if $self->{posnr} ne '40';
+
   my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
 
-  return '' if $posnr ne '40';
   # zunächst die bisherige Dauer berechnen
   my $dauer=0;
   $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
@@ -359,7 +367,7 @@ sub pos40_plausi {
   }
   my $erfasst=sprintf "%3.2f",$dauer/60;
   $erfasst =~ s/\./,/g;
-  $dauer += $d->dauer_m($zeit_bis,$zeit_von);
+  $dauer += $d->dauer_m($self->{zeit_bis},$self->{zeit_von});
   if ($dauer > (10*60)) {
     return 'FEHLER: Rückbildungsgymnastik in der Gruppe höchsten 10 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
   }
@@ -371,10 +379,11 @@ sub pos40_plausi {
 sub pos270_plausi {
   # Positionsnummer 270 darf die maximale Dauer von 10 Stunden nicht überschreiten
   my $self=shift;
+  return '' if $self->{posnr} ne '270';
+
   my ($zeit_von,$zeit_bis) = ($self->{zeit_von},$self->{zeit_bis});
   my ($posnr,$frau_id)=($self->{posnr},$self->{frau_id});
 
-  return '' if $posnr ne '270';
   # zunächst die bisherige Dauer berechnen
   my $dauer=0;
   $l->leistungsdaten_werte($frau_id,"ZEIT_VON,ZEIT_BIS","POSNR=$posnr");
@@ -434,10 +443,10 @@ sub nicht_plausi {
   # liefert Ergebnis '' wenn kein Fehler aufgetreten ist oder
   # Fehlermeldung wenn Fehler aufgetreten ist
   my $self=shift;
+  return '' unless ($self->{nicht});
+
   my ($posnr,$frau_id,$datum_l)=
     ($self->{posnr},$self->{frau_id},$self->{datum_l});
-
-  return '' unless ($self->{nicht});
 
   if ($l->leistungsdaten_werte($frau_id,"POSNR",
                                "POSNR in ($self->{nicht}) and DATUM='$self->{datum_l}'")) {
@@ -471,17 +480,13 @@ sub ltyp_plausi {
   # C (Wochenbett) nur nach Geburt des Kindes
   # Prüfung wird nur durchgeführt, wenn Geburtsdatum des Kindes bekannt ist
   my $self = shift;
-  my ($posnr,$frau_id,$datum_l)=
-    ($self->{posnr},$self->{frau_id},$self->{datum_l});
 
-  my $geb_kind=$self->{geb_kind};
-  return '' if($geb_kind eq '');
-  my $ltyp=$self->{ltyp};
+  return '' unless ($self->{geb_kind});
 
-  if ($ltyp eq 'A' && $geb_kind < $datum_l) {
+  if ($self->{ltyp} eq 'A' && $self->{geb_kind} < $self->{datum_l}) {
     return 'FEHLER: Leistungen der Schwangerenbetreuung können nur vor Geburt des\nKindes erbracht werden.\nEs wurde nichts gespeichert';
   }
-  if ($ltyp eq 'C' && $geb_kind > $datum_l) {
+  if ($self->{ltyp} eq 'C' && $self->{geb_kind} > $self->{datum_l}) {
     return 'FEHLER: Leistungen im Wochenbett können erst nach Geburt des Kindes\nerbracht werden. Es wurde nichts gespeichert.';
   }
   return '';
@@ -495,11 +500,15 @@ sub Cd_plausi {
   # innerhalb von 8 Wochen = 56 Tage mit Begründung --> OK
   # oder nach 8 Wochen mit Begründung 'auf ärztliche Anordnung' --> OK
   my $self=shift;
+  return '' if ($self->{posnr} ne '25' && 
+		$self->{posnr} ne '26' && 
+		$self->{posnr} ne '29' &&
+                $self->{posnr} ne '32' && 
+		$self->{posnr} ne '33');
+
   my ($posnr,$datum_l,$begruendung)=    
     ($self->{posnr},$self->{datum_l},$self->{begruendung});
 
-  return '' if ($posnr ne '25' && $posnr ne '26' && $posnr ne '29' &&
-                $posnr ne '32' && $posnr ne '33');
 
   my $geb_kind=$self->{geb_kind};
   return '' if($geb_kind eq '');
@@ -526,12 +535,15 @@ sub Cd_plausi_neu {
   # innerhalb von 8 Wochen = 56 Tage mit Begründung --> OK
   # oder nach 8 Wochen mit Begründung 'auf ärztliche Anordnung' --> OK
   my $self=shift;
+  return '' if ($self->{posnr} ne '180' && 
+		$self->{posnr} ne '181' && 
+		$self->{posnr} ne '200' && 
+		$self->{posnr} ne '201' &&
+		$self->{posnr} ne '210' && 
+		$self->{posnr} ne '211');
+
   my ($posnr,$datum_l,$begruendung)=    
     ($self->{posnr},$self->{datum_l},$self->{begruendung});
-
-  return '' if ($posnr ne '180' && $posnr ne '181' && 
-		$posnr ne '200' && $posnr ne '201' &&
-		$posnr ne '210' && $posnr ne '211');
 
   my $geb_kind=$self->{geb_kind};
   return '' if($geb_kind eq '');
@@ -594,8 +606,7 @@ sub Begruendung_plausi {
   my ($posnr,$datum_l,$begruendung)=    
     ($self->{posnr},$self->{datum_l},$self->{begruendung});
 
-  if (uc $self->{begruendungspflicht} eq 'J' && 
-      (!defined($begruendung ) || $begruendung eq '')) {
+  if (uc $self->{begruendungspflicht} eq 'J' && !$begruendung) {
     return 'FEHLER: Bei Position '.$posnr.' ist eine Begründung notwendig\n es wurde nichts gespeichert';
   }
   return '';
@@ -650,6 +661,55 @@ sub zeit {
 
   return $self->{zeit_bis} if($l->zeit_ende($self->{posnr}));
   return $self->{zeit_von};
+}
+
+
+sub zeit_vorhanden_plausi {
+  my $self=shift;
+
+  # prüfen ob Uhrzeit erfasst wurde, wenn ja, muss es gültige Zeit sein
+  
+#  if ($self->{zeit_von} || $self->{zeit_bis}) {
+    if ($self->{zeit_von} && !($d->check_zeit($self->{zeit_von}))) {
+      return '\nFEHLER: keine gültige Uhrzeit von erfasst, nichts gespeichert';
+    }
+    if ($self->{zeit_bis} && !($d->check_zeit($self->{zeit_bis}))) {
+      return '\nFEHLER: keine gültige Uhrzeit bis erfasst, nichts gespeichert';
+    }
+#  }
+  # Ab hier sind gültige Uhrzeiten vorhanden
+
+
+  my $fuerzeit=0;
+  (undef,$fuerzeit)=$d->fuerzeit_check($self->{fuerzeit});
+
+  if($fuerzeit) {
+    # beide Zeiten fehlen
+    if ( (!$self->{zeit_von} || !$d->check_zeit($self->{zeit_von})) &&
+	 (!$self->{zeit_bis} || !$d->check_zeit($self->{zeit_bis})) ) {
+      return 'FEHLER: Bitte Zeit von, Zeit bis erfassen, es wurde nichts gespeichert\n';
+    }
+    # Zeit von fehlt
+    if (!$self->{zeit_von} || !$d->check_zeit($self->{zeit_von})) {
+      return 'FEHLER: keine gültige Uhrzeit von erfasst, es wurde nichts gespeichert\n';
+    }
+    # Zeit bis fehlt
+    if (!$self->{zeit_bis} || !$d->check_zeit($self->{zeit_bis})) {
+      return 'FEHLER: keine gültige Uhrzeit bis erfasst, es wurde nichts gespeichert\n';
+    }
+    # Zeiten sind identisch
+    unless ($d->dauer_m($self->{zeit_bis},$self->{zeit_von})) {
+      return 'FEHLER: Bitte Zeit von, Zeit bis erfassen, es wurde nichts gespeichert\n';
+    }
+  }
+
+#  if ($l->zeit_ende($self->{posnr}) && !$self->{zeit_bis}) {
+#    return 'FEHLER: Fehlende Uhrzeit bis, es wurde nichts gespeichert\n';
+#  } elsif (!$self->{zeit_von}) {
+#    return 'FEHLER: Fehlende Uhrzeit von, es wurde nichts gespeichert\n';
+#  }
+  
+  return;
 }
 
 
