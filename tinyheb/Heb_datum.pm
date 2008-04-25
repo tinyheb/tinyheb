@@ -1,9 +1,9 @@
 # Package um Datümer zu verarbeiten
 
-# $Id: Heb_datum.pm,v 1.24 2007-12-13 11:19:00 thomas_baum Exp $
+# $Id: Heb_datum.pm,v 1.25 2008-04-25 15:12:12 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -25,26 +25,29 @@ package Heb_datum;
 
 use strict;
 use DBI;
-use Date::Calc qw(check_date Add_Delta_DHMS check_time Today Day_of_Week);
+use Date::Calc qw(check_date Add_Delta_DHMS check_time Today Day_of_Week Decode_Month);
 
 use Heb;
 
 my $debug = 1;
-our $dbh; # Verbindung zur Datenbank
-our $feiertag_such; # suchen von Feiertagen
-our $max_feiertag=0; # maximal vergebene ID
+my $h= new Heb;
+my $dbh=$h->connect; # Verbindung zur Datenbank
+my $feiertag_such; # suchen von Feiertagen
+my $max_feiertag=0; # maximal vergebene ID
+
+
+$feiertag_such = $dbh->prepare("select ID,NAME,BUNDESLAND, ".
+			       "DATE_FORMAT(DATUM,'%d.%m.%Y') ".
+			       "from Kalender where ".
+			       "NAME LIKE ? and ".
+			       "BUNDESLAND LIKE ? and ".
+			       "DATUM LIKE ?;");
+$max_feiertag = $h->parm_unique('KALENDER_ID');
 
 sub new {
   my($class) = @_;
   my $self = {};
-  $dbh = Heb->connect;
-  $feiertag_such = $dbh->prepare("select ID,NAME,BUNDESLAND, ".
-				 "DATE_FORMAT(DATUM,'%d.%m.%Y') ".
-				 "from Kalender where ".
-				 "NAME LIKE ? and ".
-				 "BUNDESLAND LIKE ? and ".
-				 "DATUM LIKE ?;");
-  $max_feiertag = Heb->parm_unique('KALENDER_ID');
+
   push @{$self->{BUNDESLAENDER}},'NRW','Bayern','Hessen','Niedersachsen','Hamburg','Rheinland-Pfalz','Thüringen','Sachsen-Anhalt','Sachsen';
   bless $self, ref $class || $class;
   return $self;
@@ -59,10 +62,10 @@ sub convert {
   # konvertiert datum vom Format tt.mm.jjjj nach jjj-mm-tt
   # es wird "error" geliefert, falls Datum nicht gültig ist
   
-  shift; # package namen vom Stack nehmen
+  my $self=shift; # package namen vom Stack nehmen
 
   my ($eingabe_datum) = @_;
-  return unless(defined($eingabe_datum));
+  return unless($eingabe_datum);
   return $eingabe_datum if ($eingabe_datum =~ /\d{1,4}-\d{1,2}-\d{1,2}/);
   my ($tag,$monat,$jahr) = split '\.',$eingabe_datum;
   return "error" if (!(defined($tag) && defined($monat) && defined($jahr)));
@@ -76,7 +79,7 @@ sub convert {
 sub convert_tmj {
   # konvertiert datum vom Format jjjj-mm-tt nach tt.mm.jjjj
   # es wird "error" geliefert, falls Datum nicht gültig ust
-  shift;
+  my $self=shift;
   my ($eingabe_datum) = @_;
   return $eingabe_datum if ($eingabe_datum =~ /\d{1,2}\.\d{1,2}\.\d{1,4}/);
   my ($jahr,$monat,$tag) = split '-',$eingabe_datum;
@@ -89,18 +92,18 @@ sub convert_tmj {
 
 sub jmt {
   # liefert Tripel jahr,monat,tag
-  shift;
+  my $self=shift;
   my ($datum) = @_;
-  $datum=Heb_datum->convert($datum);
+  $datum=$self->convert($datum);
   return split '-',$datum;
 }
 
 sub zeit_h {
   # holt die Stunden aus dem Paramter hh:mm
-  shift;
+  my $self=shift;
   my ($zeit) = @_;
   my ($h,$m) = split ':',$zeit;
-  return 0 if (!(defined($h)));
+  return 0 if (!$h);
   return $h;
 }
 
@@ -145,9 +148,9 @@ sub wotagnummer {
 
 
 sub convert_zeit {
-  shift;
+  my $self=shift;
   my ($time) = @_;
-  return '' if (!defined($time) || $time eq '');
+  return '' if (!$time);
   return $time if($time =~ /^\d{1,2}:\d{2}$/);
   if ($time =~ /^(\d{1,2})(\d{2})$/) {
     return $1.':'.$2;
@@ -157,21 +160,21 @@ sub convert_zeit {
 
 sub check_zeit {
   # prüft, ob die zeit eine gültige ist
-  shift;
+  my $self=shift;
   my ($z1) = @_;
   my ($h1,$m1) = split ':',$z1;
-  return 0 if (!defined($h1) || !defined($m1));
+  return 0 if (!$h1 || !$m1);
   return check_time($h1,$m1,0);
 }
 
 sub dauer_m {
   # eingabe 2 zeiten im Format hh:mm es wird die Dauer in Minuten berechnet
-  shift;
+  my $self=shift;
   my ($z1,$z2)= @_;
-  return 0 if(!(defined($z1)) || !(defined($z2)) || $z1 eq '' || $z2 eq '');
+  return 0 if(!$z1 || !$z2);
   my ($h1,$m1) = split ':',$z1;
   my ($h2,$m2) = split ':',$z2;
-  return 0 if(!(defined($h2)) || !(defined($m2)));
+  return 0 if(!$h2 || !$m2);
   $h2 *=-1;
   $m2 *=-1;
   my ($y,$m,$d,$H,$M,$S)=Add_Delta_DHMS(1900,1,1,$h1,$m1,0,0,$h2,$m2,0);
@@ -189,10 +192,9 @@ sub monat {
 
 sub fuerzeit_check {
   # ermittelt aus Fuerzeit, ob Flag auf komma Werte rechnen gesetzt ist
-  shift;
+  my $self=shift;
   my ($fz) = @_;
-  $fz = 0 unless(defined($fz));
-  $fz = 0 if($fz eq '');
+  $fz = 0 unless($fz);
   $fz =~ /(E{0,1})(\d{1,3})/;
   return ($1,$2);
 }
@@ -200,10 +202,10 @@ sub fuerzeit_check {
 
 sub feiertag_ins {
   # fügt neuen Feiertag in Datenbank ein
-  shift;
+  my $self=shift;
 
   # zunächst neue ID für Kalender Eintrag holen
-  my $id = Heb->parm_unique('KALENDER_ID');
+  my $id = $h->parm_unique('KALENDER_ID');
   $id++;
   # insert an DB vorbereiten
   my $feiertag_ins = $dbh->prepare("insert into Kalender ".
@@ -212,7 +214,7 @@ sub feiertag_ins {
     or die $dbh->errstr();
   my $erg = $feiertag_ins->execute($id,@_)
     or die $dbh->errstr();
-  Heb->parm_up('KALENDER_ID',$id);
+  $h->parm_up('KALENDER_ID',$id);
   $max_feiertag = $id;
   return $max_feiertag;
 }
@@ -220,7 +222,7 @@ sub feiertag_ins {
 
 sub feiertag_update {
   # speichert geänderte Daten ab
-  shift;
+  my $self=shift;
   # updaten an DB vorbereiten
   my $feiertag_up = $dbh->prepare("update Kalender set ".
                                        "NAME=?,BUNDESLAND=?,DATUM=? ".
@@ -234,7 +236,7 @@ sub feiertag_update {
 
 sub feiertag_delete {
   # löscht Krankenkasse aus der Datenbank
-  shift;
+  my $self=shift;
   # delete an DB vorbereiten
   my $feiertag_del = $dbh->prepare("delete from Kalender ".
 				   "where ID=?;")
@@ -280,11 +282,24 @@ sub feiertag_datum {
   my $feier_datum = $dbh->prepare("select * from Kalender where ".
 				  "DATUM = ?;")
     or die $dbh->errstr();
-#  $datum=Heb_datum->convert($datum);
   my $erg = $feier_datum->execute($datum) or die $dbh->errstr();
   return $erg if ($erg > 0);
   return 0;
 }
+
+
+
+sub extract_date {
+  # macht aus OpenSSL Datum einen "vernünftigen" Datumswert
+  my $self=shift;
+  my ($date_string)=@_;
+  
+  my ($mm,$dd,$time,$yyyy,$time_zone)=split ' ',$date_string;
+  $mm=Decode_Month($mm);
+  return sprintf "%4.4u%2.2u%2.2u",$yyyy,$mm,$dd;
+}
+
+
 
 sub max {
   # gibt die höchste ID zurück
