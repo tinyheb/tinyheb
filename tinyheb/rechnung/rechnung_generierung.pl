@@ -5,7 +5,7 @@
 
 # Rechnungen generieren und drucken
 
-# $Id: rechnung_generierung.pl,v 1.25 2007-07-27 18:55:15 baum Exp $
+# $Id: rechnung_generierung.pl,v 1.26 2008-04-25 15:44:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -67,7 +67,7 @@ if (defined($rech_exists)) {
 my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
     $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
     $ik_krankenkasse,$naechste_hebamme,
-    $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
+    $begruendung_nicht_nae_heb,$kzetgt) = $s->stammdaten_frau_id($frau_id);
 
 # krankenkassendaten ermitteln w/ existensprüfung krankenkasse
 my  ($name_krankenkasse) = $k->krankenkasse_sel('NAME',$ik_krankenkasse);
@@ -101,8 +101,12 @@ print '<tr>';
 print '<td><b>ID</b></td>';
 print '<td><b>Vorname:</b></td>';
 print '<td><b>Nachname</b></td>';
-print '<td><b>Geb.:</b></td>';
-print '<td><b>Geb. Kind:</b></td>';
+print '<td><b>Geb. Frau:</b></td>';
+if (!$kzetgt || $kzetgt == 2) {
+  print '<td><b>ET Kind:</b></td>';
+} else {
+  print '<td><b>Geb. Kind:</b></td>';
+}
 print '</tr>';
 print "\n";
 print '<tr>';
@@ -116,7 +120,7 @@ print "<td><input type='text' class='disabled' disabled name='vorname' value='$v
 print "<td><input type='text' class='disabled' disabled name='nachname' value='$nachname' size='40'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_frau' value='$geb_frau' size='10'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind' value='$geb_kind' size='10'></td>";
-print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl?suchen=Suchen\",\"frauenauswahl\",\"scrollbars=yes,innerwidth=750,innerheight=400\");'></td>";
+print qq!<td><input type='button' name='frau_suchen' value='Suchen' onClick='open("../erfassung/frauenauswahl.pl?suchen=Suchen&sel_status=ungleich erl.","frauenauswahl","scrollbars=yes,innerwidth=750,innerheight=400");'></td>!;
 print "</tr>";
 
 print "</table>";
