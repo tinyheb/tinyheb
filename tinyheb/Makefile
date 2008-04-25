@@ -1,6 +1,6 @@
 # Makefile für tinyHeb
 
-# $Id: Makefile,v 1.8 2007-11-01 17:37:27 thomas_baum Exp $
+# $Id: Makefile,v 1.9 2008-04-25 15:19:56 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 PM=*.pm
@@ -9,7 +9,7 @@ TXT=*.txt README
 JS=*.js
 CSS=*.css
 
-SUB_DIRS=erfassung edifact rechnung tools DATA
+SUB_DIRS=erfassung edifact rechnung tools DATA certs
 
 #USER=root
 
@@ -72,6 +72,9 @@ install:
 	fi; \
 	if [ -n "$$(ls $$i/*.sql 2>/dev/null)" ]; then \
 		$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p $$i/*.sql $(INST_DIR)/$$i/; \
+	fi; \
+	if [ -n "$$(ls $$i/*.pem 2>/dev/null)" ]; then \
+		$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p $$i/*.pem $(INST_DIR)/$$i/; \
 	fi; \
 	done
 # Apache Directiven
