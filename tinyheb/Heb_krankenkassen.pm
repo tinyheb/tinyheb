@@ -1,9 +1,9 @@
 # Package um Krankenkassen zu verarbeiten
 
-# $Id: Heb_krankenkassen.pm,v 1.16 2007-07-27 18:55:15 baum Exp $
+# $Id: Heb_krankenkassen.pm,v 1.17 2008-04-25 15:13:07 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -31,24 +31,23 @@ use Heb;
 my $h = new Heb;
 
 my $debug = 0;
-our $dbh; # Verbindung zur Datenbank
+my $dbh=$h->connect; # Verbindung zur Datenbank
 
-our $krank_such; # Suchen von Krankenkassen
+my $krank_such; # Suchen von Krankenkassen
+$krank_such = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
+			    "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL, ".
+			    "ZIK, BEMERKUNG, PUBKEY, ZIK_TYP, BELEG_IK,EMAIL ".
+			    "from Krankenkassen where ".
+			    "NAME LIKE ? and ".
+			    "KNAME LIKE ? and ".
+			    "PLZ_HAUS LIKE ? and ".
+			    "PLZ_POST LIKE ? and ".
+			    "ORT LIKE ? and ".
+			    "IK LIKE ?;");
 
 sub new {
   my($class) = @_;
   my $self = {};
-  $dbh = Heb->connect;
-  $krank_such = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
-			      "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL, ".
-			      "ZIK, BEMERKUNG, PUBKEY, ZIK_TYP, BELEG_IK,EMAIL ".
-			      "from Krankenkassen where ".
-			      "NAME LIKE ? and ".
-			      "KNAME LIKE ? and ".
-			      "PLZ_HAUS LIKE ? and ".
-			      "PLZ_POST LIKE ? and ".
-			      "ORT LIKE ? and ".
-			      "IK LIKE ?;");
   bless $self, ref $class || $class;
   return $self;
 }
@@ -56,11 +55,11 @@ sub new {
 sub krankenkasse_sel {
   # Holt Informationen zu einer gegebenen IK aus der Datenbank
 
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   my($werte,$ik) = @_;
 
-  return undef if(!defined($ik) or $ik eq '');
+  return if(!$ik);
 
   # lesen aus Datenbank vorbereiten
   my $krankenkasse_get = $dbh->prepare("select $werte from Krankenkassen ".
@@ -76,7 +75,7 @@ sub krankenkasse_sel {
 sub krankenkasse_ik {
   # Holt Informationen zu einer gegebenen IK aus der Datenbank
 
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   my ($werte,$ik) = @_;
 
@@ -94,7 +93,7 @@ sub krankenkasse_ik {
 sub krankenkasse_such {
   # Sucht nach Krankenkassen in der Datenbank
 
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 		     
   my ($name,$kname,$plz_haus,$plz_post,$ort,$ik) = @_;
   
@@ -118,7 +117,7 @@ sub da_such {
     or die $dbh->errstr();
   $da_such->execute or die $dbh->errstr();
   while (my ($da)=$da_such->fetchrow_array()) {
-    $erg{$da}=$da if($da >0);
+    $erg{$da}=$da if($da);
   }
 
   $da_such =$dbh->prepare("select distinct ik from Krankenkassen ".
@@ -126,12 +125,11 @@ sub da_such {
     or die $dbh->errstr();
   $da_such->execute or die $dbh->errstr();
   while (my ($da)=$da_such->fetchrow_array()) {
-    $erg{$da}=$da if($da >0);
+    $erg{$da}=$da if($da);
   }
 
-  foreach my $key (sort keys %erg) {
-    push @erg,$key;
-  }
+  push @erg,$_ foreach (sort keys %erg);
+
   return @erg;
 }  
 
@@ -140,7 +138,7 @@ sub da_such {
 sub krankenkassen_ins {
   # fügt neue Krankenkasse in Datenbank ein
 
-  shift;
+  my $self=shift;
   
   # insert an DB vorbereiten
   my $krankenkassen_ins = $dbh->prepare("insert into Krankenkassen ".
@@ -158,7 +156,7 @@ sub krankenkassen_ins {
 
 sub krankenkassen_update {
   # speichert geänderte Daten ab
-  shift;
+  my $self=shift;
   my @ein=@_;
   # updaten an DB vorbereiten
   my $krankenkassen_up = $dbh->prepare("update Krankenkassen set ".
@@ -179,7 +177,7 @@ sub krankenkassen_update {
 
 sub krankenkassen_up_pubkey {
   # ändert public key in Tabelle Krankenkassen
-  shift;
+  my $self=shift;
   my ($key,$ik)=@_;
   my $krankenkassen_up_pubkey = $dbh->prepare("update Krankenkassen set ".
 					     "PUBKEY=? where IK=?;")
@@ -192,7 +190,7 @@ sub krankenkassen_up_pubkey {
 
 sub krankenkassen_delete {
   # löscht Krankenkasse aus der Datenbank
-  shift;
+  my $self=shift;
   # delete an DB vorbereiten
   my $krankenkasse_del = $dbh->prepare("delete from Krankenkassen ".
 				       "where IK=?;")
@@ -205,7 +203,7 @@ sub krankenkassen_delete {
 
 sub krankenkasse_next_ik {
   # holt die zur angegebenen ik nächste ik
-  shift;
+  my $self=shift;
   my ($ik) = @_;
   my $krankenkasse_next_ik = 
     $dbh->prepare("select IK from Krankenkassen where ".
@@ -217,7 +215,7 @@ sub krankenkasse_next_ik {
 
 sub krankenkasse_prev_ik {
   # holt die zur angegebenen ik vorhergehende ik
-  shift;
+  my $self=shift;
   my ($ik) = @_;
   my $krankenkasse_prev_ik = 
     $dbh->prepare("select IK from Krankenkassen where ".
@@ -229,8 +227,8 @@ sub krankenkasse_prev_ik {
 
 
 sub krankenkassen_krank_ik {
-  # holgt alle Daten zu einer Krankenkasse
-  shift;
+  # holt alle Daten zu einer Krankenkasse
+  my $self=shift;
   
   my $krank_ik = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
 			       "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL,".
@@ -254,10 +252,10 @@ sub krankenkasse_ktr_da {
   # und die dazugehörige IK der Datenannahmestelle
   # wenn ik nicht auf einen Kostenträger verweist, ist die Kasse
   # der Kostenträger dann wird die IK als Ergebniss geliefert
-  shift;
+  my $self=shift;
 
   my ($ik)=@_;
-  my ($zik,$zik_typ)=Heb_krankenkassen->krankenkasse_sel("ZIK,ZIK_TYP",$ik);
+  my ($zik,$zik_typ)=$self->krankenkasse_sel("ZIK,ZIK_TYP",$ik);
   my $ktr=0;
   my $da=0;
   my $da_typ=0;
@@ -266,7 +264,7 @@ sub krankenkasse_ktr_da {
     $da=0;
   } elsif($zik_typ==1) {
     $ktr=$zik;
-    ($da,$da_typ)=Heb_krankenkassen->krankenkasse_sel("ZIK,ZIK_TYP",$ktr);
+    ($da,$da_typ)=$self->krankenkasse_sel("ZIK,ZIK_TYP",$ktr);
     $da=0 if(!defined($da_typ) || $da_typ < 2);
     $da=$ktr if ($da_typ==2);
   } elsif($zik_typ==3) {
@@ -283,9 +281,9 @@ sub krankenkasse_ktr_da {
 sub krankenkasse_empf_phys {
   # liefert zu einer ik einer Datenannahmestelle
   # den physikalischen Empfänger
-  shift;
+  my $self=shift;
   my ($ik)=@_;
-  my ($zik,$zik_typ)=Heb_krankenkassen->krankenkasse_sel("ZIK,ZIK_TYP",$ik);
+  my ($zik,$zik_typ)=$self->krankenkasse_sel("ZIK,ZIK_TYP",$ik);
   return undef if(!defined($zik_typ));
   return $ik if ($zik_typ == 0 || $zik_typ==1);
   return $zik if ($zik_typ == 2 || $zik_typ==3);
@@ -294,17 +292,17 @@ sub krankenkasse_empf_phys {
 sub krankenkasse_test_ind {
   # liefert zu einer Krankenkasse den Testindikator
   # für Datenlieferung per E-Mail
-  shift;
+  my $self=shift;
 
   my ($ik)=@_;
-  my ($ktr,$da)=Heb_krankenkassen->krankenkasse_ktr_da($ik);
+  my ($ktr,$da)=$self->krankenkasse_ktr_da($ik);
   my $test_ind = $h->parm_unique('IK'.$da);
   if (defined($h->parm_unique('KTR'.$ktr))) {
     $test_ind=$h->parm_unique('KTR'.$ktr);
   }
   # prüfen, ob PUBKEY vorhanden ist
-  my ($pubkey) = Heb_krankenkassen->krankenkasse_sel("PUBKEY",$da);
-  return undef if(!(defined($pubkey)) or $pubkey eq '');
+  my ($pubkey) = $self->krankenkasse_sel("PUBKEY",$da);
+  return undef unless($pubkey);
   return $test_ind;
 }
 
@@ -317,21 +315,21 @@ sub krankenkasse_beleg_ik {
   # Typ = 1, Belege gehen an die übergebene IK
   # Typ = 2, IK verweist unmittelbar auf Belegannahmestelle
   # Typ = 3, IK verweist über zentralen Kostenträger an Belegannahmestelle
-  shift;
+  my $self=shift;
 
   my ($ik)=@_;
   my $beleg_ik=0;
   my $typ=1;
 
   # Typ = 2, IK verweist unmittelbar auf Belegannahmestelle
-  ($beleg_ik)=Heb_krankenkassen->krankenkasse_sel("BELEG_IK",$ik);
+  ($beleg_ik)=$self->krankenkasse_sel("BELEG_IK",$ik);
   return ($beleg_ik,2) if(defined($beleg_ik) && $beleg_ik > 0);
 
-  my ($ktr,$da)=Heb_krankenkassen->krankenkasse_ktr_da($ik);
-  if (defined($ktr) && $ktr > 0) {
-    ($beleg_ik)=Heb_krankenkassen->krankenkasse_sel("BELEG_IK",$ktr);
+  my ($ktr,$da)=$self->krankenkasse_ktr_da($ik);
+  if ($ktr) {
+    ($beleg_ik)=$self->krankenkasse_sel("BELEG_IK",$ktr);
     # Typ = 3, IK verweist über zentralen Kostenträger an Belegannahmestelle
-    if(defined($beleg_ik) && $beleg_ik > 0) {
+    if($beleg_ik) {
       return ($beleg_ik,3);
     } else {
       return ($ik,1);
