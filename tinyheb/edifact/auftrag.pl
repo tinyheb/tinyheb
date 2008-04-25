@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: auftrag.pl,v 1.13 2007-12-13 11:24:02 thomas_baum Exp $
+# $Id: auftrag.pl,v 1.14 2008-04-25 15:25:04 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # erstellen der Auftragsdatei für den Datenaustausch mit den
@@ -54,10 +54,12 @@ my $help=0;
 my $update=0;
 my $sendmail=0;
 my $ignore=0;
+my $sig_pass='';
 
 my $result = GetOptions('help!' => \$help,
 			'mail!' => \$sendmail,
 			'update!' => \$update,
+			'passin=s' => \$sig_pass,
 			'ignore!' => \$ignore);
 
 if ($help) {
@@ -86,7 +88,8 @@ if ($status > 20 && !($ignore) ) {
   die "Rechnung wurde schon elektronisch gestellt oder ist schon (Teil-)bezahlt Rechnungsstatus ist:$status\n";
 }
 
-my $e = new Heb_Edi($rechnr);
+my $e = new Heb_Edi($rechnr,
+		    sig_pass => $sig_pass);
 if(!defined($e)) {
   die "Fehler: $Heb_Edi::ERROR Abbruch\n";
 }
