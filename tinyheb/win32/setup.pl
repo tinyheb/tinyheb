@@ -3,10 +3,10 @@
 
 # Mini Setup für tinyHeb
 
-# $Id: setup.pl,v 1.8 2007-11-18 16:20:16 thomas_baum Exp $
+# $Id: setup.pl,v 1.9 2008-04-25 15:55:28 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -43,9 +43,11 @@ my %statusHash;
 
 my $eingabe='';
 my $serv_erg='';
-my $id='$Id: setup.pl,v 1.8 2007-11-18 16:20:16 thomas_baum Exp $';
+my $id='$Id: setup.pl,v 1.9 2008-04-25 15:55:28 thomas_baum Exp $';
 
-print "Setup fuer tinyHeb Copyright (C) 2007 Thomas Baum\n";
+write_LOG("Programm id $id");
+
+print "Setup fuer tinyHeb Copyright (C) 2007,2008 Thomas Baum\n";
 print "Version of this setup programm $id\n";
 print "The tinyHeb setup programm comes with ABSOLUTELY NO WARRANTY;\nfor details see the file gpl.txt\n";
 print "This is free software, and you are welcome to redistribute it\n";
@@ -54,6 +56,10 @@ print "under certain conditions; for details see the file gpl.txt\n\n";
 
 print "Es wird zunaechst geprueft, ob alle Komponenten vorhanden sind\n";
 print "\n";
+
+printf "Perl Version ist %vd\n\n",$^V;
+my $p_version=sprintf "%vd",$^V;
+write_LOG("Perl Version",$p_version);
 
 print "Pruefe ob Windows Version installiert\n";
 write_LOG("Pruefe ob Windows Version installiert");
@@ -64,7 +70,7 @@ if ($first_line =~ /^#!perl -wT/) {
   print "Windows Version installiert\n";
   write_LOG("Windows Version installiert");
 } else {
-  print "Du hast Du Linux Version installiert, bitte lade Dir von http://www.tinyheb.de/source/ zunaechst die Windows Version herunter\n";
+  print "Du hast die Linux Version installiert, bitte lade Dir von http://www.tinyheb.de/source/ zunaechst die Windows Version herunter\n";
   print "Oder starte das Programm linux2win.pl aus dem Verzeichnis win32\n";
   print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
   write_LOG("Linux installiert");
@@ -73,25 +79,22 @@ if ($first_line =~ /^#!perl -wT/) {
 }
 close WIN;
 
-print "Pruefe ob tinyHeb im richtigen Verzeichnis installiert\n";
-my $win_path=getcwd();
-if ($win_path =~ /Programme\/Apache Group\/Apache2\/cgi-bin\/tinyheb\/win32/) {
-  print "Ist im korrekten Verzeichnis installiert\n";
-  write_LOG("Im korrekten Verzeichnis");
-} else {
-  print 'Bitte tinyHeb im Verzeichnis \Programme\Apache Group\Apache2\cgi-bin\ entpacken',"\n";
-  write_LOG("nicht im korrekten Verzeichnis");
-  print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
-  $eingabe=<STDIN>;
-  exit(1);
-}
 
 print "Pruefe auf Apache\n";
-my $pfad="/Programme/Apache Group/Apache2/bin/Apache.exe";
-print "$pfad \t";
-if (-e $pfad) {
-  print "ist vorhanden\n";
-  write_LOG("Apache vorhanden");
+my $a_pfad="/Programme/Apache Group/Apache2/";
+my $a_pfad2="/Programme/Apache Software Foundation/Apache2.2/";
+my $apachepfad='';
+my $a_flag=0;
+print "\n";
+if (-e $a_pfad."bin/Apache.exe" || -e $a_pfad2."bin/httpd.exe") {
+  $apachepfad = $a_pfad if(-e $a_pfad."bin/Apache.exe");
+  $apachepfad = $a_pfad2 if(-e $a_pfad2."bin/httpd.exe");
+  $a_flag=1 if(-e $a_pfad."bin/Apache.exe");
+  $a_flag=0 if(-e $a_pfad2."bin/httpd.exe");
+  print "ist vorhanden an $apachepfad\n";
+  write_LOG("Apache vorhanden $apachepfad");
+  write_LOG("an Stelle $a_pfad") if (-e $a_pfad."bin/Apache.exe");
+  write_LOG("an Stelle $a_pfad2") if (-e $a_pfad2."bin/httpd.exe");
 } else {
   print "nicht vorhanden,\nBitte zunaechst den Apache Webserver Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
   write_LOG("Apache nicht vorhanden");
@@ -100,8 +103,51 @@ if (-e $pfad) {
   exit(1);
 }
 
+print "Suche httpd.conf\n";
+my @pfad = split '/',$apachepfad;
+shift @pfad;
+shift @pfad;
+$apachepfad='';
+my $httpd=join '/',@pfad;
+my $httpd_pfad1="/Program Files/".$httpd.'/conf/';
+my $httpd_pfad2="/Programme/".$httpd.'/conf/';
+
+
+my $win_vista=0;
+$apachepfad="/Programme/".$httpd if (-e $httpd_pfad2);
+
+if (-e $httpd_pfad1) {
+  $apachepfad="/Program Files/".$httpd;
+  $win_vista=1;
+}
+
+unless($apachepfad) {
+  write_LOG("Setze Apache Pfad auf default");
+  $apachepfad="/Programme/Apache Group/Apache2";
+  $a_flag=1; # wenn default, dann auch Apache auf Version 2 setzen
+}
+
+print "Arbeite mit $apachepfad\n";
+write_LOG("Apache PFad $apachepfad");
+write_LOG("Vista Flag $win_vista");
+
+print "\nPruefe ob tinyHeb im richtigen Verzeichnis installiert\n";
+my $win_path=getcwd();
+my $suchpfad="$apachepfad"."/cgi-bin/tinyheb/win32";
+if ($win_path =~ /$suchpfad/) {
+  print "Ist im korrekten Verzeichnis installiert\n";
+  write_LOG("Im korrekten Verzeichnis $win_path : $suchpfad");
+} else {
+  print "Falsches Installationsverzeichnis:\n$win_path \nBitte tinyHeb im Verzeichnis $apachepfad"."/cgi-bin/ entpacken!\n";
+  write_LOG("nicht im korrekten Verzeichnis $win_path\nSuchpfad $suchpfad");
+  print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
+  $eingabe=<STDIN>;
+  exit(1);
+}
+
+
 print "Pruefe auf MySQL\n";
-$pfad="/Programme/MySQL/MySQL Server 5.0/bin/mysql.exe";
+my $pfad="/Programme/MySQL/MySQL Server 5.0/bin/mysql.exe";
 print "$pfad \t";
 if (-e $pfad) {
   print "ist vorhanden\n";
@@ -187,6 +233,26 @@ write_LOG("Perl Pakete installieren");
 print "Bitte Verbindung zum Internet aufbauen und die ENTER Taste druecken\n";
 $eingabe=<STDIN>;
 
+# falls Perl Version 5.10.x zusätzlich Repositorys angeben
+if ($^V ge v5.10.0) {
+  print "Muss Perl Pakete teilweise von anderen Quellen installieren\n";
+  write_LOG("Perl andere Quellen notwendig");
+  # prüfen ob Paketquellen schon vorhanden
+  my $ppm_rep = `ppm repo list`;
+  unless ($ppm_rep =~ /trouchelle/i && 
+	  $ppm_rep =~ /bribes/i &&
+	  $ppm_rep =~ /uwinnipeg/i) {
+    print "muessen hinzugefuegt werden\n";
+    write_LOG("muessen hinzugefuegt werden");
+    system('ppm repo add http://www.bribes.org/perl/ppm/');
+    system('ppm repo add http://cpan.uwinnipeg.ca/PPMPackages/10xx/');
+    system('ppm repo add http://trouchelle.com/ppm10/');
+  } else {
+    print "sind schon vorhanden\n";
+    write_LOG("sind schon vorhanden $ppm_rep");
+  }
+}
+
 system('ppm install Date-Calc');
 system('ppm install dbi');
 system('ppm install DBD-mysql');
@@ -204,7 +270,25 @@ $eingabe = <STDIN>;
 chomp $eingabe;
 write_LOG("Frage httpd.conf copy",$eingabe);
 if ($eingabe =~ /ja/i || $eingabe eq '') {
-  copy("httpd.conf","/Programme/Apache Group/Apache2/conf/httpd.conf") or error("konnte httpd.conf nicht kopieren $!\n");
+  if ($win_vista) {
+    write_LOG("Kopiere httpd.conf fuer win vista");
+    if ($a_flag) {
+      write_LOG("httpd_vista.conf");
+      copy("httpd_vista.conf","$apachepfad"."/conf/httpd.conf") or error("konnte httpd.conf fuer Apache2 nicht kopieren $!\n");
+    } else {
+      write_LOG("httpd_vista22.conf");
+      copy("httpd_vista22.conf","$apachepfad"."/conf/httpd.conf") or error("konnte httpd.conf fuer Apache2.2 nicht kopieren $!\n");
+    }
+  } else {
+    write_LOG("Kopiere httpd.conf fuer irgendein windows");
+    if ($a_flag) {
+      write_LOG("httpd.conf");
+      copy("httpd.conf","$apachepfad"."/conf/httpd.conf") or error("konnte httpd.conf fuer Apache2 nicht kopieren $!\n");
+    } else {
+      write_LOG("httpd22.conf");
+      copy("httpd22.conf","$apachepfad"."/conf/httpd.conf") or error("konnte httpd.conf fuer Apache2.2 nicht kopieren $!\n");
+    }
+  }
   print "Habe die httpd.conf kopiert\n";
 }
 
@@ -224,12 +308,14 @@ if ($os eq 'WinXP') {
   chomp $eingabe;
   write_LOG("Frage Apache start",$eingabe);
   if ($eingabe =~ /ja/i || $eingabe eq '') {
-    my $service='Apache2';
+    my $service='Apache2.2';
+    write_LOG("Apache Service Name: $service");
+    $service='Apache2' if ($a_flag);
     my $s=StopService('',$service);
     warte(7,$service);
     print "Habe $service gestoppt\n" if($s);
     $s=StartService('',$service);
-    warte(3,$service);
+    warte(4,$service);
     print "Habe $service gestartet\n" if($s);
     GetStatus('',$service,\%statusHash);
     write_LOG("Apache status",%statusHash);
@@ -289,28 +375,27 @@ if ($os eq 'WinXP') {
       $eingabe=<STDIN>;
       exit(1);
     }
-  }
 
-  # Datenbank Version dumpen
-  system('"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" --version >> setup.log');
-  print "wenn kein Passwort fuer die MySQL Datenbank vergeben wurde,\nbei der Frage nach dem Passwort bitte ENTER druecken\n";
-  open INIT,'"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" -p -u root < ../DATA/init.sql |' or die "konnte Datenbank nicht initialisieren $!\n";
-  while (my $zeile=<INIT>) {
-    print "Zeile $zeile\n";
-  };
-  my $cl=close(INIT);
-  if ($? == 0) { 
-    print "Habe die Datenbank initialisiert\n";
-    print "Jetzt kann tinyHeb in Deinem Browser unter dem Link\nhttp://localhost/tinyheb/hebamme.html aufgerufen werden\n";
-  } else {
-    print "\nDie Datenbank konnte vermutlich nicht initialisiert werden\n";
-    print "Du musst noch in das Verzeichnis DATA wechseln und\n";
-    print "folgenden Befehl in der Kommandozeile ausfuehren:\n";
-    print "mysql -u root < init.sql\n";
-    print "ODER falls Du bei der MySQL Installation ein Passwort fuer\n den Datenbankadmin angegeben hast:\n";
-    print "mysql -p -u root < init.sql\n\n";
+    # Datenbank Version dumpen
+    system('"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" --version >> setup.log');
+    print "wenn kein Passwort fuer die MySQL Datenbank vergeben wurde,\nbei der Frage nach dem Passwort bitte ENTER druecken\n";
+    open INIT,'"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" -p -u root < ../DATA/init.sql |' or die "konnte Datenbank nicht initialisieren $!\n";
+    while (my $zeile=<INIT>) {
+      print "Zeile $zeile\n";
+    };
+    my $cl=close(INIT);
+    if ($? == 0) { 
+      print "Habe die Datenbank initialisiert\n";
+      print "Jetzt kann tinyHeb in Deinem Browser unter dem Link\nhttp://localhost/tinyheb/hebamme.html aufgerufen werden\n";
+    } else {
+      print "\nDie Datenbank konnte vermutlich nicht initialisiert werden\n";
+      print "Du musst noch in das Verzeichnis DATA wechseln und\n";
+      print "folgenden Befehl in der Kommandozeile ausfuehren:\n";
+      print "mysql -u root < init.sql\n";
+      print "ODER falls Du bei der MySQL Installation ein Passwort fuer\n den Datenbankadmin angegeben hast:\n";
+      print "mysql -p -u root < init.sql\n\n";
+    }
   }
-
 } else {
   print "\n\nJetzt muss ein Neustart des Rechners ausgefuehrt werden, damit\n";
   print "die Aenderungen an der Konfiguration des Webservers und des\n";
@@ -383,7 +468,7 @@ sub win32_openssl {
 
 sub write_LOG {
 
-  if(!open (LOG,">>update.log")) {
+  if(!open (LOG,">>setup.log")) {
     print "FEHLER log Datei kann nicht geschrieben werden: $!\n";
     print "Bitte die ENTER Taste zum Beenden des Update druecken\n";
     my $eingabe=<STDIN>;
@@ -392,8 +477,7 @@ sub write_LOG {
 
   my @log = @_;
   my $print_log = join(':',@log);
-  my $time = join(':',localtime);
-  print LOG "LOG:$time\t$print_log\n";
+  print LOG "LOG:",scalar (localtime),"\t$print_log\n";
   close (LOG);
 };
 
