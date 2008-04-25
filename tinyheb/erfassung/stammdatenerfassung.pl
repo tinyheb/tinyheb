@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.39 2008-01-27 09:01:32 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.40 2008-04-25 15:33:00 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -26,11 +26,14 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 use strict;
+
+use lib "../";
+#use Devel::Cover -silent => 'On';
+
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 
-use lib "../";
 use Heb_stammdaten;
 use Heb_krankenkassen;
 use Heb_leistung;
@@ -159,10 +162,7 @@ print '<table border="0" width="700" align="left">';
 # z1 s1
 print '<tr><td><table border="0" align="left">';
 print '<tr>';
-print '<td><b>ID:</b></td>';
-print '<td><b>Vorname:</b></td>';
-print '<td><b>Nachname:</b></td>';
-print '<td><b>Geb.:</b></td>';
+print $q->td("<b>$_</b>\n") foreach qw(ID: Vorname: Nachname: Geb.:);
 print '</tr>';
 print "\n";
 
@@ -194,9 +194,7 @@ print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
-print '<td><b>PLZ:</b></td>';
-print '<td><b>Ort:</b></td>';
-print '<td><b>Strasse:</b></td>';
+print $q->td("<b>$_</b>\n") foreach qw(PLZ: Ort: Strasse:);
 print '</tr>';
 
 # Eingabe Felder
@@ -227,10 +225,8 @@ print '<tr><td>&nbsp;</td></tr>';
 print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
-print '<tr><td><b>KV-Nummer:</b></td>';
-print '<td><b>Gültig bis:</b></td>';
-print '<td><b>Versichertenstatus:</b></td>';
-print '<td><b>IK Krankenkasse:</b></td>';
+print '<tr>';
+print $q->td("<b>$_</b>\n") foreach ('KV-Nummer:','Gültig bis:','Versichertenstatus:','IK Krankenkasse:');
 print '</tr>';
 print "\n";
 
@@ -261,11 +257,12 @@ print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
-print '<td><b>Name Krankenkasse</b></td>';
-print '<td><b>Ort</b></td>';
-print '<td><b>Straße</b></td>';
-print '<td><b>Status Datenaustausch</b></td>';
+print $q->td("<b>$_</b>\n") foreach ('Name Krankenkasse:',
+				     'Ort:',
+				     'Straße:',
+				     'Status Datenaustausch:');
 print '</tr>';
+
 print '<tr>';
 print "<td><input type='text' class=disabled disabled name='name_krankenkasse' value='$name_krankenkasse' size='28'></td>";
 print "<td><input type='text' class=disabled disabled name='ort_krankenkasse' value='$plz_krankenkasse&nbsp;$ort_krankenkasse' size='30'></td>";
@@ -283,10 +280,10 @@ print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
-print '<td><b>Geburtsdatum Kind</b></td>';
-print '<td><b>Geburtszeit Kind</b></td>';
-print '<td><b>Kennzeichen Termin</b></td>';
-print '<td><b>Anzahl Kinder</b></td>';
+print $q->td("<b>$_</b>\n") foreach ('Geburtsdatum Kind:',
+				     'Geburtszeit Kind:',
+				     'Kennzeichen Termin',
+				     'Anzahl Kinder');
 print '</tr>';
 print "<td><input type='text' name='geburtsdatum_kind' value='$geb_kind' size='10' maxlength='10' onChange='return datum_check(this)'></td>";
 print "<td><input type='text' name='geburtszeit_kind' value='$uhr_kind' size='5' maxlength='5' onChange='uhrzeit_check(this)'></td>";
@@ -324,22 +321,29 @@ print '<table border="0" align="left">';
 print '<tr>';
 print '<td valign=top>';
 print "<b>nächste Hebamme&nbsp;</b>";
-if (defined ($naechste_hebamme) ) {
-  print '<input type="checkbox" name="naechste_hebamme" value="j" checked onClick="check_begr(this,document.stammdaten)">';
-} else {
-  print '<input type="checkbox" name="naechste_hebamme" value="j" onClick="check_begr(this,document.stammdaten)">';
-}
+
+print '<input type="checkbox" name="naechste_hebamme" value="j"';
+print $naechste_hebamme ? ' checked ' : ' ';
+print ' onClick="check_begr(this,document.stammdaten)">';
+
+#if ($naechste_hebamme) {
+#  print '<input type="checkbox" name="naechste_hebamme" value="j" checked onClick="check_begr(this,document.stammdaten)">';
+#} else {
+#  print '<input type="checkbox" name="naechste_hebamme" value="j" onClick="check_begr(this,document.stammdaten)">';
+#}
+
 print '</td>';
 print '<td valign=top>';
 print '<b>Begründung falls nicht<br>nächste Hebamme</b>';
 print '</td>';
 print '<td valgin=bottom>';
 print "<textarea ";
-if (!defined ($naechste_hebamme) ) {
-  print ' enabled ';
-} else {
-  print ' disabled ';
-}
+#if (!defined ($naechste_hebamme) ) {
+#  print ' enabled ';
+#} else {
+#  print ' disabled ';
+#}
+print $naechste_hebamme ? ' disabled ' : ' enabled ';
 print "name='nicht_naechste_heb' rows='2' cols='50'>$begruendung_nicht_nae_heb</textarea>";
 print '</td>';
 
@@ -408,8 +412,10 @@ sub speichern {
   $uhr_k = undef if ($uhr_kind eq '');
   my $ent_sp = $entfernung;
   $ent_sp =~ s/,/\./g;
-  my $plz_sp = $plz; $plz_sp = 0 if (!defined($plz_sp) or $plz_sp eq '');
-  my $ik_sp = $ik_krankenkasse; $ik_sp = 0 if (!defined($ik_sp) or $ik_sp eq '');
+  my $plz_sp = $plz; 
+  $plz_sp = 0 if (!defined($plz_sp) or $plz_sp eq '');
+  my $ik_sp = $ik_krankenkasse; 
+  $ik_sp = 0 if (!defined($ik_sp) or $ik_sp eq '');
   $geb_k = '0000-00-00' if(!defined($geb_k) or $geb_k eq 'error');
   $geb_f = '0000-00-00' if(!defined($geb_f) or $geb_f eq 'error');
   $ent_sp = 0 if(!defined($ent_sp) or $ent_sp eq '');
@@ -442,8 +448,11 @@ sub aendern {
   my $geb_k = $d->convert($geb_kind);
   my $ent_sp = $entfernung;
   $ent_sp =~ s/,/\./g;
-  my $plz_sp = $plz; $plz_sp = 0 if (!defined($plz_sp) or $plz_sp eq '');
-  my $ik_sp = $ik_krankenkasse; $ik_sp = 0 if (!defined($ik_sp) or $ik_sp eq '');
+  my $plz_sp = $plz; 
+#  $plz_sp = 0 if (!defined($plz_sp) or $plz_sp eq '');
+  $plz_sp = 0 unless($plz_sp);
+  my $ik_sp = $ik_krankenkasse; 
+  $ik_sp = 0 if (!defined($ik_sp) or $ik_sp eq '');
   $geb_k = '0000-00-00' if(!defined($geb_k) or $geb_k eq 'error');
   $geb_f = '0000-00-00' if(!defined($geb_f) or $geb_f eq 'error');
   my $uhr_k = $uhr_kind.':00';
@@ -472,13 +481,13 @@ sub hole_frau_daten {
    $begruendung_nicht_nae_heb,
    $kzetgt,$uhr_kind) = $s->stammdaten_frau_id($frau_id);
   $frau_id2=$frau_id;
-  $entfernung = '0.0' unless defined($entfernung);
+  $entfernung = '0.0' unless ($entfernung);
   $entfernung =~ s/\./,/g;
   $geb_frau = '' if ($geb_frau eq '00.00.0000');
   $geb_kind = '' if ($geb_kind eq '00.00.0000');
-  $plz = sprintf "%5.5u",$plz if ($plz ne '' && $plz > 0);
-  $plz = '' if ($plz eq '' || $plz == 0);
-  $ik_krankenkasse='' if (!defined($ik_krankenkasse) || $ik_krankenkasse eq '' || $ik_krankenkasse == 0);
+  $plz = sprintf "%5.5u",$plz if ($plz);
+  $plz = '' unless ($plz);
+  $ik_krankenkasse='' unless ($ik_krankenkasse);
   $kzetgt =0 if(!$kzetgt);
   $uhr_kind='' if (!($uhr_kind) || $uhr_kind eq '00:00:00');
   
