@@ -1,7 +1,7 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Leistungserfassung
 
-# $Id: leistungen.js,v 1.12 2008-02-12 18:35:42 thomas_baum Exp $
+# $Id: leistungen.js,v 1.13 2008-04-25 15:27:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -50,6 +50,88 @@ function dia(form) {
   }
 }
 
+
+function km(form,einaus) {
+  // schaltet die KM Felder für Erfassung ein oder aus
+  if(einaus == 'J') {
+    form.entfernung_tag.disabled=false;
+    form.entfernung_nacht.disabled=false;
+    var zl_tag = document.getElementsByName('entfernung_tag');
+    zl_tag[0].className='enabled';
+    var zl_tag = document.getElementsByName('entfernung_nacht');
+    zl_tag[0].className='enabled';
+    var zl_tag = document.getElementsByName('anzahl_frauen');
+    zl_tag[0].className='enabled';
+  } else {
+    form.entfernung_tag.disabled=true;
+    form.entfernung_nacht.disabled=true;
+    var zl_tag = document.getElementsByName('entfernung_tag');
+    zl_tag[0].className='disabled';
+    var zl_tag = document.getElementsByName('entfernung_nacht');
+    zl_tag[0].className='disabled';
+    var zl_tag = document.getElementsByName('anzahl_frauen');
+    zl_tag[0].className='disabled';
+  }
+}
+
+function zeit(form,einaus) {
+  // schaltet die Zeit von bis Felder für Erfassung ein oder aus
+  if (einaus == 'J') {
+    form.zeit_von.disabled=false;
+    form.zeit_bis.disabled=false;
+    var zl_tag = document.getElementsByName('zeit_von');
+    zl_tag[0].className='enabled';
+    var zl_tag = document.getElementsByName('zeit_bis');
+    zl_tag[0].className='enabled';
+    form.zeit_von.focus();
+  } else {
+    form.zeit_von.disabled=true;
+    form.zeit_bis.disabled=true;
+    var zl_tag = document.getElementsByName('zeit_von');
+    zl_tag[0].className='disabled';
+    var zl_tag = document.getElementsByName('zeit_bis');
+    zl_tag[0].className='disabled';
+    form.entfernung_tag.focus();
+  }
+}
+
+
+function kurs_knopf() {
+  // Feld für Anzahl Kurse auf Maske einschalten
+  // nur wenn noch nicht vorhanden
+  var ueberschrift_vor=document.getElementById("ueberschrift_anz_kurse");
+  if (ueberschrift_vor == null) {
+    var ueberschrift=document.createElement("TD");
+    ueberschrift.id='ueberschrift_anz_kurse';
+    //  alert("überschrift-Id"+ueberschrift.id);
+    var tab=document.getElementById("zeile1_tab");
+    var preis_node=document.getElementById("preis_tab_id");
+    tab.insertBefore(ueberschrift,preis_node);
+    ueberschrift.innerHTML="<b>Anzahl&nbsp;Kurse</b>";
+    
+    var feld=document.createElement("TD");
+    feld.id='anz_kurse';
+    var tab2=document.getElementById("zeile2_tab");
+    var preis_feld=document.getElementById("preis_id");
+    tab2.insertBefore(feld,preis_feld);
+    feld.innerHTML="<input type='text' name='anzahl_kurse' size='2'>";
+  }
+}
+
+function loesche_kurs_knopf() {
+  // Feld für Anzahl Kurse auf Maske ausschalten
+  var tab=document.getElementById("zeile1_tab");
+  var ueberschrift=document.getElementById("ueberschrift_anz_kurse");
+  // alert("ueberschrift"+ueberschrift);
+  // überschrift nur entfernen, wenn vorhanden
+  if (ueberschrift != null) {
+    tab.removeChild(ueberschrift);
+    var tab2=document.getElementById("zeile2_tab");
+    var feld=document.getElementById("anz_kurse");
+    tab2.removeChild(feld);
+  }
+  
+}
 
 
 function leistartsuchen (posnr) {
