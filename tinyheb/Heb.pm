@@ -1,9 +1,9 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.12 2008-02-10 13:23:30 thomas_baum Exp $
+# $Id: Heb.pm,v 1.13 2008-04-25 15:06:09 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2003,2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -25,16 +25,54 @@ package Heb;
 use strict;
 use DBI;
 
-our $dbh; # Verbindung zur Datenbank
-our $user='wwwrun';
-our $pass='';
+my $dbh; # Verbindung zur Datenbank
+my %config=();
+
+# Parameter einlesen
+my $conf_file='';
+
+foreach my $file (@INC) {
+  if (-r "$file/tinyheb.conf") {
+    $conf_file=$file."tinyheb.conf";
+    last;
+  }
+}
+
+if (-r $conf_file) {
+  open CONFIG,$conf_file or die "konnte config $conf_file nicht lesen $!\n";
+  process_config($_) while (<CONFIG>);
+  close CONFIG;
+} elsif (-r '/etc/tinyheb/tinyheb.conf') {
+  open CONFIG,'/etc/tinyheb/tinyheb.conf' or die "konnte config nicht lesen\n";
+  process_config($_) while (<CONFIG>);
+  close CONFIG;
+} else {
+  process_config($_) while (<DATA>);
+}
+
+
+sub process_config {
+  my ($wert) = @_;
+  chomp $wert;
+  $wert =~ s/#.*//;
+  $wert =~ s/^\s+//;
+  $wert =~ s/\s+$//;
+  return unless ($wert);
+  my ($var,$value) = split(/\s*=\s*/,$wert,2);
+  $config{$var}=$value;
+}
+
 
 my $debug = 1;
 my $parm_such = '';
 my $parm_such_werte = '';
 
 # verbindung zur Datenbank aufbauen
-$dbh = DBI->connect("DBI:mysql:database=Hebamme;host=localhost",$user,$pass,
+$dbh = DBI->connect("DBI:mysql:database=$config{MySQLDBName};".
+		    "host=$config{MySQLServerName};".
+		    "port=$config{MySQLServerPort}",
+		    $config{MySQLServerUser},
+		    $config{MySQLServerPassword},
 		    {RaiseError => 1,
 		     AutoCommit => 1 });
 die $DBI::errstr unless $dbh;
@@ -43,7 +81,6 @@ die $DBI::errstr unless $dbh;
 sub new {
   my($class) = @_;
   my $self = {};
-  $dbh = Heb->connect;
   $self->{dbh}=$dbh;
   bless $self, ref $class || $class;
   return $self;
@@ -63,7 +100,7 @@ sub db_name {
 
 sub parm_such {
   # parameter holen
-  shift; # package Namen vom Stack holen
+  my $self=shift; # package Namen vom Stack holen
   $parm_such = $dbh->prepare("select VALUE from Parms ".
 				"where NAME=?;")
     or die $dbh->errstr();
@@ -77,14 +114,14 @@ sub parm_such_next {
 
 sub parm_unique {
   # holt einzelnen Parameter aus Datenbank
-  shift;
-  Heb->parm_such(@_);
-  return Heb->parm_such_next();
+  my $self=shift;
+  $self->parm_such(@_);
+  return $self->parm_such_next();
 }
 
 sub parm_up {
   # update auf bestimmten Parameter
-  shift;
+  my $self=shift;
   my ($name,$value) = @_;
   my $parm_up = $dbh->prepare("update Parms set ".
 			      "VALUE=? where ".
@@ -97,10 +134,10 @@ sub parm_up {
 
 sub parm_ins {
   # fügt neuen Parameter in Parms Tabelle ein
-  shift;
+  my $self=shift;
   
   # zunächst neue ID für Parameter holen
-  my $id=Heb->parm_unique('PARM_ID');
+  my $id=$self->parm_unique('PARM_ID');
   $id++;
 
   my $parm_ins = $dbh->prepare("insert into Parms ".
@@ -109,14 +146,14 @@ sub parm_ins {
     or die $dbh->errstr();
   my $erg = $parm_ins->execute($id,@_)
     or die $dbh->errstr();
-  Heb->parm_up('PARM_ID',$id);
+  $self->parm_up('PARM_ID',$id);
   return $id;
 }
 
 
 sub parm_delete {
   # löscht Datensatz aus Parms Tabelle
-  shift;
+  my $self=shift;
   my $parm_delete = $dbh->prepare("delete from Parms ".
 				  "where ID=?;")
     or die $dbh->errstr();
@@ -129,7 +166,7 @@ sub parm_delete {
 
 sub parm_update {
   # speichert geänderte Parameter ab
- shift;
+ my $self=shift;
  my $id = shift;
  my $parm_update = $dbh->prepare("update Parms set ".
 				 "NAME=?,VALUE=?,BESCHREIBUNG=? ".
@@ -142,7 +179,7 @@ sub parm_update {
 
 sub parm_next_id {
   # holt den nächsten Parameter nach dem gegebenen
-  shift;
+  my $self=shift;
   my ($id) = @_;
 
   my $parm_next_id = $dbh->prepare("select ID from Parms where ".
@@ -155,7 +192,7 @@ sub parm_next_id {
 
 sub parm_prev_id {
   # holt den vorhergehenden Parameter zu dem gegebenen
-  shift;
+  my $self=shift;
   my ($id) = @_;
 
   my $parm_prev_id = $dbh->prepare("select ID from Parms where ".
@@ -168,7 +205,7 @@ sub parm_prev_id {
 
 sub parm_get_id {
   # holt alle werte zur gegebenen ID
-  shift;
+  my $self=shift;
   my ($id) = @_;
   my $parm_get_id = $dbh->prepare("select * from Parms where ".
 				  "ID = ?;")
@@ -181,7 +218,7 @@ sub parm_get_id {
 
 sub parm_such_werte {
   # sucht nach kriterien Parameter
-  shift;
+  my $self=shift;
   
   $parm_such_werte = $dbh->prepare("select * from Parms ".
 				   "where name like ? and ".
@@ -244,3 +281,14 @@ sub runden {
 }
 
 1;
+__DATA__
+# Konfigurationsdatei default
+# speichern im Verzeichnis /etc/tinyheb/tinyheb.conf
+MySQLDBName = PRD_Hebamme
+MySQLServerName = localhost
+MySQLServerPort = 3306
+MySQLServerUser = wwwrun
+MySQLServerPassword = 
+MySQLServerRootPassword = 
+
+BackupFilePath = /var/tinyheb/sqlbak
