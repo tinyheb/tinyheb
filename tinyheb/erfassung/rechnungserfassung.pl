@@ -3,12 +3,12 @@
 #-d:ptkdb
 #-d:DProf  
 
-# Rechnungspositionen erfassen
+# globaler Rahmen um Rechnungspositionen zu erfassen
 
-# $Id: rechnungserfassung.pl,v 1.11 2008-02-12 18:36:36 thomas_baum Exp $
+# $Id: rechnungserfassung.pl,v 1.12 2008-04-25 15:29:27 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,7 @@ my $func = $q->param('func') || 0;
 my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
     $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
     $ik_krankenkasse,$naechste_hebamme,
-    $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
+    $begruendung_nicht_nae_heb,$kzetgt) = $s->stammdaten_frau_id($frau_id);
 $entfernung = '0.0' unless defined($entfernung);
 $entfernung =~ s/\./,/g;
 
@@ -96,8 +96,12 @@ print '<tr>';
 print '<td><b>ID</b></td>';
 print '<td><b>Vorname:</b></td>';
 print '<td><b>Nachname</b></td>';
-print '<td><b>Geb.:</b></td>';
-print '<td><b>Geb. Kind:</b></td>';
+print '<td><b>Geb. Frau:</b></td>';
+if (!$kzetgt || $kzetgt == 2) {
+  print '<td><b>ET Kind:</b></td>';
+} else {
+  print '<td><b>Geb. Kind:</b></td>';
+}
 print '</tr>';
 print "\n";
 
@@ -107,7 +111,7 @@ print "<td><input type='text' class='disabled' disabled name='vorname' value='$v
 print "<td><input type='text' class='disabled' disabled name='nachname' value='$nachname' size='40'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_frau' value='$geb_frau' size='10'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind' value='$geb_kind' size='10'></td>";
-print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='open(\"../erfassung/frauenauswahl.pl\",\"frauenauswahl\",\"scrollbars=yes,innerwidth=750,innerheight=400\");'></td>";
+print qq!<td><input type='button' name='frau_suchen' value='Suchen' onClick='open("../erfassung/frauenauswahl.pl?suchen=Suchen&sel_status=ungleich erl.","frauenauswahl","scrollbars=yes,innerwidth=750,innerheight=400,resizable=yes");'></td>!;
 print "</tr>";
 print '</table>';
 print "</td></tr>\n";
@@ -117,21 +121,22 @@ print '<tr><td>&nbsp;</td></tr>';
 
 # bisher erfasste Positionen angezeigen
 print "<tr><td>\n";
-print '<table id="ueberschrift" style="margin-left: 0" border="0" width=800 align="left">';
+print '<table id="ueberschrift" style="margin-left:0;table-layout:fixed" border="0" width=800 align="left">';
 print '<tr>';
-print '<td style="width:5.1cm;text-align:right">Datum</td>';
-print '<td style="width:1.7cm;text-align:right">Nr.</td>';
-print '<td style="width:5.0cm;text-align:left">Gebühren Text</td>';
-print '<td style="width:1.7cm;text-align:right">E. Preis</td>';
-print '<td style="width:1.3cm;text-align:right">G. Preis</td>';
+print '<td style="width:4.8cm;text-align:right">Datum</td>';
+print '<td style="width:1.0cm;text-align:right">Nr.</td>';
+print '<td style="width:4.5cm;text-align:left">Gebühren Text</td>';
+print '<td style="width:1.3cm;text-align:right">E. Preis</td>';
+print '<td style="width:1.2cm;text-align:right">G. Preis</td>';
 print '<td style="width:0.8cm;text-align:right">Anf.</td>';
 print '<td style="width:0.8cm;text-align:right">Ende</td>';
 print '<td style="width:0.8cm;text-align:right">Dauer</td>';
-print '<td style="width:1.0cm;text-align:right">Begr.</td>';
-print '<td style="width:0.8cm;text-align:right">kmT</td>';
+print '<td style="width:0.9cm;text-align:right">Begr.</td>';
+print '<td style="width:0.7cm;text-align:right">kmT</td>';
 print '<td style="width:0.8cm;text-align:right">kmN</td>';
-print '<td style="width:0.6cm;text-align:right">Anz.</td>';
-print '<td style="width:1.0cm;text-align:right">Stat</td>';
+print '<td style="width:0.7cm;text-align:right">Anz.</td>';
+print '<td style="width:1.0cm;text-align:left">Status</td>';
+print '<td></td>';
 print "</tr>";
 print "</table>\n";
 print '<br>';
@@ -141,14 +146,14 @@ print "</form>\n";
 
 # die wirklichen Infos kommen aus einem Programm
 print "<tr><td>\n";
-print "<iframe src='../blank.html' name='list_posnr' width='840' height='250' scrolling='yes' frameborder='1'>";
+print "<iframe src='../blank.html' name='list_posnr' width='900' height='250' scrolling='yes' frameborder='1'>";
 print "</iframe>";
 print "</td>\n";
 print "</tr>\n";
 
 # Formular für eigentliche Erfassung ausgeben
 print "<tr>\n<td>\n";
-print "<iframe src='rechpos.pl?frau_id=$frau_id' name='rechpos' width='800' height='350' scrolling='no' frameborder='0'>";
+print "<iframe src='rechpos.pl?frau_id=$frau_id' name='rechpos' width='800' height='300' scrolling='no' frameborder='0'>";
 print "</iframe>";
 print "</td>\n";
 print "</tr>\n";

@@ -5,10 +5,10 @@
 
 # erfasste Rechnungsposten ausgeben
 
-# $Id: list_posnr.pl,v 1.13 2007-08-27 17:50:29 thomas_baum Exp $
+# $Id: list_posnr.pl,v 1.14 2008-04-25 15:28:27 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -58,59 +58,92 @@ print '</head>';
 
 
 # Alle Felder zur Eingabe ausgeben 
-print '<table rules=rows style="margin-left:0" border="2" width="100%" align="left">';
+print '<table rules=rows style="table-layout:fixed" border="1" width="870" align="left">';
 
 # jetzt Rechnungsposten ausgeben
-my $i=0;
+#my $i=0;
 $l->leistungsdaten_such($frau_id);
 while (my @erg=$l->leistungsdaten_such_next()) {
-  $i++;
+#  $i++;
   print '<tr>';
-  print "<td style='width:1cm;margin-left:0em'>";
-  print "<input style='font-size:8pt' type='button' name='aendern$i' value='Ändern' onclick='aend($frau_id,$erg[0],$erg[11]);'></td>\n";
+  print "<td style='width:43pt;margin-left:0em'>";
+  print "<input style='font-size:8pt' type='button' name='aendern' value='Ändern' onclick='aend($frau_id,$erg[0],$erg[11]);'></td>\n";
 
-  print "<td style='width:1cm'><input style='padding:0;margin:0;font-size:8pt' type='button' name='loeschen1' value='Löschen' onclick='loe_leistdat($frau_id,$erg[0],$erg[11]);'></td>";
-  print "<td style='width:1.3cm;text-align:left'>$erg[4]</td>"; # datum
-  print "<td style='width:0.4cm;text-align:center'>$erg[1]</td>"; # posnr
+  print "<td style='width:45pt'><input style='font-size:8pt' type='button' name='loeschen1' value='Löschen' onclick='loe_leistdat($frau_id,$erg[0],$erg[11]);'></td>";
+  print "<td style='width:46pt;text-align:right'>$erg[4]</td>"; # datum
+  print "<td style='width:22pt;text-align:right'>$erg[1]</td>"; # posnr
   # Aus DB Gebührentext und E. Preis holen
   my($l_bezeichnung,$l_preis,$l_fuerzeit)=$l->leistungsart_such_posnr('KBEZ,EINZELPREIS,FUERZEIT',"$erg[1]",$d->convert($erg[4]));
-  my $fuerzeit_flag='';
-  ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
 
-  print "<td style='width:5.0cm;text-align:left'>$l_bezeichnung</td>";
+  (undef,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
+
+  print "<td style='width:135pt;padding-left:2pt;text-align:left'>$l_bezeichnung</td>";
   $l_preis =~ s/\./,/g;
-  print "<td style='width:1.0cm;text-align:right'>$l_preis</td>"; # e preis
+  print "<td style='width:31pt;text-align:right'>$l_preis</td>"; # e preis
   my $g_preis = sprintf "%.2f",$erg[10];
   $g_preis =~ s/\./,/g;
-  print "<td style='width:1.0cm;text-align:right'>$g_preis</td>"; # g preis
+  print "<td style='width:35pt;text-align:right'>$g_preis</td>"; # g preis
   my ($h1,$m1)= unpack('A2xA2',$erg[5]);
-  $erg[5] =~ s/00:00//g if($erg[6] eq '00:00'); 
-  print "<td style='width:1cm;text-align:right'>$erg[5]</td>"; # zeit von
+
+  # prüfen, ob zeiten angezeigt werden müssen
+  my ($zeit_von,$zeit_bis) = $l->timetoblank($erg[1],              # posnr
+					     $l_fuerzeit,          # fuerzeit
+					     $d->convert($erg[4]), # datum
+					     $erg[5],              # zeit von
+					     $erg[6]);             # zeit bis
+
+=for later
+
+  if (!$l_fuerzeit) {
+    if( $l->leistungsart_pruef_zus($erg[1],'SAMSTAG') &&
+	$l->leistungsart_pruef_zus($erg[1],'NACHT')) {
+      $zeit_von = '' if($zeit_von eq '00:00' && $l->zeit_ende($erg[1]));
+      $zeit_bis = '' if($zeit_bis eq '00:00' && !$l->zeit_ende($erg[1]));
+    } else {
+      # keine zuschlagspflichtige Positionsnummer, Zeiten können weg
+      $zeit_von = '' if($zeit_von eq '00:00');
+      $zeit_bis = '' if($zeit_bis eq '00:00');
+    }
+  }
+  if (!$l_fuerzeit && 
+      $l->leistungsart_pruef_zus($erg[1],'SONNTAG') &&
+      $d->wotagnummer($d->convert($erg[4])) > 6) {
+    $zeit_von = '' if($zeit_von eq '00:00');
+    $zeit_bis = '' if($zeit_bis eq '00:00');
+  }
+
+=cut
+
+#  $erg[5] =~ s/00:00//g if(!$l_fuerzeit); 
+#  print "<td style='width:25pt;text-align:right'>$erg[5]</td>"; # zeit von
+  print "<td style='width:25pt;text-align:right'>$zeit_von</td>"; # zeit von
   my ($h2,$m2)= unpack('A2xA2',$erg[6]);
-  $erg[6] =~ s/00:00//g;
-  print "<td style='width:0.8cm;text-align:right'>$erg[6]</td>"; # zeit bis
+#  $erg[6] =~ s/00:00//g if(!$l_fuerzeit);
+#  print "<td style='width:24pt;text-align:right'>$erg[6]</td>"; # zeit bis
+  print "<td style='width:24pt;text-align:right'>$zeit_bis</td>"; # zeit bis
 
   # Dauer berechnen
   $h1 *=-1;
   $m1 *=-1;
   my ($y,$m,$d,$H,$M,$S) = Add_Delta_DHMS(1900,1,1,$h2,$m2,0,0,$h1,$m1,0);
   my $dauer=sprintf "%2.2u:%2.2u",$H,$M;
-  $dauer = '00:00' if (!(defined($l_fuerzeit) && $l_fuerzeit > 0));
+  $dauer = '00:00' unless($l_fuerzeit);
   $dauer =~ s/00:00//g;
-  print "<td style='width:0.8cm;text-align:right'>$dauer</td>\n"; # Dauer
+  print "<td style='width:26pt;text-align:right'>$dauer</td>\n"; # Dauer
 
   my $beg='';
-  $beg='ja' if (defined($erg[3]) && $erg[3] ne '');
-  print "<td style='width:0.7cm;text-align:center'>$beg</td>"; # Begründung
+  $beg='ja' if ($erg[3]);
+  print "<td style='width:19pt;text-align:right'>$beg</td>"; # Begründung
   my $tag = sprintf "%.2f",$erg[7];$tag =~ s/\./,/g;$tag =~ s/^0,00//g;
-  print "<td style='width:0.8cm;text-align:right'>$tag</td>"; # Entfernung Tag
+  print "<td style='width:26pt;text-align:right'>$tag</td>"; # Entfernung Tag
   my $nacht = sprintf "%.2f",$erg[8];$nacht =~ s/\./,/g;$nacht =~ s/^0,00//g;
-  print "<td style='width:0.8cm;text-align:right'>$nacht</td>"; # Entfernung Nacht
-  $erg[9]='' if ($tag eq '' && $nacht eq '');
-  print "<td style='width:0.5cm;text-align:right'>$erg[9]</td>"; # Anzahl Frauen
+  print "<td style='width:25pt;text-align:right'>$nacht</td>"; # Entfernung Nacht
+  $erg[9]='' if (!$tag && !$nacht);
+  print "<td style='width:20pt;text-align:center'>$erg[9]</td>"; # Anzahl Frauen
 
   my $status = $l->status_text($erg[11]);
-  print "<td style='width:1.5cm;text-align:right'>$status</td>"; # Status der Position
+  print "<td style='width:60;text-align:left;padding-left:5pt'>$status</td>"; # Status der Position
+  print "<td></td>";
   print '</tr>';
   print "\n";
 }
