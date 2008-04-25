@@ -2,10 +2,10 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.3 2007-10-28 16:00:55 thomas_baum Exp $
+# $Id: update.pl,v 1.4 2008-04-25 16:06:03 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -22,12 +22,54 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-
+use lib "../";
 use strict;
 use DBI;
 use Getopt::Long;
 
+write_LOG("Starte update ----------------------------");
+
 my $dbh; # Verbindung zur Datenbank
+my %config=();
+
+# Parameter einlesen
+my $conf_file='';
+foreach my $file (@INC) {
+  if (-r "$file/tinyheb.conf") {
+    $conf_file=$file."tinyheb.conf";
+    last;
+  }
+}
+
+write_LOG("Nutze conf_file $conf_file");
+
+if (-r $conf_file) {
+  open CONFIG,$conf_file or error("konnte config $conf_file nicht lesen $!\n");
+  process_config($_) while (<CONFIG>);
+  close CONFIG;
+} elsif (-r '/etc/tinyheb/tinyheb.conf') {
+  open CONFIG,'/etc/tinyheb/tinyheb.conf' or error("konnte config nicht lesen\n");
+  process_config($_) while (<CONFIG>);
+  close CONFIG;
+} else {
+  process_config($_) while (<DATA>);
+}
+
+sub process_config {
+  my ($wert) = @_;
+  chomp $wert;
+  $wert =~ s/#.*//;
+  $wert =~ s/^\s+//;
+  $wert =~ s/\s+$//;
+  return unless ($wert);
+  my ($var,$value) = split(/\s*=\s*/,$wert,2);
+  $config{$var}=$value;
+}
+
+
+write_LOG("Benutze Datenbank $config{MySQLDBName}");
+
+
 my $user='root';
 my $pass='';
 my $root_pass='';
@@ -37,15 +79,20 @@ my $rpm=undef;
 
 my $parms=GetOptions('rpm' => \$rpm);
 
-write_LOG("Starte update ----------------------------");
 
 # root passwort für db holen, wenn nötig
 $dbh = connect_db('root',$root_pass);
 if (!defined($dbh) and ($DBI::err == 1044 || $DBI::err == 1045)) {
-  write_LOG("Hole DB Passwort");
-  print "Bitte Passwort fuer Datenbankadmin root angeben:";
-  $root_pass=<STDIN>;
-  chomp $root_pass;
+  if(!$config{MySQLRootPassword}) {
+    # root passwort muss erfasst werden
+    write_LOG("Hole DB Passwort");
+    print "Bitte Passwort fuer Datenbankadmin root angeben:";
+    $root_pass=<STDIN>;
+    chomp $root_pass;
+  } else {
+    write_LOG("Root Password aus Config");
+    $root_pass = $config{MySQLServerRootPassword};
+  }
   $dbh = connect_db('root',$root_pass);
   error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
   print "Fehler Text:",$DBI::errstr,"\n" if($DBI::errstr);
@@ -88,7 +135,8 @@ unless($rpm) {
 sub do_update {
   my ($sql)=@_;
 
-  my $dbh=connect_db('wwwrun','');
+  my $dbh=connect_db($config{MySQLServerUser},
+		     $config{MySQLServerPassword});
   write_LOG("update",$dbh);
   error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
 
@@ -101,7 +149,8 @@ sub do_update {
 sub do_insert {
   my ($sql,$tabelle,$dep)=@_;
 
-  my $dbh=connect_db('wwwrun','');
+  my $dbh=connect_db($config{MySQLServerUser},
+		     $config{MySQLServerPassword});
   write_LOG("insert",$dbh,$sql,$tabelle,$dep);
   error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
 
@@ -192,7 +241,10 @@ sub parm_up {
 sub connect_db {
   my ($user,$pass) = @_;
   # verbindung zur Datenbank aufbauen
-  $dbh = DBI->connect("DBI:mysql:database=Hebamme;host=localhost",$user,$pass,
+  $dbh = DBI->connect("DBI:mysql:database=$config{MySQLDBName};".
+		      "host=$config{MySQLServerName};".
+		      "port=$config{MySQLServerPort}",
+		      $user,$pass,
                       {RaiseError => 1,
 		       HandleError => \&fehler,
                        AutoCommit => 1 });
@@ -236,8 +288,7 @@ sub write_LOG {
 
   my @log = @_;
   my $print_log = join(':',@log);
-  my $time = join(':',localtime);
-  print LOG "LOG:$time\t$print_log\n";
+  print LOG "LOG:",scalar (localtime),"\t$print_log\n";
   close (LOG);
 };
 
@@ -251,3 +302,15 @@ sub error {
   }
   exit(1);
 }
+
+__DATA__
+# Konfigurationsdatei default
+# speichern im Verzeichnis /etc/tinyheb/tinyheb.conf
+MySQLDBName = PRD_Hebamme
+MySQLServerName = localhost
+MySQLServerPort = 3306
+MySQLServerUser = wwwrun
+MySQLServerPassword = 
+MySQLServerRootPassword = 
+
+BackupFilePath = /var/tinyheb/sqlbak
