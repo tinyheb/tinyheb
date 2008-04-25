@@ -1,6 +1,6 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.26 2008-02-12 18:33:27 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.27 2008-04-25 15:17:13 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -30,62 +30,77 @@ use Heb;
 use Heb_datum;
 
 my $d = new Heb_datum;
+my $h = new Heb;
 
 my  @gruppen = ('A. Mutterschaftsvorsorge','B. Geburtshilfe','C. Wochenbett','D. Sonstige','Wegegeld');
 
-our %zeit_ende=(); # Posnr bei denen die Zeit nach Ende der Leistung berechnet wird
+my %zeit_ende=(); # Posnr bei denen die Zeit nach Ende der Leistung berechnet wird
 
-$zeit_ende{$_}=1 for qw(050 051 260 261 280 281 310);
+$zeit_ende{$_}=1 for qw(050 051 090 091 100 101 110 111 120 121 130 131 160 161 163 164 165 166 167 260 261 280 281 310);
 
-our $leistung_such; # Suchen von Leistunsarten
-our $leistungsdaten_ins; # Speichern von Leistungsdaten
-our $leistungsdaten_such; # suchen von Leistungsdaten nach Frau
-our $leistungsdaten_offen; # suchen nach (Status 10) Leistungsdaten bei Frau
-#our $rech_such; # sucht nach Rechnungen in der Datenbank
-our $leistungsdaten_such_rechnr; # Sucht Leistungsdaten einer bestimmten Rechnung
-our $leistungsdaten_werte; # sucht werte für Frau
-our $pruef_zus; # zuschlagspflichtige Posnr
-our $leistungsart_such_werte; # suchen nach mehreren Leistungsarten
-our $zus; # welche werte verweisen auf Zuschlagspflichtige Posnr
+my $dbh=$h->connect;
+
+my %leistungsdaten_pruef_zus=(); # für Zuschlagspflichtige Posnr
+foreach my $wert qw(SAMSTAG SONNTAG NACHT) {
+  my $zus = $dbh->prepare("select distinct $wert,guelt_von,guelt_bis ".
+		       "from Leistungsart ".
+		       "where $wert > 0;")
+    or die $dbh->errstr();
+  $zus->execute() or die $dbh->errstr();
+  while (my @erg=$zus->fetchrow_array()) {
+    push( @{$leistungsdaten_pruef_zus{$wert}{$erg[0]}},
+	  "$erg[1]:$erg[2]");
+  }
+}
+
+
+my $leistungsdaten_ins; # Speichern von Leistungsdaten
+$leistungsdaten_ins = $dbh->prepare("insert into Leistungsdaten " .
+				    "(ID,POSNR,FK_STAMMDATEN, " .
+				    "BEGRUENDUNG,DATUM,ZEIT_VON, ".
+				    "ZEIT_BIS,ENTFERNUNG_T, ".
+				    "ENTFERNUNG_N,ANZAHL_FRAUEN, ".
+				    "PREIS, RECHNUNGSNR,STATUS, ".
+				    "DIA_SCHL, DIA_TEXT)" .
+				    "values (?,?,?,".
+				    "?,?,?,".
+				    "?,?,".
+				    "?,?,".
+				    "?,?,?,".
+				    "?,?);")
+  or die $dbh->errstr();
+my $leistungsdaten_such; # suchen von Leistungsdaten nach Frau
+$leistungsdaten_such
+  = $dbh->prepare("select ID,POSNR,FK_STAMMDATEN,BEGRUENDUNG," .
+		  "DATE_FORMAT(DATUM,'%d.%m.%Y'),".
+		  "TIME_FORMAT(ZEIT_VON,'%H:%i'),".
+		  "TIME_FORMAT(ZEIT_BIS,'%H:%i'),ENTFERNUNG_T,ENTFERNUNG_N,".
+		  "ANZAHL_FRAUEN,PREIS,STATUS,DIA_SCHL,DIA_TEXT,cast(POSNR as unsigned) as sort ".
+		  "from Leistungsdaten ".
+		  "where FK_STAMMDATEN=? ".
+		  "order by DATUM,sort, ZEIT_VON;")
+  or die $dbh->errstr();
+my $leistung_such; # Suchen von Leistunsarten
+$leistung_such = $dbh->prepare("select *,cast(POSNR as unsigned) as sort ".
+			       "from Leistungsart ".
+			       "where ? >= GUELT_VON and ".
+			       "? <= GUELT_BIS and LEISTUNGSTYP = ? ".
+			       "order by sort;")
+  or die $dbh->errstr();
+
+my $leistungsdaten_offen; # suchen nach (Status 10) Leistungsdaten bei Frau
+my $leistungsdaten_such_rechnr; # Sucht Leistungsdaten einer bestimmten Rechnung
+my $leistungsdaten_werte; # sucht werte für Frau
+my $pruef_zus; # zuschlagspflichtige Posnr
+my $leistungsart_such_werte; # suchen nach mehreren Leistungsarten
+my $zus; # welche werte verweisen auf Zuschlagspflichtige Posnr
 
 my $debug = 1;
-our $dbh; # Verbindung zur Datenbank
 
 sub new {
   my($class) = @_;
   my $self = {};
-  $dbh = Heb->connect;
   bless $self, ref $class || $class;
-  $leistung_such = $dbh->prepare("select *,cast(POSNR as unsigned) as sort ".
-				 "from Leistungsart ".
-				 "where ? >= GUELT_VON and ".
-				 "? <= GUELT_BIS and LEISTUNGSTYP = ? ".
-				 "order by sort;")
-    or die $dbh->errstr();
-  $leistungsdaten_ins = $dbh->prepare("insert into Leistungsdaten " .
-				      "(ID,POSNR,FK_STAMMDATEN, " .
-				      "BEGRUENDUNG,DATUM,ZEIT_VON, ".
-				      "ZEIT_BIS,ENTFERNUNG_T, ".
-				      "ENTFERNUNG_N,ANZAHL_FRAUEN, ".
-				      "PREIS, RECHNUNGSNR,STATUS, ".
-				      "DIA_SCHL, DIA_TEXT)" .
-				      "values (?,?,?,".
-				      "?,?,?,".
-				      "?,?,".
-				      "?,?,".
-				      "?,?,?,".
-				      "?,?);")
-    or die $dbh->errstr();
-  $leistungsdaten_such
-    = $dbh->prepare("select ID,POSNR,FK_STAMMDATEN,BEGRUENDUNG," .
-		    "DATE_FORMAT(DATUM,'%d.%m.%Y'),".
-		    "TIME_FORMAT(ZEIT_VON,'%H:%i'),".
-		    "TIME_FORMAT(ZEIT_BIS,'%H:%i'),ENTFERNUNG_T,ENTFERNUNG_N,".
-		    "ANZAHL_FRAUEN,PREIS,STATUS,DIA_SCHL,DIA_TEXT,cast(POSNR as unsigned) as sort ".
-		    "from Leistungsdaten ".
-		    "where FK_STAMMDATEN=? ".
-		    "order by DATUM,sort, ZEIT_VON;")
-      or die $dbh->errstr();
   return $self;
 }
 
@@ -97,12 +112,10 @@ sub leistungsdaten_ins {
 #  print "Leistungsdaten einfügen";
   
   # zunächst neue ID für Leistungsdaten holen
-  Heb->parm_such('LEISTUNG_ID');
-  my $id = Heb->parm_such_next;
-  $id++;
+  my $id = 1+$h->parm_unique('LEISTUNG_ID');
   my $erg = $leistungsdaten_ins->execute($id,@_)
     or die $dbh->errstr();
-  Heb->parm_up('LEISTUNG_ID',$id);
+  $h->parm_up('LEISTUNG_ID',$id);
   return $id;
 }
 
@@ -117,7 +130,7 @@ sub rechnung_ins {
 				   "values (?,?,?,?,?,?,?,?,?,?);")
     or die $dbh->errstr();
   $rechnung_ins->execute($rechnr,$rech_datum,'0000-00-00','0000-00-00',$gsumme,20,0,$fk_st,$ik,$text) or die $dbh->errstr();
-  Heb->parm_up('RECHNR',$_[0]);
+  $h->parm_up('RECHNR',$_[0]);
 }
 
 
@@ -141,11 +154,12 @@ sub rechnung_such {
   my $self=shift;
   my $werte = shift;
   my $sel = shift;
-  if (!defined($sel)) {
+  unless ($sel) {
     $sel ='';
   } else {
     $sel = "where $sel";
   }
+
   $self->{rech_such} = $dbh->prepare("select $werte from Rechnung ".
 			     "$sel order by RECHNUNGSNR;") 
     or die $dbh->errstr();
@@ -284,19 +298,24 @@ sub leistungsart_pruef_zus {
   my $self=shift;
   my $posnr=shift;
   my $wert=shift;
-  $pruef_zus = $dbh->prepare("select distinct $wert from Leistungsart ".
-			     "where '$posnr'=$wert;")
-    or die $dbh->errstr();
-  my $erg = $pruef_zus->execute() or die $dbh->errstr();
-  return $erg if ($erg>0);
+  my $datum=shift;
+  return 0 unless (exists $leistungsdaten_pruef_zus{$wert}{$posnr});
+  return 1 if (!$datum); # falls keine Prüfung auf Datum
+
+  foreach my $von_bis 
+    (@{$leistungsdaten_pruef_zus{$wert}{$posnr}}) {
+      my ($von,$bis)=split':',$von_bis;
+      $von =~ s/-//g;
+      $bis =~ s/-//g;
+      return 1 if ($von <= $datum && $bis >= $datum);
+    }
   return 0;
 }
 
-
-sub leistungsart_pruef_zus_next {
+#sub leistungsart_pruef_zus_next {
   # holt die Positionsnummern bei denen zuschläge erforderlich sind
-  return $pruef_zus->fetchrow_array();
-}
+#  return $pruef_zus->fetchrow_array();
+#}
 
 
 sub leistungsart_such {
@@ -308,8 +327,8 @@ sub leistungsart_such {
 }
 
 sub leistungsart_such_next {
-  my @erg = $leistung_such->fetchrow_array();
-  return @erg;
+  return $leistung_such->fetchrow_array();
+#  return @erg;
 }
 
 
@@ -420,12 +439,12 @@ sub leistungsdaten_werte {
   # für bestimmtes Kriterium: where
   my $self=shift;
   my ($frau_id,$werte,$where,$order) = @_;
-  if (defined($where) && $where ne '') {
+  if ($where) {
     $where = ' and '.$where;
   } else {
     $where = '';
   }
-  if (defined($order) && $order ne '') {
+  if ($order) {
     $order = ' order by '.$order;
   } else {
     $order = '';
@@ -452,9 +471,9 @@ sub leistungsdaten_offen {
   my $self=shift;
   my ($frau_id,$where,$order) = @_;
 
-  $order = 'sort,DATUM' if (!defined($order) || $order eq '');
+  $order = 'sort,DATUM' unless ($order);
 
-  if (defined($where) && $where ne '') {
+  if ($where) {
     $where =~ s/,/ and /g;
     $where = ' and '.$where;
   } else {
@@ -488,8 +507,8 @@ sub leistungsart_such_werte {
   my ($posnr,$ltyp,$kbez,$guelt) = @_;
  
   my $where='';
-  $where = "POSNR = '$posnr' and " if ($posnr ne '');
-  $where = $where."GUELT_VON <= '$guelt' and GUELT_BIS >= '$guelt' and" if ($guelt ne '');
+  $where = "POSNR = '$posnr' and " if ($posnr);
+  $where = $where."GUELT_VON <= '$guelt' and GUELT_BIS >= '$guelt' and" if ($guelt);
   $leistungsart_such_werte =
     $dbh->prepare("select ID,POSNR,LEISTUNGSTYP,KBEZ,".
 		  "DATE_FORMAT(GUELT_VON,'%d.%m.%Y'),".
@@ -515,17 +534,17 @@ sub leistungsart_ins {
   # fügt neue Leistungsart in Datenbank ein
   my $self = shift;
   
-  my $id=1+Heb->parm_unique('LEISTUNGSART_ID');
+  my $id=1+$h->parm_unique('LEISTUNGSART_ID');
   my ($posnr,$bez,$ltyp,$epreis,$proz,
       $sonn,$nacht,$sam,$fuerz,$dau,$zwill,
       $zweites,$einm,$begrue,$zus1,
       $zus2,$zus3,$zus4,$g_v,$g_b,$kbez,
       $kilometer,$pzn,$nicht,$id_alt)=@_;
-  $id = $id_alt if(defined($id_alt));
+  $id = $id_alt if($id_alt);
 
-  $dau=0 if (!defined($dau) || $dau eq '');
-  $begrue='n' if (!defined($begrue) || $begrue eq '');
-  $proz=0 if (!defined($proz) || $proz eq '');
+  $dau=0 unless ($dau);
+  $begrue='n' unless ($begrue);
+  $proz=0 unless ($proz);
   my $leistungsart_ins=
     $dbh->prepare("insert into Leistungsart ".
 		  "(ID,POSNR,BEZEICHNUNG,LEISTUNGSTYP,EINZELPREIS, ".
@@ -542,7 +561,7 @@ sub leistungsart_ins {
 		  "?,?,?,?,?,?);")
       or die $dbh->errstr();
   $leistungsart_ins->execute($id,"$posnr",$bez,$ltyp,$epreis,$proz,$sonn,$nacht,$sam,$fuerz,$dau,$zwill,$zweites,$einm,$begrue,$zus1,$zus2,$zus3,$zus4,$g_v,$g_b,$kbez,$kilometer,$pzn,$nicht) or die $dbh->errstr();
-  Heb->parm_up('LEISTUNGSART_ID',$id) if(!defined($id_alt));
+  $h->parm_up('LEISTUNGSART_ID',$id) if(!defined($id_alt));
   return $id;
 }
 
@@ -567,6 +586,35 @@ sub zeit_ende {
   return $zeit_ende{$posnr};
 }
   
+
+sub timetoblank {
+  # setzt zeit von und zeit bis auf Blank, falls nötig
+
+  my $self=shift;
+
+  my ($posnr,$fuerzeit,$datum,$zeit_von,$zeit_bis) = @_;
+
+  return ($zeit_von,$zeit_bis) if ($fuerzeit);
+
+  if( $self->leistungsart_pruef_zus($posnr,'SAMSTAG') &&
+      $self->leistungsart_pruef_zus($posnr,'NACHT')) {
+    $zeit_von = '' if($zeit_von eq '00:00' && $self->zeit_ende($posnr));
+    $zeit_bis = '' if($zeit_bis eq '00:00' && !$self->zeit_ende($posnr));
+  } else {
+    # keine zuschlagspflichtige Positionsnummer, Zeiten können weg
+    $zeit_von = '' if($zeit_von eq '00:00');
+    $zeit_bis = '' if($zeit_bis eq '00:00');
+  }
+
+  if ($self->leistungsart_pruef_zus($posnr,'SONNTAG') &&
+      $d->wotagnummer($d->convert($datum)) > 6) {
+    $zeit_von = '' if($zeit_von eq '00:00');
+    $zeit_bis = '' if($zeit_bis eq '00:00');
+  }
+  return ($zeit_von,$zeit_bis);
+}
+
+
 
 sub status_text {
   # ermittelt zu gegebenem Status den Text
