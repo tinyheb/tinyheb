@@ -3,7 +3,7 @@
 
 # Erzeugen einer Mahnung und Druckoutput (Postscript)
 
-# $Id: mahnung.pl,v 1.9 2008-01-27 08:59:09 thomas_baum Exp $
+# $Id: mahnung.pl,v 1.10 2008-04-25 15:36:42 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -56,7 +56,8 @@ my $posnr=-1;
 my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
     $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
     $dummy,$naechste_hebamme,
-    $begruendung_nicht_nae_heb) = $s->stammdaten_frau_id($frau_id);
+    $begruendung_nicht_nae_heb,
+    $kzetgt,$uhr_kind) = $s->stammdaten_frau_id($frau_id);
 $entfernung_frau =~ s/\./,/g;
 $plz = sprintf "%5.5u",$plz;
 
@@ -313,21 +314,30 @@ sub anschrift {
     $p->box($x1,20.8,$x2,21.3);# Kiste für Kind y1=20.8 y2=21.3
     $p->setfont($font,8);
     $y1=21.35;
-    $p->text(12.7,$y1,"Kind:");
+    if ($anz_kinder < 2) {
+      $p->text(12.7,$y1,"Kind:");
+    } else {
+      my $text = "Kinder (".$kinder[$anz_kinder-1]."):";
+      $p->text(12.7,$y1,$text);
+    }
+
     $p->setfont($font,10);
     # prüfen ob ET oder Geburtsdatum
     my $geb_kind_et=$d->convert($geb_kind);$geb_kind_et =~ s/-//g;
     my $datum_jmt=$d->convert($datum);$datum_jmt =~ s/-//g;
     # zeilen nur ausgeben, wenn geb Kind gültig ist
     if ($geb_kind_et ne 'error') {
-      if ($datum_jmt >= $geb_kind_et) {
+      if ($datum_jmt >= $geb_kind_et && !$kzetgt ||
+	  $kzetgt == 1) {
 	$p->text(12.7,$y1-$y_font,"geboren am");
       } else {
 	$p->text(12.7,$y1-$y_font,"ET");
       }
-      
-      $p->text(15.1,$y1-$y_font,$geb_kind) if($anz_kinder < 2);
-      $p->text(15.1,$y1-$y_font,$geb_kind. ' ('.$kinder[$anz_kinder-1].')') if($anz_kinder > 1);
+      if ($uhr_kind && $kzetgt && $kzetgt == 1) {
+	$p->text(15.1,$y1-$y_font,"$geb_kind $uhr_kind");
+      } else {
+	$p->text(15.1,$y1-$y_font,"$geb_kind");
+      }
     } else {
       $p->text(12.7,$y1-$y_font,"unbekannt");
     }
