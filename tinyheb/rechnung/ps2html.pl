@@ -1,9 +1,10 @@
 #!/usr/bin/perl -w
+# -d:ptkdb
 # -wT
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.51 2008-02-12 18:41:49 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.52 2008-04-25 15:39:31 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -23,13 +24,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+use lib "../";
+#use Devel::Cover -silent => 'On';
+
 use PostScript::Simple;
 use Date::Calc qw(Today);
 use strict;
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);
 
-use lib "../";
 use Heb;
 use Heb_stammdaten;
 use Heb_krankenkassen;
@@ -74,13 +77,13 @@ my  ($name_krankenkasse,
      $strasse_krankenkasse,
      $postfach_krankenkasse) = $k->krankenkasse_sel('NAME,KNAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$ik_krankenkasse);
 
-$name_krankenkasse = '' unless (defined($name_krankenkasse));
-$kname_krankenkasse = '' unless (defined($kname_krankenkasse));
-$plz_krankenkasse = 0 unless (defined($plz_krankenkasse));
-$plz_post_krankenkasse = 0 unless (defined($plz_post_krankenkasse));
-$strasse_krankenkasse = '' unless (defined($strasse_krankenkasse));
-$postfach_krankenkasse = '' unless (defined($postfach_krankenkasse));
-$ort_krankenkasse = '' unless (defined($ort_krankenkasse));
+$name_krankenkasse = '' unless ($name_krankenkasse);
+$kname_krankenkasse = '' unless ($kname_krankenkasse);
+$plz_krankenkasse = 0 unless ($plz_krankenkasse);
+$plz_post_krankenkasse = 0 unless ($plz_post_krankenkasse);
+$strasse_krankenkasse = '' unless ($strasse_krankenkasse);
+$postfach_krankenkasse = '' unless ($postfach_krankenkasse);
+$ort_krankenkasse = '' unless ($ort_krankenkasse);
 $plz_krankenkasse = sprintf "%5.5u",$plz_krankenkasse;
 $plz_post_krankenkasse = sprintf "%5.5u",$plz_post_krankenkasse;
 
@@ -192,14 +195,14 @@ neue_seite(7);
 
 
 # Prüfen ob auch elektronisch versand wird
-if ($name_krankenkasse ne '' && $versichertenstatus ne 'privat' 
+if ($name_krankenkasse && $versichertenstatus ne 'privat' 
    && $versichertenstatus ne 'SOZ') {
   # prüfen ob zu ik Zentral IK vorhanden ist
   my $text='';
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
   my $test_ind = $k->krankenkasse_test_ind($ik_krankenkasse);
   my ($kname_zik)=$k->krankenkasse_sel("KNAME",$zik);
-  if (defined($zik) && $zik > 0 && defined($test_ind) && $test_ind==1) {
+  if ($zik  && $test_ind && $test_ind==1) {
     $p->text($x1,$y1,"Diese Rechnung wurde im Rahmen der Erprobungsphase des Datenaustausches im Abrechnungsverfahren");$y1-=$y_font;
     $p->text($x1,$y1,"nach §302 SGB V per E-Mail an die zuständige Datenannahmestelle ");$y1-=$y_font;
     $p->text($x1,$y1,"$zik ($kname_zik) geschickt.");$y1-=$y_font;$y1-=$y_font;
@@ -227,7 +230,7 @@ $p->text($x1,$y1,"Mit freundlichen Grüßen");
 # Prüfen ob es sich um elektronische Rechnung handelt und Begleitzettel für Urbelege
 # ertellt werden muss
 my $test_ind = $k->krankenkasse_test_ind($ik_krankenkasse);
-if (defined($test_ind) && $test_ind==2) {
+if ($test_ind && $test_ind==2) {
   # Begleitzettel für Urbeleg erstellen
   urbeleg();
 }
@@ -412,9 +415,9 @@ sub print_material {
       # zugeordnete Posnr holen
       my $go_datum = $erg[4];
       $go_datum =~ s/-//g;
-      $zus1=70 if ((!defined($zus1) or $zus1 eq '') and
+      $zus1=70 if ((!$zus1) and
 		   $go_datum < 20070801);
-      $zus1=800 if ((!defined($zus1) or $zus1 eq '') and
+      $zus1=800 if ((!$zus1) and
 		   $go_datum >= 20070801);
 
       my($bez_zus)=$l->leistungsart_such_posnr("KBEZ","$zus1",$erg[4]);
@@ -545,6 +548,7 @@ sub print_teil {
   $p->setfont($font_b,10);
   $p->text($x1,$y1,$text);$y1-=$y_font;$y1-=$y_font;
   $p->setfont($font,10);
+    my $hks=1; # Steuerung, ob Hochkomma w/ Wiederholung ausgegeben wird
   while (my @erg=$l->leistungsdaten_offen_next()) {
     my @erg2=$l->leistungsdaten_such_id($erg[0]);
     my ($bez,$fuerzeit,$epreis)=$l->leistungsart_such_posnr("KBEZ,FUERZEIT,EINZELPREIS ",$erg[1],$erg[4]);
@@ -563,23 +567,34 @@ sub print_teil {
     ($fuerzeit_flag,$fuerzeit)=$d->fuerzeit_check($fuerzeit);
     $bez = substr($bez,0,50);
     my $laenge_bez = length($bez)*0.2/2;
+
+    # Zeitangaben ggf. auf Blank setzen
+    my ($zeit_von,$zeit_bis) = $l->timetoblank($erg[1],     # posnr
+					       $fuerzeit,   # fuerzeit
+					       $erg[4],     # datum
+					       $erg2[5],    # zeit von
+					       $erg2[6]);   # zeit bis
+
     if ($posnr != $erg[1]) {
       # bei posnr wechsel posnr schreiben
       $p->text({align => 'center'},$x1+1,$y1,$erg[1]);
       $posnr=$erg[1];
       $p->text($x1+2,$y1,$bez);
-#      print "fuerzeit $fuerzeit\n";
-      $y1-=$y_font if ($fuerzeit || 
-		       $l->leistungsart_pruef_zus($erg[1],'SAMSTAG') ||
-		       $l->leistungsart_pruef_zus($erg[1],'NACHT')
-		      );
+      $hks=1; # es darf Hochkomma gesetzt werden
+
+      if ($zeit_von || $zeit_bis) {
+	$y1 -= $y_font;
+	$hks=0; # nach Zeitangabe kein Hochkomma
+      }
     } else {
       # Hochkomma ausgeben, wenn keine Zeitangabe notwendig
-      if (!$fuerzeit && 
-	  !$l->leistungsart_pruef_zus($erg[1],'SAMSTAG') &&
-	  !$l->leistungsart_pruef_zus($erg[1],'NACHT')
-	 ) {
-	$p->text({align => 'center'},$x1+2+$laenge_bez,$y1,"\"");
+      unless ($zeit_von || $zeit_bis) {
+	if ($hks) {
+	  $p->text({align => 'center'},$x1+2+$laenge_bez,$y1,"\"");
+	} else {
+	  $p->text($x1+2,$y1,$bez);
+	  $hks=1; # nach Bezeichnung darf Hochkoma kommen
+	}
       }
     }
     
@@ -605,15 +620,11 @@ sub print_teil {
 	$vk =~ s/\./,/g;
 	$p->text($x1+5.5,$y1,$dauer." min = ".$vk." h á ".$epreis." EUR");
       }
-    } elsif ($l->leistungsart_pruef_zus($erg[1],'SAMSTAG') ||
-	     $l->leistungsart_pruef_zus($erg[1],'NACHT')) {
-      if(!$d->ist_saona($erg[4],$erg[2]) || $d->wotagnummer($erg[4])==8) {
-	my $wotag=$d->wotag($erg[4]);
-	$wotag .= " in $heb_bundesland" if($d->wotagnummer($erg[4])==8);
-	$p->text($x1+2,$y1,$wotag);
-      } else {
+    } else {
+      if ($zeit_von || $zeit_bis) {
 	$p->text($x1+2,$y1,$d->wotag($erg[4]));
-	$p->text($x1+5,$y1,$erg2[5].'-'.$erg2[6]);
+	$p->text($x1+5,$y1,$zeit_von.'-'.$zeit_bis);
+	$hks=0;
       }
     }
     # datum 4
@@ -713,7 +724,13 @@ sub anschrift {
     $p->setfont($font,8);
 #    $y1=21.35;
     $y1+=0.05;
-    $p->text(12.7,$y1,"Kind:");
+    if ($anz_kinder < 2) {
+      $p->text(12.7,$y1,"Kind:");
+    } else {
+      my $text = "Kinder (".$kinder[$anz_kinder-1]."):";
+      $p->text(12.7,$y1,$text);
+    }
+
     $p->setfont($font,10);
     # prüfen ob ET oder Geburtsdatum
     my $geb_kind_et=$d->convert($geb_kind);$geb_kind_et =~ s/-//g;
@@ -726,9 +743,11 @@ sub anschrift {
       } else {
 	$p->text(12.7,$y1-$y_font,"ET");
       }
-      
-      $p->text(15.1,$y1-$y_font,$geb_kind) if($anz_kinder < 2);
-      $p->text(15.1,$y1-$y_font,$geb_kind. ' ('.$kinder[$anz_kinder-1].')') if($anz_kinder > 1);
+      if ($uhr_kind && $kzetgt && $kzetgt == 1) {
+	$p->text(15.1,$y1-$y_font,"$geb_kind $uhr_kind");
+      } else {
+	$p->text(15.1,$y1-$y_font,"$geb_kind");
+      }
     } else {
       $p->text(12.7,$y1-$y_font,"unbekannt");
     }
@@ -768,13 +787,13 @@ sub anschrift {
        $strasse_krankenkasse_beleg,
        $postfach_krankenkasse_beleg) = $k->krankenkasse_sel('NAME,KNAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$beleg_ik);
   
-  $name_krankenkasse_beleg = '' unless (defined($name_krankenkasse_beleg));
-  $kname_krankenkasse_beleg = '' unless (defined($kname_krankenkasse_beleg));
-  $plz_krankenkasse_beleg = 0 unless (defined($plz_krankenkasse_beleg));
-  $plz_post_krankenkasse_beleg = 0 unless (defined($plz_post_krankenkasse_beleg));
-  $strasse_krankenkasse_beleg = '' unless (defined($strasse_krankenkasse_beleg));
-  $postfach_krankenkasse_beleg = '' unless (defined($postfach_krankenkasse_beleg));
-  $ort_krankenkasse_beleg = '' unless (defined($ort_krankenkasse_beleg));
+  $name_krankenkasse_beleg = '' unless ($name_krankenkasse_beleg);
+  $kname_krankenkasse_beleg = '' unless ($kname_krankenkasse_beleg);
+  $plz_krankenkasse_beleg = 0 unless ($plz_krankenkasse_beleg);
+  $plz_post_krankenkasse_beleg = 0 unless ($plz_post_krankenkasse_beleg);
+  $strasse_krankenkasse_beleg = '' unless ($strasse_krankenkasse_beleg);
+  $postfach_krankenkasse_beleg = '' unless ($postfach_krankenkasse_beleg);
+  $ort_krankenkasse_beleg = '' unless ($ort_krankenkasse_beleg);
   
   $plz_krankenkasse_beleg = sprintf "%5.5u",$plz_krankenkasse_beleg;
   $plz_post_krankenkasse_beleg = sprintf "%5.5u",$plz_post_krankenkasse_beleg;
