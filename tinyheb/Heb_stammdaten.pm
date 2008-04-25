@@ -1,9 +1,9 @@
 # Package um Stammdaten zu verarbeiten
 
-# $Id: Heb_stammdaten.pm,v 1.13 2007-12-13 11:20:48 thomas_baum Exp $
+# $Id: Heb_stammdaten.pm,v 1.14 2008-04-25 15:18:09 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -27,47 +27,45 @@ use strict;
 use DBI;
 
 use Heb;
-
+my $h = new Heb;
 my $debug = 0;
-our $dbh; # Verbindung zur Datenbank
-our $frau_such; # suchen von Frauen
+my $dbh=$h->connect; # Verbindung zur Datenbank
+my $frau_such; # suchen von Frauen
+$frau_such = $dbh->prepare("select ID,VORNAME,NACHNAME,".
+			   "DATE_FORMAT(GEBURTSDATUM_FRAU,'%d.%m.%Y'),".
+			   "DATE_FORMAT(GEBURTSDATUM_KIND,'%d.%m.%Y'),".
+			   "PLZ,ORT,TEL,STRASSE,ANZ_KINDER,ENTFERNUNG, ".
+			   "KRANKENVERSICHERUNGSNUMMER,".
+			   "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
+			   "VERSICHERTENSTATUS,".
+			   "IK,".
+			   "NAECHSTE_HEBAMME,".
+			   "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME, ".
+			   "KZETGT, ".
+			   "TIME_FORMAT(GEBURTSZEIT_KIND,'%H:%i') ".
+			   "from Stammdaten where ".
+			   "VORNAME like ? and ".
+			   "NACHNAME like ? and ".
+			   "GEBURTSDATUM_FRAU like ? and ".
+			   "GEBURTSDATUM_KIND like ? and ".
+			   "PLZ like ? and ".
+			   "ORT like ? and ".
+			   "STRASSE like ?;");
+
 our $max_frau=0; # maximal vergebene id
 
 sub new {
   my($class) = @_;
   my $self = {};
-  $dbh = Heb->connect;
-  $frau_such = $dbh->prepare("select ID,VORNAME,NACHNAME,".
-			     "DATE_FORMAT(GEBURTSDATUM_FRAU,'%d.%m.%Y'),".
-			     "DATE_FORMAT(GEBURTSDATUM_KIND,'%d.%m.%Y'),".
-			     "PLZ,ORT,TEL,STRASSE,ANZ_KINDER,ENTFERNUNG, ".
-			     "KRANKENVERSICHERUNGSNUMMER,".
-			     "KRANKENVERSICHERUNGSNUMMER_GUELTIG,".
-			     "VERSICHERTENSTATUS,".
-			     "IK,".
-			     "NAECHSTE_HEBAMME,".
-			     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME, ".
-			     "KZETGT, ".
-			     "TIME_FORMAT(GEBURTSZEIT_KIND,'%H:%i') ".
-			     "from Stammdaten where ".
-			     "VORNAME like ? and ".
-			     "NACHNAME like ? and ".
-			     "GEBURTSDATUM_FRAU like ? and ".
-			     "GEBURTSDATUM_KIND like ? and ".
-			     "PLZ like ? and ".
-			     "ORT like ? and ".
-			     "STRASSE like ?;");
-
   bless $self, ref $class || $class;
-  Heb->parm_such('STAMMDATEN_ID');
-  $max_frau = Heb->parm_such_next();
+  $max_frau = $h->parm_unique('STAMMDATEN_ID');
   return $self;
 }
 
 sub stammdaten_suchfrau {
   # Sucht nach Frauen in der Datenbank
 
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   $frau_such->execute(@_) or die $dbh->errstr();
 
@@ -88,7 +86,7 @@ sub stammdaten_suchfrau_next {
 sub stammdaten_ins {
   # fügt neue Person in Datenbank ein
 
-  shift; # package Namen vom stack nehmen
+  my $self=shift; # package Namen vom stack nehmen
 
   my($vorname,
      $nachname,
@@ -112,8 +110,8 @@ sub stammdaten_ins {
      $id_alt) = @_;
 
   # zunächst neue ID für Frau holen
-  Heb->parm_such('STAMMDATEN_ID');
-  my $id = Heb->parm_such_next;
+  $h->parm_such('STAMMDATEN_ID');
+  my $id = $h->parm_such_next;
   $id++;
   $id = $id_alt if (defined($id_alt));
 
@@ -155,14 +153,14 @@ sub stammdaten_ins {
 #				     $datum,$kzetgt,undef)
     or die $dbh->errstr();
 
-  Heb->parm_up('STAMMDATEN_ID',$id) if(!defined($id_alt));
+  $h->parm_up('STAMMDATEN_ID',$id) if(!defined($id_alt));
   print "ergebnis ins_id $id<br>\n" if $debug;
   return $id;
 }
 
 sub stammdaten_update {
   # speichert geänderte Daten ab
-  shift;
+  my $self=shift;
   # update an Datenbank vorbereiten
   my $stammdaten_up = $dbh->prepare("update Stammdaten set ".
 				    "VORNAME=?,NACHNAME=?,GEBURTSDATUM_FRAU=?,".
@@ -188,7 +186,7 @@ sub stammdaten_update {
 
 sub stammdaten_delete {
   # löscht Datensatz aus der Datenbank
-  shift;
+  my $self=shift;
   # delete an Datenbank vorbereiten
   my $stammdaten_del = $dbh->prepare("delete from Stammdaten ".
 				     "where ID=?;")
@@ -203,7 +201,7 @@ sub stammdaten_delete {
 
 sub stammdaten_frau_id {
   # holt alle Daten zu einer Frau
-  shift;
+  my $self=shift;
 
   my ($id) = @_;
 
@@ -234,7 +232,7 @@ sub stammdaten_frau_id {
 
 sub stammdaten_next_id {
   # holt zur gegebenen Frau die nächste Frau
-  shift;
+  my $self=shift;
   my ($id) = @_;
   my $stammdaten_next_id =
     $dbh->prepare("select ID from Stammdaten where ".
@@ -246,7 +244,7 @@ sub stammdaten_next_id {
 
 sub stammdaten_prev_id {
   # holt zur gegebenen Frau die vorhergehende Frau
-  shift;
+  my $self=shift;
   my ($id) = @_;
   my $stammdaten_prev_id =
     $dbh->prepare("select ID from Stammdaten where ".
