@@ -6,7 +6,7 @@
 # extrahiert aus Schlüsseldateien des Trust Center ITSG die einzelnen
 # Schlüssel
 
-# $Id: key.pl,v 1.13 2008-02-10 13:29:33 thomas_baum Exp $
+# $Id: key.pl,v 1.14 2008-04-25 15:46:04 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -26,6 +26,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+BEGIN {
+  if(eval "use Crypt::OpenSSL::X509;1") {
+    warn "using Crypt::OpenSSL::X509";
+    *main::ssl_func= \&get_all_x509;
+  } else {
+    warn "using OpenSSL command line";
+    *main::ssl_func= \&get_all;
+  }
+#  *main::ssl_func= \&get_all;
+}
+
+
 use strict;
 use Date::Calc qw(This_Year Decode_Month Add_Delta_DHMS);
 use Getopt::Std;
@@ -34,6 +46,7 @@ use File::Copy;
 use lib '../';
 use Heb_krankenkassen;
 use Heb;
+
 
 my $k = new Heb_krankenkassen;
 my $h = new Heb;
@@ -147,7 +160,7 @@ foreach my $file (@dateien) {
 	  $ende,
 	  $serial,
 	  $algorithmus,
-	  $pubkey_laenge)=get_all("$path/tmpcert.pem");
+	  $pubkey_laenge)=ssl_func("$path/tmpcert.pem");
 
       die "konnte Seriennummer eines Zertifikates nicht ermittlen\n" unless ($serial);
       print "Seriennummer $serial\n" if $debug;
@@ -176,7 +189,7 @@ foreach my $file (@dateien) {
 	  print "Habe Zerfikat fuer $ik nach $orig_path/privkey/$ik.pem kopiert\n";
 	}
       }
-      if ($save_cert && $counter % 100 == 0) {
+      if (($save_cert || $save) && $counter % 100 == 0) {
 	print "verarbeitete Zertifikate $counter\r";
       }
 
@@ -214,6 +227,9 @@ unlink("$path/tmpcert.pem");
 
 print "</table>" if $html;
 
+if ($save_cert || $save) {
+  print "verarbeitete Zertifikate $counter\n";
+}
 
 
 sub get_all {
@@ -265,6 +281,43 @@ sub get_all {
   return ($ik,$organisation,$herausgeber,$ansprechpartner,$guelt_von,$guelt_bis,$serial,$algorithmus,$pubkey_laenge);
 
 }
+
+
+sub get_all_x509 {
+  my ($cert_name) = @_;
+  my $x509 = Crypt::OpenSSL::X509->new_from_file($cert_name);
+
+  my $guelt_von=$x509->notBefore();
+  my $guelt_bis=$x509->notAfter();
+  my $herausgeber=$x509->issuer();
+  my $ansprechpartner=undef;
+  my $organisation='';
+  my $serial=hex($x509->serial());
+  my $ik=undef;
+  my $algorithmus='';
+  my $pubkey=$x509->pubkey();
+  my $modulus=$x509->modulus();
+  my $pubkey_laenge=length($modulus)*4;
+  my $cert=$x509->as_string(1);
+
+  my $name = $x509->subject();
+
+
+  (undef,undef,$organisation,$ik,$ansprechpartner) = split ',',$name;
+  $organisation = '' unless($organisation);
+  $organisation =~ s/ OU=//;
+  $ik = '' unless($ik);
+  $ik =~ s/ OU=IK//;
+  $ansprechpartner='' unless($ansprechpartner);
+  $ansprechpartner =~ s/ CN=//;
+
+  (undef,$herausgeber) = split ',',$herausgeber;
+  $herausgeber =~ s/ O=//;
+
+  return ($ik,$organisation,$herausgeber,$ansprechpartner,$guelt_von,$guelt_bis,$serial,$algorithmus,$pubkey_laenge);
+
+}
+
 
 
 
