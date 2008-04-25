@@ -5,7 +5,7 @@
 
 # alte Rechnungen anzeigen
 
-# $Id: druck_alt_rech.pl,v 1.7 2007-07-27 18:55:15 baum Exp $
+# $Id: druck_alt_rech.pl,v 1.8 2008-04-25 15:35:07 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -93,6 +93,7 @@ print <<SCRIPTE;
 //    alert("Anzeige wechsel"+tag[0]+tag[0].value);
     open("ps2html_alt.pl?rech_id=$rech_id&rechtyp="+tag[0].value,"rechnung_alt");
   }
+window.focus();
 </script>
 SCRIPTE
 
