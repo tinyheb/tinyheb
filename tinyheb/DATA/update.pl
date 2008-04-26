@@ -2,7 +2,7 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.4 2008-04-25 16:06:03 thomas_baum Exp $
+# $Id: update.pl,v 1.5 2008-04-26 12:42:51 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -128,7 +128,7 @@ LINE:while (my $line=<SQL>) {
 write_LOG("Beende update ----------------------------");
 
 unless($rpm) {
-  print "Update erfolgreich durchgeführt,\nBitte die ENTER Taste zum Beenden des Update druecken\n";
+  print "Update erfolgreich durchgefuehrt,\nBitte die ENTER Taste zum Beenden des Update druecken\n";
   my $eingabe=<STDIN>;
 }
 
