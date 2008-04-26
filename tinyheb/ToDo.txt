@@ -1,15 +1,10 @@
 Offen:
-10.02.08
-Rückbau alte Version Datenaustausch
+15.03.08
+Positionsnummer 010 mehr als einmal pro Tag nur mit Begründung und Uhrzeit
 
-09.02.08
-Prüfung in Heb_Edi, sind die Zertifikate noch gültig.
-
-09.02.08
-Kurs_knopf scripte nach javascript auslagern von rechpos.pl
-
-09.02.08
-Layout der erfassten Positionen in Rechnungsposten erfassen, verbessern
+16.02.08
+Testfälle Posnr 280 290 nur bis 9. Monat nach Geburt
+Update auf Rechnung i.S. Zahlung
 
 09.02.08
 Kennzeichen in Krankenkassendaten, damit Werte einer einzelnen Kasse nicht überschrieben werden.
@@ -17,18 +12,8 @@ Kennzeichen in Krankenkassendaten, damit Werte einer einzelnen Kasse nicht übers
 09.02.08
 GUI für das Einlesen des eigenen Zertifikates
 
-27.01.08
-Config File für tinyHeb
-
 26.01.08
 Feld privat-Faktor in die Stammdaten mit aufnehmen. Ist dies belegt gilt dieses, sonst der Default aus den Parametern
-
-29.12.07
-Uhrzeit muss nur bei Geburtshilfe angegeben werden, nicht bei anderen Positionsnummern
-
-29.12.07
-Ggf. nur den IK Krankenhaus übertragen, wenn wirklich als Beleghebamme
-
 
 13.12.07
 Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
@@ -36,13 +21,11 @@ Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
 07.12.07
 Positionsnummer 270 nur nach der Geburt
 
-
 10.11.07
 Plausiprüfungen Positionsnummer 020
 
 10.11.07
 bei Zuschlägen, wenn sowohl vor wie auch nacher Stichzeitpunkt Leistung erbracht wird, ggf. 2 Positionen speichern.
-
 
 26.08.07
 Positionsnummer B. können nur am Geburtsdatum des Kindes erfasst werden.
@@ -64,12 +47,39 @@ Feiertage Bundeslandbezogen
 06.08.06
 eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
-
 09.07.05 Dokumentation erstellen.
 
 
 ----------------------------------------------------------------
 Erledigt:
+25.04.08
+Prüfung in Heb_Edi, sind die Zertifikate noch gültig. Anforderung vom 09.02.08
+
+21.04.08
+Gebührenordnung ab 01.07.08. Anforderung vom 30.03.08
+
+30.03.08
+Ggf. nur den IK Krankenhaus übertragen, wenn wirklich als Beleghebamme. Keine Fehlermeldungen, Anforderung wird nicht umgesetzt. Anforderung vom 29.12.07
+
+
+25.03.08
+Layout der erfassten Positionen in Rechnungsposten erfassen, verbessern. Anforderung vom 09.02.08
+Geburtszeit Kind auf Rechnung andrucken, wenn vorhanden. Anforderung vom 01.03.08
+Nur die Uhrzeiten müssen erfasst sein, die wirklich notwendig sind.. Anforderung vom 09.03.08
+Uhrzeit muss nur bei Geburtshilfe angegeben werden, nicht bei anderen Positionsnummern. --> Alle erfassten Uhrzeiten werden übertragen, damit erledigt. Anforderung vom 29.12.07
+
+
+16.03.08
+update.pl auf Config Datei anpassen. Anforderung vom 15.03.08
+Config File für tinyHeb. Anforderung vom 27.01.08
+
+16.02.08
+In Überschriften angeben, ob ET oder GT Kind. Anforderung vom 16.02.08
+Rückbau alte Version Datenaustausch. Anforderung vom 10.02.08
+
+15.02.08
+Kurs_knopf scripte nach javascript auslagern von rechpos.pl. Anforderung vom 09.02.08
+
 10.01.08
 Hinweise zur Sicherheit von tinyHeb. Anforderung vom 13.12.08
 
