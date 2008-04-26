@@ -3,7 +3,7 @@
 
 # Mini Setup für tinyHeb
 
-# $Id: setup.pl,v 1.9 2008-04-25 15:55:28 thomas_baum Exp $
+# $Id: setup.pl,v 1.10 2008-04-26 12:47:23 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -43,7 +43,7 @@ my %statusHash;
 
 my $eingabe='';
 my $serv_erg='';
-my $id='$Id: setup.pl,v 1.9 2008-04-25 15:55:28 thomas_baum Exp $';
+my $id='$Id: setup.pl,v 1.10 2008-04-26 12:47:23 thomas_baum Exp $';
 
 write_LOG("Programm id $id");
 
@@ -251,6 +251,8 @@ if ($^V ge v5.10.0) {
     print "sind schon vorhanden\n";
     write_LOG("sind schon vorhanden $ppm_rep");
   }
+  # unter perl 5.10 ist Tk nicht mehr dabei
+  system('ppm install Tk');
 }
 
 system('ppm install Date-Calc');
