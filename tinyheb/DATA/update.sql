@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.15 2008-04-25 16:04:55 thomas_baum Exp $
+# $Id: update.sql,v 1.16 2008-04-26 08:54:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 # zunächst alte GO ungültig machen
@@ -516,3 +516,4 @@ ROOT	ALTER	Leistungsdaten		alter table Leistungsdaten add DIA_TEXT VARCHAR(70) D
 ROOT	ALTER	Leistungsart		alter table Leistungsart add index LTYP_INDEX(LEISTUNGSTYP,GUELT_VON,GUELT_BIS);
 # Parameter
 ROOT	ALTER	Parms		alter table Parms add index PARM_INDEX(NAME);
+
