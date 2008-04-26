@@ -1,3 +1,37 @@
+Release 0.19.0
+
+Layout der erfassten Positionen in Maske "Rechnungsposten erfassen" verbessert
+
+Geburtszeit Kind wird auf Rechnung mit angedruckt, falls diese Zeit vorhanden ist
+
+Nur die Uhrzeiten müssen erfasst sein, die wirklich notwendig sind
+Alle erfassten Uhrzeiten werden auch in elektronischer Rechnung übertragen
+
+Config File möglich
+
+In Feldüberschriften wird angegeben, ob errechneter oder Geburtstermin des Kindes angegeben ist
+
+Code Cleanup: alte Version Datenaustausch ausgebaut
+
+Performance der Anwendung verbessert
+
+Bug Fix: Rechnungsposten mit Pharmazentralnummer wurden falsch übertragen
+
+Aufnahme der ab 01.07.08 gültigen Gebührenordnung 
+
+verbesserte setup.pl für Perl 5.10, Apache2.2 und Vista
+
+Beim Signieren wird Zertifikat der Zertifizierungsstelle mit übertragen
+
+Bug fix: auch Positionsnummern 090 bid 167 nach Zeit Ende berechnet
+
+In auftrag.pl kann Passwort übergeben werden
+
+Bug fix: Korrektur Rechtschreibfehler in Frauenauswahl
+
+Prüfung ob genutzte Zertifikate noch gültig sind.
+
+
 Release 0.18.0
 
 Bug fix: Positionsnummern mit Zuschlägen konnten Samstag ohne Angabe der Uhrzeit gespeichert werden.
