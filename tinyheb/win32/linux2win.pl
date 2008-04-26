@@ -4,7 +4,7 @@
 # Zeilenende werden angepasst,
 # Shebang Zeile geändert
 
-# $Id: linux2win.pl,v 1.4 2007-07-22 11:28:29 baum Exp $
+# $Id: linux2win.pl,v 1.5 2008-04-26 08:53:55 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -33,7 +33,7 @@ getopts("f:",\%option);
 
 my $base_dir=$option{f} || '.';
 
-my @dirs =qw(apache2 edifact erfassung rechnung tools win32 .);
+my @dirs =qw(apache2 certs edifact erfassung rechnung tools win32 .);
 
 foreach my $dir (@dirs) {
   print "\nBearbeite Verzeichnis $dir\n";
