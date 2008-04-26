@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.49 2008-04-25 15:09:21 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.50 2008-04-26 14:14:16 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -55,8 +55,17 @@ if ($^O =~ /MSWin32/) {
   $path .='/.tinyheb';
 }
 mkdir "$path" if(!(-d "$path"));
-
 our $ERROR = '';
+
+# suche nach Zertifikatspfad
+my $cert_path='';
+foreach my $file (@INC) {
+  if (-r "$file/certs/itsg1.pem") {
+    $cert_path=$file;
+    last;
+  }
+}
+
 
 sub new {
   my $class = shift;
@@ -1131,8 +1140,8 @@ sub sig {
 
     # 
     my $cert_opts='';
-    $cert_opts='-certfile ../certs/itsg4.pem' if ($cert_info == 2);
-    $cert_opts='-certfile ../certs/itsg2.pem' if ($cert_info == 1);
+    $cert_opts="-certfile $cert_path".'certs/itsg4.pem' if ($cert_info == 2);
+    $cert_opts="-certfile $cert_path".'certs/itsg2.pem' if ($cert_info == 1);
 
     open NUTZ, "$openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem $cert_opts -passin pass:\"$self->{sig_pass}\" -inkey $path/privkey/privkey.pem |" or
       return ("konnte Datei nicht DER signieren",0);
