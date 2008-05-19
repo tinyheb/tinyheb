@@ -1,7 +1,7 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Krankenkassenerfassung
 
-# $Id: krankenkassen.js,v 1.8 2007-07-27 18:55:15 baum Exp $
+# $Id: krankenkassen.js,v 1.9 2008-05-19 17:50:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -73,4 +73,21 @@ function kasse_speichern(formular) {
   }
 
   return true;
+}
+
+
+function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse,status_edi) {
+  //  alert("gewählt"+name+plz_haus+ort+strasse+k_ik);
+  // in Parent Dokument übernehmen
+  // alert("parent"+opener.window.document.forms[0].name);
+  var formular=opener.window.document.forms[0];
+  if (formular.name == 'krankenkassen') {
+    opener.window.location="krankenkassenerfassung.pl?func=3&ik_krankenkasse="+k_ik;
+  } else {
+    formular.ik_krankenkasse.value=k_ik;
+    formular.name_krankenkasse.value=name;
+    formular.strasse_krankenkasse.value=strasse;
+    formular.ort_krankenkasse.value=plz_haus+' '+ort;
+    formular.status_edi_krankenkasse.value=status_edi;
+  }
 }
