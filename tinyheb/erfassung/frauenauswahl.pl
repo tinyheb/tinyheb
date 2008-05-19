@@ -6,7 +6,7 @@
 
 # Auswahl einer Frau aus den Stammdaten
 
-# $Id: frauenauswahl.pl,v 1.13 2008-04-25 15:26:32 thomas_baum Exp $
+# $Id: frauenauswahl.pl,v 1.14 2008-05-19 17:48:24 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -212,10 +212,6 @@ print '</form>';
 print '</tr>';
 print '</table>';
 
-print <<SCRIPTE;
-<script>
-window.focus();
-</script>
-SCRIPTE
+print "<script>window.focus();</script>";
 print "</body>\n";
 print "</html>";

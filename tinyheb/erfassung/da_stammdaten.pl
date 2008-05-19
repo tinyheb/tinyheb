@@ -5,7 +5,7 @@
 
 # Daten der Datenannahmestellen erfassen, ändern, löschen
 
-# $Id: da_stammdaten.pl,v 1.4 2007-07-27 18:55:15 baum Exp $
+# $Id: da_stammdaten.pl,v 1.5 2008-05-19 17:45:08 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -231,10 +231,6 @@ print '</table>';
 print '</form>';
 print '</tr>';
 print '</table>';
-print <<SCRIPTE;
-<script>
-</script>
-SCRIPTE
 print "</body>";
 print "</html>";
 

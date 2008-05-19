@@ -5,7 +5,7 @@
 
 # Leistungsarten erfassen, ändern, löschen
 
-# $Id: leistungsarterfassung.pl,v 1.13 2008-01-27 09:02:56 thomas_baum Exp $
+# $Id: leistungsarterfassung.pl,v 1.14 2008-05-19 17:54:13 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -293,11 +293,7 @@ print '</table>';
 print '</form>';
 print '</tr>';
 print '</table>';
-print <<SCRIPTE;
-<script>
-  auswahl_wechsel(document.leistungsart);
-</script>
-SCRIPTE
+print "<script>auswahl_wechsel(document.leistungsart);</script>";
 print "</body>";
 print "</html>";
 

@@ -5,7 +5,7 @@
 
 # Auswahl von Leistungsarten
 
-# $Id: leistungsartauswahl.pl,v 1.6 2007-07-27 18:55:15 baum Exp $
+# $Id: leistungsartauswahl.pl,v 1.7 2008-05-19 17:52:43 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -136,16 +136,6 @@ print '</form>';
 print '</tr>';
 print '</table>';
 
-print <<SCRIPTE;
-<script>
-  function l_eintrag(id) {
-    // in Parent Dokument übernehmen
-    var formular=opener.window.name;
-    opener.window.location="leistungsarterfassung.pl?func=3&leist_id="+id;
-    self.close();
-  }
-window.focus();
-</script>
-SCRIPTE
+print "<script>window.focus();</script>";
 print "</body>";
 print "</html>";
