@@ -5,7 +5,7 @@
 
 # Feiertag erfassen, ändern, löschen
 
-# $Id: feiertagserfassung.pl,v 1.11 2007-07-27 18:55:15 baum Exp $
+# $Id: feiertagserfassung.pl,v 1.12 2008-05-19 17:47:45 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -70,15 +70,8 @@ print '<head>';
 print '<title>Feiertage</title>';
 print '<script language="javascript" src="../Heb.js"></script>';
 print '<script language="javascript" src="feiertage.js"></script>';
+print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
-
-# style-sheet ausgeben
-print <<STYLE;
-  <style type="text/css">
-  .disabled { color:black; background-color:gainsboro}
-  .invisible { color:white; background-color:white;border-style:none}
-  </style>
-STYLE
 
 if (($auswahl eq 'Löschen') && defined($abschicken)) {
   loeschen();
@@ -183,22 +176,11 @@ print '</table>';
 print '</form>';
 print '</tr>';
 print '</table>';
-print <<SCRIPTE;
-<script>
-  set_focus(document.feiertage);
-  auswahl_wechsel(document.feiertage);
-</script>
-SCRIPTE
+print "<script>set_focus(document.feiertage);auswahl_wechsel(document.feiertage);</script>";
 print "</body>";
 print "</html>";
 
-sub print_color {
-  my ($bezeichnung,$variable) = @_;
-  
-  print '<font color=red>' if ($variable eq '');
-  print "<b>$bezeichnung</b>";
-  print '<font color=black>';
-}
+
 
 sub speichern {
   # Speichert die Daten in der Krankenkassen Datenbank
@@ -230,11 +212,17 @@ sub hole_feiertag_daten {
     if (!defined($name)) {
       if ($feiertag_id <= 0) {
 	$feiertag_id = 0;
+	$name = '';
+	$bundesland = '';
+	$datum = '';
 	return;
       }
       $feiertag_id++ if ($func == 1);
       $feiertag_id-- if ($func == 2);
     }
   }
+  $name = '' unless ($name);
+  $bundesland = '' unless($bundesland);
+  $datum = '' unless($datum);
   return;
 }
