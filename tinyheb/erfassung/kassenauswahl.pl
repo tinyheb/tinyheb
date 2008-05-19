@@ -5,7 +5,7 @@
 
 # Auswahl einer Krankenkasse
 
-# $Id: kassenauswahl.pl,v 1.14 2007-07-27 18:55:15 baum Exp $
+# $Id: kassenauswahl.pl,v 1.15 2008-05-19 17:49:29 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -54,6 +54,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 # Alle Felder zur Eingabe ausgeben
 print '<head>';
 print '<title>Krankenkasse suchen</title>';
+print '<script language="javascript" src="krankenkassen.js"></script>';
 print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 print '<body bgcolor=white>';
@@ -102,29 +103,8 @@ print '<input type="button" name="zurueck" value="Zurück" onClick="self.close()"
 print '</tr>';
 print '</table>';
 
-print <<SCRIPTE;
-<script>
-  function zurueck() {
-    kassenauswahl.close();
-  }
-  function kk_eintrag(k_ik,kname,name,plz_haus,plz_post,ort,strasse,status_edi) {
-    //  alert("gewählt"+name+plz_haus+ort+strasse+k_ik);
-    // in Parent Dokument übernehmen
-    // alert("parent"+opener.window.document.forms[0].name);
-    var formular=opener.window.document.forms[0];
-    if (formular.name == 'krankenkassen') {
-      opener.window.location="krankenkassenerfassung.pl?func=3&ik_krankenkasse="+k_ik;
-    } else {
-       formular.ik_krankenkasse.value=k_ik;
-       formular.name_krankenkasse.value=name;
-       formular.strasse_krankenkasse.value=strasse;
-       formular.ort_krankenkasse.value=plz_haus+' '+ort;
-       formular.status_edi_krankenkasse.value=status_edi;
-    }
-  }
-window.focus();
-</script>
-SCRIPTE
+print "<script>window.focus();</script>";
+
 
 # Prüfen, ob gesucht werden soll
 if (defined($suchen)) {
