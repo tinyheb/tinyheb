@@ -5,7 +5,7 @@
 
 # Krankenkassen erfassen, ändern, löschen
 
-# $Id: krankenkassenerfassung.pl,v 1.17 2007-09-14 13:01:58 thomas_baum Exp $
+# $Id: krankenkassenerfassung.pl,v 1.18 2008-05-19 17:51:26 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -263,22 +263,10 @@ print '</table>';
 print '</form>';
 print '</tr>';
 print '</table>';
-print <<SCRIPTE;
-<script>
-  set_focus(document.krankenkassen);
-  auswahl_wechsel(document.krankenkassen);
-</script>
-SCRIPTE
+print "<script>set_focus(document.krankenkassen);auswahl_wechsel(document.krankenkassen);</script>";
 print "</body>";
 print "</html>";
 
-sub print_color {
-  my ($bezeichnung,$variable) = @_;
-  
-  print '<font color=red>' if ($variable eq '');
-  print "<b>$bezeichnung</b>";
-  print '<font color=black>';
-}
 
 sub speichern {
   # Speichert die Daten in der Krankenkassen Datenbank
@@ -321,18 +309,11 @@ sub hole_krank_daten {
   $kname =~ s/'/&#145;/g;
   $name =~ s/'/&#145;/g;
   $strasse =~ s/'/&#145;/g;
-  if (defined($plz_haus) && $plz_haus > 0) {
-    $plz_haus = sprintf "%5.5u",$plz_haus;
-  } else {
-    $plz_haus = '';
-  }
-  if (defined($plz_post) && $plz_post > 0) {
-    $plz_post = sprintf "%5.5u",$plz_post;
-  } else {
-    $plz_post = '';
-  }
-  $beleg_ik='' if (!defined($beleg_ik) || $beleg_ik == 0);
-  $zik='' if (!defined($zik) || $zik == 0);
-  $zik_typ='' if (!defined($zik_typ) || $zik_typ == 0);
+  $plz_haus = $plz_haus ? sprintf "%5.5u",$plz_haus : '';
+  $plz_post = $plz_post ? sprintf "%5.5u",$plz_post : '';
+
+  $beleg_ik='' unless ($beleg_ik);
+  $zik='' unless ($zik);
+  $zik_typ='' unless ($zik_typ);
   return;
 }
