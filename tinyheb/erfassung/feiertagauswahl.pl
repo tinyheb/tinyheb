@@ -5,7 +5,7 @@
 
 # Bearbeitung von Feiertagen
 
-# $Id: feiertagauswahl.pl,v 1.6 2007-07-27 18:55:15 baum Exp $
+# $Id: feiertagauswahl.pl,v 1.7 2008-05-19 17:45:47 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -51,6 +51,8 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 # Alle Felder zur Eingabe ausgeben
 print '<head>';
 print '<title>Feiertag suchen</title>';
+print '<script language="javascript" src="../Heb.js"></script>';
+print '<script language="javascript" src="feiertage.js"></script>';
 print '</head>';
 print '<body bgcolor=white>';
 print '<div align="center">';
@@ -122,23 +124,6 @@ print '</form>';
 print '</tr>';
 print '</table>';
 
-print <<SCRIPTE;
-<script>
-  function f_eintrag(feiertag_id,name,bundesland,datum) {
-    // in Parent Dokument übernehmen
-    var formular=opener.window.document.forms[0];
-    formular.id_feiertag.value=feiertag_id;
-    formular.name_feiertag.value=name;
-    //formular.bund_feiertag.value=bundesland;
-    formular.datum_feiertag.value=datum;
-    for (i=0;i<formular.bund_feiertag.options.length;i++) {
-       if (formular.bund_feiertag.options[i].text == bundesland) {
-         formular.bund_feiertag.selectedIndex=i;
-       }
-    }
-  }
-window.focus();
-</script>
-SCRIPTE
+print "<script>window.focus();</script>";
 print "</body>'";
 print "</html>";
