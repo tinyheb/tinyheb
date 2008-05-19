@@ -1,7 +1,7 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Leistungserfassung
 
-# $Id: leistungen.js,v 1.13 2008-04-25 15:27:30 thomas_baum Exp $
+# $Id: leistungen.js,v 1.14 2008-05-19 17:53:44 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -281,5 +281,15 @@ function prev_satz_leistart(formular) {
     alert("Bitte Menuepunkt Anzeigen wählen");
   }
 }
+
+
+function l_eintrag(id) {
+  // in Parent Dokument übernehmen
+  var formular=opener.window.name;
+  opener.window.location="leistungsarterfassung.pl?func=3&leist_id="+id;
+  self.close();
+}
+
+
 
 //alert("leistungen.js ist geladen");
