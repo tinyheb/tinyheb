@@ -1,9 +1,9 @@
 /* script für Plausiprüfungen im Rahmen der Feiertagserfassung
 
-# $Id: feiertage.js,v 1.5 2007-07-27 18:55:15 baum Exp $
+# $Id: feiertage.js,v 1.6 2008-05-19 17:46:52 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006, 2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -63,4 +63,20 @@ function prev_satz(formular) {
 		alert("Bitte Menuepunkt Anzeigen wählen");
 	}
 }
+
+
+function f_eintrag(feiertag_id,name,bundesland,datum) {
+  // in Parent Dokument übernehmen
+  var formular=opener.window.document.forms[0];
+  formular.id_feiertag.value=feiertag_id;
+  formular.name_feiertag.value=name;
+  //formular.bund_feiertag.value=bundesland;
+  formular.datum_feiertag.value=datum;
+  for (i=0;i<formular.bund_feiertag.options.length;i++) {
+    if (formular.bund_feiertag.options[i].text == bundesland) {
+      formular.bund_feiertag.selectedIndex=i;
+    }
+  }
+}
+
 //alert("feiertag.js geladen");
