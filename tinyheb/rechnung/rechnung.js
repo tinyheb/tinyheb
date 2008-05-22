@@ -1,7 +1,7 @@
 /* script für Plausiprüfungen im Rahmen der
 # Rechnungserfassung/ Generierung und Navigation
 
-# $Id: rechnung.js,v 1.20 2008-01-27 08:59:46 thomas_baum Exp $
+# $Id: rechnung.js,v 1.21 2008-05-22 17:25:57 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -231,6 +231,21 @@ function tonumber(wert) {
   }
   var ergebnis=Number(vk+"."+nk);
   return ergebnis;
+}
+
+
+
+function rechnung_anzeige_wechsel(rechnr) {
+  var tag=window.document.getElementsByName("rechtyp");
+// alert("Rechnung Anzeige wechsel"+tag[0]+tag[0].value);
+  open("ps2html_alt.pl?rech_id="+rechnr+"&rechtyp="+tag[0].value,"rechnung_alt");
+}
+
+
+function rufe_list_rech() {
+var sel_status=document.rechbear.sel_status.value;
+//alert("status änderung"+sel_status);
+open("list_rech.pl?sel_status="+sel_status,"list_rech");
 }
 
 //alert("rechnung.js ist geladen");
