@@ -4,7 +4,7 @@
 # Ausgabe von alten Rechnungen, entweder Postscript Format oder Edifact
 # wird ausgegeben
 
-# $Id: ps2html_alt.pl,v 1.11 2007-07-27 18:55:15 baum Exp $
+# $Id: ps2html_alt.pl,v 1.12 2008-05-22 17:23:19 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -41,7 +41,7 @@ my $h = new Heb;
 my $rech_id = $q->param('rech_id') || -1;
 my $rechtyp = $q->param('rechtyp') || 1;
 
-$l->rechnung_such("RECH,EDI_AUFTRAG,EDI_NUTZ","RECHNUNGSNR=$rech_id");
+$l->rechnung_such("RECH,EDI_AUFTRAG,EDI_NUTZ","RECHNUNGSNR='$rech_id'");
 my ($rech,$edi_auf,$edi_nutz)=$l->rechnung_such_next();
 
 if ($rechtyp == 1) {
