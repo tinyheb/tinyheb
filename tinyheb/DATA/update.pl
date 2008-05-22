@@ -2,7 +2,7 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.5 2008-04-26 12:42:51 thomas_baum Exp $
+# $Id: update.pl,v 1.6 2008-05-22 17:36:09 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -27,7 +27,10 @@ use strict;
 use DBI;
 use Getopt::Long;
 
+my $id='$Id: update.pl,v 1.6 2008-05-22 17:36:09 thomas_baum Exp $';
+
 write_LOG("Starte update ----------------------------");
+write_LOG("$id");
 
 my $dbh; # Verbindung zur Datenbank
 my %config=();
