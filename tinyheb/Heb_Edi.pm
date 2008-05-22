@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.50 2008-04-26 14:14:16 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.51 2008-05-22 17:28:57 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -60,11 +60,15 @@ our $ERROR = '';
 # suche nach Zertifikatspfad
 my $cert_path='';
 foreach my $file (@INC) {
-  if (-r "$file/certs/itsg1.pem") {
-    $cert_path=$file;
+  my $such_file = $file;
+  $such_file = ($such_file eq '.') ? '' : $such_file;
+  if (-r "$such_file"."certs/itsg1.pem") {
+    $cert_path=$such_file;
     last;
   }
 }
+
+#print "CERT $cert_path\n";
 
 
 sub new {
