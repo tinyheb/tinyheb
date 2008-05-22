@@ -1,11 +1,4 @@
 Offen:
-15.03.08
-Positionsnummer 010 mehr als einmal pro Tag nur mit Begründung und Uhrzeit
-
-16.02.08
-Testfälle Posnr 280 290 nur bis 9. Monat nach Geburt
-Update auf Rechnung i.S. Zahlung
-
 09.02.08
 Kennzeichen in Krankenkassendaten, damit Werte einer einzelnen Kasse nicht überschrieben werden.
 
@@ -17,12 +10,6 @@ Feld privat-Faktor in die Stammdaten mit aufnehmen. Ist dies belegt gilt dieses,
 
 13.12.07
 Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
-
-07.12.07
-Positionsnummer 270 nur nach der Geburt
-
-10.11.07
-Plausiprüfungen Positionsnummer 020
 
 10.11.07
 bei Zuschlägen, wenn sowohl vor wie auch nacher Stichzeitpunkt Leistung erbracht wird, ggf. 2 Positionen speichern.
@@ -52,6 +39,19 @@ eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
 ----------------------------------------------------------------
 Erledigt:
+01.05.08
+Positionsnummer 010 mehr als einmal pro Tag nur mit Begründung und Uhrzeit. Anforderung vom 15.03.08
+
+01.05.08
+Positionsnummer 270 nur nach der Geburt. Anforderung vom 07.12.07
+
+01.05.08
+Plausiprüfungen Positionsnummer 020. Anforderung vom 10.11.07
+
+01.05.08
+Testfälle Posnr 280 290 nur bis 9. Monat nach Geburt. Anforderung vom 16.02.08
+Testfälle Update auf Rechnung i.S. Zahlung. Anforderung vom 16.02.08
+
 25.04.08
 Prüfung in Heb_Edi, sind die Zertifikate noch gültig. Anforderung vom 09.02.08
 
