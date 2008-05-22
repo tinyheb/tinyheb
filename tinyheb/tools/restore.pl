@@ -5,7 +5,7 @@
 
 # Einspielen eines Backups der tinyHeb Datenbank
 
-# $Id: restore.pl,v 1.7 2007-10-03 12:00:30 thomas_baum Exp $
+# $Id: restore.pl,v 1.8 2008-05-22 17:35:28 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -120,10 +120,6 @@ print '</form>';
 print '</tr>';
 print '</table>';
 
-print <<SCRIPTE;
-<script>
-</script>
-SCRIPTE
 if ($hint ne '') {
   print "<script>";
   print "alert('$hint');";
