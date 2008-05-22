@@ -1,6 +1,6 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.27 2008-04-25 15:17:13 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.28 2008-05-22 17:31:47 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -484,10 +484,10 @@ sub leistungsdaten_offen {
     $dbh->prepare("select Leistungsdaten.*, Leistungsart.LEISTUNGSTYP, ".
 		  "cast(Leistungsdaten.POSNR as unsigned) as sort from ".
 		  "Leistungsdaten, Leistungsart where ".
-		  "FK_Stammdaten=? and ".
+		  "FK_Stammdaten=? and STATUS=10 and ".
 		  "Leistungsdaten.POSNR=Leistungsart.POSNR and ".
-		  "DATUM >= guelt_von and DATUM <= guelt_bis and ".
-		  "STATUS = 10 $where order by $order;")
+		  "DATUM >= guelt_von and DATUM <= guelt_bis ".
+		  "$where order by $order;")
       or die $dbh->errstr();
   my $erg=$leistungsdaten_offen->execute($frau_id)
     or die $dbh->errstr();
