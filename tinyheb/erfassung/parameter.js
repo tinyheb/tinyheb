@@ -1,7 +1,7 @@
 /* script für Navigation 
 # im Rahmen der Parametererfassung
 
-# $Id: parameter.js,v 1.4 2007-07-27 18:55:15 baum Exp $
+# $Id: parameter.js,v 1.5 2008-05-22 17:19:15 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -46,4 +46,15 @@ function prev_satz_parms(formular) {
 function parmsuchen(pname,pvalue,pbeschreibung) {
   // öffnet Fenster in Parameter gesucht und ausgewählt werden kann
   open("parameterauswahl.pl?pname="+pname.value+"&pvalue="+pvalue.value+"&pbeschreibung="+pbeschreibung.value+"&suchen=Suchen","parmauswahl","scrollbars=yes,width=700,height=400");
+}
+
+
+function p_eintrag(parm_id,name,wert,beschreibung) {
+  // in Parent Dokument übernehmen
+  var formular=opener.window.document.forms[0];
+  formular.id.value=parm_id;
+  formular.id2.value=parm_id;
+  formular.pname.value=name;
+  formular.pvalue.value=wert;
+  formular.pbeschreibung.value=beschreibung;
 }
