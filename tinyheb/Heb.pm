@@ -1,6 +1,6 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.13 2008-04-25 15:06:09 thomas_baum Exp $
+# $Id: Heb.pm,v 1.14 2008-05-22 17:28:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -32,11 +32,16 @@ my %config=();
 my $conf_file='';
 
 foreach my $file (@INC) {
-  if (-r "$file/tinyheb.conf") {
-    $conf_file=$file."tinyheb.conf";
+  my $such_file = $file;
+  $such_file = ($such_file eq '.') ? '' : $such_file;
+#  print "such $such_file\n";
+  if (-r "$such_file"."tinyheb.conf") {
+    $conf_file=$such_file."tinyheb.conf";
     last;
   }
 }
+
+#print "conf_file $conf_file\n";
 
 if (-r $conf_file) {
   open CONFIG,$conf_file or die "konnte config $conf_file nicht lesen $!\n";
