@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.13 2008-04-25 15:10:54 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.14 2008-05-22 17:30:51 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -203,15 +203,62 @@ sub pos010_plausi {
   my $self = shift;
   return '' if $self->{posnr} ne '010';
 
-  my ($posnr,$frau_id,$datum_l) = 
-    ($self->{posnr},$self->{frau_id},$self->{datum_l});
-
-  if ($l->leistungsdaten_werte($frau_id,"POSNR","POSNR=$posnr") >= 12) {
+  if ($l->leistungsdaten_werte($self->{frau_id},"POSNR",
+			       "POSNR='010'") >= 12) {
     return 'FEHLER: Position ist höchstens zwölfmal berechnungsfähig\nes wurde nichts gespeichert';
+  }
+
+  # prüfen, falls mehr als einmal pro Tag, ob Begründung und Uhrzeit vorhanden
+  if ($l->leistungsdaten_werte($self->{frau_id},"POSNR",
+			       "POSNR='010' AND DATUM ='$self->{datum_l}'") >= 1) {
+    if ($self->{begruendung} eq '' || !$self->zeit()) {
+      return 'FEHLER: Position 010 mehr als einmal pro Tag nur mit Begründung und Uhrzeit\nes wurde nichts gespeichert';
+    }
   }
 
   return '';
 }
+
+
+sub pos020_plausi {
+  # prüft ob Positionsnummer 020 erfasst wurde
+
+  # liefert als Ergebnis undef wenn kein Fehler aufgetreten ist oder
+  # Fehlermeldung wenn Fehler aufgetreten ist
+  my $self = shift;
+  return if $self->{posnr} ne '020';
+
+  # mindestens 30 Minuten
+  my $dauer=$d->dauer_m($self->{zeit_bis},$self->{zeit_von});
+  if ($dauer < 30) {
+    return 'FEHLER: Vorgespräch mindestens 30 Minuten\nes wurde nichts gespeichert';
+  }
+  if ($dauer > 60 && $self->{begruendung} !~ 'geplante Hausgeburt') {
+    return 'FEHLER: Vorgespräch maximal 60 Minuten\nes wurde nichts gespeichert';
+  }
+
+  if ($dauer > 90 && $self->{begruendung} =~ 'geplante Hausgeburt') {
+    return 'FEHLER: Vorgespräch bei geplanter Hausgeburt maximal 90 Minuten\nes wurde nichts gespeichert';
+  }
+
+
+  # prüfen, falls mehr als einmal pro Tag, ob Begründung und Uhrzeit vorhanden
+  my $anzahl=$l->leistungsdaten_werte($self->{frau_id},"POSNR",
+				     "POSNR='020'");
+
+  if ($anzahl >= 2) {
+    return 'FEHLER: Vorgespräch maximal 2 mal abrechenbar\nes wurde nichts gespeichert!';
+  }
+
+  if ($anzahl >= 1) {
+    if ($self->{begruendung} !~ 'geplante Hausgeburt') {
+      return q!FEHLER: Vorgespräch mehr als einmal nur mit Begründung 'geplante Hausgeburt'\nes wurde nichts gespeichert!;
+    }
+  }
+
+  return undef;
+}
+
 
 
 
@@ -395,6 +442,11 @@ sub pos270_plausi {
   $dauer += $d->dauer_m($zeit_bis,$zeit_von);
   if ($dauer > (10*60)) {
     return 'FEHLER: Rückbildungsgymnastik in der Gruppe höchsten 10 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
+  }
+
+  # Positionsnummer 270 nur nach der Geburt
+  if ($self->{geb_kind} > $self->{datum_l}) {
+    return 'FEHLER: Rückbildungsgymnastik in der Gruppe erst nach der Geburt des Kindes\nes wurde nichts gespeichert\n';
   }
   return '';
 }
