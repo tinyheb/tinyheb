@@ -5,7 +5,7 @@
 
 # Backup der tinyHeb Datenbank anlegen
 
-# $Id: backup.pl,v 1.5 2007-07-27 18:55:15 baum Exp $
+# $Id: backup.pl,v 1.6 2008-05-22 17:26:17 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -125,10 +125,6 @@ print '</form>';
 print '</tr>';
 print '</table>';
 
-print <<SCRIPTE;
-<script>
-</script>
-SCRIPTE
 print "</body>";
 print "</html>";
 

@@ -5,7 +5,7 @@
 
 # Parameter erfassen, ändern, löschen
 
-# $Id: parameter.pl,v 1.11 2007-07-27 18:55:15 baum Exp $
+# $Id: parameter.pl,v 1.12 2008-05-22 17:18:15 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -183,11 +183,7 @@ print '</table>';
 print '</form>';
 print '</tr>';
 print '</table>';
-print <<SCRIPTE;
-<script>
-  auswahl_wechsel(document.parameter);
-</script>
-SCRIPTE
+print "<script>auswahl_wechsel(document.parameter);</script>";
 print "</body>";
 print "</html>";
 

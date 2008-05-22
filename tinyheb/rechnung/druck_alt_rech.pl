@@ -5,7 +5,7 @@
 
 # alte Rechnungen anzeigen
 
-# $Id: druck_alt_rech.pl,v 1.8 2008-04-25 15:35:07 thomas_baum Exp $
+# $Id: druck_alt_rech.pl,v 1.9 2008-05-22 17:21:51 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -37,7 +37,7 @@ my $l = new Heb_leistung;
 
 my $rech_id = $q->param('rech_id') || 0;
 
-$l->rechnung_such("RECH,EDI_DATUM","RECHNUNGSNR=$rech_id");
+$l->rechnung_such("RECH,EDI_DATUM","RECHNUNGSNR='$rech_id'");
 my ($rech,$edi_datum)=$l->rechnung_such_next();
 
 print $q->header ( -type => "text/html", -expires => "-1d");
@@ -45,6 +45,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 
 print '<head>';
 print '<title>alte Rechnung anzeigen</title>';
+print '<script language="javascript" src="rechnung.js"></script>';
 print '</head>';
 
 print '<table border="0" align="left">';
@@ -57,7 +58,7 @@ print '<tr>';
 print "<td align='left'><input type='button' name='pdruck' value='zurück' onclick='self.close()'</td>";
 if (defined($edi_datum) && $edi_datum ne '' && $edi_datum ne '0000-00-00 00:00:00') {
   print '<td align="left">';
-  print "<select name='rechtyp' size=1 onChange='anzeige_wechsel();'>";
+  print "<select name='rechtyp' size=1 onChange='rechnung_anzeige_wechsel($rech_id);'>";
   print '<option selected value="1">Papier Rechnung</option>';
   print '<option value="2">elektronische Rechnung</option>';
   print "</td>\n";
@@ -86,16 +87,7 @@ print "\n";
 
 print "</body>";
 
-print <<SCRIPTE;
-<script>
-  function anzeige_wechsel() {
-    var tag=window.document.getElementsByName("rechtyp");
-//    alert("Anzeige wechsel"+tag[0]+tag[0].value);
-    open("ps2html_alt.pl?rech_id=$rech_id&rechtyp="+tag[0].value,"rechnung_alt");
-  }
-window.focus();
-</script>
-SCRIPTE
+print "<script>window.focus();</script>";
 
 print "</html>";
 

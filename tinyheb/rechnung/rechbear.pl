@@ -5,7 +5,7 @@
 
 # Rechnungen bearbeiten
 
-# $Id: rechbear.pl,v 1.10 2007-10-03 11:57:11 thomas_baum Exp $
+# $Id: rechbear.pl,v 1.11 2008-05-22 17:23:53 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -57,7 +57,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 print '<head>';
 print '<title>Rechnungen Bearbeiten</title>';
 print '<script language="javascript" src="../Heb.js"></script>';
-#print '<script>alert("lade rechbear.pl");</script>';
+print '<script language="javascript" src="rechnung.js"></script>';
 print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 
@@ -122,15 +122,6 @@ print '</td></tr>';
 print '</table>';
 
 
-print <<SCRIPTE;
-<script>
-function rufe_list_rech() {
-var sel_status=document.rechbear.sel_status.value;
-//alert("status änderung"+sel_status);
-open("list_rech.pl?sel_status="+sel_status,"list_rech");
-}
-</script>
-SCRIPTE
 print "</body>";
 print "</html>";
 

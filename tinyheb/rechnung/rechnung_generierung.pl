@@ -5,7 +5,7 @@
 
 # Rechnungen generieren und drucken
 
-# $Id: rechnung_generierung.pl,v 1.26 2008-04-25 15:44:30 thomas_baum Exp $
+# $Id: rechnung_generierung.pl,v 1.27 2008-05-22 17:24:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -226,13 +226,6 @@ print "</iframe>";
 print "</td></tr>\n";
 print "</table>\n";
 
-
-
-print <<SCRIPTE;
-<script>
-//  auswahl_wechsel(document.rechnungsdaten);
-</script>
-SCRIPTE
 print "</body>";
 print "</html>";
 

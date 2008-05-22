@@ -5,7 +5,7 @@
 
 # Mahnungen generieren und drucken
 
-# $Id: mahnung_generierung.pl,v 1.7 2007-07-27 18:55:15 baum Exp $
+# $Id: mahnung_generierung.pl,v 1.8 2008-05-22 17:22:16 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -175,13 +175,6 @@ print "</iframe>";
 print "</td></tr>\n";
 print "</table>\n";
 
-
-
-print <<SCRIPTE;
-<script>
-//  auswahl_wechsel(document.rechnungsdaten);
-</script>
-SCRIPTE
 print "</body>";
 print "</html>";
 

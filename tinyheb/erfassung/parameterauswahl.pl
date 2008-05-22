@@ -5,7 +5,7 @@
 
 # Auswahl von Parametern
 
-# $Id: parameterauswahl.pl,v 1.8 2007-07-27 18:55:15 baum Exp $
+# $Id: parameterauswahl.pl,v 1.9 2008-05-22 17:18:40 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -49,6 +49,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 # Alle Felder zur Eingabe ausgeben
 print '<head>';
 print '<title>Parameter suchen</title>';
+print '<script language="javascript" src="parameter.js"></script>';
 print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 print '<body bgcolor=white>';
@@ -125,21 +126,6 @@ print '</form>';
 print '</tr>';
 print '</table>';
 
-print <<SCRIPTE;
-<script>
-
-window.focus();
-
-  function p_eintrag(parm_id,name,wert,beschreibung) {
-    // in Parent Dokument übernehmen
-    var formular=opener.window.document.forms[0];
-    formular.id.value=parm_id;
-    formular.id2.value=parm_id;
-    formular.pname.value=name;
-    formular.pvalue.value=wert;
-    formular.pbeschreibung.value=beschreibung;
-  }
-</script>
-SCRIPTE
+print "<script>window.focus();</script>";
 print "</body>";
 print "</html>";
