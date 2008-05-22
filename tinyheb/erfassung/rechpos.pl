@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.44 2008-04-25 15:31:22 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.45 2008-05-22 17:27:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -258,16 +258,16 @@ print '</td>';
 print '</tr>';
 print '</tbody>';
 print "</table>\n";
-# //  auswahl_wechsel(document.rechpos);
-print <<SCRIPTE;
-<script>
-  open("list_posnr.pl?frau_id=$frau_id","list_posnr");
-  posnr_wechsel(document.rechpos); // funktion wurde dynamisch generiert.
-  wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);
-  document.rechpos.datum.select();
-  document.rechpos.datum.focus();
- </script>
-SCRIPTE
+
+# scripte
+print qq!<script>!;
+print qq!open("list_posnr.pl?frau_id=$frau_id","list_posnr");!;
+print qq!posnr_wechsel(document.rechpos); // funktion wurde dynamisch generiert.!;
+print qq!wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);!;
+print qq!document.rechpos.datum.select();!;
+print qq!document.rechpos.datum.focus();!;
+print qq!</script>!;
+
 if ($hint) {
   print qq!<script>alert("$hint");</script>!;
   print "<script>$hscript</script>";
@@ -397,28 +397,6 @@ sub speichern {
 
   return $hint .= $hebgo->zeit_vorhanden_plausi if ($hebgo->zeit_vorhanden_plausi);
 
-  # prüfen ob Uhrzeit erfasst wurde, wenn ja, muss es gültige Zeit sein
-#  if ($zeit_von || $zeit_bis) {
-#    if (!($d->check_zeit($zeit_von))) {
-#      $hint .= '\nFEHLER: keine gültige Uhrzeit von erfasst, nichts gespeichert';
-#      $hscript = 'document.rechpos.zeit_von.focus();';
-#      return $hint;
-#    }
-#    if (!($d->check_zeit($zeit_bis))) {
-#      $hint .= '\nFEHLER: keine gültige Uhrzeit bis erfasst, nichts gespeichert';
-#      $hscript = 'document.rechpos.zeit_von.focus();';
-#      return $hint;
-#    }
-#    my $fuerzeit_flag='';
-#    my ($l_fuerzeit) = $l->leistungsart_such_posnr('FUERZEIT',$posnr,$datum_l);
-#   ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
-#    if (!($d->check_zeit($zeit_bis)) && $l_fuerzeit) {
-#      $hint .= '\nFEHLER: keine gültige Uhrzeit bis erfasst, nichts gespeichert';
-#      $hscript = 'document.rechpos.zeit_bis.focus();';
-#      return $hint;
-#    }
-#  }
-
 
   # Entfernung konvertieren
   $entfernung_tag =~ s/,/\./g;
@@ -491,6 +469,9 @@ sub speichern {
 
   # spezielle Prüfungen für PosNr. 010
   return $hint .= $hebgo->pos010_plausi if ($hebgo->pos010_plausi);
+
+  # spezielle Prüfungen für PosNr. 020
+  return $hint .= $hebgo->pos020_plausi if ($hebgo->pos020_plausi);
 
   # spezielle Prüfung für PosNr. 6
   return $hint .= $hebgo->pos6_plausi if ($hebgo->pos6_plausi);
