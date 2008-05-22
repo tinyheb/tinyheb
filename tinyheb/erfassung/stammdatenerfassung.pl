@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.40 2008-04-25 15:33:00 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.41 2008-05-22 17:20:40 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -325,24 +325,13 @@ print "<b>nächste Hebamme&nbsp;</b>";
 print '<input type="checkbox" name="naechste_hebamme" value="j"';
 print $naechste_hebamme ? ' checked ' : ' ';
 print ' onClick="check_begr(this,document.stammdaten)">';
-
-#if ($naechste_hebamme) {
-#  print '<input type="checkbox" name="naechste_hebamme" value="j" checked onClick="check_begr(this,document.stammdaten)">';
-#} else {
-#  print '<input type="checkbox" name="naechste_hebamme" value="j" onClick="check_begr(this,document.stammdaten)">';
-#}
-
 print '</td>';
+
 print '<td valign=top>';
 print '<b>Begründung falls nicht<br>nächste Hebamme</b>';
 print '</td>';
 print '<td valgin=bottom>';
 print "<textarea ";
-#if (!defined ($naechste_hebamme) ) {
-#  print ' enabled ';
-#} else {
-#  print ' disabled ';
-#}
 print $naechste_hebamme ? ' disabled ' : ' enabled ';
 print "name='nicht_naechste_heb' rows='2' cols='50'>$begruendung_nicht_nae_heb</textarea>";
 print '</td>';
@@ -377,7 +366,7 @@ print '<td>';
 print '<input type="button" name="reset" value="Inhalt löschen"';
 print ' onClick="loeschen()">';
 print '</td>';
-print '<td><input type="submit" name="abschicken" value="Speichern"</td>';
+print '<td><input type="submit" name="abschicken" value="Speichern"></td>';
 print '<td><input type="button" name="vorheriger" value="vorheriger Datensatz" onclick="prev_satz(document.stammdaten)"></td>';
 print '<td><input type="button" name="naechster" value="nächster Datensatz" onclick="next_satz(document.stammdaten)"></td>';
 print '<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>';
@@ -392,12 +381,7 @@ print '</table>';
 print '</form>';
 print '</tr>';
 print "</table>\n";
-print <<SCRIPTE;
-<script>
-  set_focus(document.stammdaten);
-  auswahl_wechsel(document.stammdaten);
-</script>
-SCRIPTE
+print "<script>set_focus(document.stammdaten);auswahl_wechsel(document.stammdaten);</script>";
 print "</body>";
 print "</html>";
 
