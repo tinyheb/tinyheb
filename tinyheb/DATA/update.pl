@@ -2,7 +2,7 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.6 2008-05-22 17:36:09 thomas_baum Exp $
+# $Id: update.pl,v 1.7 2008-06-15 10:53:21 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -27,7 +27,7 @@ use strict;
 use DBI;
 use Getopt::Long;
 
-my $id='$Id: update.pl,v 1.6 2008-05-22 17:36:09 thomas_baum Exp $';
+my $id='$Id: update.pl,v 1.7 2008-06-15 10:53:21 thomas_baum Exp $';
 
 write_LOG("Starte update ----------------------------");
 write_LOG("$id");
@@ -51,6 +51,7 @@ if (-r $conf_file) {
   process_config($_) while (<CONFIG>);
   close CONFIG;
 } elsif (-r '/etc/tinyheb/tinyheb.conf') {
+  write_LOG("benutze /etc/tinyheb/tinyheb.conf");
   open CONFIG,'/etc/tinyheb/tinyheb.conf' or error("konnte config nicht lesen\n");
   process_config($_) while (<CONFIG>);
   close CONFIG;
@@ -86,7 +87,7 @@ my $parms=GetOptions('rpm' => \$rpm);
 # root passwort für db holen, wenn nötig
 $dbh = connect_db('root',$root_pass);
 if (!defined($dbh) and ($DBI::err == 1044 || $DBI::err == 1045)) {
-  if(!$config{MySQLRootPassword}) {
+  if(!$config{MySQLServerRootPassword}) {
     # root passwort muss erfasst werden
     write_LOG("Hole DB Passwort");
     print "Bitte Passwort fuer Datenbankadmin root angeben:";
