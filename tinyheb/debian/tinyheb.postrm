@@ -25,10 +25,11 @@ case "$1" in
     ;;
     purge)
         # fragen ob die Datenbank samt daten geloescht werden soll
+	echo "mysql: drop database PRD_Hebamme;"
     ;;
 
     *)
-        echo "postrm called with unknown argument \`$1'" >&2
+        echo "postrm called with unknown argument $1" >&2
         exit 1
 
 esac

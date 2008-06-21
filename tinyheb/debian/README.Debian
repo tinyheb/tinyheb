@@ -1,7 +1,7 @@
 tinyheb for Ubuntu and  Debian 
 ------------------------------
 
-The dependencies should resolve clearly on both (etch+dapper). 
+The dependencies should resolve clearly on both (etch+dapper/gutsy). 
 There is one pitfall with libpostscript-simple-perl on Ubuntu 6.0.6.1
 Please download the package from Thomas's Website www.tinyheb.de  and install it with dpkg -i libpostscript*.deb
 Afterwards you can install tinyheb_0.xx.x_all.deb.
@@ -10,4 +10,15 @@ libpostscript package.
 
 I have tested the package on Ubuntu 6.0.6.1 Server LTS (Dapper) only!
 
- -- Robert Sailer <robert.sailer@tinyheb.de>, Thu, 01 Nov 2007 21:49:46 +0200
+In the meantime I configured an install server from where you can install
+with apt-get
+please include the following lines in your sources.list:
+--cut--
+deb http://node1.vpnnetz.de/packages ./
+--cut--
+dont forget the apt-get update!
+Then you can:
+apt-get install libpostscript tinyheb
+thats all
+
+ -- Robert Sailer <robert.sailer@tinyheb.de>, Fri, 15 Feb 2008 19:55:46 +0100
