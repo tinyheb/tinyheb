@@ -1,6 +1,6 @@
 # Makefile für tinyHeb
 
-# $Id: Makefile,v 1.9 2008-04-25 15:19:56 thomas_baum Exp $
+# $Id: Makefile,v 1.10 2008-06-21 09:58:29 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 PM=*.pm
@@ -20,6 +20,7 @@ VERBOSE=
 
 INST_DIR=$(DESTDIR)/srv/www/cgi-bin/tinyheb
 APACHE_CONF=$(DESTDIR)/etc/apache2/conf.d
+CONFDIR=$(DESTDIR)/etc/tinyheb/
 
 nix:
 	@echo mache nix
@@ -31,6 +32,13 @@ deb:
 	dpkg-buildpackage -rfakeroot -k$(PGP_KEY)
 
 install:
+	@echo tinyheb.conf
+	# nur kopieren, wenn noch nicht vorhanden
+	if [ ! -e $(CONFDIR)/tinyheb.conf ]; then \
+		$(INSTALL) -d $(VERBOSE)  -m +x,+r,u+w,g-w,o-w -p $(CONFDIR); \
+		$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p conf/tinyheb.conf $(CONFDIR)/tinyheb.conf; \
+	fi; 
+
 	@echo Installiere nach $(INST_DIR)
 	$(INSTALL) -d $(VERBOSE)  -m +x,+r,u+w,g-w,o-w -p $(INST_DIR)
 	$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p $(PM) $(INST_DIR)
