@@ -3,6 +3,9 @@
 # erstellen der Auftragsdatei mit GUI für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
+# Id: $Id: xauftrag.pl,v 1.16 2008-07-20 16:56:23 thomas_baum Exp $
+# Tag $Name: not supported by cvs2svn $
+
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
