@@ -4,7 +4,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.52 2008-04-25 15:39:31 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.53 2008-07-20 17:08:52 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -63,7 +63,7 @@ my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
     $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
     $ik_krankenkasse,$naechste_hebamme,
     $begruendung_nicht_nae_heb,
-    $kzetgt,$uhr_kind) = $s->stammdaten_frau_id($frau_id);
+    $kzetgt,$uhr_kind,$privat_faktor) = $s->stammdaten_frau_id($frau_id);
 
 $entfernung_frau =~ s/\./,/g;
 $plz = sprintf "%5.5u",$plz;
@@ -495,7 +495,11 @@ sub print_wegegeld {
 	  uc $heb_bundesland eq 'HESSEN' ||
 	  uc $heb_bundesland eq 'BAYERN' ||
 	  uc $heb_bundesland eq 'HAMBURG') {
-	$preis *= $h->parm_unique('PRIVAT_FAKTOR');
+	if ($privat_faktor) {
+	  $preis *= $privat_faktor;
+	} else {
+	  $preis *= $h->parm_unique('PRIVAT_FAKTOR');
+	}
 	$preis = sprintf "%.2f",$preis;
       }
     }
@@ -559,7 +563,11 @@ sub print_teil {
     }
 
     if ($versichertenstatus eq 'privat') {
-      $epreis *= $h->parm_unique('PRIVAT_FAKTOR');
+      if($privat_faktor) {
+	$epreis *= $privat_faktor;
+      } else {
+	$epreis *= $h->parm_unique('PRIVAT_FAKTOR');
+      }
       $epreis = sprintf "%.2f",$epreis;
     }
     
