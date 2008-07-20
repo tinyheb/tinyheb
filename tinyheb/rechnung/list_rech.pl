@@ -5,7 +5,7 @@
 
 # erfasste Rechnungen ausgeben
 
-# $Id: list_rech.pl,v 1.14 2008-04-25 15:35:40 thomas_baum Exp $
+# $Id: list_rech.pl,v 1.15 2008-07-20 17:02:01 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -106,7 +106,7 @@ while (my @erg=$l->rechnung_such_next()) {
 }
 print '</table>';
 print "\n";
-print "<script>window.scrollByLines(1000);</script>";
+print "<script>window.scrollBy(0,10000);</script>";
 print "</body>";
 print "</html>";
 
