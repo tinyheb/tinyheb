@@ -4,7 +4,7 @@
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
-# $Id: stammdaten.js,v 1.21 2007-12-13 11:25:32 thomas_baum Exp $
+# $Id: stammdaten.js,v 1.22 2008-07-20 17:01:15 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,46 @@
 */
 
 // alert('lade stammdaten.js');
+
+
+function versichertenstatus_change(element,init) {
+  var sel=element.options[element.selectedIndex].value;
+  // alert ("sel"+sel);
+  // debugger;
+  var faktor_node = document.getElementById("ueberschrift_faktor");
+
+
+  var tab=document.getElementById("versichertenangaben");
+  var tab2=document.getElementById("zeile2_tab");
+
+  if(sel == 'privat') {
+    if (faktor_node == null) {
+    // neues Element für Privat Faktor aufnehmen, wenn noch nicht vorhanden
+    var ueberschrift=document.createElement("TD");
+    ueberschrift.id='ueberschrift_faktor';
+    
+    var ikkk_node=document.getElementById("ikkk_node");
+    tab.insertBefore(ueberschrift,ikkk_node);
+    ueberschrift.innerHTML="<b>Privat Faktor:</b>";
+
+    var wert=document.createElement("TD");
+    wert.id='privat_faktor';
+    var ikkk_wert=document.getElementById("ikkk_wert");
+    tab2.insertBefore(wert,ikkk_wert);
+        wert.innerHTML="<input type='text' name='privat_faktor' size='8' maxlength='8' value='"+default_privat+"'>";
+    }
+    // else Fall existiert im inneren IF nicht, da Felder schon da sind
+  } else {
+    // kein privat Kunde, Felder entfernen, falls vorhanden
+    if (faktor_node != null) {
+      tab.removeChild(faktor_node);
+      var privat_faktor=document.getElementById("privat_faktor");
+      tab2.removeChild(privat_faktor);
+    }
+    // else Fall existiert nicht, da Felder nicht vorhanden
+  }
+    
+}
 
 function loeschen() {
   open("stammdatenerfassung.pl","_top");
