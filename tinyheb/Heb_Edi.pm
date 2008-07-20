@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.51 2008-05-22 17:28:57 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.52 2008-07-20 17:06:49 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -1159,7 +1159,11 @@ sub sig {
  LINE: while (my $zeile=<NUTZ>) {
     print AUS $zeile;
   }
-  close NUTZ;
+  my $cl=close NUTZ;
+  print "CL wert sig: $cl,$?\n" if($debug > 1000);
+  if (!$cl && $? > 0) {
+    return("bitte Passwort prüfen",0); # openssl hat Fehler gemeldet
+  }
   close AUS;
  
   # Länge der Datei ermitteln
@@ -1203,7 +1207,13 @@ sub enc {
  LINE: while (my $zeile=<NUTZ>) {
     print AUS $zeile;
   }
-  close NUTZ;
+
+  my $cl=close NUTZ;
+  print "CL wert enc: $cl,$?\n" if($debug > 1000);
+  if (!$cl && $? > 0) {
+    return("konnte Nutzdaten nicht verschlüsseln, unbekanntes Problem aufgetreten",0); # openssl hat Fehler gemeldet
+  }
+
   close AUS;
   
   # Länge der Datei ermitteln
