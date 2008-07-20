@@ -5,7 +5,7 @@
 
 # Backup der tinyHeb Datenbank anlegen
 
-# $Id: backup_gen.pl,v 1.7 2007-09-10 17:22:43 thomas_baum Exp $
+# $Id: backup_gen.pl,v 1.8 2008-07-20 17:03:33 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -97,7 +97,7 @@ if ($umfang ne 'alles') {
   $gz->gzwrite("use $dbname;\n");
   $byteswritten1=$gz->gzwrite("drop table Krankenkassen;\n");
 } else {
-  $byteswritten1=$gz->gzwrite("drop database $dbname;\n");
+  $byteswritten1=$gz->gzwrite("drop database if exists $dbname;\n");
 }
 
 my $byteswritten2=undef;
