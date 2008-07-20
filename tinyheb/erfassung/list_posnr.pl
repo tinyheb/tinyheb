@@ -5,7 +5,7 @@
 
 # erfasste Rechnungsposten ausgeben
 
-# $Id: list_posnr.pl,v 1.14 2008-04-25 15:28:27 thomas_baum Exp $
+# $Id: list_posnr.pl,v 1.15 2008-07-20 16:58:01 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -92,34 +92,9 @@ while (my @erg=$l->leistungsdaten_such_next()) {
 					     $erg[5],              # zeit von
 					     $erg[6]);             # zeit bis
 
-=for later
 
-  if (!$l_fuerzeit) {
-    if( $l->leistungsart_pruef_zus($erg[1],'SAMSTAG') &&
-	$l->leistungsart_pruef_zus($erg[1],'NACHT')) {
-      $zeit_von = '' if($zeit_von eq '00:00' && $l->zeit_ende($erg[1]));
-      $zeit_bis = '' if($zeit_bis eq '00:00' && !$l->zeit_ende($erg[1]));
-    } else {
-      # keine zuschlagspflichtige Positionsnummer, Zeiten können weg
-      $zeit_von = '' if($zeit_von eq '00:00');
-      $zeit_bis = '' if($zeit_bis eq '00:00');
-    }
-  }
-  if (!$l_fuerzeit && 
-      $l->leistungsart_pruef_zus($erg[1],'SONNTAG') &&
-      $d->wotagnummer($d->convert($erg[4])) > 6) {
-    $zeit_von = '' if($zeit_von eq '00:00');
-    $zeit_bis = '' if($zeit_bis eq '00:00');
-  }
-
-=cut
-
-#  $erg[5] =~ s/00:00//g if(!$l_fuerzeit); 
-#  print "<td style='width:25pt;text-align:right'>$erg[5]</td>"; # zeit von
   print "<td style='width:25pt;text-align:right'>$zeit_von</td>"; # zeit von
   my ($h2,$m2)= unpack('A2xA2',$erg[6]);
-#  $erg[6] =~ s/00:00//g if(!$l_fuerzeit);
-#  print "<td style='width:24pt;text-align:right'>$erg[6]</td>"; # zeit bis
   print "<td style='width:24pt;text-align:right'>$zeit_bis</td>"; # zeit bis
 
   # Dauer berechnen
@@ -149,7 +124,7 @@ while (my @erg=$l->leistungsdaten_such_next()) {
 }
   print '</table>';
 print "\n";
-print "<script>window.scrollByLines(1000);</script>";
+print "<script>window.scrollBy(0,10000);</script>";
 print "</body>";
 print "</html>";
 
