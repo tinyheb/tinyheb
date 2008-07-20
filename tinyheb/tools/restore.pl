@@ -5,7 +5,7 @@
 
 # Einspielen eines Backups der tinyHeb Datenbank
 
-# $Id: restore.pl,v 1.8 2008-05-22 17:35:28 thomas_baum Exp $
+# $Id: restore.pl,v 1.9 2008-07-20 17:05:19 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -30,12 +30,13 @@ use CGI;
 use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
 use Compress::Zlib;
+#use Data::Dumper;
 
 use lib "../";
-use Heb;
+#use Heb;
 
 my $q = new CGI;
-my $h = new Heb;
+#my $h = new Heb;
 
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 
@@ -130,13 +131,32 @@ print "</html>";
 
 
 sub restore {
-  my $fh = $q->upload('datei');
+  my ($fh) = $q->upload('datei');
   if ($datei eq '') {
     $hint='keine Datei angegeben, es wurde keine Sicherung eingespielt\n';
     return;
   }
   binmode $fh;
-  my $gz=gzopen($fh,"rb");
+
+  # dateien anlegen
+  if (!(-d "/tmp/wwwrun")) {
+    mkdir "/tmp" if (!(-d "/tmp"));
+    mkdir "/tmp/wwwrun";
+  }
+
+  open (my $fh2,'>/tmp/wwwrun/sicher.gz');
+  binmode $fh2;
+  my $buffer;
+  while (read($fh,$buffer,16384) ) {
+    print $fh2 $buffer;
+  }
+  close $fh2;
+
+  open (my $fh3,'/tmp/wwwrun/sicher.gz');
+  binmode $fh3;
+
+#  my $gz=gzopen(\*$fh,"rb");
+  my $gz=gzopen($fh3,"rb");
   my $erg='';
   my $line='';
   my $line_counter=0;
@@ -151,10 +171,6 @@ sub restore {
   }
 
   # jetzt Restore in Datenbank einspielen
-  if (!(-d "/tmp/wwwrun")) {
-    mkdir "/tmp" if (!(-d "/tmp"));
-    mkdir "/tmp/wwwrun";
-  }
   unlink('/tmp/wwwrun/restore.sql');
   my $fd=open RESTORE,">/tmp/wwwrun/restore.sql";
   unless(defined($fd)) {
