@@ -1,13 +1,13 @@
 #!/usr/bin/perl -w
 
-# $Id: auftrag.pl,v 1.14 2008-04-25 15:25:04 thomas_baum Exp $
+# $Id: auftrag.pl,v 1.15 2008-07-20 16:55:29 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # erstellen der Auftragsdatei für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
-# Copyright (C) 2005,2006 Thomas Baum <thomas.baum@arcor.de>
-# Thomas Baum, Rubensstr. 3, 42719 Solingen, Germany
+# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
