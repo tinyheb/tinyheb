@@ -1,6 +1,6 @@
 # Package um Stammdaten zu verarbeiten
 
-# $Id: Heb_stammdaten.pm,v 1.14 2008-04-25 15:18:09 thomas_baum Exp $
+# $Id: Heb_stammdaten.pm,v 1.15 2008-07-25 12:11:35 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -43,6 +43,7 @@ $frau_such = $dbh->prepare("select ID,VORNAME,NACHNAME,".
 			   "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME, ".
 			   "KZETGT, ".
 			   "TIME_FORMAT(GEBURTSZEIT_KIND,'%H:%i') ".
+			   "PRIVAT_FAKTOR ".
 			   "from Stammdaten where ".
 			   "VORNAME like ? and ".
 			   "NACHNAME like ? and ".
@@ -107,6 +108,7 @@ sub stammdaten_ins {
      $datum,
      $kzetgt,
      $geburtszeit_kind,
+     $privat_faktor,
      $id_alt) = @_;
 
   # zunächst neue ID für Frau holen
@@ -127,7 +129,8 @@ sub stammdaten_ins {
 				     "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME,".
 				     "DATUM,".
 				     "KZETGT,".
-				     "GEBURTSZEIT_KIND".
+				     "GEBURTSZEIT_KIND,".
+				     "PRIVAT_FAKTOR".
 				     ")".
 				     "values (?,?,?,?,".
 				     "?,?,?,?,?,".
@@ -135,6 +138,7 @@ sub stammdaten_ins {
 				     "?,".
 				     "?,?,".
 				     "?,?,".
+				     "?,".
 				     "?,".
 				     "?,".
 				     "?,".
@@ -149,7 +153,8 @@ sub stammdaten_ins {
 				     $anz_kinder,$geburtsdatum_kind,
 				     $naechste_hebamme,
 				     $begruendung_nicht_naechste_hebamme,
-				     $datum,$kzetgt,$geburtszeit_kind)
+				     $datum,$kzetgt,$geburtszeit_kind,
+				     $privat_faktor)
 #				     $datum,$kzetgt,undef)
     or die $dbh->errstr();
 
@@ -173,7 +178,8 @@ sub stammdaten_update {
 				    "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME=?,".
 				    "DATUM=?, ".
 				    "KZETGT=?, ".
-				    "GEBURTSZEIT_KIND=? ".
+				    "GEBURTSZEIT_KIND=?, ".
+				    "PRIVAT_FAKTOR=? ".
 				    "where ID=?;")
     or die $dbh->errstr();
   my $erg = $stammdaten_up->execute(@_)
@@ -216,7 +222,8 @@ sub stammdaten_frau_id {
 			      "NAECHSTE_HEBAMME,".
 			      "BEGRUENDUNG_NICHT_NAECHSTE_HEBAMME, ".
 			      "KZETGT, ".
-			      "TIME_FORMAT(GEBURTSZEIT_KIND,'%H:%i') ".
+			      "TIME_FORMAT(GEBURTSZEIT_KIND,'%H:%i'), ".
+			      "PRIVAT_FAKTOR ".
 			      "from Stammdaten where ".
 			      "ID = $id;")
     or die $dbh->errstr();

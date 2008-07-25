@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.41 2008-05-22 17:20:40 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.42 2008-07-25 12:12:25 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -78,6 +78,7 @@ my $strasse_krankenkasse = '';
 my $geb_kind = $q->param('geburtsdatum_kind') || '';
 my $uhr_kind = $q->param('geburtszeit_kind') || '';
 my $kzetgt = $q->param('kzetgt') || 2;
+my $privat_faktor = $q->param('privat_faktor') || $h->parm_unique('PRIVAT_FAKTOR');
 my $naechste_hebamme = $q->param('naechste_hebamme');
 my $begruendung_nicht_nae_heb = $q->param('nicht_naechste_heb') || '';
 my $datum = $q->param('datum') || '';
@@ -91,7 +92,8 @@ my $status_edi='kein elektronischer Datenaustausch';
 hole_frau_daten() if ($func == 1 || $func == 2 || $func==3);
 
 # Infos zur Krankenkasse holen
-if ($ik_krankenkasse ne '' && $ik_krankenkasse > 0) {
+#if ($ik_krankenkasse ne '' && $ik_krankenkasse > 0) {
+if ($ik_krankenkasse) {
   ($name_krankenkasse,
    $plz_krankenkasse,
    $ort_krankenkasse,
@@ -225,17 +227,22 @@ print '<tr><td>&nbsp;</td></tr>';
 print '<tr>';
 print '<td>';
 print '<table border="0" align="left">';
-print '<tr>';
-print $q->td("<b>$_</b>\n") foreach ('KV-Nummer:','Gültig bis:','Versichertenstatus:','IK Krankenkasse:');
+print '<tr id="versichertenangaben">';
+print $q->td("<b>KV-Nummer:</b>");
+print $q->td("<b>Gültig bis:</b>");
+print $q->td("<b>Versichertenstatus:</b>");
+print '<td id="ueberschrift_faktor"><b>Privat Faktor:</b></td>' if ($versichertenstatus eq 'privat');
+print '<td id="ikkk_node" <b>IK Krankenkasse:</b>';
+#print $q->td("<b>$_</b>\n") foreach ('KV-Nummer:','Gültig bis:','Versichertenstatus:','IK Krankenkasse:');
 print '</tr>';
 print "\n";
 
-print '<tr>';
+print '<tr id="zeile2_tab">';
 print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='10' maxlength='10' onChange='kvnr_check(this);'></td>";
 print "<td><input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='4' maxlength='4' onChange='kvnr_gueltig_check(this)'></td>";
 # z4.2 s3
 print '<td>';
-print "<select name='versichertenstatus' size=1>";
+print "<select name='versichertenstatus' onChange='versichertenstatus_change(this);' size=1 >";
 my $j=0;
 while ($j <= $#verstatus) {
   print "<option value='$verstatus[$j]'";
@@ -245,8 +252,9 @@ while ($j <= $#verstatus) {
   print "</option>\n";
   $j++;
 }
+print "<td id='privat_faktor'><input type='text' name='privat_faktor' value='$privat_faktor' size='8' maxlength='8'></td>"  if ($versichertenstatus eq 'privat');
 print "</td>\n";
-print "<td><input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='10' maxlength='9' onChange='ik_gueltig_check(this)'></td>";
+print "<td id='ikkk_wert'><input type='text' name='ik_krankenkasse' value='$ik_krankenkasse' size='10' maxlength='9' onChange='ik_gueltig_check(this)'></td>";
 print "<td><input type='button' name='kasse_waehlen' value='Kasse auswählen' onClick='return kassen_auswahl();'></td>";
 print '</tr>';
 print '</table>';
@@ -382,6 +390,9 @@ print '</form>';
 print '</tr>';
 print "</table>\n";
 print "<script>set_focus(document.stammdaten);auswahl_wechsel(document.stammdaten);</script>";
+(my $help = $h->parm_unique("PRIVAT_FAKTOR")) =~ s/\./,/;
+print "<script> default_privat=new String('$help');</script>"; # default wert für den privatfaktor
+print "<script>versichertenstatus_change(document.stammdaten.versichertenstatus);</script>";
 print "</body>";
 print "</html>";
 
@@ -403,13 +414,16 @@ sub speichern {
   $geb_k = '0000-00-00' if(!defined($geb_k) or $geb_k eq 'error');
   $geb_f = '0000-00-00' if(!defined($geb_f) or $geb_f eq 'error');
   $ent_sp = 0 if(!defined($ent_sp) or $ent_sp eq '');
+  my $privat_faktor_sp = $privat_faktor;
+  $privat_faktor_sp =~ s/,/\./g;
+  $privat_faktor_sp = 0 unless($privat_faktor);
   
   # jetzt speichern
   my $erg = $s->stammdaten_ins($vorname,$nachname,$geb_f,$strasse,$plz_sp,$ort,$tel,
 			       $ent_sp,$kv_nummer,$kv_gueltig,$versichertenstatus,
 			       $ik_sp,$anz_kinder,$geb_k,$naechste_hebamme,
 			       $begruendung_nicht_nae_heb,$TODAY,
-			       $kzetgt,$uhr_k
+			       $kzetgt,$uhr_k,$privat_faktor
 			      );
   return $erg;
 }
@@ -441,7 +455,11 @@ sub aendern {
   $geb_f = '0000-00-00' if(!defined($geb_f) or $geb_f eq 'error');
   my $uhr_k = $uhr_kind.':00';
   $uhr_k = undef if ($uhr_kind eq '');
-  $ent_sp = 0 if(!defined($ent_sp) or $ent_sp eq '');
+  $ent_sp = 0 unless($ent_sp);
+  my $privat_faktor_sp = $privat_faktor;
+  $privat_faktor_sp =~ s/,/\./g;
+  $privat_faktor_sp = 0 unless($privat_faktor);
+
 
   # jetzt speichern
   my $erg = $s->stammdaten_update($vorname,$nachname,$geb_f,$strasse,$plz_sp,$ort,$tel,
@@ -449,7 +467,7 @@ sub aendern {
 				  $ik_sp,$anz_kinder,$geb_k,$naechste_hebamme,
 				  $begruendung_nicht_nae_heb,$TODAY,
 				  $kzetgt,
-				  $uhr_k,
+				  $uhr_k,$privat_faktor_sp,
 				  $frau_id);
   return $erg;
 }
@@ -463,7 +481,7 @@ sub hole_frau_daten {
    $anz_kinder,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
    $ik_krankenkasse,$naechste_hebamme,
    $begruendung_nicht_nae_heb,
-   $kzetgt,$uhr_kind) = $s->stammdaten_frau_id($frau_id);
+   $kzetgt,$uhr_kind,$privat_faktor) = $s->stammdaten_frau_id($frau_id);
   $frau_id2=$frau_id;
   $entfernung = '0.0' unless ($entfernung);
   $entfernung =~ s/\./,/g;
@@ -474,6 +492,8 @@ sub hole_frau_daten {
   $ik_krankenkasse='' unless ($ik_krankenkasse);
   $kzetgt =0 if(!$kzetgt);
   $uhr_kind='' if (!($uhr_kind) || $uhr_kind eq '00:00:00');
+  $privat_faktor = '' unless($privat_faktor);
+  $privat_faktor =~ s/\./,/;
   
   return;
 }
