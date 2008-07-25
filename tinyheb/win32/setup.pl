@@ -3,7 +3,7 @@
 
 # Mini Setup für tinyHeb
 
-# $Id: setup.pl,v 1.10 2008-04-26 12:47:23 thomas_baum Exp $
+# $Id: setup.pl,v 1.11 2008-07-25 18:52:53 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -43,7 +43,7 @@ my %statusHash;
 
 my $eingabe='';
 my $serv_erg='';
-my $id='$Id: setup.pl,v 1.10 2008-04-26 12:47:23 thomas_baum Exp $';
+my $id='$Id: setup.pl,v 1.11 2008-07-25 18:52:53 thomas_baum Exp $';
 
 write_LOG("Programm id $id");
 
@@ -274,6 +274,9 @@ write_LOG("Frage httpd.conf copy",$eingabe);
 if ($eingabe =~ /ja/i || $eingabe eq '') {
   if ($win_vista) {
     write_LOG("Kopiere httpd.conf fuer win vista");
+    write_LOG("Loesche httpd.conf");
+    my $unl_ret=unlink("$apachepfad"."/conf/httpd.conf");
+    write_LOG("unlink return code $unl_ret");
     if ($a_flag) {
       write_LOG("httpd_vista.conf");
       copy("httpd_vista.conf","$apachepfad"."/conf/httpd.conf") or error("konnte httpd.conf fuer Apache2 nicht kopieren $!\n");
