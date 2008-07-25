@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.42 2008-07-25 12:12:25 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.43 2008-07-25 20:48:42 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -232,7 +232,7 @@ print $q->td("<b>KV-Nummer:</b>");
 print $q->td("<b>Gültig bis:</b>");
 print $q->td("<b>Versichertenstatus:</b>");
 print '<td id="ueberschrift_faktor"><b>Privat Faktor:</b></td>' if ($versichertenstatus eq 'privat');
-print '<td id="ikkk_node" <b>IK Krankenkasse:</b>';
+print '<td id="ikkk_node"><b>IK Krankenkasse:</b></td>';
 #print $q->td("<b>$_</b>\n") foreach ('KV-Nummer:','Gültig bis:','Versichertenstatus:','IK Krankenkasse:');
 print '</tr>';
 print "\n";
