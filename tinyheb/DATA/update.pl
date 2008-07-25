@@ -1,8 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -wT
+# -w
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.7 2008-06-15 10:53:21 thomas_baum Exp $
+# $Id: update.pl,v 1.8 2008-07-25 12:02:51 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -27,7 +28,7 @@ use strict;
 use DBI;
 use Getopt::Long;
 
-my $id='$Id: update.pl,v 1.7 2008-06-15 10:53:21 thomas_baum Exp $';
+my $id='$Id: update.pl,v 1.8 2008-07-25 12:02:51 thomas_baum Exp $';
 
 write_LOG("Starte update ----------------------------");
 write_LOG("$id");
@@ -80,8 +81,12 @@ my $root_pass='';
 my $debug=0;
 
 my $rpm=undef;
+my $purge=undef; # tinyHeb DB entfernen
+my $downgrade=undef; # downgrade durchführen
 
-my $parms=GetOptions('rpm' => \$rpm);
+my $parms=GetOptions('rpm' => \$rpm,
+		     'purge' => \$purge,
+		     'downgrade' => \$downgrade);
 
 
 # root passwort für db holen, wenn nötig
@@ -105,15 +110,30 @@ if (!defined($dbh) and ($DBI::err == 1044 || $DBI::err == 1045)) {
   write_LOG("Habe mich mit root angemeldet $dbh");
 }
 
-write_LOG("oeffne update.sql");
-open SQL, "update.sql" or error("konnte update Datei nicht öffnen $!\n");
+
+if ($purge) {
+  # tinyHeb entfernen
+  write_LOG("tinyHeb wird entfernt");
+  write_LOG("drop user");
+  do_alter("drop user 'wwwrun'\@'localhost';",'','');
+  write_LOG("drop database");
+  do_alter("drop database ".$config{MySQLDBName});
+  write_LOG("tinyheb entfernt");
+  exit(0);
+}
+
+my $filename='update.sql';
+$filename='downgrade.sql' if ($downgrade);
+
+write_LOG("oeffne $filename");
+open SQL, "$filename" or error("konnte Datei $filename nicht öffnen $!\n");
 
 # alle Zeile der Update Datei Verarbeiten
 LINE:while (my $line=<SQL>) {
   chomp $line;
   next LINE if ($line eq '' or $line =~ /^#/);
   my ($muser,$tag,$tabelle,$dep,$sql) = split '\t',$line;
-  write_LOG("update.sql gelesen",$muser,$tag,$tabelle,$dep,$sql);
+  write_LOG("$filename gelesen",$muser,$tag,$tabelle,$dep,$sql);
   if ($debug) {
     print "muser\t$muser\n";
     print "tag\t$tag\n";
@@ -202,8 +222,9 @@ sub do_alter {
   my $erg=$dbh->do($sql);
   if (!defined($erg)) {
       write_LOG("alter fehler",$DBI::err,$DBI::errstr);
-    if ($DBI::err == 1061 || $DBI::err == 1060) {
-    # ok, mache nix, INDEX oder Spalte war schon da
+    if ($DBI::err == 1061 || $DBI::err == 1060 || $DBI::err == 1091) {
+      # ok, mache nix, INDEX oder Spalte war schon da
+      # 1091 Index oder Spalte ist schon gelöscht
     } else {
       error("unbekanntes Problem aufgetreten $DBI::errstr\n");
     }
@@ -217,6 +238,7 @@ sub get_parm {
   my ($tabelle,$dbh)=@_;
   my $name='';
   $name = 'LEISTUNGSART_ID' if (uc $tabelle eq 'LEISTUNGSART');
+  $name = 'PARM_ID' if (uc $tabelle eq 'PARMS');
 
 
   my $parm_such=$dbh->prepare("select VALUE from Parms ".
@@ -275,6 +297,9 @@ sub fehler {
 
   # Doppelter Spaltenname
   return 1 if ($erg[1]->err == 1060);
+
+  # drop auf nicht existierendes Feld/Index
+  return 1 if ($erg[1]->err == 1091);
 
   return 1;
 }
