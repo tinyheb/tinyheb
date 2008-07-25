@@ -1,9 +1,9 @@
-#!/usr/bin/perl -wT
+#!/usr/bin/perl -w
 # -w
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.8 2008-07-25 12:02:51 thomas_baum Exp $
+# $Id: update.pl,v 1.9 2008-07-25 20:47:07 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -28,7 +28,7 @@ use strict;
 use DBI;
 use Getopt::Long;
 
-my $id='$Id: update.pl,v 1.8 2008-07-25 12:02:51 thomas_baum Exp $';
+my $id='$Id: update.pl,v 1.9 2008-07-25 20:47:07 thomas_baum Exp $';
 
 write_LOG("Starte update ----------------------------");
 write_LOG("$id");
