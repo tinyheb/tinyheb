@@ -1,4 +1,7 @@
 Offen:
+08.06.08
+Plausiprüfung vor/nach Geburtstermin, muss Hinweis kommen, ob man akzeptiert oder nicht
+
 09.02.08
 Kennzeichen in Krankenkassendaten, damit Werte einer einzelnen Kasse nicht überschrieben werden.
 
@@ -39,6 +42,16 @@ eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
 ----------------------------------------------------------------
 Erledigt:
+25.07.08
+Feld privat-Faktor in die Stammdaten mit aufnehmen. Ist dies belegt gilt dieses, sonst der Default aus den Parametern. Anforderung vom 26.01.08
+
+22.06.08
+Begründung 'geplante Hausgeburt' in update-sql aufnehmen. Anforderung vom 08.06.08
+
+14.06.08
+Return Code von openssl wird bei Signatur und Verschlüsselung abgefragt.
+Bei falschem OpenSSL Passwort wurde trotzdem Rechnungsmail generiert? Prüfen. Anforderung vom 13.06.08
+
 01.05.08
 Positionsnummer 010 mehr als einmal pro Tag nur mit Begründung und Uhrzeit. Anforderung vom 15.03.08
 

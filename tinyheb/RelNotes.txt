@@ -1,3 +1,22 @@
+Release 1.0.0
+
+Privat Faktor kann bei jeder Frau individuell vorgegeben werden
+
+Positionsnummer 010 mehr als einmal pro Tag nur mit Begründung
+
+zusätzliche Plausiprüfungen für Positionsnummer 020
+
+zusätzliche Plausiprüfung für Positionsnummer 270, nur nach der Geburt
+
+Verbessertes Fehlerhandling bei der Generierung von elektronischen Rechnungen
+
+Überarbeitung Handbuch
+
+Materialpauschalen haben ab 01.07.08 auch einen neuen Preis
+
+"Bug fix" Einspielen einer Sicherung funktionierte nicht mehr unter ubuntu 8.04 (Hardy)
+
+
 Release 0.19.0
 
 Layout der erfassten Positionen in Maske "Rechnungsposten erfassen" verbessert
