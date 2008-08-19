@@ -1,7 +1,7 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Leistungserfassung
 
-# $Id: leistungen.js,v 1.14 2008-05-19 17:53:44 thomas_baum Exp $
+# $Id: leistungen.js,v 1.15 2008-08-19 16:36:56 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -83,7 +83,7 @@ function zeit(form,einaus) {
     zl_tag[0].className='enabled';
     var zl_tag = document.getElementsByName('zeit_bis');
     zl_tag[0].className='enabled';
-    form.zeit_von.focus();
+    //    form.zeit_von.focus();
   } else {
     form.zeit_von.disabled=true;
     form.zeit_bis.disabled=true;
