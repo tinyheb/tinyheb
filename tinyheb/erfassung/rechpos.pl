@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.46 2008-08-19 16:36:00 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.47 2008-08-19 17:38:43 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -266,14 +266,16 @@ print qq!<script>!;
 print qq!open("list_posnr.pl?frau_id=$frau_id","list_posnr");!;
 print qq!posnr_wechsel(document.rechpos); // funktion wurde dynamisch generiert.!;
 print qq!wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);!;
-print qq!document.rechpos.datum.select();!;
-print qq!document.rechpos.datum.focus();!;
 print qq!</script>!;
 
 if ($hint) {
   print qq!<script>alert("$hint");</script>!;
   print "<script>$hscript</script>";
 }
+print "<script>\n";
+print qq!document.rechpos.datum.select();!;
+print qq!document.rechpos.datum.focus();!;
+print "</script>\n";
 print "</body>";
 print "</html>";
 
