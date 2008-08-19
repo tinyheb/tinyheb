@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.45 2008-05-22 17:27:30 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.46 2008-08-19 16:36:00 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -95,6 +95,8 @@ if ($auswahl eq 'Neu' && defined($abschicken)) {
 #  $entfernung_nacht=0;
   $begruendung='';
 #  $anzahl_frauen=1;
+  $zeit_von='';
+  $zeit_bis='';
 }
 
 if ($auswahl eq 'Ändern' && defined($abschicken)) {
