@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.43 2008-07-25 20:48:42 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.44 2008-08-19 16:30:44 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -423,7 +423,7 @@ sub speichern {
 			       $ent_sp,$kv_nummer,$kv_gueltig,$versichertenstatus,
 			       $ik_sp,$anz_kinder,$geb_k,$naechste_hebamme,
 			       $begruendung_nicht_nae_heb,$TODAY,
-			       $kzetgt,$uhr_k,$privat_faktor
+			       $kzetgt,$uhr_k,$privat_faktor_sp
 			      );
   return $erg;
 }
