@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.52 2008-07-20 17:06:49 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.53 2008-09-12 17:02:24 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -613,7 +613,7 @@ sub SLLA_EHB {
   $preis = sprintf "%.2f",$preis;
   $preis =~ s/\./,/g;
   $erg .= $preis.'+'; # Einzelpreis der Abrechnungsposition
-  $erg .= $pzn ? "$pzn+" : '+'; # Pharmazentralnummer nur angeben, wenn vorhanden
+  $erg .= $pzn ? sprintf "%7.7u+",$pzn : '+'; # Pharmazentralnummer nur angeben, wenn vorhanden
   $erg .= $zeit_von ? "$zeit_von+" : "+"; # Uhrzeit von
   $erg .= $zeit_bis ? "$zeit_bis+" : "+"; # Uhrzeit bis
   $erg .= $dauer ? "$dauer+" : "+"; # Dauer
