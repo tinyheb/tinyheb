@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.47 2008-08-19 17:38:43 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.48 2008-09-29 15:48:36 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -538,10 +538,10 @@ sub speichern {
 #    }
     return $hint .= $hebgo->dauer_plausi if ($hebgo->dauer_plausi);
 
-    $preis = sprintf "%3.3u",($dauer / $l_fuerzeit) if ($fuerzeit_flag ne 'E');
-    $preis = sprintf "%3.2f",($dauer / $l_fuerzeit) if ($fuerzeit_flag eq 'E');
+    $preis = sprintf "%3.3u",$h->runden($dauer / $l_fuerzeit) if ($fuerzeit_flag ne 'E');
+    $preis = sprintf "%3.2f",$h->runden($dauer / $l_fuerzeit) if ($fuerzeit_flag eq 'E');
     $preis++ if ($preis*$l_fuerzeit < $dauer && $fuerzeit_flag ne 'E');
-    $preis = $preis*$l_epreis;
+    $preis = $h->runden($preis*$l_epreis);
   } else {
     $preis = $l_epreis;
   }

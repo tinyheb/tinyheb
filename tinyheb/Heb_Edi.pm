@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.53 2008-09-12 17:02:24 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.54 2008-09-29 15:47:56 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -892,7 +892,7 @@ sub SLLA {
 						 $leistdat[6]);  # zeit bis
       if ($fuerzeit) {
 	$dauer = $d->dauer_m($leistdat[6],$leistdat[5]);
-	$anzahl = sprintf "%3.2f",($dauer / $fuerzeit);
+	$anzahl = sprintf "%3.2f",$h->runden($dauer / $fuerzeit);
 	# prüfen, ob Minuten genau abgerechnet werden muss
 	if ($fuerzeit_flag ne 'E') { # nein
 	  $anzahl = sprintf "%2.2u",$anzahl;
@@ -923,8 +923,8 @@ sub SLLA {
 				  $leistdat[5], # Zeit von
 				  $leistdat[6], # Zeit bis
 				  $dauer);
-	  $gesamtsumme += sprintf "%.2f",($epreis*$anzahl);
-	  my $wert= sprintf "%.2f",($epreis*$anzahl);
+	  $gesamtsumme += sprintf "%.2f",$h->runden($epreis*$anzahl);
+	  my $wert= sprintf "%.2f",$h->runden($epreis*$anzahl);
 	  $ges_sum{$ltyp} += $wert;
 	} else {
 	  $erg .= $self->SLLA_EHB($leistdat[1],  # POSNR
@@ -933,8 +933,8 @@ sub SLLA {
 				  $leistdat[5], # Zeit von
 				  $leistdat[6], # Zeit bis
 				  $dauer);
-	  $gesamtsumme += sprintf "%.2f",($leistdat[10]*$anzahl);
-	  $ges_sum{$ltyp} += (sprintf "%.2f",($leistdat[10]*$anzahl));
+	  $gesamtsumme += sprintf "%.2f",$h->runden($leistdat[10]*$anzahl);
+	  $ges_sum{$ltyp} += (sprintf "%.2f",$h->runden($leistdat[10]*$anzahl));
 	}
 	$lfdnr++;
 

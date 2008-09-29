@@ -4,7 +4,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.53 2008-07-20 17:08:52 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.54 2008-09-29 15:49:19 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -615,7 +615,7 @@ sub print_teil {
       if ($fuerzeit_flag ne 'E') { # nein
 
 	my $dauer = $d->dauer_m($erg2[6],$erg2[5]);
-	$vk = sprintf "%3.1u",($dauer / $fuerzeit);
+	$vk = sprintf "%3.1u",$h->runden($dauer / $fuerzeit);
 	$vk++ if ($vk*$fuerzeit < $dauer);
 	$vk = sprintf "%1.1u",$vk;
 	$epreis =~ s/\./,/g;
@@ -623,7 +623,7 @@ sub print_teil {
       }
       if ($fuerzeit_flag eq 'E') { # ja
 	my $dauer = $d->dauer_m($erg2[6],$erg2[5]);
-	$vk = sprintf "%3.2f",($dauer / $fuerzeit);
+	$vk = sprintf "%3.2f",$h->runden($dauer / $fuerzeit);
 	$epreis =~ s/\./,/g;
 	$vk =~ s/\./,/g;
 	$p->text($x1+5.5,$y1,$dauer." min = ".$vk." h á ".$epreis." EUR");
@@ -639,7 +639,7 @@ sub print_teil {
     my $datum = $d->convert_tmj($erg[4]);
     my $gpreis = 0;
     $vk =~ s/,/\./g;	$epreis =~ s/,/\./g;
-    $gpreis = sprintf "%.2f",$vk * $epreis;
+    $gpreis = sprintf "%.2f",$h->runden($vk * $epreis);
 
 
     $summe+=$gpreis;$gpreis =~ s/\./,/g;
