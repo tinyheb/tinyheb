@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.17 2008-07-25 12:10:56 thomas_baum Exp $
+# $Id: update.sql,v 1.18 2008-10-03 13:13:00 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 # zunächst alte GO ungültig machen
@@ -412,10 +412,10 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where LEISTUNG
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '040';
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '060';
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '070';
-WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '142.8';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '140';
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '150';
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '190';
-WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '224.4';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '220';
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '230';
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '240';
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '250';
