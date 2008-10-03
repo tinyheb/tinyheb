@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.14 2008-05-22 17:30:51 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.15 2008-10-03 13:06:08 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -49,7 +49,7 @@ sub new {
 
   my @dat_frau = $s->stammdaten_frau_id($self->{frau_id});
   my $geb_kind=$d->convert($dat_frau[3]);
-  $geb_kind = '' if ($geb_kind eq 'error');
+  $geb_kind = '' if (!$geb_kind || $geb_kind eq 'error');
   $geb_kind =~ s/-//g;
   $self->{geb_kind}=$geb_kind;
   $self->{dow}=Day_of_Week($d->jmt($self->{datum_l}));  # 1 == Montag 2 == Dienstag, ..., 7 == Sonntag
@@ -68,6 +68,8 @@ sub new {
   $self->{dauer}=0 unless($self->{dauer});
   $self->{ltyp}='' unless($self->{ltyp});
   $self->{begruendungspflicht}='n' unless($self->{begruendungspflicht});
+
+  $self->{TODAY} = sprintf "%4.4u%2.2u%2.2u",Today();
 
   bless $self,ref $class || $class;
   return $self;
@@ -764,5 +766,18 @@ sub zeit_vorhanden_plausi {
   return;
 }
 
+
+
+sub zukunft_plausi {
+  # prüft, ob das Leistungsdatum mehr als eine Woche in der Zukunft liegt
+  # wenn ja wird Fehler ausgegeben
+  my $self=shift;
+
+  my $days = Delta_Days(unpack('A4A2A2',$self->{datum_l}),unpack('A4A2A2',$self->{TODAY}));
+  if ($days < -7) {
+    return "FEHLER: es können keine Leistungen erfasst werden, die mehr als 7 Tage in der Zukunft liegen";
+  }
+  return undef;
+}
 
 1;
