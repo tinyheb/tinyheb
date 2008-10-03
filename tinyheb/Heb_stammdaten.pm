@@ -1,6 +1,6 @@
 # Package um Stammdaten zu verarbeiten
 
-# $Id: Heb_stammdaten.pm,v 1.15 2008-07-25 12:11:35 thomas_baum Exp $
+# $Id: Heb_stammdaten.pm,v 1.16 2008-10-03 13:11:37 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -22,6 +22,16 @@
 # author: Thomas Baum
 
 package Heb_stammdaten;
+
+=head1 NAME
+
+Heb_stammdaten - Package für tinyHeb um Stammdaten zu verarbeiten
+
+my $d = new Heb_stammdaten;
+
+=head1 DESCRIPTION
+
+=cut
 
 use strict;
 use DBI;
@@ -53,13 +63,10 @@ $frau_such = $dbh->prepare("select ID,VORNAME,NACHNAME,".
 			   "ORT like ? and ".
 			   "STRASSE like ?;");
 
-our $max_frau=0; # maximal vergebene id
-
 sub new {
   my($class) = @_;
   my $self = {};
   bless $self, ref $class || $class;
-  $max_frau = $h->parm_unique('STAMMDATEN_ID');
   return $self;
 }
 
@@ -87,6 +94,36 @@ sub stammdaten_suchfrau_next {
 sub stammdaten_ins {
   # fügt neue Person in Datenbank ein
 
+=head2 $s->stammdaten_ins(@stammdaten,$id_alt)
+    
+fügt eine neue Frau in die Tabelle stammdaten ein. 
+
+=over
+
+=item Ist $id_alt nicht definiert oder 0, wird eine neue ID vergeben und der 
+Datensatz eingefügt.
+
+=item Ist $id_alt definiert, wird der Datensatz unter dieser ID in die Datenbank
+geschrieben.
+
+=back
+
+Die Felder müssen in folgender Reihenfolge übergeben werden:
+
+=over
+
+=item Vorname, Nachname, Geburtsdatum der Frau, Strasse, PLZ,
+Ort, Tel, Entfernung, Krankenversicherungsnummer,
+Krankenversicherungsnummer Gültigkeit, Versichertenstatus,
+IK-Nummer Krankenkasse, Anzahl geborene Kinder, Geburtsdatum des Kindes,
+naechste hebamme, Begründungstext falls nicht nächste Hebamme,
+aktuelles Datum, Kennzeichen errechneter Termin/ Geburtstermin,
+Geburtszeit des Kindes, privat Faktor.
+
+=back
+
+=cut
+
   my $self=shift; # package Namen vom stack nehmen
 
   my($vorname,
@@ -112,10 +149,12 @@ sub stammdaten_ins {
      $id_alt) = @_;
 
   # zunächst neue ID für Frau holen
-  $h->parm_such('STAMMDATEN_ID');
-  my $id = $h->parm_such_next;
-  $id++;
-  $id = $id_alt if (defined($id_alt));
+  $h->get_lock("STAMMDATEN_ID"); # Stammdaten_ID sperren
+  my $id = 1+$h->parm_unique('STAMMDATEN_ID');
+  $id = $id_alt if ($id_alt);
+  $h->parm_up('STAMMDATEN_ID',$id) if(!$id_alt);
+  print "ergebnis ins_id $id<br>\n" if $debug;
+  $h->release_lock("STAMMDATEN_ID"); # Stammdaten_ID freigeben
 
   # insert an Datenbank vorbereiten
   my $stammdaten_ins = $dbh->prepare("insert into Stammdaten ".
@@ -158,8 +197,6 @@ sub stammdaten_ins {
 #				     $datum,$kzetgt,undef)
     or die $dbh->errstr();
 
-  $h->parm_up('STAMMDATEN_ID',$id) if(!defined($id_alt));
-  print "ergebnis ins_id $id<br>\n" if $debug;
   return $id;
 }
 
@@ -238,7 +275,16 @@ sub stammdaten_frau_id {
 }
 
 sub stammdaten_next_id {
-  # holt zur gegebenen Frau die nächste Frau
+
+=head2 $s->stammdaten_next_id($id)
+
+liefert die ID der nächsten Frau in der Datenbank bei angebener ID.
+
+Existiert keine nächste Frau, wird die übergebende ID als Ergebnis
+zurückgeliefert.
+
+=cut
+
   my $self=shift;
   my ($id) = @_;
   my $stammdaten_next_id =
@@ -246,10 +292,23 @@ sub stammdaten_next_id {
 		  "ID > ? limit 1;")
       or die $dbh->errstr();
   $stammdaten_next_id->execute($id) or die $dbh->errstr();
-  return $stammdaten_next_id->fetchrow_array();
+  my ($erg)=$stammdaten_next_id->fetchrow_array();
+  return ($erg) if ($erg);
+  return $id;
 }
 
 sub stammdaten_prev_id {
+
+=head2 $s->stammdaten_prev_id($id)
+
+liefert die ID der vorhergehenden Frau in der Datenbank bei angebener ID.
+
+Existiert keine vorhergehende Frau, wird die übergebende ID als Ergebnis
+zurückgeliefert.
+
+=cut
+
+
   # holt zur gegebenen Frau die vorhergehende Frau
   my $self=shift;
   my ($id) = @_;
@@ -258,11 +317,9 @@ sub stammdaten_prev_id {
 		  "ID < ? order by ID desc limit 1;")
       or die $dbh->errstr();
   $stammdaten_prev_id->execute($id) or die $dbh->errstr();
-  return $stammdaten_prev_id->fetchrow_array();
+  my ($erg)= $stammdaten_prev_id->fetchrow_array();
+  return $erg if ($erg);
+  return $id;
 }
 
-sub max {
-  # gibt die höchste ID zurück
-  return $max_frau;
-}
 1;
