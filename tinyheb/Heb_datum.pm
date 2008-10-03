@@ -1,6 +1,6 @@
 # Package um Datümer zu verarbeiten
 
-# $Id: Heb_datum.pm,v 1.25 2008-04-25 15:12:12 thomas_baum Exp $
+# $Id: Heb_datum.pm,v 1.26 2008-10-03 13:08:04 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -22,6 +22,16 @@
 # author: Thomas Baum
 
 package Heb_datum;
+
+=head1 NAME
+
+Heb_datum - Package für tinyHeb um Datümer zu verarbeiten
+
+my $d = new Heb_datum;
+
+=head1 DESCRIPTION
+
+=cut
 
 use strict;
 use DBI;
@@ -59,8 +69,18 @@ sub bundeslaender {
 }
 
 sub convert {
-  # konvertiert datum vom Format tt.mm.jjjj nach jjj-mm-tt
-  # es wird "error" geliefert, falls Datum nicht gültig ist
+
+=head2 $d->convert($datum)
+    
+konvertiert $datum vom Format tt.mm.jjjj oder tt.mm.jj nach jjj-mm-tt.
+Falls $datum schon das Format jjjj-mm-tt hat, wird dieses als Ergebnis
+geliefert.
+
+Falls jj > 49 wird Jahrhundert 1900 angenommen, 2000 sonst
+
+es wird "error" geliefert, falls Datum nicht gültig ist
+
+=cut
   
   my $self=shift; # package namen vom Stack nehmen
 
@@ -77,6 +97,19 @@ sub convert {
 
 
 sub convert_tmj {
+
+=head2 $d->convert_tmj($datum)
+    
+konvertiert $datum vom Format jjjj-mm-tt oder jj-mm-tt nach tt.mm.jjjj
+Falls $datum schon das Format tt.mm.jjjj hat, wird dieses als Ergebnis
+geliefert.
+
+Falls jj > 49 wird Jahrhundert 1900 angenommen, 2000 sonst
+
+es wird "error" geliefert, falls Datum nicht gültig ist
+
+=cut
+  
   # konvertiert datum vom Format jjjj-mm-tt nach tt.mm.jjjj
   # es wird "error" geliefert, falls Datum nicht gültig ust
   my $self=shift;
@@ -91,7 +124,15 @@ sub convert_tmj {
 }
 
 sub jmt {
-  # liefert Tripel jahr,monat,tag
+
+=head2 $d->jmt($datum)
+    
+liefert Tripel Jahr, Monat, Tag
+
+$datum sollte Format jjjj-mm-tt oder tt.mm.jjjj haben
+
+=cut
+
   my $self=shift;
   my ($datum) = @_;
   $datum=$self->convert($datum);
@@ -205,8 +246,8 @@ sub feiertag_ins {
   my $self=shift;
 
   # zunächst neue ID für Kalender Eintrag holen
-  my $id = $h->parm_unique('KALENDER_ID');
-  $id++;
+  $h->get_lock('KALENDER_ID');
+  my $id = 1+$h->parm_unique('KALENDER_ID');
   # insert an DB vorbereiten
   my $feiertag_ins = $dbh->prepare("insert into Kalender ".
                                         "(ID,NAME,BUNDESLAND,DATUM) ".
@@ -215,6 +256,7 @@ sub feiertag_ins {
   my $erg = $feiertag_ins->execute($id,@_)
     or die $dbh->errstr();
   $h->parm_up('KALENDER_ID',$id);
+  $h->release_lock('KALENDER_ID');
   $max_feiertag = $id;
   return $max_feiertag;
 }
@@ -274,6 +316,57 @@ sub feiertag_feier_id {
 }
 
 
+sub feiertag_next_id {
+
+=head2 $d->feiertag_next_id($id)
+
+liefert die ID des nächsten Feiertages in der Datenbank bei angebener ID.
+
+Existiert kein nächster Feiertag, wird die übergebende ID als Ergebnis
+zurückgeliefert.
+
+=cut
+
+  my $self=shift;
+  my ($id)=@_;
+  
+  my $feiertag_next_id =
+    $dbh->prepare("select ID from Kalender where ".
+		  "ID > ? limit 1;")
+      or die $dbh->errstr();
+  $feiertag_next_id->execute($id) or die $dbh->errstr();
+  my ($erg)=$feiertag_next_id->fetchrow_array();
+  return $erg if($erg);
+  return $id;
+}
+
+
+
+sub feiertag_prev_id {
+
+=head2 $d->feiertag_prev_id($id)
+
+liefert die ID des vorhergehenden Feiertages in der Datenbank bei angebener ID.
+
+Existiert kein vorhergehender Feiertag, wird die übergebende ID als Ergebnis
+zurückgeliefert.
+
+=cut
+
+  my $self=shift;
+  my ($id)=@_;
+  
+  my $feiertag_prev_id =
+    $dbh->prepare("select ID from Kalender where ".
+		  "ID < ? order by ID desc limit 1;")
+      or die $dbh->errstr();
+  $feiertag_prev_id->execute($id) or die $dbh->errstr();
+  my ($erg)=$feiertag_prev_id->fetchrow_array();
+  return $erg if($erg);
+  return $id;
+}
+
+
 sub feiertag_datum {
   # prüft ob Datum ein Feiertag ist
   shift;
@@ -299,11 +392,5 @@ sub extract_date {
   return sprintf "%4.4u%2.2u%2.2u",$yyyy,$mm,$dd;
 }
 
-
-
-sub max {
-  # gibt die höchste ID zurück
-  return $max_feiertag;
-}
 
 1;
