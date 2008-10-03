@@ -1,6 +1,6 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.28 2008-05-22 17:31:47 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.29 2008-10-03 13:10:33 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -112,10 +112,13 @@ sub leistungsdaten_ins {
 #  print "Leistungsdaten einfügen";
   
   # zunächst neue ID für Leistungsdaten holen
+  my $gl=$h->get_lock("LEISTUNG_ID");
   my $id = 1+$h->parm_unique('LEISTUNG_ID');
+  $h->parm_up('LEISTUNG_ID',$id); # sofort update w/ race-condition
+  my $rl=$h->release_lock('LEISTUNG_ID');
   my $erg = $leistungsdaten_ins->execute($id,@_)
     or die $dbh->errstr();
-  $h->parm_up('LEISTUNG_ID',$id);
+
   return $id;
 }
 
@@ -130,7 +133,7 @@ sub rechnung_ins {
 				   "values (?,?,?,?,?,?,?,?,?,?);")
     or die $dbh->errstr();
   $rechnung_ins->execute($rechnr,$rech_datum,'0000-00-00','0000-00-00',$gsumme,20,0,$fk_st,$ik,$text) or die $dbh->errstr();
-  $h->parm_up('RECHNR',$_[0]);
+  $h->parm_up('RECHNR',$_[0]); 
 }
 
 
