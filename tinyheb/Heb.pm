@@ -1,6 +1,6 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.14 2008-05-22 17:28:22 thomas_baum Exp $
+# $Id: Heb.pm,v 1.15 2008-10-03 13:04:52 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -101,6 +101,34 @@ sub db_name {
   my ($name,$host)=split ';',$dbh->{Name};
   my ($dummy,$dbname)=split '=',$name;
   return $dbname;
+}
+
+
+sub get_lock {
+  # quasi semaphore, P operation
+  # locked Parms Tabelle w/ konkurrierender Zugriffe
+  my $self=shift;
+  my ($lockname)=@_;
+  my $get_lock=$dbh->prepare("select GET_LOCK('$lockname',10);")
+    or die $dbh->errstr();
+  $get_lock->execute() or die $dbh->errstr();
+  my ($erg) = $get_lock->fetchrow_array();
+#  warn "ergebnis $$ get lock $erg";
+  return $erg;
+}
+
+
+sub release_lock {
+  # quasi semaphore, V operation
+  # unlock Parms Tabelle w/ konkurrierender Zugriffe
+  my $self=shift;
+  my ($lockname)=@_;
+  my $release_lock=$dbh->prepare("select RELEASE_LOCK('$lockname');")
+    or die $dbh->errstr();
+  $release_lock->execute() or die $dbh->errstr();
+  my ($erg) = $release_lock->fetchrow_array();
+#  warn "ergebnis $$ release lock $erg";
+  return $erg;
 }
 
 sub parm_such {
