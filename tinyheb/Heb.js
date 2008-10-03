@@ -1,7 +1,7 @@
 /* script für generelle Plausiprüfungen und Navigation
 # im Rahmen der Leistungserfassung
 
-# $Id: Heb.js,v 1.14 2007-07-18 17:46:16 baum Exp $
+# $Id: Heb.js,v 1.15 2008-10-03 13:04:01 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -201,21 +201,4 @@ function auswahl_wechsel (formular) {
 	}
 }		
 
-
-function kk_eintrag(name,plz,ort,strasse,ik) {
-  //alert("gewählt"+name+plz+ort+strasse+ik);
-    // in Parent Dokument übernehmen
-    // alert("parent"+opener.window.document.forms[0].name);
-    var formular=opener.window.document.forms[0];
-    formular.ik_krankenkasse.value=ik;
-    formular.name_krankenkasse.value=name;
-    formular.strasse_krankenkasse.value=strasse;
-    if (formular.name == 'krankenkassen') {
-       formular.ort_krankenkasse.value = ort;
-       formular.plz_krankenkasse.value = plz;
-       //   formular.krank_id.value = krank_id;
-    } else {
-       formular.ort_krankenkasse.value=plz+' '+ort;
-    }
-  }
 //alert("heb.js ist geladen");
