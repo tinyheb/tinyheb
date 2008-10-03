@@ -1,6 +1,6 @@
 # Package um Krankenkassen zu verarbeiten
 
-# $Id: Heb_krankenkassen.pm,v 1.17 2008-04-25 15:13:07 thomas_baum Exp $
+# $Id: Heb_krankenkassen.pm,v 1.18 2008-10-03 13:09:26 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -23,6 +23,16 @@
 
 package Heb_krankenkassen;
 
+=head1 NAME
+
+Heb_krankenkassen - Package für tinyHeb um Krankenkassen zu verarbeiten
+
+my $k = new Heb_krankenkassen;
+
+=head1 DESCRIPTION
+
+=cut
+
 use strict;
 use DBI;
 
@@ -43,7 +53,7 @@ $krank_such = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
 			    "PLZ_HAUS LIKE ? and ".
 			    "PLZ_POST LIKE ? and ".
 			    "ORT LIKE ? and ".
-			    "IK LIKE ?;");
+			    "IK LIKE ? order by IK;");
 
 sub new {
   my($class) = @_;
@@ -62,23 +72,6 @@ sub krankenkasse_sel {
   return if(!$ik);
 
   # lesen aus Datenbank vorbereiten
-  my $krankenkasse_get = $dbh->prepare("select $werte from Krankenkassen ".
-				       "where $ik = IK;")
-    or die $dbh->errstr();
-  $krankenkasse_get->execute() or die $dbh->errstr();
-  my @erg = $krankenkasse_get->fetchrow_array();
-
-  print "ergebnis @erg<br>\n" if $debug;
-  return @erg;
-}
-
-sub krankenkasse_ik {
-  # Holt Informationen zu einer gegebenen IK aus der Datenbank
-
-  my $self=shift; # package Namen vom stack nehmen
-
-  my ($werte,$ik) = @_;
-
   my $krankenkasse_get = $dbh->prepare("select $werte from Krankenkassen ".
 				       "where $ik = IK;")
     or die $dbh->errstr();
@@ -202,7 +195,16 @@ sub krankenkassen_delete {
 
 
 sub krankenkasse_next_ik {
-  # holt die zur angegebenen ik nächste ik
+
+=head2 $k->krankenkasse_next_ik($ik)
+
+liefert die IK der nächsten Krankenkasse in der Datenbank bei angebener IK.
+
+Existiert keine nächste Krankenkasse, wird die übergebende IK als Ergebnis
+zurückgeliefert.
+
+=cut
+
   my $self=shift;
   my ($ik) = @_;
   my $krankenkasse_next_ik = 
@@ -210,10 +212,24 @@ sub krankenkasse_next_ik {
 		  "ik > ? limit 1;")
       or die $dbh->errstr();
   $krankenkasse_next_ik->execute($ik) or die $dbh->errstr();
-  return $krankenkasse_next_ik->fetchrow_array();
+  my($erg) = $krankenkasse_next_ik->fetchrow_array();
+  return $erg if($erg);
+  return $ik;
 }
 
 sub krankenkasse_prev_ik {
+
+=head2 $k->krankenkasse_prev_ik($ik)
+
+liefert die IK der vorhergehenden Krankenkasse in der Datenbank bei 
+angebener IK.
+
+Existiert keine vorhergehende Krankenkasse, wird die übergebende IK als 
+Ergebnis zurückgeliefert.
+
+=cut
+
+
   # holt die zur angegebenen ik vorhergehende ik
   my $self=shift;
   my ($ik) = @_;
@@ -222,7 +238,9 @@ sub krankenkasse_prev_ik {
 		  "ik < ? order by ik desc limit 1;")
       or die $dbh->errstr();
   $krankenkasse_prev_ik->execute($ik) or die $dbh->errstr();
-  return $krankenkasse_prev_ik->fetchrow_array();
+  my($erg) = $krankenkasse_prev_ik->fetchrow_array();
+  return $erg if($erg);
+  return $ik;
 }
 
 
