@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.44 2008-08-19 16:30:44 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.45 2008-10-05 13:41:56 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -26,6 +26,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 use strict;
+#no warnings qw(redefine);
 
 use lib "../";
 #use Devel::Cover -silent => 'On';
@@ -89,7 +90,11 @@ my $func = $q->param('func') || 0;
 #my $frau_suchen = $q->param('frau_suchen');
 my $status_edi='kein elektronischer Datenaustausch';
 
-hole_frau_daten() if ($func == 1 || $func == 2 || $func==3);
+($frau_id,$frau_id2,$vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,
+ $tel,$strasse,$anz_kinder,$entfernung,$kv_nummer,$kv_gueltig,
+ $versichertenstatus,$ik_krankenkasse,$naechste_hebamme,
+ $begruendung_nicht_nae_heb,
+ $kzetgt,$uhr_kind,$privat_faktor)=hole_frau_daten($s,$frau_id,$func) if ($func == 1 || $func == 2 || $func==3);
 
 # Infos zur Krankenkasse holen
 #if ($ik_krankenkasse ne '' && $ik_krankenkasse > 0) {
@@ -123,12 +128,25 @@ $strasse_krankenkasse = '' unless defined ($strasse_krankenkasse);
 print $q->header ( -type => "text/html", -expires => "-1d");
 
 if (($auswahl eq 'Neu') && defined($abschicken)) {
-  $frau_id = speichern();
+  $frau_id = speichern($s,$d,
+		       $frau_id,$vorname,$nachname,$geb_frau,$geb_kind,
+		       $plz,$ort,$tel,$strasse,
+		       $anz_kinder,$entfernung,$kv_nummer,
+		       $kv_gueltig,$versichertenstatus,
+		       $ik_krankenkasse,$naechste_hebamme,
+		       $begruendung_nicht_nae_heb,
+		       $kzetgt,$uhr_kind,$privat_faktor);
   $frau_id2=$frau_id;
   $auswahl = 'Anzeigen';
 }
 if (($auswahl eq 'Ändern') && defined($abschicken)) {
-  aendern();
+  aendern($s,$d,
+	  $frau_id,$vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,
+	  $tel,$strasse,
+	  $anz_kinder,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
+	  $ik_krankenkasse,$naechste_hebamme,
+	  $begruendung_nicht_nae_heb,
+	  $kzetgt,$uhr_kind,$privat_faktor);
   $auswahl = 'Anzeigen';
 }
 print '<head>';
@@ -140,7 +158,7 @@ print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 
 if (($auswahl eq 'Löschen') && defined($abschicken)) {
-  loeschen();
+  $hint = loeschen($s,$l,$frau_id);
   if ($hint eq '') {
     print '<script>loeschen();</script>';
   } else {
@@ -382,6 +400,8 @@ print '<td><input type="button" name="rechnung" value="Rechnungsposten erfassen"
 # nächste Zeile
 print '<tr><td>&nbsp;</td>';
 print '<td><input type="button" name="drucken" value="Rechnung gen" onclick="druck(document.stammdaten)"></td>';
+print '<td colspan="2"><input type="button" name="druck_bestaetigung2" value="Druck Versichertenbestätigung Hilfe" onclick="window.location=\'../tools/formularc.pl?frau_id=\'+stammdaten.frau_id.value"></td>';
+print '<td colspan="2"><input type="button" name="druck_bestaetigung1" value="Druck Versichertenbestätigung Kurse" onclick="window.location=\'../tools/formulara.pl?frau_id=\'+stammdaten.frau_id.value"></td>';
 print '</tr>';
 
 print '</tr>';
@@ -401,6 +421,13 @@ sub speichern {
   # Speichert die Daten in der Stammdaten Datenbank
   # print "Speichern in DB\n";
   # Datümer konvertierten
+  my ($s,$d,$frau_id,$vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,
+      $tel,$strasse,
+      $anz_kinder,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
+      $ik_krankenkasse,$naechste_hebamme,
+      $begruendung_nicht_nae_heb,
+      $kzetgt,$uhr_kind,$privat_faktor)=@_;
+
   my $geb_f = $d->convert($geb_frau);
   my $geb_k = $d->convert($geb_kind);
   my $uhr_k = $uhr_kind.':00';
@@ -417,7 +444,9 @@ sub speichern {
   my $privat_faktor_sp = $privat_faktor;
   $privat_faktor_sp =~ s/,/\./g;
   $privat_faktor_sp = 0 unless($privat_faktor);
-  
+
+  my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();  
+
   # jetzt speichern
   my $erg = $s->stammdaten_ins($vorname,$nachname,$geb_f,$strasse,$plz_sp,$ort,$tel,
 			       $ent_sp,$kv_nummer,$kv_gueltig,$versichertenstatus,
@@ -429,16 +458,23 @@ sub speichern {
 }
 
 sub loeschen {
+  my ($s,$l,$frau_id)=@_;
   # löscht Datensatz aus der Stammdaten Datenbank
   if ($l->leistungsdaten_such($frau_id)) {
-    $hint = "Löschen nicht möglich, es sind schon Leistungen erfasst";
-    return;
+    my $hint = "Löschen nicht möglich, es sind schon Leistungen erfasst";
+    return $hint;
   }
   my $erg = $s->stammdaten_delete($frau_id);
-  return $erg;
+  return '';
 }
 
 sub aendern {
+  my ($s,$d,$frau_id,$vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,
+      $tel,$strasse,
+      $anz_kinder,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
+      $ik_krankenkasse,$naechste_hebamme,
+      $begruendung_nicht_nae_heb,
+      $kzetgt,$uhr_kind,$privat_faktor)=@_;
   # Ändert die Daten zur angegebenen Frau in der Datenbank
   # print "Aendern $frau_id";
   # Datümer konvertierten
@@ -459,7 +495,7 @@ sub aendern {
   my $privat_faktor_sp = $privat_faktor;
   $privat_faktor_sp =~ s/,/\./g;
   $privat_faktor_sp = 0 unless($privat_faktor);
-
+  my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 
   # jetzt speichern
   my $erg = $s->stammdaten_update($vorname,$nachname,$geb_f,$strasse,$plz_sp,$ort,$tel,
@@ -473,16 +509,16 @@ sub aendern {
 }
 
 sub hole_frau_daten {
-  my $frau_id_alt = $frau_id;
+  my($s,$frau_id,$func)=@_;
   $frau_id = $s->stammdaten_next_id($frau_id) if ($func==1);
   $frau_id = $s->stammdaten_prev_id($frau_id) if ($func==2);
-  $frau_id = $frau_id_alt if (!defined($frau_id));
-  ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
+
+  my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
    $anz_kinder,$entfernung,$kv_nummer,$kv_gueltig,$versichertenstatus,
    $ik_krankenkasse,$naechste_hebamme,
    $begruendung_nicht_nae_heb,
    $kzetgt,$uhr_kind,$privat_faktor) = $s->stammdaten_frau_id($frau_id);
-  $frau_id2=$frau_id;
+  my $frau_id2=$frau_id;
   $entfernung = '0.0' unless ($entfernung);
   $entfernung =~ s/\./,/g;
   $geb_frau = '' if ($geb_frau eq '00.00.0000');
@@ -495,5 +531,9 @@ sub hole_frau_daten {
   $privat_faktor = '' unless($privat_faktor);
   $privat_faktor =~ s/\./,/;
   
-  return;
+  return ($frau_id,$frau_id2,$vorname,$nachname,$geb_frau,$geb_kind,
+	  $plz,$ort,$tel,$strasse,$anz_kinder,$entfernung,$kv_nummer,
+	  $kv_gueltig,$versichertenstatus,$ik_krankenkasse,$naechste_hebamme,
+	  $begruendung_nicht_nae_heb,
+	  $kzetgt,$uhr_kind,$privat_faktor);
 }
