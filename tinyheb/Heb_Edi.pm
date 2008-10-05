@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.54 2008-09-29 15:47:56 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.55 2008-10-05 13:13:44 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -77,11 +77,6 @@ sub new {
   my $self = {@_};
   $self->{dbh} = $h->connect;
 
-  # prüfen, ob Version ok
-  $self->{version6}=1 if($TODAY_jmt>20080131); # KZ Version 6
-#  $self->{version6}=1;
-
-
   # prüfen auf openssl installation
   if(!defined($openssl)) {
     $ERROR="keine openssl Installation gefunden";
@@ -95,8 +90,8 @@ sub new {
     $ERROR="Rechnung nicht vorhanden";
     return undef;
   }
-  $rechdatum =~ s/-//g;
-  $self->{rechdatum}=$rechdatum;
+#  $rechdatum =~ s/-//g;
+  ($self->{rechdatum}=$rechdatum) =~ s/-//g;
   $betrag+=0.0;
   $self->{betrag}=$betrag;
   $self->{ik}=$ik;
@@ -189,35 +184,6 @@ sub new {
     return undef;
   }
 
-  # prüfen, ob Datei verschlüsselt werden kann
-  my ($hilf_nutz,$hilf_erstell)=$self->gen_nutz($rechnr,$zik,$ktr,1);
-  unlink("$path/tmp/test_enc");
-  unlink("$path/tmp/test_enc.enc");
-  unlink("$path/tmp/test_enc.sig");
-  my $dateiname = 'test_enc';
-  # Nutzdatendatei schreiben
-  my $descriptor = open NUTZ, ">$path/tmp/$dateiname";
-  if (!defined($descriptor)) {
-    $ERROR= "Konnte Nutzdatei nicht zum Schreiben öffnen $!\n";
-    return undef;
-  }
-  print NUTZ $hilf_nutz;
-  close NUTZ;
-  my $laenge_nutz=length($hilf_nutz);
-
-  # hier muss noch verschlüsselt und signiert werden
-  # Public key der Krankenkasse schreiben
-  my ($pubkey) = $k->krankenkasse_sel("PUBKEY",$zik);
-  $descriptor = open KWRITE,">$path/tmp/zik.pem";
-  if (!defined($descriptor)) {
-    $ERROR= "Konnte öffentlichen Schlüssel zu Datenannahmestelle $zik nicht schreiben, bitte prüfen ob Schlüssel vorhanden ist.\n$!\n";
-    return undef;
-  }
-  print KWRITE "-----BEGIN CERTIFICATE-----\n";
-  print KWRITE $pubkey;
-  print KWRITE "-----END CERTIFICATE-----\n";
-  close(KWRITE);
-
   my $sig_flag = $h->parm_unique('SIG'.$zik);
   if (!defined($sig_flag)) {
     $ERROR= "Parameter für Signatur bei Datennahmestelle $zik fehlt.\nBitte Parameter SIG$zik pflegen\n";
@@ -236,6 +202,40 @@ sub new {
   }
   $self->{schl_flag}=$schl_flag;
 
+  # prüfen, ob Datei verschlüsselt werden kann
+  # w/ race conditions muss lock gesetzt werden
+  $h->get_lock("EDI");
+  my ($hilf_nutz,$hilf_erstell)=$self->gen_nutz($rechnr,$zik,$ktr,1);
+  unlink("$path/tmp/test_enc");
+  unlink("$path/tmp/test_enc.enc");
+  unlink("$path/tmp/test_enc.sig");
+  my $dateiname = 'test_enc';
+  # Nutzdatendatei schreiben
+  my $descriptor = open NUTZ, ">$path/tmp/$dateiname";
+  if (!defined($descriptor)) {
+    $ERROR= "Konnte Nutzdatei nicht zum Schreiben öffnen $!\n";
+    $h->release_lock("EDI"); # lock wieder freigeben
+    return undef;
+  }
+  print NUTZ $hilf_nutz; # Nutzdaten in Hilfsdatei schreiben
+  close NUTZ;
+  my $laenge_nutz=length($hilf_nutz);
+
+  # hier muss noch verschlüsselt und signiert werden
+  # Public key der Krankenkasse schreiben
+  my ($pubkey) = $k->krankenkasse_sel("PUBKEY",$zik);
+  $descriptor = open KWRITE,">$path/tmp/zik.pem";
+  if (!defined($descriptor)) {
+    $ERROR= "Konnte öffentlichen Schlüssel zu Datenannahmestelle $zik nicht schreiben, bitte prüfen ob Schlüssel vorhanden ist.\n$!\n";
+    $h->release_lock("EDI"); # lock wieder freigeben
+    return undef;
+  }
+  print KWRITE "-----BEGIN CERTIFICATE-----\n";
+  print KWRITE $pubkey;
+  print KWRITE "-----END CERTIFICATE-----\n";
+  close(KWRITE);
+
+
   # signieren
   ($dateiname,$laenge_nutz)=$self->sig($dateiname,$sig_flag);
   if ($laenge_nutz == 0) {
@@ -245,15 +245,18 @@ sub new {
       $ERROR= "Nutzdaten konnten nicht signiert werden.\nBitte Passwort prüfen $!";
       $ERROR= "Nutzdaten konnten nicht signiert werden.\n$dateiname" if($dateiname ne 'test_enc.sig');
     }
-      return undef;
+    $h->release_lock("EDI"); # lock wieder freigeben
+    return undef;
   }
   # verschlüsseln
   ($dateiname,$laenge_nutz)=$self->enc($dateiname,$schl_flag);
   if ($laenge_nutz == 0) {
     $ERROR= "Nutzdaten konnten nicht verschlüsselt werden.\n$dateiname\nBitte OpenSSL Installation prüfen \n$!\n";
+    $h->release_lock("EDI"); # lock wieder freigeben
     return undef;
   }
 
+  $h->release_lock("EDI"); # lock wieder freigeben
   return $self;
 }
 
@@ -708,7 +711,6 @@ sub SLLA_BES {
 
 sub UNH {
   # generiert UNH Segment
-  # generiert nach Datum Version 5 oder Version 6
 
   my $self=shift;
 
@@ -870,9 +872,10 @@ sub SLLA {
     $erg .= $self->SLLA_HEL($leisttag);$lfdnr++;
 
     # EHB Segmente generieren
-    $l->leistungsdaten_such_rechnr("*",$rechnr." and DATUM=$leisttag");
+    $l->leistungsdaten_such_rechnr("*",$rechnr." and DATUM=$leisttag order by ID");
     
     while (my @leistdat=$l->leistungsdaten_such_rechnr_next()) {
+      my $txt_kz=0; # Kennzeichen, ob schon txt Segment generiert wurde
       $leistdat[5]=substr($leistdat[5],0,5); # nur HH:MM aus Ergebniss
       $leistdat[6]=substr($leistdat[6],0,5); # nur HH:MM aus Ergebniss
 
@@ -899,14 +902,6 @@ sub SLLA {
 	  $anzahl++ if ($anzahl*$fuerzeit < $dauer);
 	}
       } 
-#      elsif (($l->leistungsart_pruef_zus($leistdat[1],'SAMSTAG') ||
-#		$l->leistungsart_pruef_zus($leistdat[1],'NACHT')) &&
-#	       $d->ist_saona($datum_jmt,$leistdat[5]) &&
-#	       $d->wotagnummer($datum_jmt) < 7) {
-#      elsif ($leistdat[5] ne '00:00' && $leistdat[6] ne '00:00') {
-#      elsif ($zeit_von || $zeit_bis) {
-	# Zeiten übertragen also hier nix tun
-#      } 
       else {
 	# Zeiten ggf. übertragen
 	($leistdat[5],$leistdat[6])=($zeit_von,$zeit_bis);
@@ -960,6 +955,7 @@ sub SLLA {
 	  $lfdnr++;
 	  # Text mit ausgeben
 	  $erg .= $self->SLLA_TXT($bez);$lfdnr++;
+	  $txt_kz++;
 	} elsif ($leistdat[1] =~ /^\d{1,3}$/) {
 	  $erg .= $self->SLLA_EHB($leistdat[1],
 				  $leistdat[10],
@@ -979,7 +975,7 @@ sub SLLA {
       
       
       # b. Begründungstexte ausgeben
-      if ($leistdat[3] ne '') { # Begründung ausgeben
+      if ($leistdat[3] && !$txt_kz) { # Begründung ausgeben
 	$erg .= $self->SLLA_TXT($leistdat[3]);$lfdnr++;
 	# prüfen ob später DIA Segment ausgegeben werden muss
 	if ($leistdat[3] =~ /Attest/ && 
@@ -1246,6 +1242,9 @@ sub edi_rechnung {
   my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik);
   my $test_ind = $k->krankenkasse_test_ind($ik);
   return undef if (!defined($test_ind)); # ZIK nicht als Annahmestelle vorhanden
+
+  $h->get_lock("EDI"); # lock damit DTAUS Nummer nicht mehrfach vergeben wird
+
   my $datenaustauschref = $h->parm_unique('DTAUS'.$zik);
   my $schl_flag = $h->parm_unique('SCHL'.$zik);
   my $sig_flag = $h->parm_unique('SIG'.$zik);
@@ -1261,6 +1260,10 @@ sub edi_rechnung {
   }
   my $empf_physisch=$k->krankenkasse_empf_phys($zik);
   die "Physikalischer Empfänger konnte für ZIK: $zik nicht ermittelt werden\n" unless (defined($empf_physisch));
+
+
+  
+
   my $transref=$h->parm_unique('DTAUS'.$empf_physisch);
   $dateiname .= sprintf "%3.3u",substr((sprintf "%5.5u",$transref),2,3); # Transfernummer
   my $dateiname_orig = $dateiname;
@@ -1310,6 +1313,7 @@ sub edi_rechnung {
   $datenaustauschref=0 if($datenaustauschref > 99999);
   $h->parm_up('DTAUS'.$zik,$datenaustauschref);
   $h->parm_up('DTAUS'.$empf_physisch,$transref) if($empf_physisch != $zik);
+  $h->release_lock("EDI");
   return ($dateiname_orig,$erstell_auf,$erstell_nutz);
 }
 
