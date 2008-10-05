@@ -6,7 +6,7 @@
 
 # Auswahl einer Frau aus den Stammdaten
 
-# $Id: frauenauswahl.pl,v 1.14 2008-05-19 17:48:24 thomas_baum Exp $
+# $Id: frauenauswahl.pl,v 1.15 2008-10-05 13:19:04 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -180,8 +180,8 @@ if (defined($suchen)) {
     # Krankenkassen Infos holen
     if ($f_fk_krankenkasse != 0) {
       ($kk_ik,$kk_name,$kk_plz,$kk_ort,$kk_strasse) =
-	 $k->krankenkasse_ik('IK,NAME,PLZ_HAUS,ORT,STRASSE',$f_fk_krankenkasse);
-      $kk_strasse = '' if (!defined($kk_strasse));
+	 $k->krankenkasse_sel('IK,NAME,PLZ_HAUS,ORT,STRASSE',$f_fk_krankenkasse);
+      $kk_strasse = '' if (!$kk_strasse);
     } else {
       ($kk_ik,$kk_name,$kk_plz,$kk_ort,$kk_strasse) = ('','','','','');
     }
