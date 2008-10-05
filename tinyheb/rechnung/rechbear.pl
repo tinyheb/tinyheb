@@ -5,7 +5,7 @@
 
 # Rechnungen bearbeiten
 
-# $Id: rechbear.pl,v 1.11 2008-05-22 17:23:53 thomas_baum Exp $
+# $Id: rechbear.pl,v 1.12 2008-10-05 13:48:09 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -36,20 +36,20 @@ use Heb_datum;
 use Heb_leistung;
 
 my $q = new CGI;
-my $s = new Heb_stammdaten;
-my $d = new Heb_datum;
-my $l = new Heb_leistung;
+our $s = new Heb_stammdaten;
+our $d = new Heb_datum;
+our $l = new Heb_leistung;
 
 my $debug=1;
 
-my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
+our $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 
-my $speichern = $q->param('Speichern');
+our $speichern = $q->param('Speichern');
 
-my $auswahl = $q->param('auswahl') || 'Anzeigen';
-my $abschicken = $q->param('abschicken');
-my $sel_status = $q->param('sel_status') || 'ungleich erl.';
-my $func = $q->param('func') || 0;
+our $auswahl = $q->param('auswahl') || 'Anzeigen';
+our $abschicken = $q->param('abschicken');
+our $sel_status = $q->param('sel_status') || 'ungleich erl.';
+our $func = $q->param('func') || 0;
 
 print $q->header ( -type => "text/html", -expires => "-1d");
 
@@ -110,7 +110,7 @@ print '</td></tr>';
 
 print '<tr><td>';
 # die wirklichen Infos kommen aus einem Programm
-print "<iframe src='../blank.html' name='list_rech' width='950' height='250' scrolling='yes' frameborder='1' align='left'>";
+print "<iframe src='about:blank' name='list_rech' width='950' height='250' scrolling='yes' frameborder='1' align='left'>";
 print "</iframe>";
 print '</td></td>';
 
