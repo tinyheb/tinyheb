@@ -5,7 +5,7 @@
 
 # Rechnungen bearbeiten für einzelne Rechnungen
 
-# $Id: rechposbear.pl,v 1.17 2008-05-22 17:24:55 thomas_baum Exp $
+# $Id: rechposbear.pl,v 1.18 2008-10-05 13:49:41 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -39,26 +39,26 @@ use Heb_krankenkassen;
 use Heb;
 
 my $q = new CGI;
-my $s = new Heb_stammdaten;
-my $d = new Heb_datum;
-my $l = new Heb_leistung;
-my $k = new Heb_krankenkassen;
-my $h = new Heb;
+our $s = new Heb_stammdaten;
+our $d = new Heb_datum;
+our $l = new Heb_leistung;
+our $k = new Heb_krankenkassen;
+our $h = new Heb;
 
 my $debug=1;
-my $script='';
-my $hint='';
+our $script='';
+our $hint='';
 
-my $TODAY = $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
-my $TODAY_jmt = sprintf "%4.4u%2.2u%2.2u",Today();
+our $TODAY = $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
+our $TODAY_jmt = sprintf "%4.4u%2.2u%2.2u",Today();
 my @aus = ('Ändern');
 
-my $rechnungsnr = $q->param('rechnungsnr') || 'NULL';
-my $mahn_datum = $q->param('mahn_datum') || '';
-my $zahl_datum = $q->param('zahl_datum') || '';
-my $betraggez = $q->param('betraggez') || 0;
+our $rechnungsnr = $q->param('rechnungsnr') || 'NULL';
+our $mahn_datum = $q->param('mahn_datum') || '';
+our $zahl_datum = $q->param('zahl_datum') || '';
+our $betraggez = $q->param('betraggez') || 0;
 
-my $ignore = $q->param('ignore') || 0;
+our $ignore = $q->param('ignore') || 0;
 my $abschicken = $q->param('abschicken');
 my $stornieren = $q->param('stornieren');
 my $func = $q->param('func') || 0;
@@ -68,7 +68,7 @@ print $q->header ( -type => "text/html", -expires => "-1d");
 
 # Daten holen
 $l->rechnung_such("RECHNUNGSNR,DATE_FORMAT(RECH_DATUM,'%d.%m.%Y'),DATE_FORMAT(MAHN_DATUM,'%d.%m.%Y'),DATE_FORMAT(ZAHL_DATUM,'%d.%m.%Y'),BETRAG,STATUS,BETRAGGEZ,FK_STAMMDATEN,IK","RECHNUNGSNR=$rechnungsnr");
-my ($r_rechnr,$r_rech_datum,$r_mahn_datum,$r_zahl_datum,$r_betrag,$r_status,$r_betraggez,$r_fk_st,$r_ik)=$l->rechnung_such_next();
+our ($r_rechnr,$r_rech_datum,$r_mahn_datum,$r_zahl_datum,$r_betrag,$r_status,$r_betraggez,$r_fk_st,$r_ik)=$l->rechnung_such_next();
 $r_rechnr='' unless (defined($r_rechnr));
 $r_rech_datum='' unless (defined($r_rech_datum));
 $r_betrag=0 unless (defined($r_betrag));
@@ -134,7 +134,7 @@ $g_preis = sprintf "%.2f",$r_betraggez;
 $g_preis =~ s/\./,/g;
 print "<td><input type='text' class='disabled' style='text-align:right' disabled name='r_betraggez' value='$g_preis' size='7'></td>";
 # Name Krankenkasse holen
-my ($name)=$k->krankenkasse_ik("NAME",$r_ik);
+my ($name)=$k->krankenkasse_sel("NAME",$r_ik);
 $name = '' unless (defined($name));
 print "<td><input type='text' class='disabled' disabled name='krankenkasse' value='$name' size='40'></td>";
 print '</tr>';
