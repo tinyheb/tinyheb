@@ -1,6 +1,6 @@
 /* script für Plausiprüfungen im Rahmen der Feiertagserfassung
 
-# $Id: feiertage.js,v 1.6 2008-05-19 17:46:52 thomas_baum Exp $
+# $Id: feiertage.js,v 1.7 2008-10-05 13:17:14 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -43,8 +43,8 @@ function feiertag_speicher(formular) {
 function next_satz(formular) {
 	var id = 0;
 	id = new Number(formular.id_feiertag.value);	
-	id++;
-//	alert("naechster Satz"+formular+id);
+	//	id++;
+	//	alert("naechster Satz"+formular+id);
 	if (formular.auswahl.value == 'Anzeigen') {
 		open("feiertagserfassung.pl?func=1&id_feiertag="+id,"_top");
 	} else {
@@ -55,8 +55,8 @@ function next_satz(formular) {
 function prev_satz(formular) {
 	var id = 0;
 	id = new Number(formular.id_feiertag.value);	
-	id--;
-//	alert("naechster Satz"+formular+id);
+	//	id--;
+	//	alert("naechster Satz"+formular+id);
 	if (formular.auswahl.value == 'Anzeigen') {
 		open("feiertagserfassung.pl?func=2&id_feiertag="+id,"_top");
 	} else {
