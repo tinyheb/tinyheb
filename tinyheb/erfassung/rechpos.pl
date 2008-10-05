@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.48 2008-09-29 15:48:36 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.49 2008-10-05 13:33:14 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -27,6 +27,8 @@
 
 use strict;
 
+#no warnings qw(redefine);
+
 use lib "../";
 #use Devel::Cover -silent => 'On';
 
@@ -42,40 +44,40 @@ use Heb_GO;
 use Heb;
 
 my $q = new CGI;
-my $s = new Heb_stammdaten;
-my $d = new Heb_datum;
-my $l = new Heb_leistung;
-my $h = new Heb;
+our $s = new Heb_stammdaten;
+our $d = new Heb_datum;
+our $l = new Heb_leistung;
+our $h = new Heb;
 
 my $debug=1;
-my $script='';
-my $hint='';
-my $hscript='';
+our $script='';
+our $hint='';
+our $hscript='';
 
-my $TODAY = $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
-my $TODAY_jmt = sprintf "%4.4u%2.2u%2.2u",Today();
+our $TODAY = $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
+our $TODAY_jmt = sprintf "%4.4u%2.2u%2.2u",Today();
 my @aus = ('Neu','Ändern');
 
-my $frau_id = $q->param('frau_id') || 0;
-my $posnr = $q->param('posnr') || '';
-my $begruendung = $q->param('begruendung') || '';
-my $datum = $q->param('datum') || $TODAY;
+our $frau_id = $q->param('frau_id') || 0;
+our $posnr = $q->param('posnr') || '';
+our $begruendung = $q->param('begruendung') || '';
+our $datum = $q->param('datum') || $TODAY;
 #$datum = $d->convert_tmj($datum);
-my $zeit_von = $q->param('zeit_von') || '';
+our $zeit_von = $q->param('zeit_von') || '';
 $zeit_von = $d->convert_zeit($zeit_von);
-my $zeit_bis = $q->param('zeit_bis') || '';
+our $zeit_bis = $q->param('zeit_bis') || '';
 $zeit_bis = $d->convert_zeit($zeit_bis);
-my $dia_schl = $q->param('dia_schl') || '';
-my $dia_text = $q->param('dia_text') || '';
-my $entfernung_tag = $q->param('entfernung_tag') || 0;
-my $entfernung_nacht = $q->param('entfernung_nacht') || 0;
-my $leist_id = $q->param('leist_id') || 0;
-my $anzahl_frauen = $q->param('anzahl_frauen') || 1;
-my $strecke = $q->param('strecke') || 'gesamt';
-my $abschicken = $q->param('abschicken');
-my $anzahl_kurse = $q->param('anzahl_kurse');
-my $auswahl = $q->param('auswahl') || 'Anzeigen';
-my $func = $q->param('func') || 0;
+our $dia_schl = $q->param('dia_schl') || '';
+our $dia_text = $q->param('dia_text') || '';
+our $entfernung_tag = $q->param('entfernung_tag') || 0;
+our $entfernung_nacht = $q->param('entfernung_nacht') || 0;
+our $leist_id = $q->param('leist_id') || 0;
+our $anzahl_frauen = $q->param('anzahl_frauen') || 1;
+our $strecke = $q->param('strecke') || 'gesamt';
+our $abschicken = $q->param('abschicken');
+our $anzahl_kurse = $q->param('anzahl_kurse');
+our $auswahl = $q->param('auswahl') || 'Anzeigen';
+our $func = $q->param('func') || 0;
 
 print $q->header ( -type => "text/html", -expires => "-1d");
 
@@ -461,6 +463,9 @@ sub speichern {
     return $hint;
   }
   
+
+  # Zukunft Plausi
+#  return $hint .= $hebgo->zukunft_plausi if ($hebgo->zukunft_plausi);
   
   # Leistungstyp Plausi
   return $hint .= $hebgo->ltyp_plausi if ($hebgo->ltyp_plausi);
