@@ -5,7 +5,7 @@
 
 # Daten der Datenannahmestellen erfassen, ändern, löschen
 
-# $Id: da_stammdaten.pl,v 1.5 2008-05-19 17:45:08 thomas_baum Exp $
+# $Id: da_stammdaten.pl,v 1.6 2008-10-05 13:54:03 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -38,8 +38,8 @@ use Heb;
 
 my $q = new CGI;
 my $d = new Heb_datum;
-my $h = new Heb;
-my $k = new Heb_krankenkassen;
+our $h = new Heb;
+our $k = new Heb_krankenkassen;
 
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my $TODAY_tmj = $d->convert_tmj($TODAY);
@@ -49,13 +49,13 @@ my @schl_typ = ('keine Verschlüsselung','PKCS#7');
 my @sig_typ=('keine Signatur','PKCS#7');
 my @da=$k->da_such();
 
-my $ik_nummer = $q->param('ik_nummer');
+our $ik_nummer = $q->param('ik_nummer');
 $ik_nummer=$da[1] unless (defined($ik_nummer));
-my $ik = $q->param('ik') || '0';
-my $mail = $q->param('mail') || '';
-my $dtaus = $q->param('dtaus') || '0';
-my $schl = $q->param('schl') || '03';
-my $sig = $q->param('sig') || '00';
+our $ik = $q->param('ik') || '0';
+our $mail = $q->param('mail') || '';
+our $dtaus = $q->param('dtaus') || '0';
+our $schl = $q->param('schl') || '03';
+our $sig = $q->param('sig') || '00';
 
 my $abschicken = $q->param('abschicken');
 
