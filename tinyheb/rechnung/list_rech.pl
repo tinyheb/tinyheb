@@ -5,7 +5,7 @@
 
 # erfasste Rechnungen ausgeben
 
-# $Id: list_rech.pl,v 1.15 2008-07-20 17:02:01 thomas_baum Exp $
+# $Id: list_rech.pl,v 1.16 2008-10-05 13:43:21 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -70,8 +70,8 @@ while (my @erg=$l->rechnung_such_next()) {
     print '<tr>';
     print "<td style='width:50pt;margin-left:0em;margin-right:0em'>";
 #    print "<td style='margin-left:0em;margin-right:0em'>";
-    print "<input style='width:50pt;font-size:8pt' type='button' name='bearb' value='Bearbeiten' onclick='bearb_rech($erg[0],$erg[5]);'></td>\n";
-    print "<td style='width:50pt;margin-left:0em;margin-right:0em'><input style='font-size:8pt' type='button' name='anseh' value='Ansehen' onclick='anseh_rech($erg[0],$erg[5]);'></td>\n";
+    print "<input style='font-size:8pt;padding-left:1pt;padding-right:0pt' type='button' name='bearb' value='Bearbeiten' onclick='bearb_rech($erg[0],$erg[5]);'></td>\n";
+    print "<td style='width:50pt;padding-left:3pt'><input style='font-size:8pt;padding-left:1pt;padding-right:1pt' type='button' name='anseh' value='Ansehen' onclick='anseh_rech($erg[0],$erg[5]);'></td>\n";
     
     print "<td style='width:35pt;text-align:right'>$erg[0]</td>"; # Rechnungsnr
     my $aus_ref='';
@@ -81,7 +81,7 @@ while (my @erg=$l->rechnung_such_next()) {
     my @erg_frau=$s->stammdaten_frau_id($erg[7]);
     print "<td style='width:100pt;text-align:left;padding:2pt'>$erg_frau[1], $erg_frau[0]</td>"; # Name Frau
     # Name Krankenkasse holen
-    my ($name)=$k->krankenkasse_ik("NAME",$erg[8]);
+    my ($name)=$k->krankenkasse_sel("NAME",$erg[8]);
     if (!(defined($name))) {
       $name = 'unbekannt';
       $name='Privat Rechnung' if ($erg_frau[12] eq 'privat');
