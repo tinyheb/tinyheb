@@ -5,7 +5,7 @@
 
 # Mahnungen generieren und drucken
 
-# $Id: mahnung_generierung.pl,v 1.8 2008-05-22 17:22:16 thomas_baum Exp $
+# $Id: mahnung_generierung.pl,v 1.9 2008-10-05 13:45:46 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -170,7 +170,7 @@ print '</tr>';
 
 print "<tr><td>\n";
 print "<iframe src='mahnung.pl?frau_id=$frau_id&rechnr=$rechnr' name='mahnung' width='880' height='550' scrolling='auto' frameborder='1'>" if ($rechnr > 0);
-print "<iframe src='../blank.html' name='mahnung' width='880' height='550' scrolling='yes' frameborder='1'>" if ($rechnr == 0);
+print "<iframe src='about:blank' name='mahnung' width='880' height='550' scrolling='yes' frameborder='1'>" unless ($rechnr);
 print "</iframe>";
 print "</td></tr>\n";
 print "</table>\n";
