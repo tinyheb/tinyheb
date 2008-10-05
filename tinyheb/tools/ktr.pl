@@ -6,7 +6,7 @@
 # Einspielen der Kostenträgerdateien in tinyHeb Datenbank und
 # Ausgabe in GUI Fenster
 
-# $Id: ktr.pl,v 1.4 2007-07-27 18:55:15 baum Exp $
+# $Id: ktr.pl,v 1.5 2008-10-05 13:52:38 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
@@ -30,20 +30,23 @@ use strict;
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);
 use Date::Calc qw(Today);
+#use Cwd;
+
+#warn "aktuelles Verzeichnis",getcwd();
 
 use lib "../";
 use Heb;
 
-my $q = new CGI;
+our $q = new CGI;
 my $h = new Heb;
 
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 
-my $datei = $q->param('datei') || '';
-my $update = $q->param('update') || '';
+our $datei = $q->param('datei') || '';
+our $update = $q->param('update') || '';
 
 my $abschicken = $q->param('abschicken');
-my $hint='';
+our $hint='';
 
 
 if (defined($abschicken)) {
