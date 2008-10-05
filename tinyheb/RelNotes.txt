@@ -1,3 +1,34 @@
+nächste Release
+
+Neue Plausiprüfung: es können keine Rechnungsposten erfasst werden, die mehr als eine Woche in der Zukunft liegen.
+
+
+
+
+Release 1.1.0
+
+Bug fix: speichern des Privat Faktors in den Stammdaten funktionierte nicht.
+
+Aus xauftrag.pl lassen sich die Mail Einstellungen ändern und speichern
+
+Bug fix: Cursor springt nach Speichern von Rechnungsposten wieder ins Datumsfeld
+
+Bug fix: bei massiv paralleler Erfassung konnte es zu race-conditions kommen. Durch advisory locking verhindert.
+
+Teile der Packages um POD erweitert.
+
+Teile der Anwendung sind unter mod_perl2 lauffähig
+
+Quittierungsbögen lassen sich aus der Anwendung Drucken
+
+Bug fix: Knöpfe in der Auflistung alter Rechnungen und einzelner Rechnungsposten hatten je nach Browser nicht die optimale Größe
+
+Bug fix: es darf maximal ein TXT Segment pro Rechnungsposten übertragen werden
+
+Bug fix: nach Nutzung der neuen Gebührenordnung konnte es zu Rundungsfehlern kommen.
+
+
+
 Release 1.0.0
 
 Privat Faktor kann bei jeder Frau individuell vorgegeben werden
