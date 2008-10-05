@@ -3,7 +3,7 @@
 # erstellen der Auftragsdatei mit GUI für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
-# Id: $Id: xauftrag.pl,v 1.16 2008-07-20 16:56:23 thomas_baum Exp $
+# Id: $Id: xauftrag.pl,v 1.17 2008-10-05 13:16:12 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -32,6 +32,8 @@ use Tk::HList;
 use Tk::ItemStyle;
 use Tk::DialogBox;
 
+#use Data::Dumper;
+
 use Mail::Sender;
 use File::stat;
 use File::Copy;
@@ -58,6 +60,8 @@ my $h = new Heb;
 my $l = new Heb_leistung;
 my $k = new Heb_krankenkassen;
 my $s = new Heb_stammdaten;
+
+my $tl; # fenster für Einstellungen
 
 my %prov=();
 my @provider =();
@@ -120,7 +124,7 @@ $bearbeiten->command(
 		    );
 $bearbeiten->command(
 		     -label => 'Einstellungen Speichern',
-		     -command => \&einstellungen,
+		     -command => \&einstellungen_speichern,
 		    );
 
 my $h_frame = $mw->Frame();
@@ -200,14 +204,18 @@ $z2_prov_f->Label(-text => 'Mail Provider')->pack(-side => 'top',
 						  -anchor => 'w');
 
 #my $prov = $z1_prov_f->BrowseEntry(#-label => 'Mail Server',
-my $prov = $z2_prov_f->BrowseEntry(#-label => 'Mail Server',
-				   -variable => \$prov_sel,
-				   -choices => \@provider,
+#my $prov_entry = $z2_prov_f->BrowseEntry(#-label => 'Mail Server',
+#				   -variable => \$prov_sel,
+#				   -choices => \@provider,
 #				   -background => 'white',
-				   -browsecmd => \&prov_neu,
-				   -state => 'readonly')->pack(-side => 'left',
-							       -anchor => 'w',
-							      );
+#				   -browsecmd => \&prov_neu,
+#				   -state => 'readonly')->pack(-side => 'left',
+#							       -anchor => 'w',
+#
+#							      );
+
+my $prov_entry;
+paint_prov_entry();
 
 HebLabEntry($z1_prov_f,'Benutzer Name',
 	    {-textvariable => \$user_sel,
@@ -418,13 +426,16 @@ sub fehler {
 }
 
 
-sub einstellungen {
-  $mw->messageBox(-title => 'NYI',
+sub hinweis {
+  my ($text)=@_;
+  $mw->messageBox(-title => 'Hinweis',
 		  -type => 'OK',
-		  -message => "leider noch nicht implementiert\n",
+		  -message => "$text\n",
 		  -default => 'OK'
 		 );
 }
+
+
 
 
 sub fill_hlist {
@@ -435,7 +446,7 @@ sub fill_hlist {
   while (my @erg=$l->rechnung_such_next()) {
     my @erg_frau=$s->stammdaten_frau_id($erg[3]);
     # Daten zur Krankenkasse holen
-    my ($name_kk)=$k->krankenkasse_ik("KNAME",$erg[4]);
+    my ($name_kk)=$k->krankenkasse_sel("KNAME",$erg[4]);
     my ($ktr,$da)=$k->krankenkasse_ktr_da($erg[4]);
     my $test_ind = $k->krankenkasse_test_ind($erg[4]);
     my ($name_da)=$k->krankenkasse_sel("KNAME",$da);
@@ -502,4 +513,108 @@ sub get_sig_pass {
 	  -show => '*',
 	  -width => 40)->pack(-side => 'bottom',-anchor => 'w');
   my $answer=$db->Show();
+}
+
+
+sub einstellungen {
+  if (!Exists($tl)) {
+    $tl = $mw->Toplevel();
+    $tl->title("Einstellungen");
+
+    my @einst_provider=();
+    my @einst_name=();
+    my @einst_from=();
+    my @einst_pass=();
+    my $i=0;
+
+    my $line_f2 = $tl->Frame()->pack(-side => 'bottom');
+
+    foreach my $p (@provider) {
+      push @einst_provider,$p;
+#      print "PROV $p\n";
+      push @einst_name,$prov{$p}{user_name};
+      push @einst_from,$prov{$p}{user_from};
+      push @einst_pass,$prov{$p}{user_pass};
+      
+      my $line_f = $tl->Frame(
+			      # -borderwidth => 3,
+			      # -relief => 'raised'
+			     )->pack(-side => 'top',
+				     -anchor => 'n',
+				     -expand => 1,
+				     -fill => 'both');
+
+      my $state='normal';
+      $state = 'disabled' if ($einst_provider[$i] eq 'localhost');
+      HebLabEntry($line_f,"Mailserver/ Provider $i",
+		  {-textvariable => \$einst_provider[$i],
+		   -state => $state,
+		   -width => 20})->pack(-side => 'left');
+      
+      HebLabEntry($line_f,'Benutzer Name',
+		  {-textvariable => \$einst_name[$i],
+		   -width => 25})->pack(-side => 'left');
+
+      HebLabEntry($line_f,'From',
+		  {-textvariable => \$einst_from[$i],
+		   -width => 30})->pack(-side => 'left');
+
+      HebLabEntry($line_f,'Passwort',
+		  {-textvariable => \$einst_pass[$i],
+		   -show => '*',
+		   -width => 10})->pack(-side => 'left');
+      $i++;
+    }
+
+    $line_f2->Button(-text => "Einstellungen übernehmen und Schließen",
+		-command => sub {$tl->withdraw;
+				 my $x=0;
+				 while ($x < $i) {
+				   $provider[$x]=$einst_provider[$x];
+				   $prov{$einst_provider[$x]}{mailserver}=$einst_provider[$x];
+				   $prov{$einst_provider[$x]}{user_name}=$einst_name[$x];
+				   $prov{$einst_provider[$x]}{user_from}=$einst_from[$x];
+				   $prov{$einst_provider[$x]}{user_pass}=$einst_pass[$x];
+				   print $provider[$x],"\n";
+				   $x++;
+				 }
+				 $prov_sel=$provider[0];
+				 prov_neu();
+				 $prov_entry->packForget;
+				 paint_prov_entry();})->pack(-side => 'left');
+    $line_f2->Button(-text => "Abbrechen",
+		-command => sub{$tl->destroy;})->pack(-side => 'left');
+
+  } else {
+    $tl->deiconify();
+    $tl->raise();
+  }
+  
+}
+
+
+sub paint_prov_entry {
+  $prov_entry = $z2_prov_f->BrowseEntry(#-label => 'Mail Server',
+					-variable => \$prov_sel,
+					-choices => \@provider,
+					# -background => 'white',
+					-browsecmd => \&prov_neu,
+					-state => 'readonly')->pack(-side => 'left',
+                                                               -anchor => 'w',
+                                                              );
+
+}
+
+sub einstellungen_speichern {
+  # in Datei speichern
+  unless (open RC,">$path/.xauftragrc") {
+    hinweis("FEHLER: Einstellungen konnten nicht gespeichert werden\n$!");
+    return;
+  }
+
+  foreach my $p (@provider) {
+    print RC $p,"\t",$prov{$p}{user_name},"\t",$prov{$p}{user_from},"\t",$prov{$p}{user_pass},"\n" if ($p ne 'localhost');
+  }
+  close RC;
+  hinweis("Einstellungen erfolgreich gespeichert");
 }
