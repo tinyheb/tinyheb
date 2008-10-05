@@ -5,7 +5,7 @@
 
 # Feiertag erfassen, ändern, löschen
 
-# $Id: feiertagserfassung.pl,v 1.12 2008-05-19 17:47:45 thomas_baum Exp $
+# $Id: feiertagserfassung.pl,v 1.13 2008-10-05 13:18:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -34,7 +34,7 @@ use lib "../";
 use Heb_datum;
 
 my $q = new CGI;
-my $d = new Heb_datum;
+our $d = new Heb_datum;
 
 my $debug=1;
 
@@ -42,16 +42,16 @@ my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
 my @bund = ('Bundesweit',$d->bundeslaender);
 
-my $feiertag_id = $q->param('id_feiertag') || '0';
-my $name = $q->param('name_feiertag') || '';
-my $bundesland = $q->param('bund_feiertag') || '';
-my $datum = $q->param('datum_feiertag') || '';
+our $feiertag_id = $q->param('id_feiertag') || '0';
+our $name = $q->param('name_feiertag') || '';
+our $bundesland = $q->param('bund_feiertag') || '';
+our $datum = $q->param('datum_feiertag') || '';
 
 my $speichern = $q->param('Speichern');
 
 my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
-my $func = $q->param('func') || 0;
+our $func = $q->param('func') || 0;
 
 hole_feiertag_daten() if ($func == 1 || $func == 2);
 if (($auswahl eq 'Ändern') && defined($abschicken)) {
@@ -205,22 +205,10 @@ sub aendern {
 
 
 sub hole_feiertag_daten {
-  $feiertag_id = $d->max if ($feiertag_id > $d->max);
-  $name='';
-  while (!defined($name) ||  $name eq '') {
-    ($name,$bundesland,$datum)= $d->feiertag_feier_id($feiertag_id);
-    if (!defined($name)) {
-      if ($feiertag_id <= 0) {
-	$feiertag_id = 0;
-	$name = '';
-	$bundesland = '';
-	$datum = '';
-	return;
-      }
-      $feiertag_id++ if ($func == 1);
-      $feiertag_id-- if ($func == 2);
-    }
-  }
+  
+  $feiertag_id = $d->feiertag_next_id($feiertag_id) if ($func==1);
+  $feiertag_id = $d->feiertag_prev_id($feiertag_id) if ($func==2);
+  ($name,$bundesland,$datum)= $d->feiertag_feier_id($feiertag_id);
   $name = '' unless ($name);
   $bundesland = '' unless($bundesland);
   $datum = '' unless($datum);
