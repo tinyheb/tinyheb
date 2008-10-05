@@ -4,7 +4,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.54 2008-09-29 15:49:19 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.55 2008-10-05 13:46:55 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -27,6 +27,8 @@
 use lib "../";
 #use Devel::Cover -silent => 'On';
 
+#no warnings qw(redefine);
+
 use PostScript::Simple;
 use Date::Calc qw(Today);
 use strict;
@@ -39,27 +41,29 @@ use Heb_krankenkassen;
 use Heb_leistung;
 use Heb_datum;
 
-my $s = new Heb_stammdaten;
-my $k = new Heb_krankenkassen;
-my $l = new Heb_leistung;
-my $d = new Heb_datum;
-my $h = new Heb;
+our $s = new Heb_stammdaten;
+our $k = new Heb_krankenkassen;
+our $l = new Heb_leistung;
+our $d = new Heb_datum;
+our $h = new Heb;
 
 my $q = new CGI;
 
-my @kinder = ('Einlinge','Zwillinge','Drillinge','Vierlinge');
-my $frau_id = $q->param('frau_id') || -1;
+our @kinder = ('Einlinge','Zwillinge','Drillinge','Vierlinge');
+our $frau_id = $q->param('frau_id') || -1;
 #my $frau_id = $ARGV[0] || 6;
-my $seite=1;
-my $rechnungsnr = 1+($h->parm_unique('RECHNR'));
-my $datum = $ARGV[2] || $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
-my $speichern = $q->param("speichern") || '';
-my $posnr=-1;
-my $heb_bundesland = $h->parm_unique('HEB_BUNDESLAND') || 'NRW';
+our $seite=1;
+our $speichern = $q->param("speichern") || '';
+$h->get_lock("RECHNR") if ($speichern eq 'save'); # rechnr sperren
+our $rechnungsnr = 1+($h->parm_unique('RECHNR'));
+our $datum = $ARGV[2] || $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
+
+our $posnr=-1;
+our $heb_bundesland = $h->parm_unique('HEB_BUNDESLAND') || 'NRW';
 
 
 # zunächst daten der Frau holen
-my ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
+our ($vorname,$nachname,$geb_frau,$geb_kind,$plz,$ort,$tel,$strasse,
     $anz_kinder,$entfernung_frau,$kv_nummer,$kv_gueltig,$versichertenstatus,
     $ik_krankenkasse,$naechste_hebamme,
     $begruendung_nicht_nae_heb,
@@ -69,7 +73,7 @@ $entfernung_frau =~ s/\./,/g;
 $plz = sprintf "%5.5u",$plz;
 
 
-my  ($name_krankenkasse,
+our ($name_krankenkasse,
      $kname_krankenkasse,
      $plz_krankenkasse,
      $plz_post_krankenkasse,
@@ -88,18 +92,18 @@ $plz_krankenkasse = sprintf "%5.5u",$plz_krankenkasse;
 $plz_post_krankenkasse = sprintf "%5.5u",$plz_post_krankenkasse;
 
 
-my $font ="Helvetica-iso";
-my $font_b = "Helvetica-Bold-iso";
-my $y_font = 0.410;
+our $font ="Helvetica-iso";
+our $font_b = "Helvetica-Bold-iso";
+our $y_font = 0.410;
 
-my $p = new PostScript::Simple(papersize => "A4",
+our $p = new PostScript::Simple(papersize => "A4",
 #			       color => 1,
 			       eps => 0,
 			       units => "cm",
 			       reencode => "ISOLatin1Encoding");
 
-my $x1=2;
-my $y1=0;
+our $x1=2;
+our $y1=0;
 
 $p->newpage;
 wasserzeichen();
@@ -283,6 +287,7 @@ if ($speichern eq 'save') {
   rech_up('C');
   rech_up('D');
   rech_up('M');
+  $h->release_lock("RECHNR");
 }
 
 #-----------------------------------------------------------------
