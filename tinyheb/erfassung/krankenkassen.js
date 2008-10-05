@@ -1,10 +1,10 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Krankenkassenerfassung
 
-# $Id: krankenkassen.js,v 1.9 2008-05-19 17:50:30 thomas_baum Exp $
+# $Id: krankenkassen.js,v 1.10 2008-10-05 13:19:39 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
