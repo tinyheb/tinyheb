@@ -5,7 +5,7 @@
 
 # Krankenkassen erfassen, ändern, löschen
 
-# $Id: krankenkassenerfassung.pl,v 1.18 2008-05-19 17:51:26 thomas_baum Exp $
+# $Id: krankenkassenerfassung.pl,v 1.19 2008-10-05 13:20:29 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -35,7 +35,7 @@ use Heb_krankenkassen;
 use Heb_datum;
 
 my $q = new CGI;
-my $k = new Heb_krankenkassen;
+our $k = new Heb_krankenkassen;
 my $d = new Heb_datum;
 
 my $debug=1;
@@ -44,28 +44,28 @@ my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
 my @bund = ('NRW','Bayern','Rheinlandpfalz','Hessen');
 
-my $name = $q->param('name_krankenkasse') || '';
-my $kname = $q->param('kname_krankenkasse') || '';
-my $asp_tel = $q->param('asp_tel_krankenkasse') || '';
-my $asp_name = $q->param('asp_name_krankenkasse') || '';
-my $strasse = $q->param('strasse_krankenkasse') || '';
-my $plz_haus = $q->param('plz_haus_krankenkasse') || '';
-my $plz_post = $q->param('plz_post_krankenkasse') || '';
-my $ort = $q->param('ort_krankenkasse') || '';
-my $ik = $q->param('ik_krankenkasse') || 0;
-my $zik = $q->param('zik_krankenkasse') || '';
-my $zik_typ = $q->param('zik_typ') || 0;
-my $postfach = $q->param('postfach_krankenkasse') || '';
-my $bemerkung = $q->param('bemerkung_krankenkasse') || '';
-my $beleg_ik = $q->param('beleg_ik') || '';
-my $email = $q->param('email') || '';
-my $pubkey = '';
+our $name = $q->param('name_krankenkasse') || '';
+our $kname = $q->param('kname_krankenkasse') || '';
+our $asp_tel = $q->param('asp_tel_krankenkasse') || '';
+our $asp_name = $q->param('asp_name_krankenkasse') || '';
+our $strasse = $q->param('strasse_krankenkasse') || '';
+our $plz_haus = $q->param('plz_haus_krankenkasse') || '';
+our $plz_post = $q->param('plz_post_krankenkasse') || '';
+our $ort = $q->param('ort_krankenkasse') || '';
+our $ik = $q->param('ik_krankenkasse') || 0;
+our $zik = $q->param('zik_krankenkasse') || '';
+our $zik_typ = $q->param('zik_typ') || 0;
+our $postfach = $q->param('postfach_krankenkasse') || '';
+our $bemerkung = $q->param('bemerkung_krankenkasse') || '';
+our $beleg_ik = $q->param('beleg_ik') || '';
+our $email = $q->param('email') || '';
+our $pubkey = '';
 
 my $speichern = $q->param('Speichern');
 
 my $auswahl = $q->param('auswahl') || 'Anzeigen';
 my $abschicken = $q->param('abschicken');
-my $func = $q->param('func') || 0;
+our $func = $q->param('func') || 0;
 
 hole_krank_daten() if ($func == 1 || $func == 2 || $func == 3);
 if (($auswahl eq 'Ändern') && defined($abschicken)) {
@@ -296,16 +296,22 @@ sub aendern {
 
 sub hole_krank_daten {
   $name='';
-  my $ik_alt=$ik;
+
   $ik = $k->krankenkasse_next_ik($ik) if ($func==1);
   $ik = $k->krankenkasse_prev_ik($ik) if ($func==2);
-  $ik=$ik_alt if (!defined($ik));
+
   ($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$pubkey,$zik_typ,$beleg_ik,$email)= $k->krankenkassen_krank_ik($ik);
-  $kname = '' unless(defined($kname));
-  $name = '' unless(defined($name));
-  $strasse = '' unless(defined($strasse));
-  $postfach = '' unless(defined($postfach));
-  $bemerkung = '' unless(defined($bemerkung));
+
+  $ik = '' unless($ik);
+  $kname = '' unless($kname);
+  $name = '' unless($name);
+  $strasse = '' unless($strasse);
+  $ort = '' unless($ort);
+  $postfach = '' unless($postfach);
+  $asp_name = '' unless($asp_name);
+  $asp_tel = '' unless($asp_tel);
+  $bemerkung = '' unless($bemerkung);
+  $email = '' unless($email);
   $kname =~ s/'/&#145;/g;
   $name =~ s/'/&#145;/g;
   $strasse =~ s/'/&#145;/g;
