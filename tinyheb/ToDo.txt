@@ -1,4 +1,7 @@
 Offen:
+17.08.08
+Neues Zertifikat generieren, obwohl altes noch existiert.
+
 08.06.08
 Plausiprüfung vor/nach Geburtstermin, muss Hinweis kommen, ob man akzeptiert oder nicht
 
@@ -7,9 +10,6 @@ Kennzeichen in Krankenkassendaten, damit Werte einer einzelnen Kasse nicht übers
 
 09.02.08
 GUI für das Einlesen des eigenen Zertifikates
-
-26.01.08
-Feld privat-Faktor in die Stammdaten mit aufnehmen. Ist dies belegt gilt dieses, sonst der Default aus den Parametern
 
 13.12.07
 Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
@@ -42,6 +42,14 @@ eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
 ----------------------------------------------------------------
 Erledigt:
+14.09.08
+Leistungen können nicht Wochen/Monate/Jahre in der Zukunft erbracht werden. Anforderung vom 30.08.08
+
+
+17.08.08
+bei Materialien darf kein Begründungstext in der elektronischen Rechnung übermittelt werden. Anforderung vom 01.08.08
+
+
 25.07.08
 Feld privat-Faktor in die Stammdaten mit aufnehmen. Ist dies belegt gilt dieses, sonst der Default aus den Parametern. Anforderung vom 26.01.08
 
