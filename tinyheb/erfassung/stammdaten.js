@@ -4,7 +4,7 @@
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
-# $Id: stammdaten.js,v 1.23 2008-10-05 13:34:37 thomas_baum Exp $
+# $Id: stammdaten.js,v 1.24 2008-12-06 16:39:00 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # This program is free software; you can redistribute it and/or modify
@@ -158,9 +158,9 @@ function save_heb_stammdaten(formular) {
 
 
 function kvnr_check(kvnummer) {
-  re=/^\d{9,10}$/;
+  re=/^\d{9,12}$/;
   if (kvnummer.value != '' && !re.test(kvnummer.value)) {
-    alert("Bitte KV-Nummer 9 stellig numerisch erfassen");
+    alert("Bitte KV-Nummer maximal 12 stellig numerisch erfassen");
     kvnummer.focus();
     kvnummer.select();
     return false;

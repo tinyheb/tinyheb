@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.45 2008-10-05 13:41:56 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.46 2008-12-06 16:39:31 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -256,7 +256,7 @@ print '</tr>';
 print "\n";
 
 print '<tr id="zeile2_tab">';
-print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='10' maxlength='10' onChange='kvnr_check(this);'></td>";
+print "<td><input type='text' name='krankenversicherungsnummer' value='$kv_nummer' size='13' maxlength='12' onChange='kvnr_check(this);'></td>";
 print "<td><input type='text' name='krankenversicherungsnummer_gueltig' value='$kv_gueltig' size='4' maxlength='4' onChange='kvnr_gueltig_check(this)'></td>";
 # z4.2 s3
 print '<td>';
