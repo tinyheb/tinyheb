@@ -5,7 +5,7 @@
 
 # Krankenkassen erfassen, ändern, löschen
 
-# $Id: krankenkassenerfassung.pl,v 1.19 2008-10-05 13:20:29 thomas_baum Exp $
+# $Id: krankenkassenerfassung.pl,v 1.20 2008-12-07 16:10:55 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -42,7 +42,7 @@ my $debug=1;
 
 my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
 my @aus = ('Anzeigen','Ändern','Neu','Löschen');
-my @bund = ('NRW','Bayern','Rheinlandpfalz','Hessen');
+#my @bund = ('NRW','Bayern','Rheinlandpfalz','Hessen');
 
 our $name = $q->param('name_krankenkasse') || '';
 our $kname = $q->param('kname_krankenkasse') || '';
