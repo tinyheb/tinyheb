@@ -3,7 +3,7 @@
 # erstellen der Auftragsdatei mit GUI für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
-# Id: $Id: xauftrag.pl,v 1.17 2008-10-05 13:16:12 thomas_baum Exp $
+# Id: $Id: xauftrag.pl,v 1.18 2008-12-07 16:10:16 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -168,7 +168,7 @@ $z1_knp_f->Button(-text => 'Aktualisieren',
 
 # Checkboxen für --ignore --update
 my $cb_ignore = $z1_knp_f->Checkbutton(-text => 'ignore',
-				       -onvalue => '24',
+				       -onvalue => '29',
 				       -offvalue => '22',
 				       -variable => \$ignore);
 $cb_ignore->pack(-side => 'left',
