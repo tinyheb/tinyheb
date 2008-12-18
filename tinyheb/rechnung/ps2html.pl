@@ -4,7 +4,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.55 2008-10-05 13:46:55 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.56 2008-12-18 08:41:03 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -121,6 +121,10 @@ if ($versichertenstatus ne 'privat') {
     $betreff.="NRW";
   } elsif (uc $heb_bundesland eq 'BAYERN') {
     $betreff.="Bayern";
+  } elsif (uc $heb_bundesland eq 'BERLIN') {
+    $betreff.="Berlin";
+  } elsif (uc $heb_bundesland eq 'BRANDENBURG') {
+    $betreff.="Brandenburg";
   } elsif (uc $heb_bundesland eq 'NIEDERSACHSEN') {
     $betreff.="Niedersachsen";
   } elsif (uc $heb_bundesland eq 'HESSEN') {

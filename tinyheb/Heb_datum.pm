@@ -1,6 +1,6 @@
 # Package um Datümer zu verarbeiten
 
-# $Id: Heb_datum.pm,v 1.26 2008-10-03 13:08:04 thomas_baum Exp $
+# $Id: Heb_datum.pm,v 1.27 2008-12-18 08:42:12 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -58,7 +58,7 @@ sub new {
   my($class) = @_;
   my $self = {};
 
-  push @{$self->{BUNDESLAENDER}},'NRW','Bayern','Hessen','Niedersachsen','Hamburg','Rheinland-Pfalz','Thüringen','Sachsen-Anhalt','Sachsen';
+  push @{$self->{BUNDESLAENDER}},'NRW','Berlin','Bayern','Hessen','Niedersachsen','Hamburg','Rheinland-Pfalz','Thüringen','Sachsen-Anhalt','Sachsen','Brandenburg';
   bless $self, ref $class || $class;
   return $self;
 }
@@ -163,6 +163,19 @@ sub ist_saona {
 
 
 sub wotag {
+
+=head2 $d->wotag($datum)
+    
+liefert Feiertag, falls es sich um einen Feiertag handelt,
+sonst den Wochentag.
+
+Falls ein Fehler auftritt wird undef geliefert
+
+$datum sollte Format jjjj-mm-tt oder tt.mm.jjjj haben
+
+=cut
+
+
   my $self=shift;
   my ($datum)=@_;
   my $dow=Day_of_Week($self->jmt($datum));
