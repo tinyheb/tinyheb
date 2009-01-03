@@ -4,7 +4,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.56 2008-12-18 08:41:03 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.57 2009-01-03 16:13:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -788,6 +788,11 @@ sub anschrift {
   $p->setfont($font,8);
   my $absender=$h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME').', '.$h->parm_unique('HEB_STRASSE').', '.$h->parm_unique('HEB_PLZ').' '.$h->parm_unique('HEB_ORT');
   $p->text($x1,24.7,$absender);
+
+  # Logo einbauen
+  if (-e "logo.eps") {
+    $p->importepsfile("logo.eps",$x1+7.3,26.2,$x1+9.3,28.2);
+  }
   
   # Empfänger
   # zunächst richtige Annahmestelle für Belege holen
