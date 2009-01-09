@@ -1,10 +1,10 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.15 2008-10-03 13:06:08 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.16 2009-01-09 17:58:40 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -474,7 +474,8 @@ sub pos280_290_plausi {
 
   # spätestens
   my $neun_spaeter=sprintf "%4.4u%2.2u%2.2u",Add_Delta_YM(unpack('A4A2A2',$self->{geb_kind}),0,9);
-  if ($self->{datum_l} > $neun_spaeter) {
+  if ($self->{datum_l} > $neun_spaeter && 
+      $self->{begruendung} !~ /Anordnung/) {
     return '\nFEHLER: Position '.$self->{posnr}.' nur bis zum Ende 9. Monat nach Geburt,\nEs wurde nichts gespeichert';
   }
 
@@ -483,7 +484,8 @@ sub pos280_290_plausi {
   $pruef_pos .= ',281' if ($pruef_pos eq '280');
   $pruef_pos .= ',280' if ($pruef_pos eq '281');
 
-   if ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR in ($pruef_pos)")>=4) {
+   if ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR in ($pruef_pos)")>=4 &&
+      $self->{begruendung} !~ /Anordnung/) {
     return '\nFEHLER: Position '.$pruef_pos.' maximal 4 mal berechnungsfähig\nEs wurde nichts gespeichert';
   }
   
