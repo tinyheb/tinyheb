@@ -1,10 +1,10 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Leistungserfassung
 
-# $Id: leistungen.js,v 1.15 2008-08-19 16:36:56 thomas_baum Exp $
+# $Id: leistungen.js,v 1.16 2009-01-09 17:35:52 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004-2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -83,7 +83,8 @@ function zeit(form,einaus) {
     zl_tag[0].className='enabled';
     var zl_tag = document.getElementsByName('zeit_bis');
     zl_tag[0].className='enabled';
-    //    form.zeit_von.focus();
+    form.zeit_von.focus();
+    //    form.zeit_von.select();
   } else {
     form.zeit_von.disabled=true;
     form.zeit_bis.disabled=true;
