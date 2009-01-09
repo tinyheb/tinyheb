@@ -5,7 +5,7 @@
 
 # globaler Rahmen um Rechnungspositionen zu erfassen
 
-# $Id: rechnungserfassung.pl,v 1.13 2008-10-05 13:32:12 thomas_baum Exp $
+# $Id: rechnungserfassung.pl,v 1.14 2009-01-09 18:00:11 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -146,8 +146,8 @@ print "</form>\n";
 
 # die wirklichen Infos kommen aus einem Programm
 print "<tr><td>\n";
-#print "<iframe src='../blank.html' name='list_posnr' width='900' height='250' scrolling='yes' frameborder='1'>";
-print "<iframe src='about:blank' name='list_posnr' width='900' height='250' scrolling='yes' frameborder='1'>";
+print "<iframe src='../blank.html' name='list_posnr' width='900' height='250' scrolling='yes' frameborder='1'>";
+#print "<iframe src='about:blank' name='list_posnr' width='900' height='250' scrolling='yes' frameborder='1'>";
 print "</iframe>";
 print "</td>\n";
 print "</tr>\n";

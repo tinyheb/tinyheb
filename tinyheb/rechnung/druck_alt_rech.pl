@@ -5,7 +5,7 @@
 
 # alte Rechnungen anzeigen
 
-# $Id: druck_alt_rech.pl,v 1.10 2008-10-05 13:42:29 thomas_baum Exp $
+# $Id: druck_alt_rech.pl,v 1.11 2009-01-09 18:00:46 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -72,7 +72,7 @@ print "\n";
 print '<tr>';
 print '<td>';
 print "<iframe src='ps2html_alt.pl?rech_id=$rech_id' name='rechnung_alt' width='880' height='650' scrolling='auto' frameborder='1'>" if ($rech_id > 0);
-print "<iframe src='about:blank' name='rechnung_alt' width='880' height='650' scrolling='yes' frameborder='1'>" unless ($rech_id);
+print "<iframe src='../blank.html' name='rechnung_alt' width='880' height='650' scrolling='yes' frameborder='1'>" unless ($rech_id);
 print "</iframe>";
 print '</td>';
 print '</tr>';

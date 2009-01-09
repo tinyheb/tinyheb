@@ -5,7 +5,7 @@
 
 # Rechnungen bearbeiten
 
-# $Id: rechbear.pl,v 1.12 2008-10-05 13:48:09 thomas_baum Exp $
+# $Id: rechbear.pl,v 1.13 2009-01-09 18:01:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -110,7 +110,7 @@ print '</td></tr>';
 
 print '<tr><td>';
 # die wirklichen Infos kommen aus einem Programm
-print "<iframe src='about:blank' name='list_rech' width='950' height='250' scrolling='yes' frameborder='1' align='left'>";
+print "<iframe src='../blank.html' name='list_rech' width='950' height='250' scrolling='yes' frameborder='1' align='left'>";
 print "</iframe>";
 print '</td></td>';
 

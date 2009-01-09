@@ -5,7 +5,7 @@
 
 # Rechnungen generieren und drucken
 
-# $Id: rechnung_generierung.pl,v 1.28 2008-10-05 13:48:59 thomas_baum Exp $
+# $Id: rechnung_generierung.pl,v 1.29 2009-01-09 18:01:50 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -221,7 +221,7 @@ print '</tr>';
 
 print "<tr><td>\n";
 print "<iframe src='ps2html.pl?frau_id=$frau_id' name='rechnung' width='880' height='550' scrolling='auto' frameborder='1'>" if ($frau_id > 0);
-print "<iframe src='about:blank' name='rechnung' width='880' height='550' scrolling='yes' frameborder='1'>" unless ($frau_id);
+print "<iframe src='../blank.html' name='rechnung' width='880' height='550' scrolling='yes' frameborder='1'>" unless ($frau_id);
 print "</iframe>";
 print "</td></tr>\n";
 print "</table>\n";
