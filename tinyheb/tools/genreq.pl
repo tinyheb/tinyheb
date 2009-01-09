@@ -2,10 +2,10 @@
 
 # erstellen eines Zertifikatrequest und senden an die ITSG
 
-# $Id: genreq.pl,v 1.3 2007-07-21 05:23:07 baum Exp $
+# $Id: genreq.pl,v 1.4 2009-01-09 18:05:34 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -55,11 +55,6 @@ my $h = new Heb;
 my $openssl ='openssl';
 
 $openssl = $h->win32_openssl() if ($^O =~ /MSWin32/);
-# prüfen auf openssl installation
-if(!defined($openssl)) {
-  fehler("keine openssl Installation gefunden");
-  exit 1;
-}
 
 my $prov_sel=undef;
 my $user_sel='';
@@ -300,45 +295,76 @@ sub gen_cert {
     fehler("Ansprechpartner muss angegeben sein\nGenerierung des Zertifikates abgebrochen\n");
     return;
   }
-  
+
+
   # prüfen, ob schon ein Zertifikatrequest vorliegt
+  print "prüfe Pfad",-e $path.'/'.substr($h->parm_unique('HEB_IK'),0,8).'.crq',"\n";
+  if (-e $path.'/'.substr($h->parm_unique('HEB_IK'),0,8).'.crq') {
+    my $cert_quest='';
+    $cert_quest=warnung("Es existiert schon eine Zertifikatanfrage, soll diese überschrieben werden?");
+    return if($cert_quest eq 'Nein' || $cert_quest eq 'Abbruch');
+  }
+
+  
+  # prüfen, ob schon ein privater Schlüssel vorliegt
+  my $priv_key_quest='';
   if (-e "$path/privkey.pem") {
-    return if(warnung("Es existiert schon ein privater Schlüssel, soll dieser überschrieben werden?") eq 'Nein');
+    $priv_key_quest=warnung("Es existiert schon ein privater Schlüssel, soll ein neuer generiert werden?");
+    return if($priv_key_quest eq 'Abbruch');
+  }
+
+  # prüfen auf openssl installation
+  if(!($openssl)) {
+    fehler("keine openssl Installation gefunden");
+    exit 1;
   }
   
+  my $hilf=undef;
+  my $cl=undef;
+
+  if ($priv_key_quest eq 'Ja') {
+    $erg->insert('end',"Generiere neuen privaten Schlüssel\n");
   
-  $erg->insert('end',"Generiere privaten Schlüssel\n");
+    $hilf=open PRIVKEY,"$openssl genrsa -passout pass:\"$priv_pass\" -des3 2048|";
+    if (!defined($hilf)) {
+      $erg->insert('end',"konnte privaten Schlüssel nicht generieren");
+      fehler("konnte privaten Schlüssel nicht generieren, Zertifikatgenerierung wird abgebrochen");
+      exit(1);
+    }
   
-  my $hilf=open PRIVKEY,"$openssl genrsa -passout pass:$priv_pass -des3 2048|";
-  if (!defined($hilf)) {
-    $erg->insert('end',"konnte privaten Schlüssel nicht generieren");
-    fehler("konnte privaten Schlüssel nicht generieren, Zertifikatgenerierung wird abgebrochen");
-    exit(1);
+    open (AUS,">:raw","$path/privkey.pem") or return (undef,"konnte privaten Schlüssel nicht schreiben");
+    while (my $zeile=<PRIVKEY>) {
+      print AUS $zeile;
+    }
+    close AUS;
+    $cl=close PRIVKEY;
+    if (!$cl && $? > 0) {
+      $erg->insert('end',"schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+      exit(1);
+    }
+    $erg->insert('end',"Habe privaten Schlüssel generiert\n");
+  } else {
+    $erg->insert('end',"arbeite mit bestehendem privaten Schlüssel");
   }
-  
-  open (AUS,">:raw","$path/privkey.pem") or return (undef,"konnte privaten Schlüssel nicht schreiben");
-  while (my $zeile=<PRIVKEY>) {
-    print AUS $zeile;
-  }
-  close AUS;
-  close PRIVKEY;
+
   my $st=stat("$path/privkey.pem");
   if (!defined($st) || $st->size == 0) {
-    fehler("konnte privaten Schlüssel nicht schreiben, Zertifikatgenerierung wird abgebrochen\n");
+    fehler("Privater Schlüssel nicht vorhanden, Zertifikatgenerierung wird abgebrochen\n");
     exit(1);
   }
   
-  $erg->insert('end',"Habe privaten Schlüssel generiert\n");
+
   
   $erg->insert('end',"\nGeneriere Zertifikat Request\n");
-  
   $hilf=undef;
-  $hilf=open REQ,"$openssl req -new -key $path/privkey.pem -passin pass:$priv_pass -outform DER -subj \"/C=DE/O=ITSG TrustCenter fuer sonstige Leistungserbringer/OU=$name_hebamme/OU=$ik/CN=$ansprechpartner/\"|";
+  $hilf=open REQ,"$openssl req -new -key $path/privkey.pem -passin pass:\"$priv_pass\" -outform DER -subj \"/C=DE/O=ITSG TrustCenter fuer sonstige Leistungserbringer/OU=$name_hebamme/OU=$ik/CN=$ansprechpartner/\"|";
+
   if (!defined($hilf)) {
     $erg->insert('end',"konnte Request nicht generieren");
     fehler("konnte Request nicht generieren, Zertifikatgenerierung wird abgebrochen");
     exit(1);
   }
+
   my $out_path=$path.'/'.substr($h->parm_unique('HEB_IK'),0,8).'.crq';
   #  print "OUT_PATH: $out_path\n";
   open (AUS,">:raw","$out_path") or return (undef,"konnte Zertifikatrequest nicht schreiben");
@@ -346,7 +372,12 @@ sub gen_cert {
     print AUS $zeile;
   }
   close AUS;
-  close REQ;
+  $cl = close REQ;
+  if (!$cl && $? > 0) {
+    $erg->insert('end',"schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation und Passwort prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    fehler("schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation und Passwort prüfen, Zertifikatgenerierung wird abgebrochen");
+    exit(1);
+  }
   
   $st=undef;
   $st=stat("$out_path");
@@ -374,8 +405,14 @@ sub gen_cert {
     print AUS $zeile;
   }
   close AUS;
-  close PUB;    
-  
+  $cl = close PUB;    
+  if (!$cl && $? > 0) {
+    $erg->insert('end',"schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    fehler("schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    exit(1);
+  }
+
+
   $st=undef;
   $st=stat("$path/pubkey.pem");
   if (!defined($st) || $st->size == 0) {
@@ -398,7 +435,13 @@ sub gen_cert {
     #    $erg->insert('end',$zeile);
   }
   close AUS;
-  close MD5;
+  $cl = close MD5;
+  if (!$cl && $? > 0) {
+    $erg->insert('end',"schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    fehler("schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    exit(1);
+  }
+
   $st=undef;
   $st=stat("$path/pubkey_itsg.der");
   if (!defined($st) || $st->size == 0) {
@@ -420,7 +463,12 @@ sub gen_cert {
     ($help_p,$pruefsumme)=split '=',$zeile;
   }
   close AUS;
-  close MD5;
+  $cl=close MD5;
+  if (!$cl && $? > 0) {
+    $erg->insert('end',"schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    fehler("schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    exit(1);
+  }
   $erg->insert('end',"Habe MD5 Signatur (Prüfsumme) berechnet\n");
   $erg->insert('end',"MD5 Signatur (Prüfsumme) des Zertifikates ist:\n");
   $erg->insert('end',"$pruefsumme\n");
@@ -442,14 +490,21 @@ sub gen_cert {
     ($help_p,$pruefsumme)=split '=',$zeile;
   }
   close AUS;
-  close MD5;
+  $cl=close MD5;
+  if (!$cl && $? > 0) {
+    $erg->insert('end',"schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    fehler("schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    exit(1);
+  }
   $erg->insert('end',"Habe SHA1 Signatur (Prüfsumme) berechnet\n");
   $erg->insert('end',"SHA1 Signatur (Prüfsumme) des Zertifikates ist:\n");
   $erg->insert('end',"$pruefsumme\n");
 
-  
   fehler("Bitte die Signaturen (Prüfsummen) mit Bezeichnung genau notieren, diese müssen per Brief/Fax unterschrieben an die ITSG geschickt werden");
-  
+
+  $erg->yviewMoveto(1);
+  $mw->update;
+ 
   my $mail_frage=$mw->Dialog(-title => 'Frage',
 			     -text => 'Soll das Zertifikat per E-Mail an die ITSG geschickt werden?',
 			     -default_button => 'Ja',
@@ -484,6 +539,9 @@ sub gen_cert {
     }
     
   $erg->insert('end',"\nDie Zertifikatgenerierung ist beendet, bitte die notwendigen Papierunterlagen\nper Brief oder Fax an die ITSG schicken.");
+  $erg->yviewMoveto(1);
+  $mw->update;
+
   $z2_frame->packForget;
   $z2_frame->pack(-side => 'bottom',
 		-expand => 1,
@@ -528,7 +586,7 @@ sub warnung {
   return $mw->Dialog(-title => 'Warnung',
 		     -text => $text,
 		     -default_button => 'Nein',
-		     -buttons => ['Ja', 'Nein'],
+		     -buttons => ['Ja', 'Nein','Abbruch'],
 		     )->Show();
 }
 
@@ -572,8 +630,8 @@ sub gen_mail {
     return undef;
   }
   
-#  if ($sender->OpenMultipart({to => 'thomas.baum@arcor.de',
-  if ($sender->OpenMultipart({to => 'itsg-crq@atosorigin.com',
+  if ($sender->OpenMultipart({to => 'thomas.baum@arcor.de',
+#  if ($sender->OpenMultipart({to => 'itsg-crq@atosorigin.com',
 			      bcc => $user_from,
 			      subject => 'Zertifikatsanfrage für '.$h->parm_unique('HEB_IK')}) < 0) {
     fehler("Fehler bei Mailverschicken der Zertifikatsanfrage $Mail::Sender::Error\nversenden wird abgebrochen ");
