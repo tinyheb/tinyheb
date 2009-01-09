@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.55 2008-10-05 13:13:44 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.56 2009-01-09 18:09:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -62,6 +62,7 @@ my $cert_path='';
 foreach my $file (@INC) {
   my $such_file = $file;
   $such_file = ($such_file eq '.') ? '' : $such_file;
+#  print "suche nach $such_file \n";
   if (-r "$such_file"."certs/itsg1.pem") {
     $cert_path=$such_file;
     last;
@@ -78,7 +79,7 @@ sub new {
   $self->{dbh} = $h->connect;
 
   # prüfen auf openssl installation
-  if(!defined($openssl)) {
+  if(!($openssl)) {
     $ERROR="keine openssl Installation gefunden";
     return undef;
   }
@@ -1140,8 +1141,18 @@ sub sig {
 
     # 
     my $cert_opts='';
-    $cert_opts="-certfile $cert_path".'certs/itsg4.pem' if ($cert_info == 2);
-    $cert_opts="-certfile $cert_path".'certs/itsg2.pem' if ($cert_info == 1);
+    $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg4.pem"! if ($cert_info == 2);
+    $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg2.pem"! if ($cert_info == 1);
+
+    # prüfen, ob Zertifikate der Zertifizierungskette geladen werden können
+    if ($cert_info == 1 && !(-r "$cert_path".'certs/itsg2.pem')) {
+      return ("Ein Zertifikat der Zertifizierungskette (itsg2.pem) konnte nicht gefunden werden",0);
+    }
+    if ($cert_info == 2 && !(-r "$cert_path".'certs/itsg4.pem')) {
+      return ("Ein Zertifikat der Zertifizierungskette (itsg4.pem) konnte nicht gefunden werden",0);
+    }
+
+#    print "OpenSSL Befehl: $openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem $cert_opts -passin pass:\" test \" -inkey $path/privkey/privkey.pem";
 
     open NUTZ, "$openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem $cert_opts -passin pass:\"$self->{sig_pass}\" -inkey $path/privkey/privkey.pem |" or
       return ("konnte Datei nicht DER signieren",0);
@@ -1517,6 +1528,7 @@ sub get_cert_info {
   $guelt_bis=$d->extract_date($guelt_bis);
   $guelt_von=$d->extract_date($guelt_von);
   return ("Zertifikat abgelaufen",0) if ($guelt_bis < $TODAY_jmt);
+#  return ("Zertifikat noch nicht gültig",0) if ($guelt_von > $TODAY_jmt);
   
   return ("Zertifikat mit Zertifizierungscert 01",1) if ($guelt_von < 20071213);
   return ("Zertifikat mit Zertifizierungscert 14",2);
