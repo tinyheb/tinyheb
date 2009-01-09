@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.49 2008-10-05 13:33:14 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.50 2009-01-09 17:38:35 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -266,9 +266,9 @@ print "</table>\n";
 # scripte
 print qq!<script>!;
 print qq!open("list_posnr.pl?frau_id=$frau_id","list_posnr");!;
-print qq!posnr_wechsel(document.rechpos); // funktion wurde dynamisch generiert.!;
-print qq!wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);!;
-print qq!</script>!;
+print qq!posnr_wechsel(document.rechpos); // funktion wurde dynamisch generiert.\n!;
+print qq!wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);\n!;
+print qq!</script>\n!;
 
 if ($hint) {
   print qq!<script>alert("$hint");</script>!;
@@ -330,6 +330,15 @@ sub printbox {
       # Script um Kilometer anzeige abzuschalten
       $script .= "km(formular,'$l_kilometer'); ";
 
+      # Skript aufrufen, um Kursknopf an und auszuschalten
+      if($l_posnr eq '7' || $l_posnr eq '40' ||
+	 $l_posnr eq '070' || $l_posnr eq '270') {
+	$script .= "kurs_knopf();\n";
+	$script .= "formular.anzahl_kurse.focus(); ";
+      } else {
+	$script .= "loesche_kurs_knopf(); ";
+      }
+
       # Script um Zeitanzeige abzuschalten
       if (1 ||
 	  $l_fuerzeit || 
@@ -341,14 +350,6 @@ sub printbox {
 	$script .= "zeit(formular,'J'); ";
       } else {
 	$script .= "zeit(formular,'N'); ";
-      }
-
-      if($l_posnr eq '7' || $l_posnr eq '40' ||
-	 $l_posnr eq '070' || $l_posnr eq '270') {
-	$script .= "kurs_knopf();\n";
-	$script .= "formular.anzahl_kurse.focus(); ";
-      } else {
-	$script .= "loesche_kurs_knopf(); ";
       }
 
       $script.="}\n";
