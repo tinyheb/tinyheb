@@ -3,7 +3,7 @@
 
 # Mini Setup für tinyHeb
 
-# $Id: setup.pl,v 1.11 2008-07-25 18:52:53 thomas_baum Exp $
+# $Id: setup.pl,v 1.12 2009-01-09 18:03:32 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -43,7 +43,7 @@ my %statusHash;
 
 my $eingabe='';
 my $serv_erg='';
-my $id='$Id: setup.pl,v 1.11 2008-07-25 18:52:53 thomas_baum Exp $';
+my $id='$Id: setup.pl,v 1.12 2009-01-09 18:03:32 thomas_baum Exp $';
 
 write_LOG("Programm id $id");
 
@@ -235,8 +235,8 @@ $eingabe=<STDIN>;
 
 # falls Perl Version 5.10.x zusätzlich Repositorys angeben
 if ($^V ge v5.10.0) {
-  print "Muss Perl Pakete teilweise von anderen Quellen installieren\n";
-  write_LOG("Perl andere Quellen notwendig");
+  print "Muss Perl Pakete für $^V teilweise von anderen Quellen installieren\n";
+  write_LOG("Perl andere Quellen 5.10.x notwendig");
   # prüfen ob Paketquellen schon vorhanden
   my $ppm_rep = `ppm repo list`;
   unless ($ppm_rep =~ /trouchelle/i && 
@@ -253,6 +253,23 @@ if ($^V ge v5.10.0) {
   }
   # unter perl 5.10 ist Tk nicht mehr dabei
   system('ppm install Tk');
+}
+
+if ($^V lt v5.10.0) {
+  print "Muss Perl Pakete für $^V teilweise von anderen Quellen installieren\n";
+  write_LOG("Perl andere Quellen 5.8.x notwendig");
+  # prüfen ob Paketquellen schon vorhanden
+  my $ppm_rep = `ppm repo list`;
+  unless ($ppm_rep =~ /trouchelle/i && 
+	  $ppm_rep =~ /uwinnipeg/i) {
+    print "muessen hinzugefuegt werden\n";
+    write_LOG("muessen hinzugefuegt werden");
+    system('ppm repo add http://theoryx5.uwinnipeg.ca/');
+    system('ppm repo add http://trouchelle.com/ppm/');
+  } else {
+    print "sind schon vorhanden\n";
+    write_LOG("sind schon vorhanden $ppm_rep");
+  }
 }
 
 system('ppm install Date-Calc');
