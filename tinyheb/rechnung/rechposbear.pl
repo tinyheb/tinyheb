@@ -5,10 +5,10 @@
 
 # Rechnungen bearbeiten für einzelne Rechnungen
 
-# $Id: rechposbear.pl,v 1.18 2008-10-05 13:49:41 thomas_baum Exp $
+# $Id: rechposbear.pl,v 1.19 2009-02-01 11:05:21 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -196,28 +196,53 @@ sub print_summen {
 #--- neue Tabelle für Summen
 # summe der offenen und erledigten Rechnungen berechnen
   # Teilzahlung und erledigt
+  # gesamte Vergangenheit
   $l->rechnung_such('sum(betraggez)','status>=24 and status<80');
   my $summe_gez = $l->rechnung_such_next();
   $summe_gez=0 unless(defined($summe_gez));
   $summe_gez = sprintf "%.2f",$summe_gez;
   $summe_gez =~ s/\./,/g;
+
+  # akutelles Jahr
+  my (undef,undef,$akt_jahr) = split '\.',$TODAY;
+  $l->rechnung_such('sum(betraggez)','status>=24 and status<80 and ZAHL_DATUM > '.$akt_jahr.'0101');
+  my $summe_gez_akt = $l->rechnung_such_next();
+  $summe_gez_akt = 0 unless($summe_gez_akt);
+  $summe_gez_akt = sprintf "%.2f",$summe_gez_akt;
+  $summe_gez_akt =~ s/\./,/g;
   
+  # offene Rechnungen
   $l->rechnung_such('sum(betrag)-sum(betraggez)','status<30');
   my $summe_offen = $l->rechnung_such_next();
   $summe_offen=0 unless(defined($summe_offen));
   $summe_offen = sprintf "%.2f",$summe_offen;
   $summe_offen =~ s/\./,/g;
+
+
+  # offene Rechnungen aktuelles Jahr
+  $l->rechnung_such('sum(betrag)-sum(betraggez)','status<30 and RECH_DATUM > '.$akt_jahr.'0101');
+  my $summe_offen_akt = $l->rechnung_such_next();
+  $summe_offen_akt=0 unless($summe_offen_akt);
+  $summe_offen_akt = sprintf "%.2f",$summe_offen_akt;
+  $summe_offen_akt =~ s/\./,/g;
+
   print '<table border="0">';
   print '<tr>';
-  print '<td colspan="2"><h3>Rechnungssummen</h3></td>';
+  print '<td colspan="2"><b style="font-size: 1.2em">Rechnungssummen</b></td>';
+  print '</tr>';
+  print '<tr>';
+  print '<td colspan="2" align="right">'.$akt_jahr.'</td>';
+  print '<td colspan="2" align="right">gesamt</td>';
   print '</tr>';
   print '<tr>';
   print '<td><b>erl.</b></td>';
-  print "<td align='right'>$summe_gez</td>";
+  print "<td align='right'>$summe_gez_akt</td>";
+  print "<td align='right' style='padding-left:9pt'>$summe_gez</td>";
   print '</tr>';
   print '<tr>';
   print '<td><b>offene</b></td>';
-  print "<td align='right'>$summe_offen</td>";
+  print "<td align='right'>$summe_offen_akt</td>";
+  print "<td align='right' style='padding-left:9pt'>$summe_offen</td>";
   print '</tr>';
   print '</table>';
   #--- Tabelle Summen ende
