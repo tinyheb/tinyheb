@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.50 2009-01-09 17:38:35 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.51 2009-02-23 11:41:16 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -466,7 +466,7 @@ sub speichern {
   
 
   # Zukunft Plausi
-#  return $hint .= $hebgo->zukunft_plausi if ($hebgo->zukunft_plausi);
+  return $hint .= $hebgo->zukunft_plausi if ($hebgo->zukunft_plausi);
   
   # Leistungstyp Plausi
   return $hint .= $hebgo->ltyp_plausi if ($hebgo->ltyp_plausi);
