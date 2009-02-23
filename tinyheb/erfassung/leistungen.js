@@ -1,7 +1,7 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Leistungserfassung
 
-# $Id: leistungen.js,v 1.16 2009-01-09 17:35:52 thomas_baum Exp $
+# $Id: leistungen.js,v 1.17 2009-02-23 11:40:26 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004-2009 Thomas Baum <thomas.baum@arcor.de>
@@ -71,6 +71,8 @@ function km(form,einaus) {
     zl_tag[0].className='disabled';
     var zl_tag = document.getElementsByName('anzahl_frauen');
     zl_tag[0].className='disabled';
+    form.entfernung_tag.value=0;
+    form.entfernung_nacht.value=0;
   }
 }
 
