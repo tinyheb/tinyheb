@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.18 2008-10-03 13:13:00 thomas_baum Exp $
+# $Id: update.sql,v 1.19 2009-02-23 10:58:26 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 # zunächst alte GO ungültig machen
@@ -532,4 +532,9 @@ WWWRUN	INSERT	Parms	NAME='BEGRUENDUNG' and VALUE='geplante Hausgeburt'	insert in
 #
 #
 ROOT	ALTER	Stammdaten		alter table Stammdaten add PRIVAT_FAKTOR decimal(4,2) DEFAULT NULL AFTER GEBURTSZEIT_KIND;
+#
+#
+# ---------- nach 1.1.0 ----------------
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set KILOMETER='N' where POSNR = '150';
 
