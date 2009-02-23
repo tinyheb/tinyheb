@@ -1,6 +1,9 @@
 Offen:
-17.08.08
-Neues Zertifikat generieren, obwohl altes noch existiert.
+23.02.09
+Mahngebüheren einführen
+
+15.02.09
+Dokumentation für ein eigenes Zertifikat erneuern schreiben.
 
 08.06.08
 Plausiprüfung vor/nach Geburtstermin, muss Hinweis kommen, ob man akzeptiert oder nicht
@@ -8,8 +11,6 @@ Plausiprüfung vor/nach Geburtstermin, muss Hinweis kommen, ob man akzeptiert ode
 09.02.08
 Kennzeichen in Krankenkassendaten, damit Werte einer einzelnen Kasse nicht überschrieben werden.
 
-09.02.08
-GUI für das Einlesen des eigenen Zertifikates
 
 13.12.07
 Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
@@ -26,8 +27,6 @@ Grund angeben, warum eine elektronische Rechnung nicht möglich ist.
 12.11.06
 Beschreibung der Maske Mahnungen generieren
 
-Beschreibung der Maske Angaben zur Hebamme
-
 24.09.06
 Privat Rechnungen für andere Bundesländer als NRW
 
@@ -42,6 +41,49 @@ eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
 ----------------------------------------------------------------
 Erledigt:
+14.02.09
+Zuschläge dürfen kein KM  Geld haben. Anforderung  vom 10.01.2009
+
+Wenn Feld inaktiv ist bei KM den Wert auf blank/ 0 setzen. Anforderung vom 29.11.08
+
+
+01.02.09
+Gesamtsumme der Erträge sollen Anfang des Jahres auf 0 gehen. Anforderung vom 12.01.2009
+
+09.01.09
+Neues Zertifikat generieren, obwohl altes noch existiert. Anforderung vom 17.08.08
+
+04.01.09
+GUI für das Einlesen des eigenen Zertifikates. Anforderung vom 09.02.2008
+
+03.01.09
+Logo mit auf Rechnung drucken. Anforderung vom 18.12.08
+
+18.12.08
+Literaturhinweise überarbeiten. Anforderung vom 17.12.08
+
+Nach Auswahl Positionsnummer 180 geht Focus auf Begründung statt auf Uhrzeit von. Anforderung vom 02.11.2008
+
+Bei init.sql nur solche Datenannahmestellen auf ohne Signatur stellen, die wirklich keine Signatur benötigen. 
+Das Signaturkennzeichen wird 1:1 aus der Produktions-DB übernommen.
+Anforderung vom 26.10.2008
+
+17.12.08
+Return Code aus OpenSSL Prüfung richtig abfragen. Anforderung vom 29.11.08
+
+Änderung mit about:blank rückgängig machen, funktioniert nicht mit opera. Anforderung vom 24.10.08
+
+
+07.12.08
+Auch bei perl 5.8.x müssen zusätzliche Repos unter windows aufgenommen werden:
+http://theoryx5.uwinnipeg.ca/
+http://trouchelle.com/ppm/
+Anforderung vom 06.12.08
+
+Gebührenordnung Brandenburg einbauen. Anforderung vom 24.10.08
+
+Gebührenordnung Berlin einbauen. Anforderung vom 11.10.08
+
 14.09.08
 Leistungen können nicht Wochen/Monate/Jahre in der Zukunft erbracht werden. Anforderung vom 30.08.08
 
@@ -306,6 +348,8 @@ Die Anforderung wird so nicht umgesetzt, Makefile muss reichen.
 02.12.06
 Doku für:
 - versandte Rechnungen bearbeiten Anforderung vom 25.08.06.
+- Beschreibung der Maske Angaben zur Hebamme. Anforderung vom 12.11.06
+
 
 11.11.06
 Plausiprüfungen für Positionsnummer 40. Anforderung vom 26.08.06

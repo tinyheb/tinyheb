@@ -1,8 +1,35 @@
 nächste Release
 
+In der Maske Rechnungsbearbeitung wird bei den Rechnungssummen nach aktuellen und Gesamtbeträgen unterschieden.
+
 Neue Plausiprüfung: es können keine Rechnungsposten erfasst werden, die mehr als eine Woche in der Zukunft liegen.
 
+Bug fix: Auch bei gemahnten Rechnungen muss es möglich sein, die elektronische Rechnung nochmal zu schicken.
 
+Bug fixes:
+Zeit von soll nach Auswahl der Positionsnummer den Focus erhalten.
+Datum soll nach Speichern den Focus erhalten.
+Wochentag muss nach Eingabe des Datums ermittelt werden.
+Zuschläge dürfen kein KM Geld haben
+
+Logo wird mit angedruckt, wenn Datei logo.eps im Verzeichnis rechnung existiert.
+
+Bug fix: im Opera unter Windows wurden iframes mit about:blank nicht korrekt angezeigt. Jetzt wieder leere Seite
+
+Posnr. 280,281,290 lassen sich mit ärztlichem Attest mehr als 4mal und auch nach 9 Monaten noch erfassen.
+
+Windows Setup berücksichtigt, dass für Windows perl 5.8.x zusätzliche Repository
+Quellen notwendig sind.
+
+genreq.pl berücksichtigt, wenn schon privater Schlüssel und Zertifikat existieren.
+
+Bug fix: OpenSSL Aufruf kann Zertifikate in Verzeichnissen verarbeiten, die blanks enthalten.
+
+Es wird geprüft, ob alle Zertifikate der Zertifizierungskette vorhanden sind.
+
+GUI für das Einlesen des eigenen Zertifikates
+
+Brandenburg und Berlin als Bundesländer aufgenommen
 
 
 Release 1.1.0
