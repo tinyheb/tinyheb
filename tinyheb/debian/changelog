@@ -1,28 +1,40 @@
+tinyheb (1.1.0-1) unstable; urgency=low
+
+  * new upstream release 
+
+ -- robert <robert.sailer@tinyheb.de>  Mon, 13 Oct 2008 19:20:47 +0200
+
+tinyheb (1.0.0) unstable; urgency=low
+
+  * new/final upstream release 
+
+ -- robert <robert.sailer@tinyheb.de>  Sun,  3 Aug 2008 19:59:35 +0200
+
 tinyheb (0.19.0-1) unstable; urgency=low
 
   * new upstream release  
 
- -- robert <robert.sailer@sysplex.org>  Fri,  2 May 2008 12:15:19 +0200
+ -- robert <robert.sailer@tinyheb.de>  Fri,  2 May 2008 12:15:19 +0200
 
 tinyheb (0.18.0-1) unstable; urgency=low
 
   * new upstream release
    
 
- -- robert <robert@vxl35080.lan.net>  Fri,  2 May 2008 12:14:21 +0200
+ -- robert <robert.sailer@tinyheb.de>  Fri,  2 May 2008 12:14:21 +0200
 
 tinyheb (0.17.0-1) unstable; urgency=low
 
   * new upstream relase 
 
- -- Robert Sailer <robert@px100.lan.net>  Fri, 14 Dec 2007 19:03:50 +0100
+ -- Robert Sailer <robert.sailer@tinyheb.de>  Fri, 14 Dec 2007 19:03:50 +0100
 
 
 tinyheb (0.16.0-1) unstable; urgency=low
 
   * upstream update for the package
 
- -- Robert Sailer <robert@px100.lan.net>  Fri, 14 Dec 2007 19:01:56 +0100
+ -- Robert Sailer <robert.sailer@tinyheb.de>  Fri, 14 Dec 2007 19:01:56 +0100
 
 tinyheb (0.15.1-1) unstable; urgency=low
 
