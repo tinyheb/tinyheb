@@ -2,7 +2,7 @@
 
 # erstellen eines Zertifikatrequest und senden an die ITSG
 
-# $Id: genreq.pl,v 1.4 2009-01-09 18:05:34 thomas_baum Exp $
+# $Id: genreq.pl,v 1.5 2009-05-21 16:15:15 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
@@ -307,7 +307,7 @@ sub gen_cert {
 
   
   # prüfen, ob schon ein privater Schlüssel vorliegt
-  my $priv_key_quest='';
+  my $priv_key_quest='Ja';
   if (-e "$path/privkey.pem") {
     $priv_key_quest=warnung("Es existiert schon ein privater Schlüssel, soll ein neuer generiert werden?");
     return if($priv_key_quest eq 'Abbruch');
