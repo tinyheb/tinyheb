@@ -2,7 +2,7 @@
 
 # erstellen eines Zertifikatrequest und senden an die ITSG
 
-# $Id: genreq.pl,v 1.5 2009-05-21 16:15:15 thomas_baum Exp $
+# $Id: genreq.pl,v 1.6 2009-05-26 17:42:45 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
@@ -630,8 +630,8 @@ sub gen_mail {
     return undef;
   }
   
-  if ($sender->OpenMultipart({to => 'thomas.baum@arcor.de',
-#  if ($sender->OpenMultipart({to => 'itsg-crq@atosorigin.com',
+#  if ($sender->OpenMultipart({to => 'thomas.baum@arcor.de',
+  if ($sender->OpenMultipart({to => 'itsg-crq@atosorigin.com',
 			      bcc => $user_from,
 			      subject => 'Zertifikatsanfrage für '.$h->parm_unique('HEB_IK')}) < 0) {
     fehler("Fehler bei Mailverschicken der Zertifikatsanfrage $Mail::Sender::Error\nversenden wird abgebrochen ");
