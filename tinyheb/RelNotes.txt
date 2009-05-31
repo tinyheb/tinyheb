@@ -1,4 +1,17 @@
-nächste Release
+Release 1.2.1
+
+Bug fix: Plausiprüfung für zweiten Besuch am selben Tag innerhalb 10 Tage war nicht ganz korrekt.
+
+Bug fix: Return Codes aus OpenSSL wurden nicht immer korrekt abgefragt.
+
+Bug fix: Zertifikatsanfrage wurde nicht mehr an ITSG geschickt.
+Bug fix: Zertifikatsanfrage konnte nur generiert werden, wenn privater Schlüssel schon vorhanden war
+
+Jahressummen in der Maske Rechnungsbearbeitung wurden in Firefox 3.0 nicht korrekt dargestellt.
+
+
+
+Release 1.2.0
 
 In der Maske Rechnungsbearbeitung wird bei den Rechnungssummen nach aktuellen und Gesamtbeträgen unterschieden.
 
