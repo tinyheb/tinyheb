@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.16 2009-01-09 17:58:40 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.17 2009-05-31 05:54:02 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
@@ -608,13 +608,14 @@ sub Cd_plausi_neu {
 				      "POSNR in (180,181,200,201,210,211) and DATUM='$datum_l'");
 
   my $days = Delta_Days(unpack('A4A2A2',$geb_kind),unpack('A4A2A2',$datum_l));
-  if ($days < 11 && $anzahl < 2) {
+#  warn "days $days, anzahl: $anzahl\n";
+  if ($days < 11 && $anzahl < 1) {
     return '';
-  } elsif ($days < 11 && $anzahl > 1 && $begruendung !~ /Anordnung/) {
+  } elsif ($anzahl > 1 && $begruendung !~ /Anordnung/) {
     return '\nFEHLER: Position '.$posnr.' mehr als 2 mal pro Tag nur auf ärztliche Anordnung.\nEs wurde nichts gespeichert';
-  } elsif ($days < 57 && $begruendung eq '' && $anzahl > 0) {
-    return '\nFEHLER: Position '.$posnr.' nach 10 Tagen innerhalb 8 Wochen nur mit Begründung.\nEs wurde nichts gespeichert';
-  } elsif ($days > 56 && ($begruendung !~ /Anordnung/) && $anzahl > 0) {
+  } elsif (!$begruendung && $anzahl > 0) {
+    return '\nFEHLER: Position '.$posnr.' mehr als einmal pro Tag innerhalb 8 Wochen nur mit Begründung.\nEs wurde nichts gespeichert';
+  } elsif ($days > 56 && ($begruendung !~ /Anordnung/)) {
     return '\nFEHLER: Position '.$posnr.' nach 8 Wochen nur auf ärztliche Anordnung\nEs wurde nichts gespeichert';
   }
   return '';
@@ -643,6 +644,8 @@ sub Cc_plausi {
   return '' if ($geb_kind eq '');
   my $days = Delta_Days(unpack('A4A2A2',$geb_kind),unpack('A4A2A2',$datum_l));
   my $zehn_spaeter=join('-',Add_Delta_Days(unpack('A4A2A2',$geb_kind),10));
+#  my $anzahl = $l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR in (22,23,25,26,28,29,30,31,32,33,35,180,181,200,201,210,211,230) AND DATUM>'$zehn_spaeter'");
+#  warn "Cc_plausi $datum_l days $days, anzahl: $anzahl\n";
   if ($days > 10 && 
       ($begruendung !~ /Anordnung/) &&
       ($l->leistungsdaten_werte($self->{frau_id},"POSNR","POSNR in (22,23,25,26,28,29,30,31,32,33,35,180,181,200,201,210,211,230) AND DATUM>'$zehn_spaeter'") > 15) ) {
