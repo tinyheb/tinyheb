@@ -1,10 +1,10 @@
 /* script für generelle Plausiprüfungen und Navigation
 # im Rahmen der Leistungserfassung
 
-# $Id: Heb.js,v 1.15 2008-10-03 13:04:01 thomas_baum Exp $
+# $Id: Heb.js,v 1.16 2009-05-31 04:48:19 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
