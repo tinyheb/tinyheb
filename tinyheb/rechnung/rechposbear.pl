@@ -5,7 +5,7 @@
 
 # Rechnungen bearbeiten für einzelne Rechnungen
 
-# $Id: rechposbear.pl,v 1.19 2009-02-01 11:05:21 thomas_baum Exp $
+# $Id: rechposbear.pl,v 1.20 2009-05-31 06:56:18 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
@@ -226,7 +226,7 @@ sub print_summen {
   $summe_offen_akt = sprintf "%.2f",$summe_offen_akt;
   $summe_offen_akt =~ s/\./,/g;
 
-  print '<table border="0">';
+  print '<table border="0" align="right">';
   print '<tr>';
   print '<td colspan="2"><b style="font-size: 1.2em">Rechnungssummen</b></td>';
   print '</tr>';
