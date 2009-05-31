@@ -1,9 +1,9 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.56 2009-01-09 18:09:22 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.57 2009-05-31 04:47:38 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -1168,7 +1168,7 @@ sub sig {
   }
   my $cl=close NUTZ;
   print "CL wert sig: $cl,$?\n" if($debug > 1000);
-  if (!$cl && $? > 0) {
+  if (!$cl && $? != 0) {
     return("bitte Passwort prüfen",0); # openssl hat Fehler gemeldet
   }
   close AUS;
@@ -1217,7 +1217,7 @@ sub enc {
 
   my $cl=close NUTZ;
   print "CL wert enc: $cl,$?\n" if($debug > 1000);
-  if (!$cl && $? > 0) {
+  if (!$cl && $? != 0) {
     return("konnte Nutzdaten nicht verschlüsseln, unbekanntes Problem aufgetreten",0); # openssl hat Fehler gemeldet
   }
 
