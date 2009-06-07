@@ -1,3 +1,9 @@
+tinyheb (1.2.1-1) hardy; urgency=low
+
+  * bugfix release
+
+ -- robert <robert.sailer@tinyheb.de>  Tue,  2 Jun 2009 20:00:31 +0200
+
 tinyheb (1.2.0-1) hardy; urgency=low
 
   * new upstream release 
