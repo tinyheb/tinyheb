@@ -1,10 +1,10 @@
 /* script für Plausiprüfungen im Rahmen der
 # Rechnungserfassung/ Generierung und Navigation
 
-# $Id: rechnung.js,v 1.22 2008-10-05 13:48:32 thomas_baum Exp $
+# $Id: rechnung.js,v 1.23 2009-07-26 07:12:52 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -243,8 +243,9 @@ function rechnung_anzeige_wechsel(rechnr) {
 
 
 function rufe_list_rech() {
-var sel_status=document.rechbear.sel_status.value;
-//alert("status änderung"+sel_status);
+  var sel=document.rechbear.sel_status;
+  var sel_status=sel.options[sel.selectedIndex].text;
+  //alert("status änderung"+sel_status);
 open("list_rech.pl?sel_status="+sel_status,"list_rech");
 }
 
