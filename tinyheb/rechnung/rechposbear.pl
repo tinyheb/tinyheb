@@ -5,7 +5,7 @@
 
 # Rechnungen bearbeiten für einzelne Rechnungen
 
-# $Id: rechposbear.pl,v 1.20 2009-05-31 06:56:18 thomas_baum Exp $
+# $Id: rechposbear.pl,v 1.21 2009-07-26 07:13:45 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
@@ -179,8 +179,10 @@ print_summen();
 print qq!<script>!;
 print qq!document.rechposbear.zahl_datum.select();!;
 print qq!document.rechposbear.zahl_datum.focus();!;
-# //  alert("parent"+window.parent.frames.document.rechbear.sel_status.value);
-print qq!open("list_rech.pl?sel_status="+window.parent.frames.document.forms[0].sel_status.value,"list_rech");!;
+print qq!var sel=window.parent.frames.document.rechbear.sel_status;!;
+print qq!sel_status=sel.options[sel.selectedIndex].text;!;
+#print qq!alert("parent"+sel_status);!;
+print qq!open("list_rech.pl?sel_status="+sel_status,"list_rech");!;
 print qq!</script>!;
 
 if ($hint ne '') {
