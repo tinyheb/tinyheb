@@ -1,6 +1,6 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.29 2008-10-03 13:10:33 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.30 2009-10-30 16:48:47 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -519,7 +519,7 @@ sub leistungsart_such_werte {
 		  "cast(POSNR as unsigned) as sort ".
 		  "from Leistungsart where ".
 		  "$where LEISTUNGSTYP LIKE ? and ".
-		  "KBEZ LIKE ? order by sort;")
+		  "KBEZ LIKE ? order by sort, POSNR, GUELT_BIS;")
       or die $dbh->errstr();
   my $erg = $leistungsart_such_werte->execute($ltyp,$kbez)
     or die $dbh->errstr();
