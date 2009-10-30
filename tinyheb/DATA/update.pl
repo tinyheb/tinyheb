@@ -3,10 +3,10 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.9 2008-07-25 20:47:07 thomas_baum Exp $
+# $Id: update.pl,v 1.10 2009-10-30 16:55:19 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@ use strict;
 use DBI;
 use Getopt::Long;
 
-my $id='$Id: update.pl,v 1.9 2008-07-25 20:47:07 thomas_baum Exp $';
+my $id='$Id: update.pl,v 1.10 2009-10-30 16:55:19 thomas_baum Exp $';
 
 write_LOG("Starte update ----------------------------");
 write_LOG("$id");
@@ -83,9 +83,11 @@ my $debug=0;
 my $rpm=undef;
 my $purge=undef; # tinyHeb DB entfernen
 my $downgrade=undef; # downgrade durchführen
+my $other_file=undef; # Anderen Filename benutzen für update Informationen
 
 my $parms=GetOptions('rpm' => \$rpm,
 		     'purge' => \$purge,
+		     'file=s' => \$other_file,
 		     'downgrade' => \$downgrade);
 
 
@@ -123,6 +125,7 @@ if ($purge) {
 }
 
 my $filename='update.sql';
+$filename=$other_file if($other_file);
 $filename='downgrade.sql' if ($downgrade);
 
 write_LOG("oeffne $filename");
