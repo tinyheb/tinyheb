@@ -6,7 +6,7 @@
 
 # Auswahl einer Frau aus den Stammdaten
 
-# $Id: frauenauswahl.pl,v 1.15 2008-10-05 13:19:04 thomas_baum Exp $
+# $Id: frauenauswahl.pl,v 1.16 2009-10-30 16:56:53 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -80,13 +80,13 @@ print '</div><br>';
 # Formular ausgeben
 print '<form name="frau_suchen" action="frauenauswahl.pl" method="get" target=_self onsubmit="return frauenauswahl(this);">';
 print '<h3>Suchkriterien:</h3>';
-print '<table border="0" width="500" align="left">';
+print '<table border="0" width="850" align="left">';
 
 # Name, Ort, PLZ, IK, als Suchkriterien vorgeben
 # z1 s1
 print '<tr>';
 print '<td>';
-print '<table border="0" align="left">';
+print '<table border="0" align="left" width="850">';
 print '<tr>';
 print "<td><b>Vorname</b></td>\n";
 print "<td><b>Nachname</b></td>\n";
