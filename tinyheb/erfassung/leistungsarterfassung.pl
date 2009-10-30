@@ -5,7 +5,7 @@
 
 # Leistungsarten erfassen, ändern, löschen
 
-# $Id: leistungsarterfassung.pl,v 1.14 2008-05-19 17:54:13 thomas_baum Exp $
+# $Id: leistungsarterfassung.pl,v 1.15 2009-10-30 17:07:09 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -193,7 +193,7 @@ print '<table border="0" align="left">';
 print '<tr>';
 print '<td><b>Zwillinge</b></td>';
 print '<td><b>Zweitesmal</b></td>';
-print '<td><b>Einamlig</b></td>';
+print '<td><b>Einmalig</b></td>';
 print '<td><b>Begründungspflicht</b></td>';
 print '</tr>';
 print '<tr>';
