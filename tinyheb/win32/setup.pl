@@ -3,7 +3,7 @@
 
 # Mini Setup für tinyHeb
 
-# $Id: setup.pl,v 1.12 2009-01-09 18:03:32 thomas_baum Exp $
+# $Id: setup.pl,v 1.13 2009-10-30 17:08:57 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -43,11 +43,11 @@ my %statusHash;
 
 my $eingabe='';
 my $serv_erg='';
-my $id='$Id: setup.pl,v 1.12 2009-01-09 18:03:32 thomas_baum Exp $';
+my $id='$Id: setup.pl,v 1.13 2009-10-30 17:08:57 thomas_baum Exp $';
 
 write_LOG("Programm id $id");
 
-print "Setup fuer tinyHeb Copyright (C) 2007,2008 Thomas Baum\n";
+print "Setup fuer tinyHeb Copyright (C) 2007,2008,2009 Thomas Baum\n";
 print "Version of this setup programm $id\n";
 print "The tinyHeb setup programm comes with ABSOLUTELY NO WARRANTY;\nfor details see the file gpl.txt\n";
 print "This is free software, and you are welcome to redistribute it\n";
