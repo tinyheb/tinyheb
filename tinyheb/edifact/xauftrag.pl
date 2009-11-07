@@ -3,10 +3,10 @@
 # erstellen der Auftragsdatei mit GUI für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
-# Id: $Id: xauftrag.pl,v 1.18 2008-12-07 16:10:16 thomas_baum Exp $
+# Id: $Id: xauftrag.pl,v 1.19 2009-11-07 08:19:31 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -283,13 +283,13 @@ RECH:  foreach (@sel) {
 				   auth => 'LOGIN',
 				   authid => $user_sel,
 				   authpwd => $user_pass,
-				   debug_level => 2,
+				   debug_level => 3,
 				   boundary => 'tinyheb-'.$rechnr});
     } else {
       $sender = new Mail::Sender ({smtp => $prov_sel,
 				   from => $h->parm_unique('HEB_IK').'<'.$user_from.'>',
 				   debug => $debug,
-				   debug_level => 2,
+				   debug_level => 3,
 				   boundary => 'tinyheb-'.$rechnr});
     }
 
@@ -377,7 +377,7 @@ RECH:  foreach (@sel) {
     }
 
     if ($sender->Part(
-                {ctype => 'text/plain',
+                {# ctype => 'text/plain',
                  name => $dateiname,
                  charset => 'iso-8859-1',
                  encoding => 'Base64',
