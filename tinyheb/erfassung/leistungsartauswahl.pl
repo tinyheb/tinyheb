@@ -5,7 +5,7 @@
 
 # Auswahl von Leistungsarten
 
-# $Id: leistungsartauswahl.pl,v 1.7 2008-05-19 17:52:43 thomas_baum Exp $
+# $Id: leistungsartauswahl.pl,v 1.8 2009-11-15 06:35:36 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -43,6 +43,11 @@ my $d = new Heb_datum;
 my $TODAY = $d->convert_tmj(sprintf "%4.4u-%2.2u-%2.2u",Today());
 my $posnr = $q->param('posnr') || '';
 my $guelt = $q->param('guelt') || '';
+if ($guelt eq '') {
+  $guelt = $TODAY;
+} elsif ($guelt eq '*' || $guelt eq '%') {
+  $guelt = '';
+}
 my $kbez = $q->param('kbez') || '';
 my $leistungstyp = $q->param('leistungstyp') || '';
 
