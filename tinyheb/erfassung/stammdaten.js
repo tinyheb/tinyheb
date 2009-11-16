@@ -4,7 +4,7 @@
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
-# $Id: stammdaten.js,v 1.24 2008-12-06 16:39:00 thomas_baum Exp $
+# $Id: stammdaten.js,v 1.25 2009-11-16 16:48:23 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # This program is free software; you can redistribute it and/or modify
@@ -92,7 +92,8 @@ function route_ber(formular,strasse_start,plz_start,ort_start) {
 
 function frausuchen(vorname,nachname,geb,formular) {
   // öffnet Fenster in dem eine Frau ausgewählt werden kann
-  open("frauenauswahl.pl?vorname="+vorname.value+"&nachname="+nachname.value+"&geb_f="+geb.value+"&suchen=Suchen&sel_status=alle","frauenwahl","scrollbars=yes,width=700,height=400");
+  //  open("frauenauswahl.pl?vorname="+vorname.value+"&nachname="+nachname.value+"&geb_f="+geb.value+"&suchen=Suchen&sel_status=alle","frauenwahl","scrollbars=yes,width=800,height=400");
+  open("frauenauswahl.pl?vorname="+vorname.value+"&nachname="+nachname.value+"&geb_f="+geb.value+"&suchen=Suchen&sel_status=alle","frauenwahl","scrollbars=yes,height=400,width=880");
   };
 
 
