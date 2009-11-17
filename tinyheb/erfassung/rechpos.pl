@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.51 2009-02-23 11:41:16 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.52 2009-11-17 10:00:33 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -598,8 +598,8 @@ sub speichern {
   # noch nicht erfasst ist
   my ($einmal_zus) = $l->leistungsart_such_posnr('EINMALIG',$posnr,$datum_l);
   $einmal_zus = '' unless($einmal_zus);
-  if ($einmal_zus =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
-    $zuschlag=$2;
+  if ($einmal_zus =~ /(\+{0,1})(\d{1,3})(\w*)/ && $2 > 0) {
+    $zuschlag=$2.$3;
     if ($l->leistungsdaten_werte($frau_id,"ID,DATUM","POSNR=$zuschlag","DATUM")) {
       my ($id,$datum1)=$l->leistungsdaten_werte_next();
       $datum1 =~ s/-//g;
@@ -635,8 +635,8 @@ sub speichern {
   my ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN1,ZUSATZGEBUEHREN2',$posnr,$datum_l);
   $mat_zus2 = '' unless($mat_zus2);
   $mat_zus = '' unless($mat_zus);
-  if ($mat_zus2 eq '' && $mat_zus =~ /(\+[A-Z]?)(\d{1,3})/ && $2 > 0) {
-    my $m_zus=$1.$2;$m_zus =~ s/\+//;
+  if ($mat_zus2 eq '' && $mat_zus =~ /(\+[A-Z]?)(\d{1,3})(\w*)/ && $2 > 0) {
+    my $m_zus=$1.$2.$3;$m_zus =~ s/\+//;
     # Entfernung nicht 2mal rechnen, deshalb im insert statement auf 0 setzen
     # Begründungen müssen bei automatisch gewählen Auslagen nicht 
     # angegeben werden, hier löschen
@@ -673,11 +673,11 @@ sub abh {
   my ($posnr,$abh_posnr,$datum_l) = @_;
   my ($l_posnr) = $l->leistungsart_such_posnr($abh_posnr,$posnr,$datum_l);
   return unless($l_posnr);
-  if ($l_posnr =~ /^(\+{0,1})(\d{1,3})$/ && $2 > 0) {
+  if ($l_posnr =~ /^(\+{0,1})(\d{1,3})(\w*)$/ && $2 > 0) {
     # print "$typ erkannt\n";
     # prüfen ob es sich um andere Positionsnummer handelt
     # welche ID hat diese Posnr?
-    $l->leistungsdaten_werte($frau_id,"ID","POSNR=$2 AND DATUM='$datum_l'");
+    $l->leistungsdaten_werte($frau_id,"ID","POSNR='$2$3' AND DATUM='$datum_l'");
     my ($id)=$l->leistungsdaten_werte_next();
     return $id;
   }
