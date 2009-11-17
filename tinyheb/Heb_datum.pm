@@ -1,9 +1,9 @@
 # Package um Datümer zu verarbeiten
 
-# $Id: Heb_datum.pm,v 1.27 2008-12-18 08:42:12 thomas_baum Exp $
+# $Id: Heb_datum.pm,v 1.28 2009-11-17 10:03:02 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ sub new {
   my($class) = @_;
   my $self = {};
 
-  push @{$self->{BUNDESLAENDER}},'NRW','Berlin','Bayern','Hessen','Niedersachsen','Hamburg','Rheinland-Pfalz','Thüringen','Sachsen-Anhalt','Sachsen','Brandenburg';
+  push @{$self->{BUNDESLAENDER}},'NRW','Berlin','Bayern','Hessen','Niedersachsen','Hamburg','Rheinland-Pfalz','Thüringen','Sachsen-Anhalt','Sachsen','Brandenburg', 'Baden-Württemberg';
   bless $self, ref $class || $class;
   return $self;
 }
