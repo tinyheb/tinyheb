@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.17 2009-05-31 05:54:02 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.18 2009-11-17 10:02:17 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
@@ -79,9 +79,11 @@ sub ersetze_samstag {
   # Wenn Samstag angegeben ist, prüfen ob posnr ersetzt werden muss
   my $self=shift;
 
-  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($self->zeit) >= 12) { # 
+  return undef unless($self->{samstag});
+
+  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})(\w*)/ && $2 > 0 && $d->zeit_h($self->zeit) >= 12) { # 
     # Samstag nach 12 Uhr und ob es sich um andere Positionsnummer handelt
-    return $2 if ($1 ne '+');
+    return $2.$3 if ($1 ne '+');
   }
   return undef;
 }
@@ -90,9 +92,11 @@ sub zuschlag_samstag {
   # prüft ob Zuschlag für diese Positionsnummer an einem Samstag  existiert
   my $self=shift;
 
-  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0 && $d->zeit_h($self->zeit) >= 12) { # 
-    # Samstag nach 12 Uhr und ob es sich um Zuschlags Positionsnummer handelt
-    return $2 if ($1 eq '+');
+  return undef unless($self->{samstag});
+
+  if ($self->{dow} == 6 && $self->{samstag} =~ /(\+{0,1})(\d{1,3})(\w*)/ && $2 > 0 && $d->zeit_h($self->zeit) >= 12) { # 
+    # Samstag nach 12 Uhr und ob es handelt sich um Zuschlags Positionsnummer
+    return $2.$3 if ($1 eq '+');
   }
   return undef;
 }
@@ -102,8 +106,11 @@ sub ersetze_sonntag {
   # Wenn Sonntag oder Feiertag angegeben ist, prüfen ob posnr ersetzt werden
   # muss
   my $self=shift;
-  if (($self->{dow} == 7 || ($d->feiertag_datum($self->{datum_l})>0)) && $self->{sonntag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
-    return $2 if ($1 ne '+');
+
+  return undef unless($self->{sonntag});
+
+  if (($self->{dow} == 7 || ($d->feiertag_datum($self->{datum_l})>0)) && $self->{sonntag} =~ /(\+{0,1})(\d{1,3}(\w*))/ && $2 > 0) {
+    return $2.$3 if ($1 ne '+');
   }
   return undef;
 }
@@ -112,8 +119,10 @@ sub zuschlag_sonntag {
   # prüft ob Zuschlag für diese Posnr an einem Sonntag oder Feiertag existiert
   my $self=shift;
 
-  if (($self->{dow} == 7 || ($d->feiertag_datum($self->{datum_l})>0)) && $self->{sonntag} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
-    return $2 if ($1 eq '+');
+  return undef unless($self->{sonntag});
+
+  if (($self->{dow} == 7 || ($d->feiertag_datum($self->{datum_l})>0)) && $self->{sonntag} =~ /(\+{0,1})(\d{1,3})(\w*)/ && $2 > 0) {
+    return $2.$3 if ($1 eq '+');
   }
   return undef;
 }
@@ -122,8 +131,11 @@ sub zuschlag_sonntag {
 sub ersetze_nacht {
   # wenn Nacht angegeben ist, prüfen ob posnr ersetzt werden muss
   my $self=shift;
-  if ($self->zeit && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
-    return $2 if($1 ne '+');
+
+  return undef unless($self->{nacht});
+
+  if ($self->zeit && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})(\w*)/ && $2 > 0) {
+    return $2.$3 if($1 ne '+');
   }
   return undef;
 }
@@ -131,8 +143,11 @@ sub ersetze_nacht {
 sub zuschlag_nacht {
   # prüfen, ob Zuschlag für diese Posnr Nachts existiert
   my $self=shift;
-  if ($self->zeit  && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})/ && $2 > 0) {
-    return $2 if($1 eq '+');
+
+  return undef unless($self->{nacht});
+
+  if ($self->zeit  && ($d->zeit_h($self->zeit) < 8 || $d->zeit_h($self->zeit)>=20) && $self->{nacht} =~ /(\+{0,1})(\d{1,3})(\w*)/ && $2 > 0) {
+    return $2.$3 if($1 eq '+');
   }
   return undef;
 }
@@ -473,11 +488,11 @@ sub pos280_290_plausi {
   }
 
   # spätestens
-  my $neun_spaeter=sprintf "%4.4u%2.2u%2.2u",Add_Delta_YM(unpack('A4A2A2',$self->{geb_kind}),0,9);
-  if ($self->{datum_l} > $neun_spaeter && 
-      $self->{begruendung} !~ /Anordnung/) {
-    return '\nFEHLER: Position '.$self->{posnr}.' nur bis zum Ende 9. Monat nach Geburt,\nEs wurde nichts gespeichert';
-  }
+#  my $neun_spaeter=sprintf "%4.4u%2.2u%2.2u",Add_Delta_YM(unpack('A4A2A2',$self->{geb_kind}),0,9);
+#  if ($self->{datum_l} > $neun_spaeter && 
+#      $self->{begruendung} !~ /Anordnung/) {
+#    return '\nFEHLER: Position '.$self->{posnr}.' nur bis zum Ende 9. Monat nach Geburt,\nEs wurde nichts gespeichert';
+#  }
 
   # maximal 4 Mal
   my $pruef_pos=$self->{posnr};
@@ -504,8 +519,14 @@ sub nicht_plausi {
   my ($posnr,$frau_id,$datum_l)=
     ($self->{posnr},$self->{frau_id},$self->{datum_l});
 
+  my @nicht = split ',',$self->{nicht};
+  my $nicht = '';
+  foreach my $n (@nicht) {
+    $nicht .= ',' if ($nicht);
+    $nicht .= "'$n'";
+  }
   if ($l->leistungsdaten_werte($frau_id,"POSNR",
-                               "POSNR in ($self->{nicht}) and DATUM='$self->{datum_l}'")) {
+                               "POSNR in ($nicht) and DATUM='$self->{datum_l}'")) {
     return 'FEHLER: Positionsnummer '.$self->{posnr}.' ist neben Leistungen nach '.$self->{nicht}.'\nan demselben Tag nicht berechnungsfähig\nes wurde nichts gespeichert';
   }
   return '';
