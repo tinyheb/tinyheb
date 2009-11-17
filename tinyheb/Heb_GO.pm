@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.18 2009-11-17 10:02:17 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.19 2009-11-17 13:24:18 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
@@ -617,7 +617,8 @@ sub Cd_plausi_neu {
 		$self->{posnr} ne '200' && 
 		$self->{posnr} ne '201' &&
 		$self->{posnr} ne '210' && 
-		$self->{posnr} ne '211');
+		$self->{posnr} ne '211' && 
+		$self->{posnr} ne '230');
 
   my ($posnr,$datum_l,$begruendung)=    
     ($self->{posnr},$self->{datum_l},$self->{begruendung});
@@ -626,7 +627,7 @@ sub Cd_plausi_neu {
   return '' if($geb_kind eq '');
 
   my $anzahl=$l->leistungsdaten_werte($self->{frau_id},"POSNR",
-				      "POSNR in (180,181,200,201,210,211) and DATUM='$datum_l'");
+				      "POSNR in (180,181,200,201,210,211,230) and DATUM='$datum_l'");
 
   my $days = Delta_Days(unpack('A4A2A2',$geb_kind),unpack('A4A2A2',$datum_l));
 #  warn "days $days, anzahl: $anzahl\n";
