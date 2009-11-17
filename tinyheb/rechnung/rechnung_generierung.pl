@@ -5,10 +5,10 @@
 
 # Rechnungen generieren und drucken
 
-# $Id: rechnung_generierung.pl,v 1.29 2009-01-09 18:01:50 thomas_baum Exp $
+# $Id: rechnung_generierung.pl,v 1.30 2009-11-17 08:54:53 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -120,7 +120,7 @@ print "<td><input type='text' class='disabled' disabled name='vorname' value='$v
 print "<td><input type='text' class='disabled' disabled name='nachname' value='$nachname' size='40'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_frau' value='$geb_frau' size='10'></td>";
 print "<td><input type='text' class='disabled' disabled name='geburtsdatum_kind' value='$geb_kind' size='10'></td>";
-print qq!<td><input type='button' name='frau_suchen' value='Suchen' onClick='open("../erfassung/frauenauswahl.pl?suchen=Suchen&sel_status=ungleich erl.","frauenauswahl","scrollbars=yes,innerwidth=750,innerheight=400");'></td>!;
+print qq!<td><input type='button' name='frau_suchen' value='Suchen' onClick='open("../erfassung/frauenauswahl.pl?suchen=Suchen&sel_status=ungleich erl.","frauenauswahl","scrollbars=yes,width=880,height=400");'></td>!;
 print "</tr>";
 
 print "</table>";
