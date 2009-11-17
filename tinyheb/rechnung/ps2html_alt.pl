@@ -4,10 +4,10 @@
 # Ausgabe von alten Rechnungen, entweder Postscript Format oder Edifact
 # wird ausgegeben
 
-# $Id: ps2html_alt.pl,v 1.12 2008-05-22 17:23:19 thomas_baum Exp $
+# $Id: ps2html_alt.pl,v 1.13 2009-11-17 08:49:44 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -85,11 +85,11 @@ if ($rechtyp == 2) {
   print '<head>';
   print '</head>';
   print '<body bgcolor=white>';
-  print '<table border="0" width="700" align="left">';
+  print '<table border="0" width="880" align="left">';
   print '<tr><td><b>Auftragsdatei</b></td></tr>';
-  print "<tr><td><textarea name='aufdatei' cols='120' rows='2'>$edi_auf</textarea></td></tr>";
+  print "<tr><td><textarea name='aufdatei' cols='121' rows='2'>$edi_auf</textarea></td></tr>";
   print '<tr><td><b>Nutzdatendatei</b></td></tr>';
-  print "<tr><td><textarea name='nutzdatei' cols='120' rows='37'>$edi_nutz</textarea></td></tr>";
+  print "<tr><td><textarea name='nutzdatei' cols='121' rows='37'>$edi_nutz</textarea></td></tr>";
   print '</table>';
   print "</body>";
   print "</html>";

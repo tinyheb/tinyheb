@@ -5,10 +5,10 @@
 
 # alte Rechnungen anzeigen
 
-# $Id: druck_alt_rech.pl,v 1.11 2009-01-09 18:00:46 thomas_baum Exp $
+# $Id: druck_alt_rech.pl,v 1.12 2009-11-17 08:48:59 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ print "<tr>";
 print '<td>';
 print '<table border="0" align="left">';
 print '<tr>';
-print "<td align='left'><input type='button' name='pdruck' value='zurück' onclick='self.close()'</td>";
+print "<td align='left'><input type='button' name='pdruck' value='zurück' onclick='self.close()'></td>\n";
 if (defined($edi_datum) && $edi_datum ne '' && $edi_datum ne '0000-00-00 00:00:00') {
   print '<td align="left">';
   print "<select name='rechtyp' size=1 onChange='rechnung_anzeige_wechsel($rech_id);'>";
@@ -71,15 +71,15 @@ print "\n";
 
 print '<tr>';
 print '<td>';
-print "<iframe src='ps2html_alt.pl?rech_id=$rech_id' name='rechnung_alt' width='880' height='650' scrolling='auto' frameborder='1'>" if ($rech_id > 0);
-print "<iframe src='../blank.html' name='rechnung_alt' width='880' height='650' scrolling='yes' frameborder='1'>" unless ($rech_id);
-print "</iframe>";
+print "<iframe src='ps2html_alt.pl?rech_id=$rech_id' name='rechnung_alt' width='900' height='700' scrolling='auto' frameborder='1'>" if ($rech_id > 0);
+print "<iframe src='../blank.html' name='rechnung_alt' width='900' height='700' scrolling='yes' frameborder='1'>" unless ($rech_id);
+print "</iframe>\n";
 print '</td>';
 print '</tr>';
 
 print '<tr>';
 print '<td>';
-print "<br><input type='button' name='pdruck' value='zurück' onclick='self.close()'";
+print "<input type='button' name='pdruck' value='zurück' onclick='self.close()'>\n";
 print '</td>';
 print '</tr>';
 print '</table>';
