@@ -4,10 +4,10 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.57 2009-01-03 16:13:22 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.58 2009-11-17 09:06:17 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005,2006,2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -139,6 +139,8 @@ if ($versichertenstatus ne 'privat') {
     $betreff.="Sachsen-Anhalt";
   } elsif (uc $heb_bundesland eq 'SACHSEN') {
     $betreff.="Sachsen";
+  } elsif (uc $heb_bundesland eq 'BADEN-WüRTTEMBERG' || $heb_bundesland eq 'Baden-Württemberg') {
+    $betreff.="Baden-Württemberg";
   }  else {
     $betreff.="PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen".uc $heb_bundesland;
   }
@@ -496,6 +498,14 @@ sub print_wegegeld {
       $posnr = 300 if ($tn eq 'TK');
       $posnr = 310 if ($tn eq 'NK');
     }
+    # Falls Privatrechnung und Baden-Württemberg andere Posnr benutzen
+    if (uc $heb_bundesland eq 'BADEN-WüRTTEMBERG' &&
+	$versichertenstatus eq 'privat') {
+      $posnr = 'BW330' if ($tn eq 'N');
+      $posnr = 'BW320' if ($tn eq 'T');
+      $posnr = 'BW300' if ($tn eq 'TK');
+      $posnr = 'BW310' if ($tn eq 'NK');
+    }
     ($preis)=$l->leistungsart_such_posnr("EINZELPREIS","$posnr",$erg[4]);
 
 
@@ -592,7 +602,7 @@ sub print_teil {
 					       $erg2[5],    # zeit von
 					       $erg2[6]);   # zeit bis
 
-    if ($posnr != $erg[1]) {
+    if ($posnr ne $erg[1]) {
       # bei posnr wechsel posnr schreiben
       $p->text({align => 'center'},$x1+1,$y1,$erg[1]);
       $posnr=$erg[1];
