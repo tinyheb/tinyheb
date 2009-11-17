@@ -4,7 +4,7 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.58 2009-11-17 09:06:17 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.59 2009-11-17 09:18:10 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
@@ -856,6 +856,13 @@ sub urbeleg {
   $p->newpage;
   wasserzeichen();
   anschrift();
+
+  # Falz  ausgeben
+  $p->setlinewidth(0.02);
+  $p->line(0,19.2,0.5,19.2);
+  $p->line(20.4,19.2,21,19.2);
+  $p->setlinewidth(0.04);
+
   # Betreff Zeile
   $p->setfont($font_b,10);
   if ($versichertenstatus ne 'privat') {
