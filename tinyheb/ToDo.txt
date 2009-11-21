@@ -1,16 +1,18 @@
 Offen:
+10.05.09
+Heb.css anpassen, Font sollte Arial sein, nicht serif.
+
+26.04.09
+Möglichkeiten eruieren, elektrische Rechnung aus dem Browser zu produzieren
+ 
 23.02.09
 Mahngebüheren einführen
-
-15.02.09
-Dokumentation für ein eigenes Zertifikat erneuern schreiben.
 
 08.06.08
 Plausiprüfung vor/nach Geburtstermin, muss Hinweis kommen, ob man akzeptiert oder nicht
 
 09.02.08
 Kennzeichen in Krankenkassendaten, damit Werte einer einzelnen Kasse nicht überschrieben werden.
-
 
 13.12.07
 Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
@@ -21,12 +23,6 @@ bei Zuschlägen, wenn sowohl vor wie auch nacher Stichzeitpunkt Leistung erbracht
 26.08.07
 Positionsnummer B. können nur am Geburtsdatum des Kindes erfasst werden.
 
-26.12.06
-Grund angeben, warum eine elektronische Rechnung nicht möglich ist.
-
-12.11.06
-Beschreibung der Maske Mahnungen generieren
-
 24.09.06
 Privat Rechnungen für andere Bundesländer als NRW
 
@@ -36,11 +32,45 @@ Feiertage Bundeslandbezogen
 06.08.06
 eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
-09.07.05 Dokumentation erstellen.
-
-
 ----------------------------------------------------------------
 Erledigt:
+17.11.09
+Plausprüfung Tel. Beratung 2x innerhalb erste 10 Tage nur mit Begründung.
+Anforderung vom 17.11.09
+
+17.11.09
+Link auf Kostenträgerdateien in Doku anpassen. Anforderung vom 17.11.09
+
+17.11.09
+Falzmarkierungen bei Urbelegen. Anforderung vom 20.07.09
+
+17.11.09
+Positionsnummern 280, 281, 290 sind auch nach 9 Monaten noch abrechenbar.
+Nur bei Ernährungsproblem Säugling bis 9 Monate. Anforderung vom 11.07.09
+
+17.11.09
+Gebührenordnung BW einbauen. Anforderung vom 11.07.09
+
+17.11.09
+Dokumentation für ein eigenes Zertifikat erneuern schreiben. 
+Anforderung vom 15.02.09
+
+
+16.11.09
+prüfen, ob es sinnvoll ist, dass Passwort des Hebammenzertifikates mit verschlüsselt abzuspeicher, falls die Hebamme das Passwort vergisst. 
+Anforderung vom 26.04.09
+
+
+08.03.09
+Beschreibung der Maske Mahnungen generieren. Anforderung vom 12.11.2006
+
+Dokumentation erstellen. Mahnungen generieren war das letzte fehlende
+Kapitel. Anforderung vom 09.07.2005
+
+Grund angeben, warum eine elektronische Rechnung nicht möglich ist. Wird 
+nicht umgesetzt, die angegebenen Gründe sind ausreichend. Anforderung vom
+26.12.2006
+
 14.02.09
 Zuschläge dürfen kein KM  Geld haben. Anforderung  vom 10.01.2009
 
