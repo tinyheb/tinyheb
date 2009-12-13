@@ -5,10 +5,10 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.46 2008-12-06 16:39:31 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.47 2009-12-13 07:57:19 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -109,11 +109,15 @@ if ($ik_krankenkasse) {
     # ermitteln Status Datenaustausch
     my $test_ind= $k->krankenkasse_test_ind($ik_krankenkasse);
     if (defined($test_ind)) {
-      $status_edi='Testphase' if ($test_ind == 0);
-      $status_edi='Erprobungsphase' if ($test_ind == 1);
-      $status_edi='Echtbetrieb' if ($test_ind == 2);
+      $status_edi='(Testphase)' if ($test_ind == 0);
+      $status_edi='(Erprobungsphase)' if ($test_ind == 1);
+      $status_edi='(Echtbetrieb)' if ($test_ind == 2);
       $status_edi='unbekannt, Bitte Parameter prüfen' if ($test_ind != 0 && $test_ind != 1 && $test_ind != 2);
-    }
+      # Datenannahmestelle ermitteln
+      my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
+      my ($name_zik)=$k->krankenkasse_sel("KNAME",$zik);
+      $status_edi = $name_zik.' '.$status_edi if ($zik);
+    } 
   }
 } elsif($versichertenstatus ne 'privat') {
   $name_krankenkasse = 'noch keine gültige Krankenkasse gewählt';
@@ -293,7 +297,7 @@ print '<tr>';
 print "<td><input type='text' class=disabled disabled name='name_krankenkasse' value='$name_krankenkasse' size='28'></td>";
 print "<td><input type='text' class=disabled disabled name='ort_krankenkasse' value='$plz_krankenkasse&nbsp;$ort_krankenkasse' size='30'></td>";
 print "<td><input type='text' class=disabled disabled name='strasse_krankenkasse' value='$strasse_krankenkasse' size='20'></td>";
-print "<td><input type='text' class=disabled disabled name='status_edi_krankenkasse' value='$status_edi' size='30'></td>";
+print "<td><input type='text' class=disabled disabled name='status_edi_krankenkasse' value='$status_edi' size='37'></td>";
 print '</tr>';
 print '</table>';
 print "\n";
