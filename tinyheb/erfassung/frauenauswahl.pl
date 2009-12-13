@@ -6,7 +6,7 @@
 
 # Auswahl einer Frau aus den Stammdaten
 
-# $Id: frauenauswahl.pl,v 1.16 2009-10-30 16:56:53 thomas_baum Exp $
+# $Id: frauenauswahl.pl,v 1.17 2009-12-13 07:55:34 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -146,6 +146,7 @@ if (defined($suchen)) {
   print "<td><b>PLZ</b></td>\n";
   print "<td><b>Ort</b></td>\n";
   print "<td><b>Strasse</b></td>\n";
+  print "<td><b>DA Stelle</b></td>\n";
   print "<td><b>Status Bearb.</b></td>\n";
   print '</tr>';
   # suchkriterien erweitern
@@ -185,6 +186,20 @@ if (defined($suchen)) {
     } else {
       ($kk_ik,$kk_name,$kk_plz,$kk_ort,$kk_strasse) = ('','','','','');
     }
+
+    # Datenannahmestelle ermitteln
+    my $da_stelle='';
+    if ($kk_name ne '') {
+      # prüfen ob zu ik Zentral IK vorhanden ist
+      my ($ktr,$zik)=$k->krankenkasse_ktr_da($kk_ik);
+      my ($name_zik)=$k->krankenkasse_sel("KNAME",$zik);
+      if ($zik) {
+	$da_stelle=$name_zik;
+      }
+      $da_stelle = 'privat' if($f_verstatus eq 'privat');
+    }
+
+
     # Status zu Erfassung ermitteln
     my $status=$l->status_text(10);
     if($l->leistungsdaten_werte($f_id,'distinct status','','status')) {
@@ -200,9 +215,10 @@ if (defined($suchen)) {
       print "<td>$f_plz</td>";
       $f_ort=' ' if (!defined($f_ort));print "<td>$f_ort</td>";
       $f_strasse=' ' if (!defined($f_strasse));print "<td>$f_strasse</td>";
+      print "<td>$da_stelle</td>\n";
       print "<td>$status</td>";
       print '<td><input type="button" name="waehlen" value="Auswählen"';
-      print "onclick=\"frau_eintrag('$f_id');self.close();\">";
+      print "onclick=\"frau_eintrag('$f_id');self.close();\">\n";
       print "</td>";
       print "</tr>\n";
     }
