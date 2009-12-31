@@ -4,10 +4,10 @@
 
 # Erzeugen Formular Versichertenbestätigung A und Druckoutput (Postscript)
 
-# $Id: formulara.pl,v 1.1 2008-10-05 13:50:43 thomas_baum Exp $
+# $Id: formulara.pl,v 1.2 2009-12-31 16:48:40 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2008 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -156,7 +156,7 @@ while ($y1 > 1.8) {
   $y1-=0.45;
 }
 
-foreach my $posnr ('070','270') {
+foreach my $posnr ('0700','2700') {
 
   # Überschrift Datum,...
   $y1=$y2-0.6;
