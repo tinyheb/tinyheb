@@ -2,7 +2,7 @@
 
 # erstellen eines Zertifikatrequest und senden an die ITSG
 
-# $Id: genreq.pl,v 1.7 2009-11-17 08:58:19 thomas_baum Exp $
+# $Id: genreq.pl,v 1.8 2010-01-24 16:04:14 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
@@ -490,7 +490,7 @@ sub gen_cert {
   close AUS;
   $cl=close MD5;
   if (!$cl && $? != 0) {
-    $erg->insert('end',"schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    $erg->insert('end',"schwerer OpenSSL MD5 Prüfsumme Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
     fehler("schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
     exit(1);
   }
@@ -515,10 +515,10 @@ sub gen_cert {
     ($help_p,$pruefsumme)=split '=',$zeile;
   }
   close AUS;
-  $cl=close MD5;
+  $cl=close SHA1;
   if (!$cl && $? != 0) {
-    $erg->insert('end',"schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
-    fehler("schwerer OpenSSL Fehler aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    $erg->insert('end',"schwerer OpenSSL Fehler bei SHA1 Prüfsumme aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    fehler("schwerer OpenSSL Fehler bei SHA1 Prüfsumme aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
     exit(1);
   }
   $erg->insert('end',"Habe SHA1 Signatur (Prüfsumme) berechnet\n");
