@@ -4,10 +4,10 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.59 2009-11-17 09:18:10 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.60 2010-01-31 12:10:43 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -229,7 +229,7 @@ $p->text($x1,$y1, "Die abgerechneten Leistungen sind nach § 4 Nr. 14 UStG von de
 
 if ($versichertenstatus ne 'privat' && $versichertenstatus ne 'SOZ') {
   $p->text($x1,$y1,"Bitte überweisen Sie den Gesamtbetrag innerhalb der gesetzlichen Frist von drei Wochen nach");$y1-=$y_font;
-  $p->text($x1,$y1,"Rechnungseingang (§5 Abs. 4 HebGV) unter Angabe der Rechnungsnummer.");
+  $p->text($x1,$y1,"Rechnungseingang unter Angabe der Rechnungsnummer.");
 } else {
   $p->text($x1,$y1,"Bitte überweisen Sie den Gesamtbetrag innerhalb der gesetzlichen Frist von 30 Tagen nach");$y1-=$y_font;
   $p->text($x1,$y1,"Rechnungseinang unter Angabe der Rechnungsnummer.");
@@ -383,7 +383,7 @@ sub print_begruendung {
     while (my @erg=$l->leistungsdaten_offen_next()) {
       my ($bez,$fuerzeit,$epreis)=$l->leistungsart_such_posnr("KBEZ",$erg[1],$erg[4]);
       my $datum = $d->convert_tmj($erg[4]);
-      $p->text($x1,$y1,"Begründung für $bez am $datum : $erg[3]");$y1-=$y_font;
+      $p->text($x1,$y1,"Begründung für $bez am $datum: $erg[3]");$y1-=$y_font;
       if ($erg[3] =~ /Attest/) {
 	if ($erg[13]) {
 	  $p->text($x1,$y1,"Diagnose Schlüssel: $erg[13]");$y1-=$y_font;
@@ -410,7 +410,7 @@ sub print_material {
   NEXT: while (my @erg=$l->leistungsdaten_offen_next()) {
     my ($bez,$epreis,$zus1)=$l->leistungsart_such_posnr("KBEZ,EINZELPREIS,ZUSATZGEBUEHREN1 ",$erg[1],$erg[4]);
 
-    if($erg[1] =~ /^\d{1,3}$/) { # 
+    if($erg[1] =~ /^\d{1,4}$/) { # 
       $bez = substr($bez,0,50);
       my $laenge_bez = length($bez)*0.2/2;
       if ($posnr ne $erg[1]) {
@@ -422,14 +422,15 @@ sub print_material {
 	# Hochkomma ausgeben, wenn keine Zeitangabe notwendig
 	$p->text({align => 'center'},$x1+2+$laenge_bez,$y1,"\"");
       }
-    } elsif($erg[1] =~ /^[A-Z]\d{1,3}$/) {
+    } elsif($erg[1] =~ /^[A-Z]\d{1,4}$/) {
       # zugeordnete Posnr holen
       my $go_datum = $erg[4];
       $go_datum =~ s/-//g;
-      $zus1=70 if ((!$zus1) and
+      $zus1=70 if ((!$zus1) &&
 		   $go_datum < 20070801);
-      $zus1=800 if ((!$zus1) and
-		   $go_datum >= 20070801);
+      $zus1=800 if ((!$zus1) &&
+		    $go_datum >= 20070801 && $go_datum < 20100101);
+      $zus1=8000 if ((!$zus1) && $go_datum >= 20100101);
 
       my($bez_zus)=$l->leistungsart_such_posnr("KBEZ","$zus1",$erg[4]);
       $bez_zus = substr($bez_zus,0,50);
@@ -491,13 +492,22 @@ sub print_wegegeld {
       $posnr = 93 if ($tn eq 'T');
       $posnr = 91 if ($tn eq 'TK');
       $posnr = 92 if ($tn eq 'NK');
-    } else {
-      # Gebührenordnung ab 01.08.2007 mit neuen PosNr
+    }
+    if ($go_datum < 20100101 && $go_datum >= 20070801) {
+      # Gebührenordnung ab 01.08.2007
       $posnr = 330 if ($tn eq 'N');
       $posnr = 320 if ($tn eq 'T');
       $posnr = 300 if ($tn eq 'TK');
       $posnr = 310 if ($tn eq 'NK');
     }
+    if ($go_datum >= 20100101) {
+      # Gebührenordnung ab 01.01.2010 mit neuen PosNr
+      $posnr = 3300 if ($tn eq 'N');
+      $posnr = 3200 if ($tn eq 'T');
+      $posnr = 3000 if ($tn eq 'TK');
+      $posnr = 3100 if ($tn eq 'NK');
+    }
+
     # Falls Privatrechnung und Baden-Württemberg andere Posnr benutzen
     if (uc $heb_bundesland eq 'BADEN-WüRTTEMBERG' &&
 	$versichertenstatus eq 'privat') {
@@ -592,7 +602,7 @@ sub print_teil {
     
     my $fuerzeit_flag='';
     ($fuerzeit_flag,$fuerzeit)=$d->fuerzeit_check($fuerzeit);
-    $bez = substr($bez,0,50);
+    $bez = substr($bez,0,60);
     my $laenge_bez = length($bez)*0.2/2;
 
     # Zeitangaben ggf. auf Blank setzen
