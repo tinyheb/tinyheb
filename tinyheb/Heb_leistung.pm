@@ -1,9 +1,9 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.30 2009-10-30 16:48:47 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.31 2010-01-31 12:28:16 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2003 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,8 @@ my  @gruppen = ('A. Mutterschaftsvorsorge','B. Geburtshilfe','C. Wochenbett','D.
 my %zeit_ende=(); # Posnr bei denen die Zeit nach Ende der Leistung berechnet wird
 
 $zeit_ende{$_}=1 for qw(050 051 090 091 100 101 110 111 120 121 130 131 160 161 163 164 165 166 167 260 261 280 281 310);
+$zeit_ende{$_}=1 for qw(0500 0501 0502 0510 0511 0512 0901 0902 0911 0912 1000 1010 1100 1110 1200 1210 1300 1301 1302 1310 1311 1312 1600 1601 1602 1610 1611 1612 1700 1701 1702 1710 1711 1712 2600 2601 2602 2610 2611 2612 2800 2810 3100);
+
 
 my $dbh=$h->connect;
 
