@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.58 2010-01-31 12:30:28 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.59 2010-01-31 13:35:08 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -1204,6 +1204,7 @@ sub sig {
 
     # 
     my $cert_opts='';
+    $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg6.pem"! if ($cert_info == 3);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg4.pem"! if ($cert_info == 2);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg2.pem"! if ($cert_info == 1);
 
@@ -1213,6 +1214,9 @@ sub sig {
     }
     if ($cert_info == 2 && !(-r "$cert_path".'certs/itsg4.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg4.pem) konnte nicht gefunden werden",0);
+    }
+    if ($cert_info == 3 && !(-r "$cert_path".'certs/itsg6.pem')) {
+      return ("Ein Zertifikat der Zertifizierungskette (itsg6.pem) konnte nicht gefunden werden",0);
     }
 
 #    print "OpenSSL Befehl: $openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem $cert_opts -passin pass:\" test \" -inkey $path/privkey/privkey.pem";
@@ -1594,7 +1598,8 @@ sub get_cert_info {
 #  return ("Zertifikat noch nicht gültig",0) if ($guelt_von > $TODAY_jmt);
   
   return ("Zertifikat mit Zertifizierungscert 01",1) if ($guelt_von < 20071213);
-  return ("Zertifikat mit Zertifizierungscert 14",2);
+  return ("Zertifikat mit Zertifizierungscert 14",2) if ($guelt_von < 20091210);
+  return ("Zertifikat mit Zertifizierungscert 56",3);
 
 }
 
