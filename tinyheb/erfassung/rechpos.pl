@@ -5,10 +5,10 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.52 2009-11-17 10:00:33 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.53 2010-01-31 12:21:42 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -332,7 +332,9 @@ sub printbox {
 
       # Skript aufrufen, um Kursknopf an und auszuschalten
       if($l_posnr eq '7' || $l_posnr eq '40' ||
-	 $l_posnr eq '070' || $l_posnr eq '270') {
+	 $l_posnr eq '070' || $l_posnr eq '270' ||
+	 $l_posnr eq '0700' || $l_posnr eq '2700'
+	) {
 	$script .= "kurs_knopf();\n";
 	$script .= "formular.anzahl_kurse.focus(); ";
       } else {
@@ -480,8 +482,14 @@ sub speichern {
   # spezielle Prüfungen für PosNr. 010
   return $hint .= $hebgo->pos010_plausi if ($hebgo->pos010_plausi);
 
+  # spezielle Prüfungen für PosNr. 0100
+  return $hint .= $hebgo->pos0100_plausi if ($hebgo->pos0100_plausi);
+
   # spezielle Prüfungen für PosNr. 020
   return $hint .= $hebgo->pos020_plausi if ($hebgo->pos020_plausi);
+
+  # spezielle Prüfungen für PosNr. 0200
+  return $hint .= $hebgo->pos0200_plausi if ($hebgo->pos0200_plausi);
 
   # spezielle Prüfung für PosNr. 6
   return $hint .= $hebgo->pos6_plausi if ($hebgo->pos6_plausi);
@@ -489,17 +497,26 @@ sub speichern {
   # spezielle Prüfung für PosNr. 060
   return $hint .= $hebgo->pos060_plausi if ($hebgo->pos060_plausi);
 
-  # spezielle Prüfung für PosNr. 7 
+  # spezielle Prüfung für PosNr. 0600
+  return $hint .= $hebgo->pos0600_plausi if ($hebgo->pos0600_plausi);
+
+  # spezielle Prüfung für PosNr. 7
   return $hint .= $hebgo->pos7_plausi if ($hebgo->pos7_plausi);
 
-  # spezielle Prüfung für PosNr. 070 
+  # spezielle Prüfung für PosNr. 070
   return $hint .= $hebgo->pos070_plausi if ($hebgo->pos070_plausi);
 
-  # spezielle Prüfung für PosNr. 8 
+  # spezielle Prüfung für PosNr. 0700
+  return $hint .= $hebgo->pos0700_plausi if ($hebgo->pos0700_plausi);
+
+  # spezielle Prüfung für PosNr. 8
   return $hint .= $hebgo->pos8_plausi if ($hebgo->pos8_plausi);
 
-  # spezielle Prüfung für PosNr. 080 
+  # spezielle Prüfung für PosNr. 080
   return $hint .= $hebgo->pos080_plausi if ($hebgo->pos080_plausi);
+
+  # spezielle Prüfung für PosNr. 0800
+  return $hint .= $hebgo->pos0800_plausi if ($hebgo->pos0800_plausi);
 
   # spezielle Prüfung für PosNr. 40 
   return $hint .= $hebgo->pos40_plausi if ($hebgo->pos40_plausi);
@@ -507,14 +524,23 @@ sub speichern {
   # spezielle Prüfung für PosNr. 270 
   return $hint .= $hebgo->pos270_plausi if ($hebgo->pos270_plausi);
 
+  # spezielle Prüfung für PosNr. 2700
+  return $hint .= $hebgo->pos2700_plausi if ($hebgo->pos2700_plausi);
+
   # spezielle Prüfung für PosNr. 280 290
   return $hint .= $hebgo->pos280_290_plausi if ($hebgo->pos280_290_plausi);
+
+  # spezielle Prüfung für PosNr. 2800 2900
+  return $hint .= $hebgo->pos2800_2900_plausi if ($hebgo->pos2800_2900_plausi);
 
   # spezielle Prüfung w/ Zeitesmal im Wochenbett
   return $hint .= $hebgo->Cd_plausi if ($hebgo->Cd_plausi);
 
   # spezielle Prüfung w/ Zeitesmal im Wochenbett
   return $hint .= $hebgo->Cd_plausi_neu if ($hebgo->Cd_plausi_neu);
+
+  # spezielle Prüfung w/ Zeitesmal im Wochenbett
+  return $hint .= $hebgo->Cd_plausi_GO2010 if ($hebgo->Cd_plausi_GO2010);
 
   # spezielle Prüfung w/ wie viele Wochenbettbesuche
   return $hint .= $hebgo->Cc_plausi if ($hebgo->Cc_plausi);
@@ -527,6 +553,9 @@ sub speichern {
 
   # Ist PZN hinterlegt bei Material
   return $hint .= $hebgo->pzn_plausi if ($hebgo->pzn_plausi);
+
+  # gültige übergeordnete Materialrgruppe hinterlegt bei Material
+  return $hint .= $hebgo->material_plausi if ($hebgo->material_plausi);
 
 
   # Preis berechnen in Abhängigkeit der Dauer
@@ -576,11 +605,15 @@ sub speichern {
 				zeit_bis => $zeit_bis,
 			       );
       
-      if ($hebgo7s->pos7_plausi or $hebgo7s->pos070_plausi) {
+      if ($hebgo7s->pos7_plausi || 
+	  $hebgo7s->pos070_plausi ||
+	  $hebgo7s->pos0700_plausi) {
 	$hint .= "Es wurden nur $i Kurse gespeichert.";
 	return $hint;
       }
-      if ($hebgo7s->pos40_plausi or $hebgo7s->pos270_plausi) {
+      if ($hebgo7s->pos40_plausi ||
+	  $hebgo7s->pos270_plausi ||
+	  $hebgo7s->pos2700_plausi) {
 	$hint .= "Es wurden nur $i Kurse gespeichert.";
 	return $hint;
       }
@@ -598,7 +631,7 @@ sub speichern {
   # noch nicht erfasst ist
   my ($einmal_zus) = $l->leistungsart_such_posnr('EINMALIG',$posnr,$datum_l);
   $einmal_zus = '' unless($einmal_zus);
-  if ($einmal_zus =~ /(\+{0,1})(\d{1,3})(\w*)/ && $2 > 0) {
+  if ($einmal_zus =~ /(\+{0,1})(\d{1,4})(\w*)/ && $2 > 0) {
     $zuschlag=$2.$3;
     if ($l->leistungsdaten_werte($frau_id,"ID,DATUM","POSNR=$zuschlag","DATUM")) {
       my ($id,$datum1)=$l->leistungsdaten_werte_next();
@@ -635,7 +668,7 @@ sub speichern {
   my ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN1,ZUSATZGEBUEHREN2',$posnr,$datum_l);
   $mat_zus2 = '' unless($mat_zus2);
   $mat_zus = '' unless($mat_zus);
-  if ($mat_zus2 eq '' && $mat_zus =~ /(\+[A-Z]?)(\d{1,3})(\w*)/ && $2 > 0) {
+  if ($mat_zus2 eq '' && $mat_zus =~ /(\+[A-Z]?)(\d{1,4})(\w*)/ && $2 > 0) {
     my $m_zus=$1.$2.$3;$m_zus =~ s/\+//;
     # Entfernung nicht 2mal rechnen, deshalb im insert statement auf 0 setzen
     # Begründungen müssen bei automatisch gewählen Auslagen nicht 
@@ -673,7 +706,7 @@ sub abh {
   my ($posnr,$abh_posnr,$datum_l) = @_;
   my ($l_posnr) = $l->leistungsart_such_posnr($abh_posnr,$posnr,$datum_l);
   return unless($l_posnr);
-  if ($l_posnr =~ /^(\+{0,1})(\d{1,3})(\w*)$/ && $2 > 0) {
+  if ($l_posnr =~ /^(\+{0,1})(\d{1,4})(\w*)$/ && $2 > 0) {
     # print "$typ erkannt\n";
     # prüfen ob es sich um andere Positionsnummer handelt
     # welche ID hat diese Posnr?
@@ -681,7 +714,7 @@ sub abh {
     my ($id)=$l->leistungsdaten_werte_next();
     return $id;
   }
-  if ($l_posnr =~ /(\+)([A-Z])(\d{1,3})/ && $3 > 0) {
+  if ($l_posnr =~ /(\+)([A-Z])(\d{1,4})/ && $3 > 0) {
     # Materialpauschalen
     $l->leistungsdaten_werte($frau_id,"ID","POSNR='$2$3' AND DATUM='$datum_l'");
     my ($id)=$l->leistungsdaten_werte_next();
@@ -701,12 +734,12 @@ sub matpausch {
 
   # keine Prüfung, wenn Werte nicht definiert
   return '' if (!$mat_zus2);
-  if ($mat_zus2 && $mat_zus =~ /(\+[A-Z]?)(\d{1,3})/ && $2 > 0) {
+  if ($mat_zus2 && $mat_zus =~ /(\+[A-Z]?)(\d{1,4})/ && $2 > 0) {
     my $m_zus=$1.$2;$m_zus=~s/\+//;
     my $comp=0; # Flag ob gespeichert werden muss oder nicht
     # operator für Vergleich ermitteln
     my ($op,$op_wert,$op_vgltyp) = 
-      $mat_zus2 =~ /([>,<,=]{1})(\d{1,3})(\D{1,2})/;
+      $mat_zus2 =~ /([>,<,=]{1})(\d{1,4})(\D{1,2})/;
     my $kzetgt=2; # errechneter Termin (default)
     if ($op_vgltyp eq 'GK') { # Geburtsdatum Kind
       # geburtsdatum kind ermitteln
