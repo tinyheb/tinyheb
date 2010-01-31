@@ -4,10 +4,10 @@
 
 # extrahiert aus Kostenträger Dateien die benötigten Daten
 
-# $Id: kostentraeger.pl,v 1.17 2007-07-31 17:11:52 thomas_baum Exp $
+# $Id: kostentraeger.pl,v 1.18 2010-01-31 12:06:39 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -158,6 +158,7 @@ LINE:while ($zeile=<FILE>) {
 	if ($erg[1]==3 && $erg[5]==7 && 
 	    ($erg[9]==00 || $erg[9]==50 || 
 	     ($erg[9]==99 && $zik_typ < 3))) {
+	  print "VKG Segment @erg, zik_typ: $zik_typ idk:$idk zentral_idk:$zentral_idk erg9:$erg9\n" if ($debug);
 	  # aok haben ring geschlossen über typ 2 Verbindungen, die dürfen
 	  # hier nicht berücksichtigt werden
 	  if ((uc $k_typ eq 'AO' && $zik_typ < 3) ||
@@ -167,14 +168,22 @@ LINE:while ($zeile=<FILE>) {
 	      # darf nur mit datenannahmestelle überschrieben werden
 	      # wenn kostenträger die gleiche kasse ist,
 	      # das bedeutet dann ZIK ist DA und IK ist KTR
-	      ((uc $k_typ ne 'AO') && $idk != $erg[2] && 
-	       ($zentral_idk==$idk || $zentral_idk==0))) {
-	    $zentral_idk=$erg[2];
-	    $da=$zentral_idk;
-	    $bemerkung .= "Zentral IK mit Entschlüsselungsbefugnis w/ $zeile\n";
-	    $zik_typ=3; # Datenannamestelle mit Entschlüsselungsbefugnis
-	    $erg9=$erg[9]; # welcher Abrechnungscode hat zur DA geführt
-	  }
+	      ((uc $k_typ ne 'AO') && # keine AOK
+	       $idk != $erg[2] && # 
+	       (($zentral_idk==$idk || $zentral_idk==0)
+		# alte DA wurde via 99 ermittelt, neues Ergebnis ist besser
+		|| ($zentral_idk!=$idk && $erg9==99) 
+	       )
+	      )
+	     )
+	    {
+	      $zentral_idk=$erg[2];
+	      $da=$zentral_idk;
+	      $bemerkung .= "Zentral IK mit Entschlüsselungsbefugnis w/ $zeile\n";
+	      $zik_typ=3; # Datenannamestelle mit Entschlüsselungsbefugnis
+	      $erg9=$erg[9]; # welcher Abrechnungscode hat zur DA geführt
+	      print "Debug: $bemerkung\n" if ($debug);
+	    }
 	}
 
 	if ($erg[1]==2 && $erg[5]==7 &&
