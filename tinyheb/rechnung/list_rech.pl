@@ -5,10 +5,10 @@
 
 # erfasste Rechnungen ausgeben
 
-# $Id: list_rech.pl,v 1.16 2008-10-05 13:43:21 thomas_baum Exp $
+# $Id: list_rech.pl,v 1.17 2010-01-31 12:32:12 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -74,12 +74,14 @@ while (my @erg=$l->rechnung_such_next()) {
     print "<td style='width:50pt;padding-left:3pt'><input style='font-size:8pt;padding-left:1pt;padding-right:1pt' type='button' name='anseh' value='Ansehen' onclick='anseh_rech($erg[0],$erg[5]);'></td>\n";
     
     print "<td style='width:35pt;text-align:right'>$erg[0]</td>"; # Rechnungsnr
+#    print "<td style='width:35pt;padding-left:1pt;text-align:right'>$erg[0]</td>"; # Rechnungsnr
     my $aus_ref='';
     $aus_ref=substr($erg[9],19,8) if ($erg[9]);
     print "<td style='width:51pt;text-align:right;'>$aus_ref</td>"; # Datenaustauschreferenz
     # Name Frau holen
     my @erg_frau=$s->stammdaten_frau_id($erg[7]);
     print "<td style='width:100pt;text-align:left;padding:2pt'>$erg_frau[1], $erg_frau[0]</td>"; # Name Frau
+#    print "<td style='width:100pt;text-align:left;padding-left:0pt'>$erg_frau[1], $erg_frau[0]</td>"; # Name Frau
     # Name Krankenkasse holen
     my ($name)=$k->krankenkasse_sel("NAME",$erg[8]);
     if (!(defined($name))) {
