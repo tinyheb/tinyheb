@@ -5,10 +5,10 @@
 
 # erfasste Rechnungsposten ausgeben
 
-# $Id: list_posnr.pl,v 1.16 2008-10-05 13:21:53 thomas_baum Exp $
+# $Id: list_posnr.pl,v 1.17 2010-01-31 12:22:56 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -71,7 +71,7 @@ while (my @erg=$l->leistungsdaten_such_next()) {
 
   print "<td style='width:45pt;padding-left:0pt'><input style='font-size:8pt;padding-right:0pt;padding-left:1pt' type='button' name='loeschen1' value='Löschen' onclick='loe_leistdat($frau_id,$erg[0],$erg[11]);'></td>";
   print "<td style='width:46pt;text-align:right'>$erg[4]</td>"; # datum
-  print "<td style='width:22pt;text-align:right'>$erg[1]</td>"; # posnr
+  print "<td style='width:22pt;padding-left:5pt;text-align:right'>$erg[1]</td>"; # posnr
   # Aus DB Gebührentext und E. Preis holen
   my($l_bezeichnung,$l_preis,$l_fuerzeit)=$l->leistungsart_such_posnr('KBEZ,EINZELPREIS,FUERZEIT',"$erg[1]",$d->convert($erg[4]));
 
