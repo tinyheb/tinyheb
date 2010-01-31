@@ -6,10 +6,10 @@
 
 # Auswahl einer Frau aus den Stammdaten
 
-# $Id: frauenauswahl.pl,v 1.17 2009-12-13 07:55:34 thomas_baum Exp $
+# $Id: frauenauswahl.pl,v 1.18 2010-01-31 12:23:39 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -139,7 +139,7 @@ if (defined($suchen)) {
   print '<td>';
   print '<table border="1" align="left">';
   print '<tr>';
-  print "<td><b>Vorame</b></td>\n";
+  print "<td><b>Vorname</b></td>\n";
   print "<td><b>Nachname</b></td>\n";
   print "<td><b>Geb. Frau</b></td>\n";
   print "<td><b>Geb. Kind</b></td>\n";
