@@ -5,7 +5,7 @@
 
 # globaler Rahmen um Rechnungspositionen zu erfassen
 
-# $Id: rechnungserfassung.pl,v 1.15 2009-11-16 16:47:39 thomas_baum Exp $
+# $Id: rechnungserfassung.pl,v 1.16 2010-01-31 12:22:25 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
@@ -124,7 +124,7 @@ print "<tr><td>\n";
 print '<table id="ueberschrift" style="margin-left:0;table-layout:fixed" border="0" width=800 align="left">';
 print '<tr>';
 print '<td style="width:4.8cm;text-align:right">Datum</td>';
-print '<td style="width:1.0cm;text-align:right">Nr.</td>';
+print '<td style="width:1.0cm;padding-left:5pt;text-align:right">Nr.</td>';
 print '<td style="width:4.5cm;text-align:left">Gebühren Text</td>';
 print '<td style="width:1.3cm;text-align:right">E. Preis</td>';
 print '<td style="width:1.2cm;text-align:right">G. Preis</td>';
