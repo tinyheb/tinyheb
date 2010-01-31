@@ -2,10 +2,10 @@
 
 # erstellen eines Zertifikatrequest und senden an die ITSG
 
-# $Id: genreq.pl,v 1.8 2010-01-24 16:04:14 thomas_baum Exp $
+# $Id: genreq.pl,v 1.9 2010-01-31 12:07:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -517,7 +517,8 @@ sub gen_cert {
   close AUS;
   $cl=close SHA1;
   if (!$cl && $? != 0) {
-    $erg->insert('end',"schwerer OpenSSL Fehler bei SHA1 Prüfsumme aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    print "Close Wert $cl, $?\n";
+    $erg->insert('end',"schwerer OpenSSL Fehler bei SHA1 Prüfsumme aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen $cl,$? "); # openssl hat Fehler gemeldet
     fehler("schwerer OpenSSL Fehler bei SHA1 Prüfsumme aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
     exit(1);
   }
