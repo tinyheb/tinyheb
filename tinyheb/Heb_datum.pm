@@ -1,9 +1,9 @@
 # Package um Datümer zu verarbeiten
 
-# $Id: Heb_datum.pm,v 1.28 2009-11-17 10:03:02 thomas_baum Exp $
+# $Id: Heb_datum.pm,v 1.29 2010-01-31 12:28:56 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004 - 2009 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,7 @@ $feiertag_such = $dbh->prepare("select ID,NAME,BUNDESLAND, ".
 			       "from Kalender where ".
 			       "NAME LIKE ? and ".
 			       "BUNDESLAND LIKE ? and ".
-			       "DATUM LIKE ?;");
+			       "DATUM LIKE ? order by DATUM;");
 $max_feiertag = $h->parm_unique('KALENDER_ID');
 
 sub new {
@@ -129,7 +129,7 @@ sub jmt {
     
 liefert Tripel Jahr, Monat, Tag
 
-$datum sollte Format jjjj-mm-tt oder tt.mm.jjjj haben
+$datum muss Format jjjj-mm-tt oder tt.mm.jjjj haben
 
 =cut
 
@@ -138,6 +138,8 @@ $datum sollte Format jjjj-mm-tt oder tt.mm.jjjj haben
   $datum=$self->convert($datum);
   return split '-',$datum;
 }
+
+
 
 sub zeit_h {
   # holt die Stunden aus dem Paramter hh:mm
@@ -191,6 +193,15 @@ $datum sollte Format jjjj-mm-tt oder tt.mm.jjjj haben
 }
 
 sub wotagnummer {
+
+=head2 $d->wotagnummer($datum)
+    
+liefert die Nummer des Wochentages
+
+8 falls es sich um einen Feiertag handelt
+	
+=cut
+
   my $self=shift;
   my ($datum)=@_;
   my $dow=Day_of_Week($self->jmt($datum));
