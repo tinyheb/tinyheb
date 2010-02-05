@@ -1,3 +1,45 @@
+Release 1.4.0
+
+neue Gebührenordnung gültig ab 01.01.2010
+
+Versichertenbesätigungen mit neuen Positionsnummern
+
+in Frauensuchmaske wird Datenannahmestelle angezeigt
+
+in Stammdatenerfassung wird Datenannahmestellt angezeigt
+
+Bug fix: Beim Einlesen der Kostenträgerdateien konnte wurde in SEHR seltenen 
+Fällen die falsche Datenannahmestelle ermittelt.
+
+Bug fix: Bei Generierung des eigenen Zertifikates wurde bei SHA1 Hash 
+Ermittlung ein schwerer OpenSSL Fehler ausgewiesen, obwohl keiner 
+vorhanden war. Richtigen Filehandle geschlossen und zusätzliche prints 
+eingebaut.
+
+Bug fix: Rechnungen an Mendent können mit Schlüsseln signiert werden, die nach dem 10.12.2009 vergeben wurden
+
+Zusätzliche Plausiprüfung bei Material, übergeordnete Positionsnummer muss
+gültig sein.
+
+
+
+Release 1.3.0
+
+neue Plausiprüfung für Positionsnummer 230, 2x am gleichen Tag nur mit 
+Begründung. Steht zwar nicht in Gebührenordnung, wird aber ohne Begründung 
+von den Krankenkassen gekürzt.
+
+Bug fix: Positionsnummern 280, 281, 290 sind auch nach 9 Monaten noch
+abrechenbar
+
+neues Bundesland Baden-Württemberg
+
+Layout der Frauen Suchmaske verbessert.
+
+Falzmarkierung bei Urbelegen aufgenommen.
+
+
+
 Release 1.2.1
 
 Bug fix: Plausiprüfung für zweiten Besuch am selben Tag innerhalb 10 Tage war nicht ganz korrekt.
