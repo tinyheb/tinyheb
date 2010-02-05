@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.59 2010-01-31 13:35:08 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.60 2010-02-05 12:15:59 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -1566,6 +1566,7 @@ sub get_cert_info {
   # Rückgabe Wert 2 Ergebnis:
   #  1 == Zertifikat gültig Zertifizierungskette 1
   #  2 == Zertifikat gültig Zertifizierungskette 2
+  #  3 == Zertifikat gültig Zertifizierungskette 3
   #  0 == Zertifikat nicht gültig oder sonstiges Problem
 
   my $self=shift;
