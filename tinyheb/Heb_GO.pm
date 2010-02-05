@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.20 2010-01-31 12:29:36 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.21 2010-02-05 12:54:10 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -460,7 +460,7 @@ sub pos0700_plausi {
   my $erfasst=sprintf "%3.2f",$dauer/60;
   $erfasst =~ s/\./,/g;
   $dauer += $d->dauer_m($zeit_bis,$zeit_von);
-  warn "0700: dauer $dauer\n";
+#  warn "0700: dauer $dauer\n";
   if ($dauer > (14*60)) {
     return 'FEHLER: Geburtsvorbereitung in der Gruppe höchsten 14 Stunden\nschon erfasst '.$erfasst.' Stunden\nes wurde nichts gespeichert\n';
   }
