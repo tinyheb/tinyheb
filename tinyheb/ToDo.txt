@@ -1,4 +1,10 @@
 Offen:
+09.01.10
+Nachkommastellen immer bei Nacht anzeige NK stellen, auch bei erstem Sprung in Maske
+
+03.01.10
+Win setup auf MySQL 6 einstellen, 5 wird zukünftig nicht mehr gewartet.
+
 10.05.09
 Heb.css anpassen, Font sollte Arial sein, nicht serif.
 
@@ -34,6 +40,12 @@ eigene Erfassungs- und Bearbeitungsmaske für Materialien
 
 ----------------------------------------------------------------
 Erledigt:
+31.01.10 
+Plausiprüfung für Material, muss auf richtige übergeordnete Positionsnummer verweisen. Anforderung vom 03.01.10
+
+31.12.09
+Versichertenbestätigungen auf neue Positionsnummern anpassen. Anforderung vom. 28.12.09
+
 17.11.09
 Plausprüfung Tel. Beratung 2x innerhalb erste 10 Tage nur mit Begründung.
 Anforderung vom 17.11.09
