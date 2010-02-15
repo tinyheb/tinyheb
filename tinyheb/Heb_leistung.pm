@@ -1,6 +1,6 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.31 2010-01-31 12:28:16 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.32 2010-02-15 07:28:15 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -357,14 +357,13 @@ sub leistungsart_next_id {
   # holt zur gegebenen ID die nächste Leistungsart
   my $self = shift;
   my ($id)=@_;
+  $id = $self->min_id() unless($id);
   my @erg = $self->leistungsart_id($id);
-  if (!(defined($erg[1]))) {
-    my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
-    $erg[1]=1;
-    ($id)=$self->leistungsart_such_posnr('ID',$erg[1],$TODAY);
+  if (!$erg[1]) {
+    $id = $self->min_id();
   }
   my $leistungsart_next_id;
-  if ($erg[1] =~ /^\d{1,3}$/) {
+  if ($erg[1] =~ /^\d{1,4}$/) {
     $leistungsart_next_id =
       $dbh->prepare("select ID,cast(POSNR as unsigned) as sort ".
 		    "from Leistungsart where ".
@@ -393,15 +392,14 @@ sub leistungsart_prev_id {
   # holt zur gegebenen ID die vorhergehende Leistungsart
   my $self = shift;
   my ($id)=@_;
+  $id = $self->min_id() unless($id);
   my @erg = $self->leistungsart_id($id);
-  if (!(defined($erg[1]))) {
-    my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
-    $erg[1]=1;
-    ($id)=$self->leistungsart_such_posnr('ID',$erg[1],$TODAY);
+  if (!$erg[1]) {
+    $id = $self->min_id();
   }
 
   my $leistungsart_prev_id;
-  if ($erg[1] =~ /^\d{1,3}$/) {
+  if ($erg[1] =~ /^\d{1,4}$/) {
     $leistungsart_prev_id =
       $dbh->prepare("select ID,cast(POSNR as unsigned) as sort ".
 		    "from Leistungsart where ".
@@ -422,6 +420,18 @@ sub leistungsart_prev_id {
   @erg2 = $leistungsart_prev_id->fetchrow_array();
   return $erg2[0];
 
+}
+
+
+sub min_id {
+  # holt die kleinste in der Datenbank befindliche LeistungsID
+  my $self=shift;
+  my $min_id = $dbh->prepare("select ID from Leistungsart order by ID limit 1;") or die $dbh->errstr();
+  
+  $min_id->execute() or die $dbh->errstr();
+  my ($min) = $min_id->fetchrow_array();
+#  warn "MIN $min\n";
+  return $min;
 }
 
 
