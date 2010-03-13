@@ -1,6 +1,6 @@
 # Package um Stammdaten zu verarbeiten
 
-# $Id: Heb_stammdaten.pm,v 1.17 2010-01-31 12:27:21 thomas_baum Exp $
+# $Id: Heb_stammdaten.pm,v 1.18 2010-03-13 17:40:09 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -41,6 +41,7 @@ my $h = new Heb;
 my $debug = 0;
 my $dbh=$h->connect; # Verbindung zur Datenbank
 my $frau_such; # suchen von Frauen
+my $stammdaten_werte; # suchen nach bestimmten Werten bei Frauen
 $frau_such = $dbh->prepare("select ID,VORNAME,NACHNAME,".
 			   "DATE_FORMAT(GEBURTSDATUM_FRAU,'%d.%m.%Y'),".
 			   "DATE_FORMAT(GEBURTSDATUM_KIND,'%d.%m.%Y'),".
@@ -321,5 +322,56 @@ zurückgeliefert.
   return $erg if ($erg);
   return $id;
 }
+
+
+sub stammdaten_werte {
+
+=head2 $s->stammdaten_werte($werte,$where,$order)
+
+Sucht nach Frauen die der $where Bedinung entsprechen
+wenn where blank übergeben wird, werden alle Frauen ausgegeben
+      
+Als Ergebnis werden die in $werte angegebenen Felder übermittelt
+
+Bei Bedarf kann $order angeben werden, dann wird das Ergebnis in der
+in $order angegebenen Suchreihenfolge geliefert
+
+=cut
+
+  my $self=shift;
+  my ($werte,$where,$order) = @_;
+  $werte ='*' unless ($werte);
+  if ($where) {
+    $where = ' where '.$where;
+  } else {
+    $where = '';
+  }
+  if ($order) {
+    $order = ' order by '.$order;
+  } else {
+    $order = '';
+  }
+  $stammdaten_werte = $dbh->prepare("select $werte from Stammdaten ".
+				    "$where $order;")
+      or die $dbh->errstr();
+  my $erg=$stammdaten_werte->execute() or die $dbh->errstr();
+  return $erg if($erg > 0);
+  return 0;
+}
+
+
+
+sub stammdaten_werte_next {
+
+=head2 $s->stammdaten_werte_next
+
+Liefert das nächste Suchergebnis zur Funktion stammdaten_werte
+
+=cut
+
+  my @erg=$stammdaten_werte->fetchrow_array();
+  return @erg;
+}
+
 
 1;
