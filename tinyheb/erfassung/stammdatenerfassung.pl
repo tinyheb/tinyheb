@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.48 2010-01-31 12:16:00 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.49 2010-03-13 17:43:06 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -132,7 +132,7 @@ $strasse_krankenkasse = '' unless defined ($strasse_krankenkasse);
 print $q->header ( -type => "text/html", -expires => "-1d");
 
 if (($auswahl eq 'Neu') && defined($abschicken)) {
-  $frau_id = speichern($s,$d,
+  ($frau_id,$hint) = speichern($s,$d,
 		       $frau_id,$vorname,$nachname,$geb_frau,$geb_kind,
 		       $plz,$ort,$tel,$strasse,
 		       $anz_kinder,$entfernung,$kv_nummer,
@@ -166,7 +166,7 @@ if (($auswahl eq 'Löschen') && defined($abschicken)) {
   if ($hint eq '') {
     print '<script>loeschen();</script>';
   } else {
-    print "<script>alert('$hint');</script>";
+ #   print "<script>alert('$hint');</script>";
     $auswahl='Anzeigen';
   }
 }
@@ -417,6 +417,9 @@ print "<script>set_focus(document.stammdaten);auswahl_wechsel(document.stammdate
 (my $help = $h->parm_unique("PRIVAT_FAKTOR")) =~ s/\./,/;
 print "<script> default_privat=new String('$help');</script>"; # default wert für den privatfaktor
 print "<script>versichertenstatus_change(document.stammdaten.versichertenstatus);</script>";
+if ($hint ne '') {
+  print "<script>alert('$hint');</script>";
+}
 print "</body>";
 print "</html>";
 
@@ -432,6 +435,7 @@ sub speichern {
       $begruendung_nicht_nae_heb,
       $kzetgt,$uhr_kind,$privat_faktor)=@_;
 
+  my $hint='';
   my $geb_f = $d->convert($geb_frau);
   my $geb_k = $d->convert($geb_kind);
   my $uhr_k = $uhr_kind.':00';
@@ -449,7 +453,42 @@ sub speichern {
   $privat_faktor_sp =~ s/,/\./g;
   $privat_faktor_sp = 0 unless($privat_faktor);
 
-  my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();  
+  my $TODAY = sprintf "%4.4u-%2.2u-%2.2u",Today();
+
+  # vor dem Speichern prüfen, ob es schon Frau mit dem Namen gibt
+  # d.h. Namensgleichheit prüfen, dann Warnung ausgeben
+  my $select = "VORNAME='$vorname' and NACHNAME='$nachname' ";
+#  $select .= "and GEBURTSDATUM_KIND='$geb_k' " if($geb_k ne '0000-00-00');
+#  $select .= "and GEBURTSDATUM_FRAU='$geb_f' " if($geb_f ne '0000-00-00');
+
+  $s->stammdaten_werte('VORNAME,NACHNAME,GEBURTSDATUM_KIND,GEBURTSDATUM_FRAU',
+		       $select);
+ 
+  my (@stammdaten_werte)=$s->stammdaten_werte_next();
+  if (@stammdaten_werte) {
+    $stammdaten_werte[2]='' unless ($stammdaten_werte[2]);
+    $stammdaten_werte[3]='' unless ($stammdaten_werte[3]);
+    $stammdaten_werte[2]=$d->convert_tmj($stammdaten_werte[2]);
+    $stammdaten_werte[3]=$d->convert_tmj($stammdaten_werte[3]);
+    $hint='ACHTUNG: Es ist schon eine Frau mit diesem Namen gespeichert:\n'."Vorname: $stammdaten_werte[0],".'\n'."Nachname: $stammdaten_werte[1],".'\n'."Geb Kind: $stammdaten_werte[2],".'\n'."Geb Frau: $stammdaten_werte[3]".'\nFrau wurde trotzdem gespeichert';
+  }
+
+
+  $select = "VORNAME='$nachname' and NACHNAME='$vorname' ";
+#  $select .= "and GEBURTSDATUM_KIND='$geb_k' " if($geb_k ne '0000-00-00');
+#  $select .= "and GEBURTSDATUM_FRAU='$geb_f' " if($geb_f ne '0000-00-00');
+
+  $s->stammdaten_werte('VORNAME,NACHNAME,GEBURTSDATUM_KIND,GEBURTSDATUM_FRAU',
+		       $select);
+ 
+  (@stammdaten_werte)=$s->stammdaten_werte_next();
+  if (@stammdaten_werte) {
+    $stammdaten_werte[2]='' unless ($stammdaten_werte[2]);
+    $stammdaten_werte[3]='' unless ($stammdaten_werte[3]);
+    $stammdaten_werte[2]=$d->convert_tmj($stammdaten_werte[2]);
+    $stammdaten_werte[3]=$d->convert_tmj($stammdaten_werte[3]);
+    $hint='ACHTUNG: Es ist schon eine Frau mit ähnlichem Namen gespeichert:\n'."Vorname: $stammdaten_werte[0],".'\n'."Nachname: $stammdaten_werte[1],".'\n'."Geb Kind: $stammdaten_werte[2],".'\n'."Geb Frau: $stammdaten_werte[3]".'\nFrau wurde trotzdem gespeichert';
+  }
 
   # jetzt speichern
   my $erg = $s->stammdaten_ins($vorname,$nachname,$geb_f,$strasse,$plz_sp,$ort,$tel,
@@ -458,7 +497,7 @@ sub speichern {
 			       $begruendung_nicht_nae_heb,$TODAY,
 			       $kzetgt,$uhr_k,$privat_faktor_sp
 			      );
-  return $erg;
+  return ($erg,$hint);
 }
 
 sub loeschen {
