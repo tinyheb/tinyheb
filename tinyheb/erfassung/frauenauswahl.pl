@@ -6,7 +6,7 @@
 
 # Auswahl einer Frau aus den Stammdaten
 
-# $Id: frauenauswahl.pl,v 1.18 2010-01-31 12:23:39 thomas_baum Exp $
+# $Id: frauenauswahl.pl,v 1.19 2010-03-13 13:31:31 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -109,7 +109,8 @@ print "<td><input type='text' name='strasse' value='$strasse' size='10'></td>";
 print '</table>';
 print "\n";
 
-# Zeile mit Pop Menue um Einschränkung auf erledigt vorzunehmen
+# Zeile mit Pop Menue um Einschränkung auf erledigt und andere status
+# vorzunehmen
 print '<tr>';
 print '<td>';
 print '<select name="sel_status" size="1">';
@@ -119,6 +120,11 @@ print '>alle</option>';
 print '<option';
 print ' selected' if ($sel_status eq 'ungleich erl.');
 print '>ungleich erl.</option>';
+foreach (10,20,22,24,26,80) {
+  print '<option';
+  print ' selected' if ($sel_status eq $l->status_text($_));
+  print ">".$l->status_text($_)."</option>\n";
+}
 print '</td></tr>';
 
 # Zeile mit Knöpfen für unterschiedliche Funktionen
@@ -206,7 +212,10 @@ if (defined($suchen)) {
       ($status)=$l->leistungsdaten_werte_next();
       $status=$l->status_text($status);
     }
-    if ($sel_status eq 'alle' || $status ne $l->status_text(30)) {
+    if ($sel_status eq 'alle' || # <- alle frauen
+	($status ne $l->status_text(30) && $sel_status eq 'ungleich erl.') || 
+	$sel_status eq $status # angegebene status
+       ) {
       print '<tr>';
       $f_vorname=' ' if (!defined($f_vorname));print "<td>$f_vorname</td>";
       $f_nachname=' ' if (!defined($f_nachname));print "<td>$f_nachname</td>";
