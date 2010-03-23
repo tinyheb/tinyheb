@@ -1,12 +1,12 @@
 #!/usr/bin/perl -wT
-#-w
+#-wT
 #-d:ptkdb
 #-d:DProf  
 
 
 # Auswahl einer Frau aus den Stammdaten
 
-# $Id: frauenauswahl.pl,v 1.19 2010-03-13 13:31:31 thomas_baum Exp $
+# $Id: frauenauswahl.pl,v 1.20 2010-03-23 20:04:00 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -120,9 +120,9 @@ print '>alle</option>';
 print '<option';
 print ' selected' if ($sel_status eq 'ungleich erl.');
 print '>ungleich erl.</option>';
-foreach (10,20,22,24,26,80) {
-  print '<option';
-  print ' selected' if ($sel_status eq $l->status_text($_));
+foreach (10,20,22,24,26,27,28,80) {
+  print "<option value='$_' ";
+  print ' selected' if ($sel_status eq $_);
   print ">".$l->status_text($_)."</option>\n";
 }
 print '</td></tr>';
@@ -207,14 +207,16 @@ if (defined($suchen)) {
 
 
     # Status zu Erfassung ermitteln
-    my $status=$l->status_text(10);
+    my $status=10;
     if($l->leistungsdaten_werte($f_id,'distinct status','','status')) {
       ($status)=$l->leistungsdaten_werte_next();
-      $status=$l->status_text($status);
+#      $status=$l->status_text($status);
     }
+
     if ($sel_status eq 'alle' || # <- alle frauen
-	($status ne $l->status_text(30) && $sel_status eq 'ungleich erl.') || 
-	$sel_status eq $status # angegebene status
+#	($status ne $l->status_text(30) && $sel_status eq 'ungleich erl.') || 
+	($status != 30 && $sel_status eq 'ungleich erl.') || 
+	$sel_status == $status # angegebene status
        ) {
       print '<tr>';
       $f_vorname=' ' if (!defined($f_vorname));print "<td>$f_vorname</td>";
@@ -225,7 +227,7 @@ if (defined($suchen)) {
       $f_ort=' ' if (!defined($f_ort));print "<td>$f_ort</td>";
       $f_strasse=' ' if (!defined($f_strasse));print "<td>$f_strasse</td>";
       print "<td>$da_stelle</td>\n";
-      print "<td>$status</td>";
+      print "<td>".$l->status_text($status)."</td>";
       print '<td><input type="button" name="waehlen" value="Auswählen"';
       print "onclick=\"frau_eintrag('$f_id');self.close();\">\n";
       print "</td>";
