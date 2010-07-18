@@ -1,6 +1,6 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.15 2008-10-03 13:04:52 thomas_baum Exp $
+# $Id: Heb.pm,v 1.16 2010-07-18 09:35:10 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
@@ -278,6 +278,23 @@ sub win32_openssl {
 
   return undef;
 }
+
+
+sub win32_mysql {
+  my $pfad='';
+  
+  # Suche Server 5.1
+  $pfad='/Programme/MySQL/MySQL Server 5.1/bin/';
+  return $pfad if (-e $pfad."mysql.exe");
+  
+  
+  # Suche Server 5.0
+  $pfad='/Programme/MySQL/MySQL Server 5.0/bin/';
+  return $pfad if (-e $pfad."mysql.exe");
+
+  return undef;
+}
+
 
 sub suche_gswin32 {
   my $gswin32=undef;
