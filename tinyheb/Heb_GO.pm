@@ -1,7 +1,7 @@
 # Package für die Hebammen Verarbeitung
 # Plausiprüfungen der GO
 
-# $Id: Heb_GO.pm,v 1.21 2010-02-05 12:54:10 thomas_baum Exp $
+# $Id: Heb_GO.pm,v 1.22 2010-07-18 11:44:35 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -557,8 +557,10 @@ sub pos0800_plausi {
   $vk++ if ($vk*$self->{fuerzeit} < $dauer_akt);
   $vk = sprintf "%1.1u",$vk;
 
-  if ($dauer_alt+$vk > 14) {
-    return 'FEHLER: Geburtsvorbereitung bei Einzelunterweisung höchsten 14 Unterichtseinheiten a 30 Minuten bis jetzt wurden '.$dauer_alt.' Einheiten erfasst\nes wurde nichts gespeichert\n';
+  my $ueinheiten = 14;
+  $ueinheiten  = 28 if ($self->{datum_l} > 20100630);
+  if ($dauer_alt+$vk > $ueinheiten) {
+    return 'FEHLER: Geburtsvorbereitung bei Einzelunterweisung höchsten '.$ueinheiten.' Unterichtseinheiten bis jetzt wurden '.$dauer_alt.' Einheiten erfasst\nes wurde nichts gespeichert\n';
   }
   return '';
 }
