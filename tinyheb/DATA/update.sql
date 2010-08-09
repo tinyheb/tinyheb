@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.21 2010-07-18 11:48:06 thomas_baum Exp $
+# $Id: update.sql,v 1.22 2010-08-09 14:42:34 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 #
@@ -770,3 +770,8 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='0901,0902,0911,0912,1
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='1600,1601,1602,1610,1611,1612' where POSNR in ('0901','0902','0911','0912','1000','1010','1100','1110','1200','1210');
 #
 #
+#
+# Fehlerkorrektur Positionsnummer 1110
+# 560,64 statt 560,65
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set EINZELPREIS=560.64 where POSNR = '1110' AND GUELT_VON = '2010-07-01';
