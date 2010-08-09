@@ -3,10 +3,10 @@
 
 # Mini Setup für tinyHeb
 
-# $Id: setup.pl,v 1.13 2009-10-30 17:08:57 thomas_baum Exp $
+# $Id: setup.pl,v 1.14 2010-08-09 14:57:04 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -43,11 +43,11 @@ my %statusHash;
 
 my $eingabe='';
 my $serv_erg='';
-my $id='$Id: setup.pl,v 1.13 2009-10-30 17:08:57 thomas_baum Exp $';
+my $id='$Id: setup.pl,v 1.14 2010-08-09 14:57:04 thomas_baum Exp $';
 
 write_LOG("Programm id $id");
 
-print "Setup fuer tinyHeb Copyright (C) 2007,2008,2009 Thomas Baum\n";
+print "Setup fuer tinyHeb Copyright (C) 2007 - 2010 Thomas Baum\n";
 print "Version of this setup programm $id\n";
 print "The tinyHeb setup programm comes with ABSOLUTELY NO WARRANTY;\nfor details see the file gpl.txt\n";
 print "This is free software, and you are welcome to redistribute it\n";
@@ -147,11 +147,13 @@ if ($win_path =~ /$suchpfad/) {
 
 
 print "Pruefe auf MySQL\n";
-my $pfad="/Programme/MySQL/MySQL Server 5.0/bin/mysql.exe";
+#my $pfad="/Programme/MySQL/MySQL Server 5.0/bin/mysql.exe";
+my $pfad=win32_mysql();
+
 print "$pfad \t";
-if (-e $pfad) {
+if ($pfad) {
   print "ist vorhanden\n";
-  write_LOG("MySQL vorhanden");
+  write_LOG("MySQL $pfad vorhanden");
 } else {
   print "nicht vorhanden,\nBitte zunaechst den MySQL Server Installieren,\nbevor dieses Setup Programm erneut gestartet werden kann\n";
   write_LOG("MySQL nicht vorhanden");
@@ -159,6 +161,7 @@ if (-e $pfad) {
   $eingabe=<STDIN>;
   exit(1);
 }
+
 
 print "Pruefe auf OpenSSL\n";
 $pfad=win32_openssl();
@@ -199,7 +202,7 @@ while ($eingabe < 1 or $eingabe > 3 or $eingabe !~ /\d{1}/) {
   print "Welches Betriebssystem wird genutzt?\n";
   print "(1) Win98\n";
   print "(2) WinXP\n";
-  print "(3) Vista\n";
+  print "(3) Vista oder Windows7\n";
   print "(4) anderes Windows System\n";
   print "Eingabe :";
   $eingabe=<STDIN>;
@@ -235,7 +238,7 @@ $eingabe=<STDIN>;
 
 # falls Perl Version 5.10.x zusätzlich Repositorys angeben
 if ($^V ge v5.10.0) {
-  print "Muss Perl Pakete für $^V teilweise von anderen Quellen installieren\n";
+  print "Muss Perl Pakete fuer $^V teilweise von anderen Quellen installieren\n";
   write_LOG("Perl andere Quellen 5.10.x notwendig");
   # prüfen ob Paketquellen schon vorhanden
   my $ppm_rep = `ppm repo list`;
@@ -256,7 +259,7 @@ if ($^V ge v5.10.0) {
 }
 
 if ($^V lt v5.10.0) {
-  print "Muss Perl Pakete für $^V teilweise von anderen Quellen installieren\n";
+  print "Muss Perl Pakete fuer $^V teilweise von anderen Quellen installieren\n";
   write_LOG("Perl andere Quellen 5.8.x notwendig");
   # prüfen ob Paketquellen schon vorhanden
   my $ppm_rep = `ppm repo list`;
@@ -302,7 +305,7 @@ if ($eingabe =~ /ja/i || $eingabe eq '') {
       copy("httpd_vista22.conf","$apachepfad"."/conf/httpd.conf") or error("konnte httpd.conf fuer Apache2.2 nicht kopieren $!\n");
     }
   } else {
-    write_LOG("Kopiere httpd.conf fuer irgendein windows");
+    write_LOG("Kopiere httpd.conf fuer irgendein windows vor Vista");
     if ($a_flag) {
       write_LOG("httpd.conf");
       copy("httpd.conf","$apachepfad"."/conf/httpd.conf") or error("konnte httpd.conf fuer Apache2 nicht kopieren $!\n");
@@ -314,14 +317,7 @@ if ($eingabe =~ /ja/i || $eingabe eq '') {
   print "Habe die httpd.conf kopiert\n";
 }
 
-print "\nSoll ich die my.ini fuer den MySQL Server kopieren (ja/nein) [ja]";
-$eingabe = <STDIN>;
-chomp $eingabe;
-write_LOG("Frage my.ini copy",$eingabe);
-if ($eingabe =~ /ja/i || $eingabe eq '') {
-  copy("my.ini","/Programme/MySQL/MySQL Server 5.0/my.ini") or error("konnte my.ini nicht kopieren $!\n");
-  print "Habe die my.ini kopiert\n";
-}
+# keine my.ini mehr überschreiben tinyHeb sollte auch so funktionieren.
 
 
 if ($os eq 'WinXP') {
@@ -346,35 +342,8 @@ if ($os eq 'WinXP') {
     }
   }
   
-  
-  print "\nSoll ich die MySQL Datenbank neu starten, damit die Aenderungen wirksam werden (ja/nein) [ja]";
-  $eingabe = <STDIN>;
-  chomp $eingabe;
-  if ($eingabe =~ /ja/i || $eingabe eq '') {
-    my $service='MySQL';
-    my $s=StopService('',$service);
-    print "Stoppe $service\n" if($s);
-    warte(5,$service);
-    GetStatus('',$service,\%statusHash);
-    if ($statusHash{"CurrentState"} =~ /[1-7]/) {
-      print $service . " ist aktuell " . $statcodeHash{$statusHash{"CurrentState"}} . "\n";
-    }
-    
-    $s=StartService('',$service);
-    $serv_erg=warte(5,$service);
-    GetStatus('',$service,\%statusHash);
-    if ($statusHash{"CurrentState"} =~ /[1-7]/) {
-      print $service . " ist aktuell " . $statcodeHash{$statusHash{"CurrentState"}} . "\n";
-    }
-    if($statusHash{"CurrentState"} eq '4') {
-      print "Habe $service gestartet\n";
-    } else {
-      print $service . " ist aktuell " . $statcodeHash{$statusHash{"CurrentState"}} . "\n";
-    }
-    write_LOG("MySQL status",%statusHash);
-    
-  }
-  
+  # Datenbank muss nicht mehr neu gestartet werden, wenn my.ini
+  # nicht überschrieben wird
   
   print "\nSoll ich die tinyHeb Datenbank initialisieren (ja/nein) [ja]";
   $eingabe = <STDIN>;
@@ -384,24 +353,23 @@ if ($os eq 'WinXP') {
   if ($eingabe =~ /ja/i || $eingabe eq '') {
     if(warte(1,'MySQL') ne '4') {
       print "Kann die Datenbank nicht initialisieren, weil der Server nicht gestartet werden konnte\nBitte manuell initialisieren\n";
-      print "\n\nJetzt muss ein Neustart des Rechners ausgefuehrt werden, damit\n";
-      print "die Aenderungen an der Konfiguration des Webservers und des\n";
-      print "MySQL Servers (Datenbank) wirksam werden\n\n";
-      
-      print "danach muss Du noch in das Verzeichnis DATA wechseln und\n";
+      print "Du musst noch in das Verzeichnis DATA wechseln und\n";
       print "folgenden Befehl in der Kommandozeile ausfuehren:\n";
       print "mysql -u root < init.sql\n";
       print "ODER falls Du bei der MySQL Installation ein Passwort fuer\n den Datenbankadmin angegeben hast:\n";
       print "mysql -p -u root < init.sql\n\n";
       write_LOG('MYSQL ist gestoppt, setup wird abgebrochen');
+      print "Das setup wird abgebrochen\n";
+      print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
       $eingabe=<STDIN>;
       exit(1);
     }
 
     # Datenbank Version dumpen
-    system('"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" --version >> setup.log');
+#    system('"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" --version >> setup.log');
+    system('"'.win32_mysql().'bin/mysql" --version >> setup.log');
     print "wenn kein Passwort fuer die MySQL Datenbank vergeben wurde,\nbei der Frage nach dem Passwort bitte ENTER druecken\n";
-    open INIT,'"C:/Programme/MySQL/MySQL Server 5.0/bin/mysql" -p -u root < ../DATA/init.sql |' or die "konnte Datenbank nicht initialisieren $!\n";
+    open INIT,'"'.win32_mysql().'bin/mysql" -p -u root < ../DATA/init.sql |' or die "konnte Datenbank nicht initialisieren $!\n";
     while (my $zeile=<INIT>) {
       print "Zeile $zeile\n";
     };
@@ -418,18 +386,7 @@ if ($os eq 'WinXP') {
       print "mysql -p -u root < init.sql\n\n";
     }
   }
-} else {
-  print "\n\nJetzt muss ein Neustart des Rechners ausgefuehrt werden, damit\n";
-  print "die Aenderungen an der Konfiguration des Webservers und des\n";
-  print "MySQL Servers (Datenbank) wirksam werden\n\n";
-
-  print "danach muss Du noch in das Verzeichnis DATA wechseln und\n";
-  print "folgenden Befehl in der Kommandozeile ausfuehren:\n";
-  print "mysql -u root < init.sql\n";
-  print "ODER falls Du bei der MySQL Installation ein Passwort fuer\n den Datenbankadmin angegeben hast:\n";
-  print "mysql -p -u root < init.sql\n\n";
 }
-
 
 
 print "Bitte die ENTER Taste zum Beenden des Setup druecken\n";
@@ -453,6 +410,7 @@ sub warte {
   return $statusHash{"CurrentState"};
 }
 
+
 sub suche_gswin32 {
   my $gswin32=undef;
   my $i=0;
@@ -475,7 +433,7 @@ sub suche_gswin32 {
 }
 
 sub win32_openssl {
-  my $openssl='';
+#  my $openssl='';
   my $pfad="/OpenSSL/bin/openssl";
   return $pfad if (-e "$pfad.exe");
   
@@ -483,6 +441,23 @@ sub win32_openssl {
   # Suche unterhalb /Programme/
   $pfad="/Programme/OpenSSL/bin/openssl";
   return $pfad if (-e "$pfad.exe");
+
+  return undef;
+}
+
+
+
+sub win32_mysql {
+  my $pfad='';
+  
+  # Suche Server 5.1
+  $pfad='/Programme/MySQL/MySQL Server 5.1/';
+  return $pfad if (-e $pfad."bin/mysql.exe");
+  
+  
+  # Suche Server 5.0
+  $pfad='/Programme/MySQL/MySQL Server 5.0/';
+  return $pfad if (-e $pfad."bin/mysql.exe");
 
   return undef;
 }
