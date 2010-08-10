@@ -1,13 +1,10 @@
-Release 1.6.0
+Release 1.5.0
 
 neue Gebührenordnung gültig ab 01.07.2010
 
 in der Frauensuche lässt sich nach unterschiedlichen Statuswerten suchen
 
 neues setup.pl Programm kommt auch ohne kopieren der my.ini Datei klar.
-
-
-Release 1.5.0
 
 Bug fix: In der Leistungsartenmaske funktionierte das vor- und zurückspringen zum nächsten Datensatz nicht, wenn die Maske leer war
 
