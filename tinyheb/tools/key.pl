@@ -6,10 +6,10 @@
 # extrahiert aus Schlüsseldateien des Trust Center ITSG die einzelnen
 # Schlüssel
 
-# $Id: key.pl,v 1.14 2008-04-25 15:46:04 thomas_baum Exp $
+# $Id: key.pl,v 1.15 2011-01-24 18:52:28 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2011 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -273,7 +273,7 @@ sub get_all {
     if ($name =~ /Public Key Algorithm: (.*?)$/) {
       $algorithmus = $1;
     }
-    if ($name =~ /Public Key: \((\d{1,4}) bit/) {
+    if ($name =~ /Public[- ]Key: \((\d{1,4}) bit/) {
       $pubkey_laenge = $1;
     }
   }

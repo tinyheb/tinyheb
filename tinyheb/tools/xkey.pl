@@ -8,10 +8,10 @@
 # identisch zu key.pl -c
 # aber mit Grafischer Oberfläche
 
-# $Id: xkey.pl,v 1.1 2009-01-04 13:21:30 thomas_baum Exp $
+# $Id: xkey.pl,v 1.2 2011-01-24 18:52:55 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2008,2009 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2008 - 2011 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -338,7 +338,7 @@ sub get_all {
     if ($name =~ /Public Key Algorithm: (.*?)$/) {
       $algorithmus = $1;
     }
-    if ($name =~ /Public Key: \((\d{1,4}) bit/) {
+    if ($name =~ /Public[- ]Key: \((\d{1,4}) bit/) {
       $pubkey_laenge = $1;
     }
   }
