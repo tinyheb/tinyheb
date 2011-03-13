@@ -5,7 +5,7 @@
 
 # Daten der Datenannahmestellen erfassen, ändern, löschen
 
-# $Id: da_stammdaten.pl,v 1.6 2008-10-05 13:54:03 thomas_baum Exp $
+# $Id: da_stammdaten.pl,v 1.7 2011-03-13 12:34:19 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
@@ -254,21 +254,21 @@ sub hole_da_daten {
   my ($name_da)=$k->krankenkasse_sel("kname",$ik_nummer);
   $ik=$h->parm_unique("IK".$ik_nummer);
   if(!defined($ik)) {
-    $h->parm_ins("IK".$ik_nummer,'00',"Datenannahmestelle (hier $name_da) Testindikator 0=Test, 1=Erprobungsphase, 2=Produktion");
+    $h->parm_ins("IK".$ik_nummer,'00',"Annahmestelle (hier $name_da) 0=Test, 1=Erprobungsphase, 2=Produktion");
     $ik=0;
   }
 
 
   $mail=$h->parm_unique("MAIL".$ik_nummer);
   if(!defined($mail)) {
-    $h->parm_ins("MAIL".$ik_nummer,'',"Mailadresse der Datenannahmestelle (hier $name_da) zwingend im Format NAME".'<mail@blab.blub.de>');
+    $h->parm_ins("MAIL".$ik_nummer,'',"Mailadresse der Annahmestelle (hier $name_da)");
     $mail='';
   }
 
 
   $sig=$h->parm_unique("SIG".$ik_nummer);
   if(!defined($sig)) {
-    $h->parm_ins("SIG".$ik_nummer,'00',"Signatur für diese Datenannahmestelle (hier $name_da) 0=keine, 2=PEM, 3=PKCS#7");
+    $h->parm_ins("SIG".$ik_nummer,'00',"Signatur für die Annahmestelle (hier $name_da) 0=keine, 2=PEM, 3=PKCS#7");
     $sig=00;
   }
   $sig = sprintf "%u",$sig;
@@ -276,14 +276,14 @@ sub hole_da_daten {
 
   $schl=$h->parm_unique("SCHL".$ik_nummer);
   if(!defined($schl)) {
-    $h->parm_ins("SCHL".$ik_nummer,'03',"Verschlüsselung für diese Datenannahmestelle (hier $name_da) 0=keine, 2=PEM, 3=PKCS#7");
+    $h->parm_ins("SCHL".$ik_nummer,'03',"Verschlüsselung für die Annahmestelle (hier $name_da) 0=keine, 2=PEM, 3=PKCS#7");
     $schl=03;
   }
   $schl = sprintf "%u",$schl;
 
   $dtaus=$h->parm_unique("DTAUS".$ik_nummer);
   if(!defined($dtaus)) {
-    $h->parm_ins("DTAUS".$ik_nummer,'1',"Datenaustauschreferenz für diese Datenannahmestelle (hier $name_da)");
+    $h->parm_ins("DTAUS".$ik_nummer,'1',"Datenaustauschreferenz für diese Annahmestelle (hier $name_da)");
     $dtaus=1;
   }
   return;
