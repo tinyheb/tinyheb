@@ -5,7 +5,7 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.49 2010-03-13 17:43:06 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.50 2011-06-19 08:23:54 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -205,7 +205,7 @@ print "\n";
 
 # Zeile Telefonnumer
 print '<tr><td><b>Tel.:</b></td></tr>';
-print "<tr><td><input type='text' name='tel' value='$tel' size='40'></td>";
+print "<tr><td><input type='text' name='tel' value='$tel' size='30' maxlength='30'></td>";
 
 print '</tr>';
 print "\n";
