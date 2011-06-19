@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.60 2010-02-05 12:15:59 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.61 2011-06-19 08:22:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -640,6 +640,7 @@ sub SLLA_TXT {
   
   my ($text)=@_;
   $text =~ s/'/\?'/g;$text =~ s/\+/\?\+/g; # Steuerzeichen aufbereiten
+  $text =~ s/,/\?\,/g;
   $text = substr($text,0,70);
 
   my $erg = 'TXT+';
