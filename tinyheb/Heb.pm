@@ -1,9 +1,9 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.16 2010-07-18 09:35:10 thomas_baum Exp $
+# $Id: Heb.pm,v 1.17 2011-06-19 08:20:50 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2003,2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2003 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -323,7 +323,8 @@ sub runden {
   my $self=shift;
   my ($zahl) = @_;
   $zahl *= 100;
-  $zahl += 0.5;
+  $zahl += 0.5 if($zahl > 0);
+  $zahl -= 0.5 if($zahl < 0);
   return ($zahl/100) if($zahl !~ /\./g); # Fehler in perl ausgleichen
   my $erg=int($zahl);
   $erg = $erg / 100;
