@@ -5,7 +5,7 @@
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
 
-# $Id: rechpos.pl,v 1.53 2010-01-31 12:21:42 thomas_baum Exp $
+# $Id: rechpos.pl,v 1.54 2011-06-19 08:23:13 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -321,7 +321,7 @@ sub printbox {
     my $fuerzeit_flag='';
     my ($l_posnr,$l_bez,$l_preis,$l_fuerzeit,$l_samstag,$l_nacht,$l_kilometer)=($werte[1],$werte[21],$werte[4],$werte[9],$werte[8],$werte[7],$werte[22]);
     ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
-    if ($l_preis > 0) {
+    if ($l_preis != 0) {
       print "<option value='$l_posnr'";
       print ' selected' if ($posnr eq $l_posnr);
       print ">\n";
