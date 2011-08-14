@@ -25,7 +25,7 @@ case "$1" in
     ;;
     purge)
         # fragen ob die Datenbank samt daten geloescht werden soll
-	echo "mysql: drop database PRD_Hebamme;"
+	echo "do manually in mysql: drop database PRD_Hebamme;"
     ;;
 
     *)

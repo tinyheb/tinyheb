@@ -1,3 +1,18 @@
+tinyheb (1.5.2-1) hardy; urgency=low
+
+  * bugfix upstream release includes Thomas's latest changes
+  * new maintainer key
+  * still supports Ubuntu 6.06.2 even when its end of life at 06.2011
+  * tested on hardy and dapper
+
+ -- robert <robert.sailer@tinyheb.de>  Sun, 07 Aug 2011 09:07:53 +0200
+
+tinyheb (1.5.1-1) hardy; urgency=low
+
+  * new upstream release
+
+ -- robert <robert.sailer@tinyheb.de>  Wed, 11 Aug 2010 07:46:29 +0200
+
 tinyheb (1.4.0-1) hardy; urgency=low
 
   * new upstream release 
