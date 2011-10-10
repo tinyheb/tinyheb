@@ -5,10 +5,10 @@
 
 # Stammdaten der Hebamme erfassen, ändern, löschen
 
-# $Id: heb_stammdaten.pl,v 1.6 2008-05-19 17:48:49 thomas_baum Exp $
+# $Id: heb_stammdaten.pl,v 1.7 2011-10-10 17:03:51 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2006, 2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2006 - 2011 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,7 @@ my $TODAY_tmj = $d->convert_tmj($TODAY);
 my @aus = ('Anzeigen','Ändern');
 my @bund = $d->bundeslaender;
 my %tarifkz =('00' => 'bundeseinheitlicher Tarif',
+#	      '02' => 'Bayern',
 	      '24' => 'West Tarif',
 	      '25' => 'Ost Tarif');
 
