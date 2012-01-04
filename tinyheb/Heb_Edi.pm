@@ -1,9 +1,9 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.61 2011-06-19 08:22:22 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.62 2012-01-04 17:52:19 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2012 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,10 @@ my $l = new Heb_leistung;
 my $k = new Heb_krankenkassen;
 my $s = new Heb_stammdaten;
 my $d = new Heb_datum;
+
+my %sondertarifkz = (); # Positionsnummern bei denen Sondertarif KZ mitgegeben werden muss
+
+$sondertarifkz{$_}=1 for qw (900 0900 910 0910 920 0920 930 0930 940 0940 950 0950);
 
 my $delim = "'\x0d\x0a"; # Trennzeichen
 my $crlf = "\x0d\x0a";
@@ -611,7 +615,11 @@ sub SLLA_EHB {
   $menge =~ s/\./,/g;
 
   my $erg = 'EHB+';
-  $erg .= '50:'.$h->parm_unique('HEB_TARIFKZ').'000+'; # Abrechnungscode 50 Hebamme Sondertarik 000 = ohne Sondertarif
+  if ($sondertarifkz{$posnr}) {
+    $erg .= '50:'.$h->parm_unique('HEB_TARIFKZ').'001+'; # Abrechnungscode 50 Hebamme Sondertarik 001 = mit Sondertarif w/ Betriebskostenpauschale
+  } else {
+    $erg .= '50:'.$h->parm_unique('HEB_TARIFKZ').'000+'; # Abrechnungscode 50 Hebamme Sondertarik 000 = ohne Sondertarif
+  }
   $erg .= $posnr.'+'; # Art der Leistung gem 8.2.6 PosNr
   $erg .= "$menge+"; # Anzahl der Abrechnungspositionen
   $preis = sprintf "%.2f",$preis;
