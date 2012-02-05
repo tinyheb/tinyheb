@@ -1,10 +1,10 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Stammdatenerfassung
 
-# Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2012 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
-# $Id: stammdaten.js,v 1.25 2009-11-16 16:48:23 thomas_baum Exp $
+# $Id: stammdaten.js,v 1.26 2012-02-05 17:41:27 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # This program is free software; you can redistribute it and/or modify
@@ -159,9 +159,9 @@ function save_heb_stammdaten(formular) {
 
 
 function kvnr_check(kvnummer) {
-  re=/^\d{9,12}$/;
+  re=/(^(\d{9,12}|[A-Z]{1}\d{9}))$/;
   if (kvnummer.value != '' && !re.test(kvnummer.value)) {
-    alert("Bitte KV-Nummer maximal 12 stellig numerisch erfassen");
+    alert("Bitte KV-Nummer prüfen");
     kvnummer.focus();
     kvnummer.select();
     return false;
