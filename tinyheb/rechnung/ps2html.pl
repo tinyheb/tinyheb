@@ -4,10 +4,10 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.60 2010-01-31 12:10:43 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.61 2012-03-10 16:26:59 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2012 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -141,10 +141,19 @@ if ($versichertenstatus ne 'privat') {
     $betreff.="Sachsen";
   } elsif (uc $heb_bundesland eq 'BADEN-WüRTTEMBERG' || $heb_bundesland eq 'Baden-Württemberg') {
     $betreff.="Baden-Württemberg";
+    my $priv=0;
+    $priv=$privat_faktor ? $privat_faktor : $h->parm_unique('PRIVAT_FAKTOR');
+    $priv= sprintf "%.2f",$priv;
+    $priv=~ s/\./,/g;
+    $betreff.= " Faktor $priv";
+      
   }  else {
     $betreff.="PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen".uc $heb_bundesland;
   }
 }
+
+
+
 
 $p->text(2,19.7,$betreff);
 
@@ -248,13 +257,17 @@ if ($test_ind && $test_ind==2) {
 
 # in Browser schreiben, falls Windows wird PDF erzeugt, sonst Postscript
 my $all_rech=$p->get();
-if ($q->user_agent !~ /Windows/) {
+
+#warn "User_agent: ",$q->user_agent;
+#warn "OS :",$^O;
+
+if ($q->user_agent !~ /Windows/ && $q->user_agent !~ /Macintosh/) {
   print $q->header ( -type => "application/postscript", -expires => "-1d");
   $all_rech =~ s/PostScript::Simple generated page/${nachname}_${vorname}/g;
   print $all_rech;
 }
 
-if ($q->user_agent =~ /Windows/) {
+if ($q->user_agent =~ /Windows/ || $q->user_agent =~ /Macintosh/) {
   print $q->header ( -type => "application/pdf", -expires => "-1d");
   if (!(-d "/tmp/wwwrun")) {
     mkdir "/tmp" if (!(-d "/tmp"));
@@ -263,7 +276,8 @@ if ($q->user_agent =~ /Windows/) {
   unlink('/tmp/wwwrun/file.ps');
   $p->output('/tmp/wwwrun/file.ps');
 
-  if ($^O =~ /linux/) {
+  if ($^O =~ /linux/ || $^O =~ /darwin/) {
+#    warn "Linux oder darwin";
     system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
   } elsif ($^O =~ /MSWin32/) {
     unlink('/tmp/wwwrun/file.pdf');
