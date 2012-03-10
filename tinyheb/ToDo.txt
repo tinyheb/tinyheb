@@ -1,4 +1,17 @@
 Offen:
+22.01.11
+Return Code OpenSSL in xkey.pl abfragen. 
+Prüfen ob das Problem auch in key.pl auftritt
+
+14.10.10 
+Bug fix, bei Gültigkeit in Maske Leistungsarten suchen, muss die Plausi auf * und % anders sein
+
+14.10.10
+Tabelle für Leistungsarten so anlegen, dass keine Werte doppelt eingetragen werden können
+
+14.10.10
+Bei Zertifizierungsanfragen direkt Anschreiben mit generieren.
+
 09.08.10 
 LASTUPDATE wird nur bei insert korrekt gefüllt, nicht bei update
 
