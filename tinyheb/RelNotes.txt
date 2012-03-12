@@ -8,6 +8,8 @@ Bug fix: , als Sonderzeichen wird in elektronischen Rechnung mit ESC Sequenz ver
 
 Bug fix: ITST benutzt neue Zertifikatkette seit 07.12.2011 
 
+Bug fix:lange Bezeichnungen der Datenannahmestellen führten zum Abbruch
+
 Berücksichtigung Sonderkennzeichen wegen Betriebskostenpauschale bei bestimmten Positionsnummern.
 
 
