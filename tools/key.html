@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- $Id$ -->
+<!-- Tag $Name -->
+  <head>
+    <title>öffentliche Schlüssel einspielen</title>
+    <script language="javascript" src="../Heb.js"></script>
+    <link href="../Heb.css" rel="stylesheet" type="text/css">
+    <script>
+      var fenster;
+      function oeffnen (url) {
+      if (!(fenster instanceof Window) || fenster.closed)
+      // Fenster nicht geöffnet -> Fenster mit Bild Öffnen
+      fenster = window.open (url, 'Schluessel');
+      else {
+      // Bild in bereits geöffnetem Fenster laden
+      fenster.location = url;
+      fenster.focus();
+      }
+      }
+    </script>
+  </head>
+
+  <body>
+    <div align="center">
+      <h1>öffentliche Schlüssel einspielen</h1>
+      <hr width="90%">
+    </div>
+    <br/>
+    <form name="key" action="key_ein.pl" method="post" enctype="multipart/form-data" target='key_erg' bgcolor=white>
+      <table border="0" width="700" align="left">
+	  <tr><td>
+	      <table border="0" align="left">
+		  <tr>
+		    <td><b>Dateiname der Schlüsseldatei</b></td>
+		  </tr>
+		  <tr>
+		    <td  style="font-size: small">Die Schlüsseldateien müssen vorher aus dem <a href="javascript:oeffnen('http://www.itsg.de/%28S%285rxq1l45011uub45y5zfhb55%29%29/tc_keys_leistungserbringerverfahren.ITSG')">Internet</a> geladen werden</td>
+		  </tr>
+		  <tr>
+		    <td><input type='file' name='datei' size='80'></td>
+		  </tr>
+	      </table>
+	  <tr>
+	    <td><table border="0" align="left">
+		  <tr>
+		    <td><b>Update oder Testlauf</b></td>
+		  </tr>
+	  </tr>
+	  <tr>
+	    <td><input type='radio' name='update' value='-u'>Update durchführen</td>
+	  </tr>
+	  <tr>
+	    <td><input type='radio' name='update' value='' checked>Testlauf</td>
+	  </tr>
+      </table>
+      <tr>
+	<td>
+	  <table border="0" align="left">
+	    <tr>
+		<td><input type="submit" name="abschicken" value="Schlüsseldatei einspielen"></td>
+		<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>
+		<td><input type="button" name="wartungsmenue" value="Wartungsmenue" onClick="window.location='../wartung.html';"></td>
+
+	      </tr>
+	  </table>
+    </form>
+  </tr>
+
+    <tr>
+      <td>
+	<iframe src='../blank.html' name='key_erg' width='800' height='400' scrolling='yes' frameborder='1' align='left'>
+    </iframe>
+      </td>
+    </tr>
+  </table>
+  </body>
+</html>
