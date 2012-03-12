@@ -1,4 +1,7 @@
 Offen:
+10.03.12
+Unter Mac müssen auch Mahnungen als PDF produziert werden
+
 22.01.11
 Return Code OpenSSL in xkey.pl abfragen. 
 Prüfen ob das Problem auch in key.pl auftritt
