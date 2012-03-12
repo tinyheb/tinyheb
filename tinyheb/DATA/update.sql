@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.22 2010-08-09 14:42:34 thomas_baum Exp $
+# $Id: update.sql,v 1.23 2012-03-12 18:22:49 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 #
@@ -687,7 +687,35 @@ WWWRUN	INSERT	Leistungsart	POSNR='2810' and GUELT_VON='2010-07-01' and GUELT_BIS
 WWWRUN	INSERT	Leistungsart	POSNR='2820' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2820','D','Zuschlag Zwillinge bei Stillschw.',9.30,'Zuschlag für die Beratung der Mutter bei Stillschwierigkeiten oder Ernührungsproblemen bei Zwillingen und mehr Kindern zu den Gebühren nach 2800 und 2810 für das zweite und jedes weitere Kind, je Kind','2010-07-01','9999-12-31','','','','','',0,'');
 #
 #
+# -------- neue Positionsnummern w/ Betriebskostenpauschale ab 27.06.2011
 #
+# Posnr 0900
+WWWRUN	INSERT	Leistungsart	POSNR='0900' and GUELT_VON='2011-06-27' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'0900','B','Betriebskostenpausch. vollendete Geb. nach QM',550.00,'Betriebskostenpauschale für eine vollendete Geburt in einer von Hebammen geleiteten Einrichtung, sofern die Einrichtung eines QM-System gemäß §7 Abs. 2 und Anlage 1 begonnen oder die Einführung beschlossen hat','2011-06-27','9999-12-31','','','','','',0,'');
+#
+#
+# Posnr 0910
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0910' and GUELT_VON='2011-06-27' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'0910','B','Betriebskostenpauschale vollendete Geb. vor QM',500.50,'Betriebskostenpauschale für eine vollendete Geburt in einer von Hebammen geleiteten Einrichtung bis zum Zeitpunkt der Einführung eines QM-Systems','2011-06-27','9999-12-31','','','','','',0,'');
+#
+# 
+# Posnr 0920
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0920' and GUELT_VON='2011-06-27' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'0920','B','Betriebskostenpauschale nicht-vollendete Geb. nach QM',412.50,'Betriebskostenpauschale für eine nicht-vollendete Geburt in einer von Hebammen geleiteten Einrichtung bei Verlegung aus der Einrichtung nach weniger als 4 Stunden, sofern die Einrichtung eines QM-System gemäß §7 Abs. 2 und Anlage 1 begonnen oder die Einführung beschlossen hat','2011-06-27','9999-12-31','','','','','',0,'');
+#
+#
+# Posnr 0930
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0930' and GUELT_VON='2011-06-27' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'0930','B','Betriebskostenpauschale nicht-vollendete Geb. vor QM',375.38,'Betriebskostenpauschale für eine nicht-vollendete Geburt in einer von Hebammen geleiteten Einrichtung bei Verlegung aus der Einrichtung nach weniger als 4 Stunden bis zum Zeitpunkt der Einführung eines QM-Systems','2011-06-27','9999-12-31','','','','','',0,'');
+#
+#
+# Posnr 0940
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0940' and GUELT_VON='2011-06-27' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'0940','B','Betriebskostenpauschale nicht-vollendete Geb. nach QM',550.00,'Betriebskostenpauschale für eine nicht-vollendete Geburt in einer von Hebammen geleiteten Einrichtung bei Verlegung aus der Einrichtung nach mehr als 4 Stunden, sofern die Einrichtung eines QM-System gemäß §7 Abs. 2 und Anlage 1 begonnen oder die Einführung beschlossen hat','2011-06-27','9999-12-31','','','','','',0,'');
+#
+#
+# Posnr 0950
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0950' and GUELT_VON='2011-06-27' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'0950','B','Betriebskostenpauschale nicht-vollendete Geb. vor QM',500.50,'Betriebskostenpauschale für eine nicht-vollendete Geburt in einer von Hebammen geleiteten Einrichtung bei Verlegung aus der Einrichtung nach mehr als 4 Stunden bis zum Zeitpunkt der Einführung eines QM-Systems','2011-06-27','9999-12-31','','','','','',0,'');
 #
 #
 #
