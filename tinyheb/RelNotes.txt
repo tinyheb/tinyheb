@@ -1,3 +1,16 @@
+Release 1.6.0
+
+Berücksichtigung Version 7 der technischen Anlage 1
+
+Bug fix: Runden geht auch bei negativen Zahlen richtig
+
+Bug fix: , als Sonderzeichen wird in elektronischen Rechnung mit ESC Sequenz versehen.
+
+Bug fix: ITST benutzt neue Zertifikatkette seit 07.12.2011 
+
+Berücksichtigung Sonderkennzeichen wegen Betriebskostenpauschale bei bestimmten Positionsnummern.
+
+
 Release 1.5.0
 
 neue Gebührenordnung gültig ab 01.07.2010
