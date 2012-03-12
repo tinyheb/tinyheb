@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.62 2012-01-04 17:52:19 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.63 2012-03-12 17:56:35 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2012 Thomas Baum <thomas.baum@arcor.de>
@@ -49,6 +49,7 @@ my $crlf = "\x0d\x0a";
 my $openssl ='openssl';
 
 my $TODAY_jmt = sprintf "%4.4u%2.2u%2.2u",Today();
+#my $TODAY_jmt = '20120402';
 
 $openssl = $h->win32_openssl() if ($^O =~ /MSWin32/);
 
@@ -587,6 +588,19 @@ sub SLLA_NAD {
 
 
 
+sub SLLA_HEB {
+  # generiert SLLA HEB Segement, gibt es erst ab Version 7
+  my $self=shift;
+  my ($ik_hebamme) = @_;
+
+  my $erg='HEB+';
+  $erg .= $ik_hebamme;
+  $erg .= $delim;
+  
+  return $erg;
+}
+
+
 sub SLLA_HEL {
   # generiert SLLA HEL Segment, gibt erst ab Version 6
   my $self=shift;
@@ -730,7 +744,8 @@ sub UNH {
   my $erg = 'UNH+';
   $erg .= $lfdnr.'+'; # laufender Nummer der UNH Segmente
   $erg .= $typ;
-  $erg .= ':06:0:0'; # Nachichtenkennung
+  # Nachrichtenkennung ab 01.04.2012 Version 07
+  $erg .= $TODAY_jmt > 20120331 ? ':07:0:0' : ':06:0:0';
   $erg .= $delim;
 
   return $erg;
@@ -870,7 +885,13 @@ sub SLLA {
 			  $self->{land});
   $lfdnr++;
 
-  # 5. HEL Segmente generieren
+  # 5. HEB Segment generieren, erst nachdem 01.04.2012
+  if ($TODAY_jmt > 20120331) {
+    $erg .= $self->SLLA_HEB($h->parm_unique('HEB_IK'));
+    $lfdnr++;
+  }
+
+  # 6. HEL Segmente generieren
   # Schleife über Tage an denen Leistungen erbracht wurden
   my %ges_sum;$ges_sum{A}=0;$ges_sum{C}=0;$ges_sum{M}=0;$ges_sum{B}=0;
   my $lleist=new Heb_leistung;
@@ -1142,20 +1163,20 @@ sub SLLA {
     }
   }
 
-  # 6 ZHB Segment erzeugen
+  # 7 ZHB Segment erzeugen
   $erg .= $self->SLLA_ZHB($dia_datum);$lfdnr++;
   
-  # 7 DIA Segment erzeugen
+  # 8 DIA Segment erzeugen
   if ($dia_schl || $dia_text) {
     $erg .= $self->SLLA_DIA($dia_schl,$dia_text);
     $lfdnr++;
   }
 
-  # 8. BES Segment ausgeben
+  # 9. BES Segment ausgeben
   $gesamtsumme += $summe_km;
   $erg .= $self->SLLA_BES($gesamtsumme);
 
-  # 9. UNT Endesegment ausgeben
+  # 10. UNT Endesegment ausgeben
   $erg .= $self->UNT($lfdnr+1,$ref);
   print "$gesamtsumme, $summe_km\n" if ($debug > 10);
   $self->{SLLA}=$erg;
@@ -1213,6 +1234,7 @@ sub sig {
 
     # 
     my $cert_opts='';
+    $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg7.pem"! if ($cert_info == 4);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg6.pem"! if ($cert_info == 3);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg4.pem"! if ($cert_info == 2);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg2.pem"! if ($cert_info == 1);
@@ -1223,10 +1245,13 @@ sub sig {
     }
     if ($cert_info == 2 && !(-r "$cert_path".'certs/itsg4.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg4.pem) konnte nicht gefunden werden",0);
-    }
-    if ($cert_info == 3 && !(-r "$cert_path".'certs/itsg6.pem')) {
+      if ($cert_info == 3 && !(-r "$cert_path".'certs/itsg6.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg6.pem) konnte nicht gefunden werden",0);
+    }  }
+    if ($cert_info == 4 && !(-r "$cert_path".'certs/itsg7.pem')) {
+      return ("Ein Zertifikat der Zertifizierungskette (itsg7.pem) konnte nicht gefunden werden",0);
     }
+
 
 #    print "OpenSSL Befehl: $openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem $cert_opts -passin pass:\" test \" -inkey $path/privkey/privkey.pem";
 
@@ -1576,6 +1601,7 @@ sub get_cert_info {
   #  1 == Zertifikat gültig Zertifizierungskette 1
   #  2 == Zertifikat gültig Zertifizierungskette 2
   #  3 == Zertifikat gültig Zertifizierungskette 3
+  #  4 == Zertifikat gültig Zertifizierungskette 4
   #  0 == Zertifikat nicht gültig oder sonstiges Problem
 
   my $self=shift;
@@ -1604,12 +1630,15 @@ sub get_cert_info {
 
   $guelt_bis=$d->extract_date($guelt_bis);
   $guelt_von=$d->extract_date($guelt_von);
+  
+#  warn "Gült von,bis: $guelt_von bis $guelt_bis\n";
   return ("Zertifikat abgelaufen",0) if ($guelt_bis < $TODAY_jmt);
 #  return ("Zertifikat noch nicht gültig",0) if ($guelt_von > $TODAY_jmt);
   
   return ("Zertifikat mit Zertifizierungscert 01",1) if ($guelt_von < 20071213);
   return ("Zertifikat mit Zertifizierungscert 14",2) if ($guelt_von < 20091210);
-  return ("Zertifikat mit Zertifizierungscert 56",3);
+  return ("Zertifikat mit Zertifizierungscert 56",3) if ($guelt_von < 20111208);
+  return ("Zertifikat mit Zertifizierungscert root67",4);
 
 }
 
