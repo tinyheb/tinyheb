@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.63 2012-03-12 17:56:35 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.64 2012-03-16 18:58:24 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2012 Thomas Baum <thomas.baum@arcor.de>
@@ -1245,9 +1245,10 @@ sub sig {
     }
     if ($cert_info == 2 && !(-r "$cert_path".'certs/itsg4.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg4.pem) konnte nicht gefunden werden",0);
-      if ($cert_info == 3 && !(-r "$cert_path".'certs/itsg6.pem')) {
+    }
+    if ($cert_info == 3 && !(-r "$cert_path".'certs/itsg6.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg6.pem) konnte nicht gefunden werden",0);
-    }  }
+    }  
     if ($cert_info == 4 && !(-r "$cert_path".'certs/itsg7.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg7.pem) konnte nicht gefunden werden",0);
     }
