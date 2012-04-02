@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.64 2012-03-16 18:58:24 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.65 2012-04-02 17:47:22 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2012 Thomas Baum <thomas.baum@arcor.de>
@@ -594,7 +594,8 @@ sub SLLA_HEB {
   my ($ik_hebamme) = @_;
 
   my $erg='HEB+';
-  $erg .= $ik_hebamme;
+  $erg .= $ik_hebamme.'+';
+  $erg .= $h->parm_unique('HEB_IK_BELEG_KKH'); # IK Belegkrankenhaus
   $erg .= $delim;
   
   return $erg;
@@ -675,14 +676,16 @@ sub SLLA_TXT {
 
 sub SLLA_ZHB {
   # generiert SLLA ZHB Segment Zusatzinfo Fall Hebammen
-  # nur in Version 6 vorhanden
+  # ab Version 6 vorhanden
 
   my $self=shift;
   my ($dia_datum)=@_;
 
   my $erg = 'ZHB+';
-  $erg .= $self->{HEB_IK}.'+'; # IK der behandelnden Hebamme
-  $erg .= $h->parm_unique('HEB_IK_BELEG_KKH').'+'; # IK Belegkrankenhaus
+  # IK Nummer Hebamme wird in Version 7 nicht mehr benötigt
+  #$erg .= $self->{HEB_IK}.'+'; # IK der behandelnden Hebamme
+  # IK Belegkrankenhaus wird in Version 7 nicht mehr benötigt
+  #$erg .= $h->parm_unique('HEB_IK_BELEG_KKH').'+'; # IK Belegkrankenhaus
   # $erg .= '999999999+'; # Betriebsstättennummer default angeben, bis Beschw.
   $erg .= '+'; # Betriebsstättennummer kann Feld
   # $erg .= '999999999+'; # Vertragsarztnummer default angeben, bis Beschw.
