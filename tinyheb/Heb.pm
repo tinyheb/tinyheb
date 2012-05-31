@@ -1,6 +1,6 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.17 2011-06-19 08:20:50 thomas_baum Exp $
+# $Id: Heb.pm,v 1.18 2012-05-31 16:49:14 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2003 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -274,6 +274,10 @@ sub win32_openssl {
   
   # Suche unterhalb /Programme/
   $pfad="/Programme/OpenSSL/bin/openssl";
+  return $pfad if (-e "$pfad.exe");
+
+  # zusätzlicher Pfad 
+  $pfad="/OpenSSL-Win32/bin/openssl";
   return $pfad if (-e "$pfad.exe");
 
   return undef;
