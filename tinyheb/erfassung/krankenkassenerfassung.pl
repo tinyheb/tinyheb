@@ -5,10 +5,10 @@
 
 # Krankenkassen erfassen, ändern, löschen
 
-# $Id: krankenkassenerfassung.pl,v 1.20 2008-12-07 16:10:55 thomas_baum Exp $
+# $Id: krankenkassenerfassung.pl,v 1.21 2012-07-05 17:26:30 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2012 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -272,9 +272,13 @@ sub speichern {
   # Speichert die Daten in der Krankenkassen Datenbank
   $plz_post = 0 if($plz_post eq '');
   $plz_haus = 0 if($plz_haus eq '');
+  $zik = 0 unless($zik);
+  $beleg_ik = 0 unless($beleg_ik);
   my $erg = $k->krankenkassen_ins($ik,$kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik,$email);
   $plz_post = '' if($plz_post == 0);
   $plz_haus = '' if($plz_haus == 0);
+  $zik = '' if($zik == 0);
+  $beleg_ik = '' if($beleg_ik == 0);
   return $erg;
 }
 
@@ -288,9 +292,13 @@ sub aendern {
   # Ändert die Daten zur angegebenen Krankenkassen in der Datenbank
   $plz_post = 0 if($plz_post eq '');
   $plz_haus = 0 if($plz_haus eq '');
+  $zik = 0 unless($zik);
+  $beleg_ik = 0 unless($beleg_ik);
   my $erg = $k->krankenkassen_update($kname,$name,$strasse,$plz_haus,$plz_post,$ort,$postfach,$asp_name,$asp_tel,$zik,$bemerkung,$zik_typ,$beleg_ik,$email,$ik);
   $plz_post = '' if($plz_post == 0);
   $plz_haus = '' if($plz_haus == 0);
+  $zik = '' if($zik == 0);
+  $beleg_ik = '' if($beleg_ik == 0);
   return $erg;
 }
 
