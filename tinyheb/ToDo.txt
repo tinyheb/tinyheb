@@ -1,4 +1,7 @@
 Offen:
+05.08.12
+neue Plausiprüfungen für Positionsnummern 3910 und 3920
+
 10.03.12
 Unter Mac müssen auch Mahnungen als PDF produziert werden
 
@@ -31,7 +34,7 @@ Heb.css anpassen, Font sollte Arial sein, nicht serif.
 Möglichkeiten eruieren, elektrische Rechnung aus dem Browser zu produzieren
  
 23.02.09
-Mahngebüheren einführen
+Mahngebüren einführen
 
 08.06.08
 Plausiprüfung vor/nach Geburtstermin, muss Hinweis kommen, ob man akzeptiert oder nicht
