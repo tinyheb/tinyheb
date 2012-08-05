@@ -20,32 +20,32 @@ set -e
 get_config()
 {
     # Webserverauswahl wie im tinyheb.config definert
-    echo "DEBUG: setzen der Variablen" >>/root/debug
+    # echo "DEBUG: setzen der Variablen fuer getconfig" >>/tmp/debug
     db_get tinyheb/webserver
     SELECTEDWebServerName="$RET"
-    echo "DEBUG: SELECTEDWebServerName=$SELECTEDWebServerName" >>/root/debug
+    # echo "DEBUG: SELECTEDWebServerName=$SELECTEDWebServerName" >>/tmp/debug
 
     # Daten fuer den mysqlServer
     db_get tinyheb/mysql_server
     mysql_server="$RET"
-    echo "DEBUG: mysql_server=$mysql_server" >>/root/debug
+    # echo "DEBUG: mysql_server=$mysql_server" >>/tmp/debug
 
     db_get tinyheb/mysql_port
     mysql_port="$RET"
-    echo "DEBUG: mysql_port=$mysql_port" >>/root/debug
+    # echo "DEBUG: mysql_port=$mysql_port" >>/tmp/debug
 
     db_get tinyheb/mysql_root
     mysql_root="$RET"
-    echo "DEBUG: mysql_root=$mysql_root" >>/root/debug
+    # echo "DEBUG: mysql_root=$mysql_root" >>/tmp/debug
 
     db_get tinyheb/mysql_password
     mysql_password="$RET"
-    echo "DEBUG: mysql_password=$mysql_password" >>/root/debug
+    # echo "DEBUG: mysql_password=$mysql_password" >>/tmp/debug
 }
 
-echo "DEBUG: Prog=$0 Arg1=$1 Arg2=$2" >> /root/debug
+# echo "DEBUG: Prog=$0 Arg1=$1 Arg2=$2" >> /tmp/debug
 
-case $1 in
+case "$1" in
     configure)
         # source debconf stuff
         . /usr/share/debconf/confmodule
@@ -63,7 +63,7 @@ case $1 in
         esac
 
         srcPath='/srv/www/cgi-bin/tinyheb'
-        echo "DEBUG pwd=:`pwd`:" >>/root/debug
+        # echo "DEBUG $0 pwd=:`pwd`:" >>/tmp/debug
 
         # das geht eigentlich noch nicht, weil der Thomas das file beim
         # install kopiert und somit ist es dann schon da. Es geht
@@ -85,11 +85,11 @@ case $1 in
         # im config-Dialog wurden die Variablen abgefragt
         if [ "${mysql_password}" != 'none'  ]
         then
-            echo "DEBUG: mysqlpasswort gesetzt -->  mysql_password=:$mysqlpassword:" >>/root/debug
+            # echo "DEBUG: mysqlpasswort gesetzt -->  mysql_password=:$mysqlpassword:" >>/tmp/debug
             mysql_pwd="-p${mysql_password}"
 	    # passwort ins konfigfile unter /etc/tinyheb/tinyheb.conf scrhreiben
         else
-            echo "DEBUG: mysqlPasswd leer --> mysql_password=:$mysqlpassword:" >>/root/debug
+            # echo "DEBUG: mysqlPasswd leer --> mysql_password=:$mysqlpassword:" >>/tmp/debug
             mysql_pwd=""
         fi
         cfg="/etc/tinyheb/tinyheb.conf"
@@ -97,7 +97,7 @@ case $1 in
 	then
 	    # ok cfg file gefunden
 	    # Paraemeter eintragen
-            echo "DEBUG: originalfile kopieren" >>/root/debug
+            # echo "DEBUG: originalfile kopieren" >>/tmp/debug
             cp -p $cfg ${cfg}.orig
 	    # ATTN: die Rechte duerfen nicht verloren gehen
 	    (
@@ -108,23 +108,23 @@ case $1 in
                sed "s/^\(MySQLServerPort =\).*$/\1 $mysql_port/" \
 	       >/tmp/cfg.tmp && mv /tmp/cfg.tmp $cfg || true
 	    ) || true
-            echo "DEBUG: Passwort ins konfigfile eintragen" >>/root/debug
+            # echo "DEBUG: Passwort ins konfigfile eintragen" >>/tmp/debug
 	else
 	    # file neu anlegen
-            echo "DEBUG: kein Konfigfile da" >>/root/debug
+            # echo "DEBUG: $0 kein Konfigfile da" >>/tmp/debug
 	    # das duerfte eigentlich nie passieren weil es im Paket enth. ist
             echo "ATTN: das Unmoegliche ist eingetreten $cfg nicht da!"
         fi    
         mysqlcmd="mysql -h ${mysql_server} -P ${mysql_port} -u ${mysql_root} ${mysql_pwd}"
         # jetzt pruefen ob die Datenbank schon da ist:
-        echo "DEBUG: mysqlcmd=$mysqlcmd" >>/root/debug
+        # echo "DEBUG: mysqlcmd=$mysqlcmd" >>/tmp/debug
         # in $2 steht die Vorversion wenns keine gibt ist das leer
         # in $1 sollte configure stehen
-        echo "DEBUG: 1=$1 2=$2" >>/root/debug
+        # echo "DEBUG: $0 1=$1 2=$2" >>/tmp/debug
         if [ "x$2" != "x" ]
         then
             # ATTN Datenbank ist schon da dann das update script aufrufen
-            echo "update-script aufrufen in :$srcPath/DATA:" >>/root/debug
+            # echo "update-script aufrufen in :$srcPath/DATA:" >>/tmp/debug
             ( 
 	    echo "Fuehre jetzt den update der Datenbank durch "
             cd "${srcPath}/DATA"; ./update.pl --rpm 
@@ -132,12 +132,12 @@ case $1 in
         else
 	    echo "Erzeuge Datenbankstruktur..."
             # die Datenbank anlegen
-            echo "debug: Datenbank anlegen" >>/root/debug
-            echo "DEBUG: cmd=${mysqlcmd}" >>/root/debug
+            # echo "debug: Datenbank anlegen" >>/tmp/debug
+            # echo "DEBUG: cmd=${mysqlcmd}" >>/tmp/debug
             ${mysqlcmd} < "$srcPath/DATA/init.sql" || true
         fi
 
-        echo "DEBUG: nach dem Konfigzweig sql" >>/root/debug
+        # echo "DEBUG: nach dem Konfigzweig sql" >>/tmp/debug
 
         # webserver neu starten wenn gewuenscht
         for server in $webservers
@@ -152,11 +152,11 @@ case $1 in
 
     abort-upgrade|abort-remove|abort-deconfigure)
        # do nothing 
-       echo "PostInst: $1"
+       echo "PostInst: $0 $1"
     ;;
 
     *)
-        echo "postinst called with unknown argument \`$1'" >&2
+        echo "postinst called with unknown argument $1" >&2
         exit 1
     ;;
 esac

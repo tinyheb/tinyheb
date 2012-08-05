@@ -1,3 +1,9 @@
+tinyheb (1.6.1-1) jaunty; urgency=low
+
+  * new upstram release (skipped Version 1.6.0)
+
+ -- robert <robert.sailer@tinyheb.de>  Wed, 11 Apr 2012 20:32:08 +0100
+
 tinyheb (1.5.2-1) hardy; urgency=low
 
   * bugfix upstream release includes Thomas's latest changes
