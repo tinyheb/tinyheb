@@ -1,3 +1,13 @@
+Release 1.6.2
+
+Aufnahme neuer Positionsnummern für Auslagenersatz
+
+
+Release 1.6.1
+
+Bug fix: elektronische Rechnungen wurden durch die Datenannahmestellen wegen einem Problem im ZHB Segment nicht mehr angenommen 
+
+
 Release 1.6.0
 
 Berücksichtigung Version 7 der technischen Anlage 1
@@ -6,7 +16,7 @@ Bug fix: Runden geht auch bei negativen Zahlen richtig
 
 Bug fix: , als Sonderzeichen wird in elektronischen Rechnung mit ESC Sequenz versehen.
 
-Bug fix: ITST benutzt neue Zertifikatkette seit 07.12.2011 
+Bug fix: ITSG benutzt neue Zertifikatkette seit 07.12.2011 
 
 Bug fix:lange Bezeichnungen der Datenannahmestellen führten zum Abbruch
 
