@@ -1,0 +1,39 @@
+tinyheb for Ubuntu and  Debian 
+------------------------------
+
+The dependencies should resolve clearly as usual for deb-packages
+I have tested the package on Ubuntu 8.0.4 and 10.04 _Server_ LTS only!
+On 8.04 the package libcgi-perl is still available while on 10.04 it isn't.
+So after asking Thomas it isnt needed anymore but still in the suggested
+packages for the installation (just to be sure it will work on older systems
+too)
+
+
+There is an install server available from where you can install
+with apt-get
+please include the following lines in your sources.list:
+--cut--
+deb http://node1.vpnnetz.de/packages ./
+--cut--
+dont forget the apt-get update!
+
+Then you can do:
+apt-get install tinyheb
+that's all
+
+I peronally recommend to install tinyheb in a virtual environment with
+Ubuntu 8.04 / 10.04 LTS Server as it is supported for an extended timerange.
+Possible Hypervisors could be Virtual Box (its free) or VMware Server 1.x/2x 
+(also free) or one of the commerical products like VMware Workstation or
+VMware Fusion on MACs. Each of the mentioned products run on Windows Derivates.
+Even VirtualPC from Microsoft should work (untested by myself - if there is 
+anybody who had success with MS-vPC please drop me a note).
+The major advantage of running the system in a virtual environment is the
+complete independence of the underlaying OS. This means independend patching
+of both systems without any dependencies between the systems.
+The major disadvantage is that the system has to be started before it can be
+used and after use it has to be shutdown. 
+
+So think about it.
+
+ -- Robert Sailer <robert.sailer@tinyheb.de>, Sat Apr 11 20:13:05 CET 2012 +0100
