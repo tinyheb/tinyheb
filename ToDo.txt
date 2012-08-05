@@ -1,0 +1,584 @@
+Offen:
+05.08.12
+neue Plausiprüfungen für Positionsnummern 3910 und 3920
+
+10.03.12
+Unter Mac müssen auch Mahnungen als PDF produziert werden
+
+22.01.11
+Return Code OpenSSL in xkey.pl abfragen. 
+Prüfen ob das Problem auch in key.pl auftritt
+
+14.10.10 
+Bug fix, bei Gültigkeit in Maske Leistungsarten suchen, muss die Plausi auf * und % anders sein
+
+14.10.10
+Tabelle für Leistungsarten so anlegen, dass keine Werte doppelt eingetragen werden können
+
+14.10.10
+Bei Zertifizierungsanfragen direkt Anschreiben mit generieren.
+
+09.08.10 
+LASTUPDATE wird nur bei insert korrekt gefüllt, nicht bei update
+
+09.01.10
+Nachkommastellen immer bei Nacht anzeige NK stellen, auch bei erstem Sprung in Maske
+
+03.01.10
+Win setup auf MySQL 6 einstellen, 5 wird zukünftig nicht mehr gewartet.
+
+10.05.09
+Heb.css anpassen, Font sollte Arial sein, nicht serif.
+
+26.04.09
+Möglichkeiten eruieren, elektrische Rechnung aus dem Browser zu produzieren
+ 
+23.02.09
+Mahngebüren einführen
+
+08.06.08
+Plausiprüfung vor/nach Geburtstermin, muss Hinweis kommen, ob man akzeptiert oder nicht
+
+09.02.08
+Kennzeichen in Krankenkassendaten, damit Werte einer einzelnen Kasse nicht überschrieben werden.
+
+13.12.07
+Positionen 090 bis 130 beinhaltet alles bis 8 Stunden vor und 3 Stunden danach
+
+10.11.07
+bei Zuschlägen, wenn sowohl vor wie auch nacher Stichzeitpunkt Leistung erbracht wird, ggf. 2 Positionen speichern.
+
+26.08.07
+Positionsnummer B. können nur am Geburtsdatum des Kindes erfasst werden.
+
+24.09.06
+Privat Rechnungen für andere Bundesländer als NRW
+
+23.09.06
+Feiertage Bundeslandbezogen
+
+06.08.06
+eigene Erfassungs- und Bearbeitungsmaske für Materialien
+
+----------------------------------------------------------------
+Erledigt:
+18.07.10
+Gebührenordnung gültig ab 01.07.2010 Anforderung vom 18.07.2010
+
+31.01.10 
+Plausiprüfung für Material, muss auf richtige übergeordnete Positionsnummer verweisen. Anforderung vom 03.01.10
+
+31.12.09
+Versichertenbestätigungen auf neue Positionsnummern anpassen. Anforderung vom. 28.12.09
+
+17.11.09
+Plausprüfung Tel. Beratung 2x innerhalb erste 10 Tage nur mit Begründung.
+Anforderung vom 17.11.09
+
+17.11.09
+Link auf Kostenträgerdateien in Doku anpassen. Anforderung vom 17.11.09
+
+17.11.09
+Falzmarkierungen bei Urbelegen. Anforderung vom 20.07.09
+
+17.11.09
+Positionsnummern 280, 281, 290 sind auch nach 9 Monaten noch abrechenbar.
+Nur bei Ernährungsproblem Säugling bis 9 Monate. Anforderung vom 11.07.09
+
+17.11.09
+Gebührenordnung BW einbauen. Anforderung vom 11.07.09
+
+17.11.09
+Dokumentation für ein eigenes Zertifikat erneuern schreiben. 
+Anforderung vom 15.02.09
+
+
+16.11.09
+prüfen, ob es sinnvoll ist, dass Passwort des Hebammenzertifikates mit verschlüsselt abzuspeicher, falls die Hebamme das Passwort vergisst. 
+Anforderung vom 26.04.09
+
+
+08.03.09
+Beschreibung der Maske Mahnungen generieren. Anforderung vom 12.11.2006
+
+Dokumentation erstellen. Mahnungen generieren war das letzte fehlende
+Kapitel. Anforderung vom 09.07.2005
+
+Grund angeben, warum eine elektronische Rechnung nicht möglich ist. Wird 
+nicht umgesetzt, die angegebenen Gründe sind ausreichend. Anforderung vom
+26.12.2006
+
+14.02.09
+Zuschläge dürfen kein KM  Geld haben. Anforderung  vom 10.01.2009
+
+Wenn Feld inaktiv ist bei KM den Wert auf blank/ 0 setzen. Anforderung vom 29.11.08
+
+
+01.02.09
+Gesamtsumme der Erträge sollen Anfang des Jahres auf 0 gehen. Anforderung vom 12.01.2009
+
+09.01.09
+Neues Zertifikat generieren, obwohl altes noch existiert. Anforderung vom 17.08.08
+
+04.01.09
+GUI für das Einlesen des eigenen Zertifikates. Anforderung vom 09.02.2008
+
+03.01.09
+Logo mit auf Rechnung drucken. Anforderung vom 18.12.08
+
+18.12.08
+Literaturhinweise überarbeiten. Anforderung vom 17.12.08
+
+Nach Auswahl Positionsnummer 180 geht Focus auf Begründung statt auf Uhrzeit von. Anforderung vom 02.11.2008
+
+Bei init.sql nur solche Datenannahmestellen auf ohne Signatur stellen, die wirklich keine Signatur benötigen. 
+Das Signaturkennzeichen wird 1:1 aus der Produktions-DB übernommen.
+Anforderung vom 26.10.2008
+
+17.12.08
+Return Code aus OpenSSL Prüfung richtig abfragen. Anforderung vom 29.11.08
+
+Änderung mit about:blank rückgängig machen, funktioniert nicht mit opera. Anforderung vom 24.10.08
+
+
+07.12.08
+Auch bei perl 5.8.x müssen zusätzliche Repos unter windows aufgenommen werden:
+http://theoryx5.uwinnipeg.ca/
+http://trouchelle.com/ppm/
+Anforderung vom 06.12.08
+
+Gebührenordnung Brandenburg einbauen. Anforderung vom 24.10.08
+
+Gebührenordnung Berlin einbauen. Anforderung vom 11.10.08
+
+14.09.08
+Leistungen können nicht Wochen/Monate/Jahre in der Zukunft erbracht werden. Anforderung vom 30.08.08
+
+
+17.08.08
+bei Materialien darf kein Begründungstext in der elektronischen Rechnung übermittelt werden. Anforderung vom 01.08.08
+
+
+25.07.08
+Feld privat-Faktor in die Stammdaten mit aufnehmen. Ist dies belegt gilt dieses, sonst der Default aus den Parametern. Anforderung vom 26.01.08
+
+22.06.08
+Begründung 'geplante Hausgeburt' in update-sql aufnehmen. Anforderung vom 08.06.08
+
+14.06.08
+Return Code von openssl wird bei Signatur und Verschlüsselung abgefragt.
+Bei falschem OpenSSL Passwort wurde trotzdem Rechnungsmail generiert? Prüfen. Anforderung vom 13.06.08
+
+01.05.08
+Positionsnummer 010 mehr als einmal pro Tag nur mit Begründung und Uhrzeit. Anforderung vom 15.03.08
+
+01.05.08
+Positionsnummer 270 nur nach der Geburt. Anforderung vom 07.12.07
+
+01.05.08
+Plausiprüfungen Positionsnummer 020. Anforderung vom 10.11.07
+
+01.05.08
+Testfälle Posnr 280 290 nur bis 9. Monat nach Geburt. Anforderung vom 16.02.08
+Testfälle Update auf Rechnung i.S. Zahlung. Anforderung vom 16.02.08
+
+25.04.08
+Prüfung in Heb_Edi, sind die Zertifikate noch gültig. Anforderung vom 09.02.08
+
+21.04.08
+Gebührenordnung ab 01.07.08. Anforderung vom 30.03.08
+
+30.03.08
+Ggf. nur den IK Krankenhaus übertragen, wenn wirklich als Beleghebamme. Keine Fehlermeldungen, Anforderung wird nicht umgesetzt. Anforderung vom 29.12.07
+
+
+25.03.08
+Layout der erfassten Positionen in Rechnungsposten erfassen, verbessern. Anforderung vom 09.02.08
+Geburtszeit Kind auf Rechnung andrucken, wenn vorhanden. Anforderung vom 01.03.08
+Nur die Uhrzeiten müssen erfasst sein, die wirklich notwendig sind.. Anforderung vom 09.03.08
+Uhrzeit muss nur bei Geburtshilfe angegeben werden, nicht bei anderen Positionsnummern. --> Alle erfassten Uhrzeiten werden übertragen, damit erledigt. Anforderung vom 29.12.07
+
+
+16.03.08
+update.pl auf Config Datei anpassen. Anforderung vom 15.03.08
+Config File für tinyHeb. Anforderung vom 27.01.08
+
+16.02.08
+In Überschriften angeben, ob ET oder GT Kind. Anforderung vom 16.02.08
+Rückbau alte Version Datenaustausch. Anforderung vom 10.02.08
+
+15.02.08
+Kurs_knopf scripte nach javascript auslagern von rechpos.pl. Anforderung vom 09.02.08
+
+10.01.08
+Hinweise zur Sicherheit von tinyHeb. Anforderung vom 13.12.08
+
+Hat es schon Teilrechnungen gegeben, wird bei der zweiten Teilrechnung erneut Zuschlag 1. Besuch nach Geburt ausgewählt, das ist falsch. Anforderung vom 27.01.08
+--> Problem tritt nur auf, bei wechsel von HebGO nach HebGV. Daher keine Umsetzung.
+
+Handbuch überarbeiten w/ geänderter erweiterter Plausiprüfungen. Anforderung vom 02.02.08
+
+Positionsnummer 181 lässt sich Samstags ohne Angabe der Uhrzeit erfassen. Anforderung vom 09.02.08
+
+
+26.01.08
+Bei Versichertenstatus SOZ und privat darf keine elektronische Rechnung generiert werden können. Anforderung vom 21.01.08
+
+DIA Informationen auf Papierrechnung ausgeben. Anforderung vom 19.01.08
+
+
+19.01.08
+DIA Segment umsetzen. Anforderung vom 29.12.07
+
+Bei Klinikgeburten darf nicht Pauschale 360 berechnet werden. Anforderung vom 14.12.07
+
+Wenn Zuschlag zusätzlich gespeichert, wird nicht angegeben, welcher Zuschlag. Anforderung vom 14.12.07
+
+Plausiprüfung ob Zeiten von erfassten Rechnungposten sich überschneiden. Anforderung vom 13.12.07
+
+Beschreibung welche Zwischendateien bei der Rechnungsgenerierung erzeugt werden. Anforderung vom 13.12.07
+
+Position 160 ist nicht neben 090 bis 130 abrechnungsfähig. Anforderung vom 13.12.07
+
+Bei unzulässiger Änderung von Positionsnummer 180 wird manchmal nach Änderung und Fehlerhinweis Positionsnummer 181 gespeichert. Anforderung vom 18.11.07
+
+
+
+11.12.07
+Neue Positionsnummern 161 bis 167. Anforderung vom 10.12.07
+
+11.12.07
+Bei bestimmten Zuschlägen muss die BIS Zeit genutzt werden. Anforderung vom 21.10.07
+
+11.12.07
+Version 6.0 elektronischer Datenaustausch. Anforderung vom 20.10.07
+
+11.12.07
+Plausiprüfung, wenn Rechnung signiert werden soll, muss Zertifikat und privater Schlüssel vorhanden sein. Anforderung vom 11.11.07
+
+
+27.10.07
+Plausiprüfung für Posnr. 280 bis 291. Anforderung vom 31.08.07
+
+03.10.07
+Temporäre Verzeichnisse für Win einheitlich. Anforderung vom 11.11.06
+Wird nicht umgesetzt, da Initialisierungsroutinen sauber sind.
+
+Wenn es sich um Zwillinge handelt, muss Zuschlag gerechnet werden. Pro Kind.
+Anforderung vom 31.12.05
+Wird nicht umgesetzt, da ggf. ein Teil der Kiner noch KK ist
+
+Plausiprüfung für Posnr. 280 bis 291. Anforderung vom 31.08.07
+
+
+29.09.07
+Pos. 260, 261 nur auf ärztliche Anordnung. Anforderung vom 31.08.07
+Pos. 280,281, 290 maximal 4 mal. Anforderung vom 31.08.07
+
+In Rechnungsposten Erfassung (rechpos.pl):
+- es soll nur dann KM erfassbar sein, wenn wirklich KM erfasst werden müssen.
+Anforderung aus dem Jahr 2004
+Schalter Kilometer erfassbar (j/n) in Datenhaushalt aufnehmen. Anforderung aus dem Jahr 2004
+
+Daten aus Entfernung in Stammdaten soll in Maske Rechnungsposten Erfassung übernommen werden. Anforderung vom 11.11.06
+
+Pharmazentralnummer in Datenhaushalt aufnehmen. Anforderung vom 20.09.07
+
+IK Nummer des Belegkrankenhauses in Datenhaushalt aufnehmen. Anforderung vom 20.09.07
+
+In Maske Rechnungsbearbeitung die Datenaustauschreferenz anzeigen. Anforderung vom 20.09.07
+
+Uhrzeit Geburt Kind in Datenhaushalt aufnehmen. Anforderung vom 20.09.07
+
+Kennzeichen ET/Geburtstermin in Datenhaushalt aufnehmen. Anforderung vom 20.09.07
+
+
+01.09.07
+neue Gebührenordnung. Anforderung vom 03.08.07
+dazu:
+Plausiprüfung für Posnr. 020 
+neue Positionsnummer importieren
+hart verdrahtete Punkte anpassen
+Anpassen, wann muss Uhrzeit erfasst werden
+Anpassen Positionsnummern w/ Kurse
+Posnr. 180 erwartet Uhrzeit bis, muss nicht erfasst werden
+Gebührenordnung OST ausbauen.
+
+Installationshinweise für Windows aufnehmen. Anforderung vom 12.08.07
+
+
+29.06.07
+Nach neuanlage einer Krankenkasse muss die IK Nummer erhalten bleiben.
+Anforderung vom 23.05.07
+
+29.06.07
+Maske für Generierung eines Zertifkatrequest. Anforderung vom 20.05.07
+
+29.06.07
+Maske Schlüssel einlesen Layout unter Windows schlecht. Anforderung vom 27.06.07
+
+29.06.07
+GES und BES Segmente muss status in Abhängigkeit Versichertenstatus gefüllt werden. Anforderung vom 27.06.07
+
+29.06.07
+Schlüssel lassen sich unter Windows nicht einlesen. Anforderung vom 27.06.07
+
+27.06.07
+elektronischer Versand mit Signatur testen. Anforderung vom 19.05.07
+
+18.05.07
+Plausiprüfung w/ CTG Anforderung von Günther. Anforderung vom 26.08.06
+
+18.05.07
+xauftrag.pl muss breiter werden, damit auch bei langen Namen alles angezeigt wird. Anforderung vom 21.04.07
+
+17.05.07
+Rechnungen an Sozialamt müssen möglich sein. Anforderung vom 18.04.07
+
+17.05.07
+Maske Rechnungsgenerierung Layout im IE nicht korrekt, wenn Rechnung
+mit ausgegeben wird. Anforderung vom 17.05.07
+
+18.05.07
+Layout "Mahnungen generieren" ist im Internet Explorer nicht korrekt.
+Anforderung vom 18.04.07
+
+17.05.07
+In setup.pl Prüfung aufnehmen, ob tinyheb an der richtigen Stelle installiert ist.
+In setup.pl Prüfung aufnehmen, ob Windows Version installiert ist.
+Anforderung vom 11.05.07
+
+17.05.07
+Fehlerkorrektur: Kostenträgerdateien und öffentliche Schlüssel können unter Win nicht eingelesen werden. Anforderung vom 11.05.07
+
+17.05.07
+openssl kann an verschiedenen Stellen bei Win32 liegen, dies berücksichtigen. Anforderung vom 04.05.07
+
+19.04.07
+M001 bis M003 dürfen nicht mehr angezeigt werden, update.sql anpassen.
+Anforderung vom 18.04.07
+
+08.04.07
+Sicherung erstellen muss auch unter Windows funktionieren, wenn mysqldump nicht im Path enthalten ist. Anforderung vom 02.04.07
+
+
+25.02.07
+Mahnungen für privat Versicherte. Anforderung vom 01.08.06.
+
+In Spec File ggf. mozplugger mit aufnehmen.
+Wird nicht umgesetzt, es gab keine Beschwerden. Anforderung vom 12.08.06.
+
+Positionsnummer 8 muss gleiche Plausiprüfung haben, wie Positionsnummer 7. Anforderung vom 12.11.06
+
+
+
+24.02.07
+prüfen ob mit harten Fehlern in mysql richtig umgegangen wird. Anforderung vom 12.08.06.
+
+24.02.07
+Plausiprüfung bei der Kilometer Erfassung, wann Tag und wann Nacht und nur eins von beiden.
+Beides muss möglich sein! Anforderung vom 23.07.05.
+
+11.02.07
+Storno ist möglich. Damit:
+neue Maske in der Status von Rechnungen verändert werden kann. Anforderung vom 11.11.06.
+
+11.02.07
+Bei Rechnungsbearbeitung muss Einschränkung auf ungleich erl. möglich sein.
+Anforderung vom 06.08.06.
+
+
+
+14.01.07
+Anpassung Handbuch, Kapitel 4.5 bei E-Preis beschreiben, dass immer der HebGV Preis angezeigt wird. Anforderung vom 03.12.06
+
+13.01.07
+Erste Version eines setup Programms für Windows Systeme. 
+Anforderung vom 23.09.06.
+
+13.01.07
+privat Rechnungen für Rheinland-Pfalz. Anforderung vom 24.09.06
+
+26.12.06
+Programm key.pl auf Win32 Systeme anpassen. Anforderung vom 15.11.06
+
+eigene Erfassungs- und Bearbeitungsmaske für Datenannahmestellen. Anforderung vom 06.08.06
+
+update auf Postionsnummer 24 nötig, in >5GK und <6GK
+zusätzliche Versichertenstati. Anforderung vom 12.12.06
+
+Makefile erstellt. Anforderung vom 12.08.06 war Makefile.PL erstellen.
+Die Anforderung wird so nicht umgesetzt, Makefile muss reichen.
+
+
+
+02.12.06
+Doku für:
+- versandte Rechnungen bearbeiten Anforderung vom 25.08.06.
+- Beschreibung der Maske Angaben zur Hebamme. Anforderung vom 12.11.06
+
+
+11.11.06
+Plausiprüfungen für Positionsnummer 40. Anforderung vom 26.08.06
+
+Positionsnummer 7 nicht mehr als 14 Stunden. Anforderung vom 26.08.06
+
+Es kann nur geändert werden, wenn vorher Positiosnummer ausgewählt wurde. Anforderung vom 26.08.06
+
+Wenn gezahlter Betrag ungleich Rechnungsbetrag, muss es trotzdem 
+möglich sein, Rechnung auf erledigt zu setzen. Anforderung vom 24.09.06
+
+privat Rechnungen für Bayern, Niedersachsen, Hessen und Hamburg. Anforderung vom 24.09.06.
+
+In die Maske Mahnung darf nur gesprungen werden, wenn vorher eine Rechnung ausgewählt wurde. Anforderung vom 05.11.06
+
+eigene Ergassungs- und Bearbeitungsmaske für Stammdaten der Hebamme. Anforderung vom 12.08.06
+
+Druck alter Rechnungen muss auch für Windows funktionieren. Anforderung vom 13.08.06
+
+
+
+
+
+24.09.06
+Plausiprüfungen bei Frauenauswahl müssen analog der Prüfungen in Stammdatenerfassung sein. Anforderung vom 12.08.06
+
+Krankenkassen Menue auf neue Plausi überarbeiten. Anforderung 01.10.05
+z.B. Speichern darf nur zulässig sein, wenn alle Plausi OK sind. 
+
+verbessertes Fehlerhandling in Heb_Edi.pm Anforderung vom 12.08.06
+- Abfrage ob Verschlüsselung erfolgreich
+- Abfrage ob E-Mail Adresse der DA und der Hebamme vorhanden ist
+
+
+23.09.06
+Gebührenordnung Ost ist noch nicht umgesetzt. Alle Punkte aus §1 * 0,9 
+Anforderung vom 23.09.06
+
+Plausiprüfung für Kilometer bei Rechnungsposten erfassen. Anforderung 26.08.06
+Es dürfen nur numerische Werte erfasst werden können. Anforderung 26.08.06
+
+26.08.06
+generelles stylesheet Heb.css einführen, um die Textgröße auf die optimale Größe zu setzen. Anforderung vom 24.07.05
+
+- Dokumentation anpassen auf Version 0.7.1 Anforderung vom 12.08.06
+- Hyperref Links auf Anhang funktionieren nicht. Anforderung vom 12.08.06
+
+Datum Plausiprüfung bei Feiertagserfassung ist nicht korrekt, bei 
+Speichern des Formulares muss geprüft werden, ob im Datum
+ein gültiger Wert steht. Anforderung vom 19.08.06
+
+Doku
+- Rechnungsposten erfassen Anforderung vom 25.08.06
+- Rechnungen generieren Anforderung vom 25.08.06
+
+05.08.06
+Bei privat Versicherten ist keine Plausi auf gültigkeitsdatum der Versichertenkarte notwendig. Anforderung vom 31.07.06
+
+26.06.06
+Fehler: Bei Geburtsvorbereitung Einzel ist keine Begründung notwendig. Anforderung vom 01.05.06
+
+15.04.06
+Begleitzettel für Urbelege muss her. Anforderung vom 14.04.06
+Steuernummer muss in Rechnung aufgenommen werden. Anforderung vom 04.04.06
+Ist in SLGA Segement UST.
+Auslagen müssen in Rechnung mit angegeben werden können. Anforderung vom 04.04.06
+
+20.02.06
+- Wenn DAUER bei Leistungsart angegeben ist, prüfen, ob Begründung notwendig.
+Anforderung vor Juli 05
+
+19.02.06
+Auwertung, für welche Frauen existieren noch Positionen in Bearbeitung. Anforderung vom 21.08.05
+
+21.01.06
+Für privat Versicherte muss Rechnung erstellt werden können. Anforderung vom 02.10.05
+
+
+31.12.05
+Bei Änderung Vorsorgeuntersuchung wird Materialpauschale zweitesmal gespeichert. War Anforderung vom 10.10.05
+- wenn Positionsnummer mit Zuschlag gelöscht wird, Zuschlag auch löschen. War Anforderung vor dem 09.07.05
+
+18.12.05
+Wenn Begründung erfasst und gespeichert wird, muss danach auf default gestellt werden.
+
+
+12.12.05
+Es wurde bei Pos 4 nicht automatisch erkannt das Nacht ist und nichts gespeichert,
+Wenn Positionsnummer ersetzt wird w/ SaSoNa, muss ggf. auch Kilometer geändert werden?
+Es muss Prüfun auf zweitesmal gemacht  werden, z.B. 2 Hausbesuch am gleichen Tag.
+
+
+02.12.05
+In Stammdatenmaske und Datenbank wird Feld für Anzahl der Kinder benötigt.
+
+
+25.09.05
+Plausiprüfung bei "entgültig Drucken"
+harte Prüfung: IK muss gültig sein
+weiche Prüfung: Vorname, Nachname, PLZ, Ort, Strasse,geb_frau, geb_kind,
+kvnr, kvnr_gueltig.
+Summen für Rechnungen ausgeben, offene Rechnungen, erl. Rechnungen
+
+11.09.05
+Wenn PLZ nur 4-stellig in Datenbank gespeichert ist, muss der Wert trotzdem 5-stellig angezeigt werden.
+Feld Gültig bis, hier muss Plausibilisiert werden, das gültiger Monat und Jahr erfasst werden.
+In der Rechnungsbearbeitung ist es möglich einen Betrag gez. zu erfassen, der höher ist, als der ursprüngliche Rechnungsbetrag. Das darf nicht sein.
+
+
+
+04.09.05
+Plausiprüfung auf Datumsfelder: es muss geprüft werden, ob das Datum wirklich gültig ist, z.B. 12.13.05
+
+21.08.05
+Wenn Materialpauschale nötig, soll diese automatisch kommen,
+z.B. bei Vorsorgeuntersuchung
+
+In Rechnung drucken:
+entgültig Drucken darf nur gedrückt werden, wenn rechnung noch nicht gedruckt wurde.
+D.h. Knopf entgültig Drucken auf disabled stellen, wenn gerade Rechnung gedruckt wurde.
+Rechnung kann nur dann gedruckt werden, wenn offene Rechnungsposten vorhanden sind.
+20.08.05
+Ansehen alter Rechnung muss möglich sein
+
+13.08.05
+Tabelle Leistungsart:
+Umstellen von auto_increment auf "manuelles" increment.
+- im Menue Leistungsarten muss noch Suchen, sowie Ändern und Löschen Implementiert werden.
+
+Zugriffsmodule Leistungsart
+Erfassungsdialog Leistungsart
+Änderungsdialog Leistungsart
+
+24.07.05
+Plausiprüfung für IK der Krankenkasse in der Stammdatenerfassung
+Plausiprüfung in Stammdatenerfassung auf gültig bis, funktioniert nicht richtig. Bei Plausi auf KV-Nummer abschreiben
+---> Fehler konnte nicht nachgestellt werden
+- in der Parameterpflege muss ein Button für Sprung in Hauptmenue hin
+
+
+früher:
+- wenn erster Wert Beratung erfasst wurde, automatisch Zuschlag erste Beratung setzen.
+
+Zugriffsmodule für Stammdatenbank
+Pflegedialog Stammdaten
+Änderungsdialog Stammdaten
+
+
+Leistunggsdatenbank anlegen
+Kalenderroutine
+Tabelle mit Krankenkassen
+Zugriffsmodule Leistungsdaten
+Erfassungsdialog Leistungsdaten
+Änderungsdialog Leistungsdaten
+
+Kalenderroutine
+diese muss berechnen, ob es sich bei einem Tag um
+einen Wochentag
+einen Samstag
+einen Sonntag
+einen Feiertag handelt
+
+Preisberechnung: ist Teil von rechpos.pl
+Routine, die Preis einer Leistung an einem Datum zu einer Uhrzeit berechnet
+
