@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.23 2012-03-12 18:22:49 thomas_baum Exp $
+# $Id: update.sql,v 1.24 2012-08-05 07:55:47 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 #
@@ -24,6 +24,9 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2009-12-31' where
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2010-06-30' where GUELT_VON = '2010-01-01' and GUELT_BIS = '9999-12-31' and POSNR in ('0800','1100','1110','1200','1210','1800','1801','1802','1810','1811','1812','2100','2110','2200','2201','2202','2800','2810','2820');
 #
 #
+# Gebührenordnung für Materialpauschalen vom 01.01.2010 für bestimmte Posnr ungültig machen
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2012-07-31' where GUELT_VON = '2010-01-01' and GUELT_BIS = '9999-12-31' and POSNR in ('3400','3500','3600','3700','3800','3900');
 #
 #
 # alte Matrialien ungültig machen
@@ -498,27 +501,27 @@ WWWRUN	INSERT	Leistungsart	POSNR='3310' and GUELT_VON='2010-01-01' and GUELT_BIS
 #
 # PosNr 3400
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3400' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,NICHT) values (9999,'3400','M','Pauschale Vorsorgeuntersuchung',2.58,'Materialpauschale Vorsorgeuntersuchung','2010-01-01','9999-12-31',0,'3500');
+WWWRUN	INSERT	Leistungsart	POSNR='3400' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-07-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,NICHT) values (9999,'3400','M','Pauschale Vorsorgeuntersuchung',2.58,'Materialpauschale Vorsorgeuntersuchung','2010-01-01','2012-07-31',0,'3500');
 #
 # PosNr 3500
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3500' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,NICHT) values (9999,'3500','M','Pauschale Schwangerschaftsbeschw.',2.58,'Materialpauschale bei Schwangerschaftsbeschwerden oder bei Wehen','2010-01-01','9999-12-31',0,'3400,3600');
+WWWRUN	INSERT	Leistungsart	POSNR='3500' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-07-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,NICHT) values (9999,'3500','M','Pauschale Schwangerschaftsbeschw.',2.58,'Materialpauschale bei Schwangerschaftsbeschwerden oder bei Wehen','2010-01-01','2012-07-31',0,'3400,3600');
 #
 # PosNr. 3600
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3600' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,NICHT) values (9999,'3600','M','Pauschale Geburtshilfe',35.02,'Materialpauschale Geburtshilfe','2010-01-01','9999-12-31',0,'3500');
+WWWRUN	INSERT	Leistungsart	POSNR='3600' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-07-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,NICHT) values (9999,'3600','M','Pauschale Geburtshilfe',35.02,'Materialpauschale Geburtshilfe','2010-01-01','2012-07-31',0,'3500');
 #
 # PosNr. 3700
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3700' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3700','M','Pauschale Naht bei Geburtsverletzung',28.33,'Materialpauschale, zusätzlich zu Nr. 3600, bei Versorgung einer Naht bei Geburtsverletzungen','2010-01-01','9999-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3700' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-07-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3700','M','Pauschale Naht bei Geburtsverletzung',28.33,'Materialpauschale, zusätzlich zu Nr. 3600, bei Versorgung einer Naht bei Geburtsverletzungen','2010-01-01','2012-07-31',0);
 #
 # PosNr. 3800
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3800' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3800','M','Pauschale Wochenbettbetreuung',25.24,'Materialpauschale Wochenbettbetreuung','2010-01-01','9999-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3800' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-07-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3800','M','Pauschale Wochenbettbetreuung',25.24,'Materialpauschale Wochenbettbetreuung','2010-01-01','2012-07-31',0);
 #
 # PosNr. 3900
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3900' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3900','M','Pauschale Wochenbettbetreuung nach 4 Tag p.p.',13.7,'Materialpauschale bei Beginn der Betreuung später als vier Tage nach der Geburt','2010-01-01','9999-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3900' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-07-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3900','M','Pauschale Wochenbettbetreuung nach 4 Tag p.p.',13.7,'Materialpauschale bei Beginn der Betreuung später als vier Tage nach der Geburt','2010-01-01','2012-07-31',0);
 #
 # PosNr. 4000
 #
@@ -803,3 +806,51 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set NICHT='1600,1601,1602,1610,1
 # 560,64 statt 560,65
 #
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set EINZELPREIS=560.64 where POSNR = '1110' AND GUELT_VON = '2010-07-01';
+#
+#
+#
+# sonstige Leistungen
+# Leistungsgruppe E in tinyHeb Leistungsgruppe M
+# ----- geändert ab 01.08.2012
+#
+# PosNr 3400
+#
+WWWRUN	INSERT	Leistungsart	POSNR='3400' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,NICHT) values (9999,'3400','M','Pauschale Vorsorgeuntersuchung',2.83,'Materialpauschale Vorsorgeuntersuchung als ambulante hebammenhilfliche Leistung','2012-08-01','9999-12-31',0,'3500');
+#
+# PosNr 3500
+#
+WWWRUN	INSERT	Leistungsart	POSNR='3500' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,NICHT) values (9999,'3500','M','Pauschale Schwangerschaftsbeschw.',2.08,'Materialpauschale bei Schwangerschaftsbeschwerden oder bei Wehen als ambulante hebammenhilfliche Leistung','2012-08-01','9999-12-31',0,'3400,3600');
+#
+# PosNr. 3600
+#
+WWWRUN	INSERT	Leistungsart	POSNR='3600' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,NICHT) values (9999,'3600','M','Pauschale Geburtshilfe',52.36,'Materialpauschale Geburtshilfe','2012-08-01','9999-12-31',0,'3500');
+#
+# PosNr. 3700
+#
+WWWRUN	INSERT	Leistungsart	POSNR='3700' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3700','M','Pauschale Naht bei Geburtsverletzung',39.00,'Materialpauschale, zusätzlich zu Nr. 3600, bei Versorgung einer Naht bei Geburtsverletzungen als ambulante hebammenhilfliche Leistung','2012-08-01','9999-12-31',0);
+#
+# PosNr. 3800
+#
+WWWRUN	INSERT	Leistungsart	POSNR='3800' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3800','M','Pauschale Wochenbettbetreuung',25.76,'Materialpauschale Wochenbettbetreuung','2012-08-01','9999-12-31',0);
+#
+#
+# PosNr. 3810 
+# ----- neu ab 01.08.2012 -----
+#
+WWWRUN	INSERT	Leistungsart	POSNR='3810' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3810','M','Pauschale Neugeborenen-Screening',2.97,'Materialpauschale Neugeborenen-Screening als ambulante hebammenhilfliche Leistung','2012-08-01','9999-12-31',0);
+#
+#
+# PosNr. 3900
+#
+WWWRUN	INSERT	Leistungsart	POSNR='3900' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3900','M','Pauschale Wochenbettbetreuung nach 4 Tag p.p.',15.96,'Materialpauschale bei Beginn der Betreuung später als vier Tage nach der Geburt','2012-08-01','9999-12-31',0);
+#
+# PosNr. 3910 
+# ----- neu ab 01.08.2012 -----
+#
+WWWRUN	INSERT	Leistungsart	POSNR='3910' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3910','M','Pauschale Fäden ziehen Dammnaht',7.09,'Materialpauschale Fäden ziehen Dammnaht als ambulante hebammenhilfliche Leistung','2012-08-01','9999-12-31',0);
+#
+# PosNr. 3920 
+# ----- neu ab 01.08.2012 -----
+#
+WWWRUN	INSERT	Leistungsart	POSNR='3920' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3920','M','Pauschale Fäden entfernen Sectionaht',5.54,'Materialpauschale Fäden/Klammern entfernen Sectionaht als ambulante hebammenhilfliche Leistung','2012-08-01','9999-12-31',0);
+#
