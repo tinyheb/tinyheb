@@ -3,7 +3,7 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.10 2009-10-30 16:55:19 thomas_baum Exp $
+# $Id: update.pl,v 1.11 2012-08-26 13:46:25 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
@@ -27,8 +27,9 @@ use lib "../";
 use strict;
 use DBI;
 use Getopt::Long;
+#use Data::Dumper;
 
-my $id='$Id: update.pl,v 1.10 2009-10-30 16:55:19 thomas_baum Exp $';
+my $id='$Id: update.pl,v 1.11 2012-08-26 13:46:25 thomas_baum Exp $';
 
 write_LOG("Starte update ----------------------------");
 write_LOG("$id");
@@ -88,7 +89,8 @@ my $other_file=undef; # Anderen Filename benutzen für update Informationen
 my $parms=GetOptions('rpm' => \$rpm,
 		     'purge' => \$purge,
 		     'file=s' => \$other_file,
-		     'downgrade' => \$downgrade);
+		     'downgrade' => \$downgrade,
+		     'verbose' => \$debug);
 
 
 # root passwort für db holen, wenn nötig
@@ -111,7 +113,7 @@ if (!defined($dbh) and ($DBI::err == 1044 || $DBI::err == 1045)) {
   print "State Nummmer:",$DBI::state,"\n" if($DBI::state);
   write_LOG("Habe mich mit root angemeldet $dbh");
 }
-
+write_LOG("Habe mich angemeldet $dbh");
 
 if ($purge) {
   # tinyHeb entfernen
@@ -138,7 +140,7 @@ LINE:while (my $line=<SQL>) {
   my ($muser,$tag,$tabelle,$dep,$sql) = split '\t',$line;
   write_LOG("$filename gelesen",$muser,$tag,$tabelle,$dep,$sql);
   if ($debug) {
-    print "muser\t$muser\n";
+    print "\n","muser\t$muser\n";
     print "tag\t$tag\n";
     print "tabelle\t$tabelle\n";
     print "dep\t$dep\n";
@@ -219,17 +221,18 @@ sub do_alter {
 
   my $dbh=connect_db('root',$root_pass);
   write_LOG("alter",$dbh,$sql,$tabelle,$dep);
-  error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($dbh));
+  error("unbekanntes Problem aufgetreten $DBI::errstr, $DBI::err \n") unless (defined($dbh));
 
   # alter durchführen
   my $erg=$dbh->do($sql);
+#  print "DUMPER $erg,",Dumper($dbh->err),Dumper($dbh->state);
   if (!defined($erg)) {
-      write_LOG("alter fehler",$DBI::err,$DBI::errstr);
+      write_LOG("alter fehler dbh:$dbh dbi: $DBI::err,$DBI::errstr \n");
     if ($DBI::err == 1061 || $DBI::err == 1060 || $DBI::err == 1091) {
       # ok, mache nix, INDEX oder Spalte war schon da
       # 1091 Index oder Spalte ist schon gelöscht
     } else {
-      error("unbekanntes Problem aufgetreten $DBI::errstr\n");
+      error("unbekanntes Problem aufgetreten $DBI::errstr $DBI::err erg:$erg\n");
     }
   }
 
@@ -284,8 +287,8 @@ sub fehler {
   my @erg=@_;
   print "Fehlernummer ",$erg[1]->err,"\n" if $debug;
   print "STR ",$erg[1]->errstr,"\n" if $debug;
-
   write_LOG("DB Fehler",$erg[1]->err,$erg[1]->errstr);
+
   #  Keine Zugriffsberechtigung
   return 1 if ($erg[1]->err == 1044);
 
