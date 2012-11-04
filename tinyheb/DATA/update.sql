@@ -1,6 +1,6 @@
 # Updates f¸r tinyHeb
 #
-# $Id: update.sql,v 1.25 2012-11-04 16:29:43 thomas_baum Exp $
+# $Id: update.sql,v 1.26 2012-11-04 17:17:40 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 #
@@ -24,12 +24,21 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2009-12-31' where
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2010-06-30' where GUELT_VON = '2010-01-01' and GUELT_BIS = '9999-12-31' and POSNR in ('0800','1100','1110','1200','1210','1800','1801','1802','1810','1811','1812','2100','2110','2200','2201','2202','2800','2810','2820');
 #
 #
+# Geb¸hrenordnung vor dem 01.07.2012 f¸r bestimmte Positionsnummern ung¸ltig machen
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2012-06-30' where GUELT_VON = '2010-07-01' and GUELT_BIS = '9999-12-31' and POSNR in ('1800','1801','1802','1810','1811','1812','2100','2110');
+#
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2012-06-30' where GUELT_VON = '2010-01-01' and GUELT_BIS = '9999-12-31' and POSNR in ('2001','2002','2011','2012');
+#
+#
+#
 # Geb¸hrenordnung f¸r Materialpauschalen vom 01.01.2010 f¸r bestimmte Posnr ung¸ltig machen
 #
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2012-07-31' where GUELT_VON = '2010-01-01' and GUELT_BIS = '9999-12-31' and POSNR in ('3400','3500','3600','3700','3800','3900');
 #
 #
-# alte Matrialien ung¸ltig machen
+#
+# alte Materialien ung¸ltig machen
 #
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2009-12-31' where GUELT_VON = '2007-08-01' and GUELT_BIS = '9999-12-31';
 #
@@ -325,20 +334,20 @@ WWWRUN	INSERT	Leistungsart	POSNR='1900' and GUELT_VON='2010-01-01' and GUELT_BIS
 #
 # PosNr 2001
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2001' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2001','C','Wochenbettbetreuung in K-Haus Belegheb.',13.16,'aufsuchende Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme','2010-01-01','9999-12-31',0,'','2011','2011','2011',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2001' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2001','C','Wochenbettbetreuung in K-Haus Belegheb.',13.16,'aufsuchende Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme','2010-01-01','2012-06-30',0,'','2011','2011','2011',0,'');
 #
 # PosNr 2002
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2002' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2002','C','Wochenbettbetreuung in K-Haus Belegheb. 1:1',13.16,'aufsuchende Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme 1:1','2010-01-01','9999-12-31',0,'','2012','2012','2012',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2002' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2002','C','Wochenbettbetreuung in K-Haus Belegheb. 1:1',13.16,'aufsuchende Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme 1:1','2010-01-01','2012-06-30',0,'','2012','2012','2012',0,'');
 #
 #
 # PosNr 2011
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2011' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2011','C','Wochenbettbetr. in K-Haus Nacht,Sa,So Belegheb.',15.79,'Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','9999-12-31',0,'','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2011' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2011','C','Wochenbettbetr. in K-Haus Nacht,Sa,So Belegheb.',15.79,'Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','2012-06-30',0,'','','','',0,'');
 #
 # PosNr 2012
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2012' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2012','C','Wochenbettbetr. in K-Haus Nacht,Sa,So Belegheb. 1:1',15.79,'Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2010-01-01','9999-12-31',0,'','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2012' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2012','C','Wochenbettbetr. in K-Haus Nacht,Sa,So Belegheb. 1:1',15.79,'Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2010-01-01','2012-06-30',0,'','','','',0,'');
 #
 #
 # PosNr. 2100
@@ -628,38 +637,38 @@ WWWRUN	INSERT	Leistungsart	POSNR='1210' and GUELT_VON='2010-07-01' and GUELT_BIS
 #
 # PosNr. 1800
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1800' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1800','C','Wochenbettbetreuung',27.00,'aufsuchende Wochenbettbetreuung nach der Geburt','2010-07-01','9999-12-31',0,'','1810','1810','1810',0,'+1900');
+WWWRUN	INSERT	Leistungsart	POSNR='1800' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1800','C','Wochenbettbetreuung',27.00,'aufsuchende Wochenbettbetreuung nach der Geburt','2010-07-01','2012-06-30',0,'','1810','1810','1810',0,'+1900');
 #
 # PosNr. 1801
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1801' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1801','C','Wochenbettbetreuung Beleghebamme',27.00,'aufsuchende Wochenbettbetreuung nach der Geburt Beleghebamme','2010-07-01','9999-12-31',0,'','1811','1811','1811',0,'+1900');
+WWWRUN	INSERT	Leistungsart	POSNR='1801' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1801','C','Wochenbettbetreuung Beleghebamme',27.00,'aufsuchende Wochenbettbetreuung nach der Geburt Beleghebamme','2010-07-01','2012-06-30',0,'','1811','1811','1811',0,'+1900');
 #
 # PosNr. 1802
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1802' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1802','C','Wochenbettbetreuung Beleghebamme 1:1',27.00,'aufsuchende Wochenbettbetreuung nach der Geburt Beleghebamme 1:1','2010-07-01','9999-12-31',0,'','1812','1812','1812',0,'+1900');
+WWWRUN	INSERT	Leistungsart	POSNR='1802' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1802','C','Wochenbettbetreuung Beleghebamme 1:1',27.00,'aufsuchende Wochenbettbetreuung nach der Geburt Beleghebamme 1:1','2010-07-01','2012-06-30',0,'','1812','1812','1812',0,'+1900');
 #
 #
 # PosNr. 1810
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1810' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1810','C','Wochenbettbetreuung Nacht,Sa,So',32.40,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-07-01','9999-12-31',0,'','','','',0,'+1900');
+WWWRUN	INSERT	Leistungsart	POSNR='1810' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1810','C','Wochenbettbetreuung Nacht,Sa,So',32.40,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-07-01','2012-06-30',0,'','','','',0,'+1900');
 #
 # PosNr. 1811
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1811' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1811','C','Wochenbettbetreuung Nacht,Sa,So Beleghebamme',32.40,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-07-01','9999-12-31',0,'','','','',0,'+1900');
+WWWRUN	INSERT	Leistungsart	POSNR='1811' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1811','C','Wochenbettbetreuung Nacht,Sa,So Beleghebamme',32.40,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-07-01','2012-06-30',0,'','','','',0,'+1900');
 #
 # PosNr. 1812
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1812' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1812','C','Wochenbettbetreuung Nacht,Sa,So Beleghebamme 1:1',32.40,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2010-07-01','9999-12-31',0,'','','','',0,'+1900');
+WWWRUN	INSERT	Leistungsart	POSNR='1812' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1812','C','Wochenbettbetreuung Nacht,Sa,So Beleghebamme 1:1',32.40,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2010-07-01','2012-06-30',0,'','','','',0,'+1900');
 #
 #
 # PosNr. 2100
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2100' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2100','C','Wochenbettbetreuung in Einr. Leitung Heb.',22.00,'aufsuchende Wochenbettbetreuung in einer von Hebammen geleiteten Einrichtung nach der Geburt','2010-07-01','9999-12-31',0,'','2110','2110','2110',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2100' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2100','C','Wochenbettbetreuung in Einr. Leitung Heb.',22.00,'aufsuchende Wochenbettbetreuung in einer von Hebammen geleiteten Einrichtung nach der Geburt','2010-07-01','2012-06-30',0,'','2110','2110','2110',0,'');
 #
 #
 # PosNr. 2110
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2110' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2110','C','Wochenbettbetr. in Einr. Leitung Heb. Nacht,Sa,So',26.4,'aufsuchende Wochenbettbetreuung in einer von Hebammen geleiteten Einrichtung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-07-01','9999-12-31',0,'','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2110' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2110','C','Wochenbettbetr. in Einr. Leitung Heb. Nacht,Sa,So',26.4,'aufsuchende Wochenbettbetreuung in einer von Hebammen geleiteten Einrichtung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-07-01','2012-06-30',0,'','','','',0,'');
 #
 #
 # PosNr 2200
@@ -688,6 +697,65 @@ WWWRUN	INSERT	Leistungsart	POSNR='2810' and GUELT_VON='2010-07-01' and GUELT_BIS
 # PosNr 2820
 #
 WWWRUN	INSERT	Leistungsart	POSNR='2820' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2820','D','Zuschlag Zwillinge bei Stillschw.',9.30,'Zuschlag f¸r die Beratung der Mutter bei Stillschwierigkeiten oder Ern¸hrungsproblemen bei Zwillingen und mehr Kindern zu den Geb¸hren nach 2800 und 2810 f¸r das zweite und jedes weitere Kind, je Kind','2010-07-01','9999-12-31','','','','','',0,'');
+#
+#
+#
+#
+# -------- ge‰nderte Positionsnummern ab 01.07.2012
+#
+# PosNr. 1800
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1800' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1800','C','Wochenbettbetreuung',27.08,'aufsuchende Wochenbettbetreuung nach der Geburt','2012-07-01','9999-12-31',0,'','1810','1810','1810',0,'+1900');
+#
+# PosNr. 1801
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1801' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1801','C','Wochenbettbetreuung Beleghebamme',27.08,'aufsuchende Wochenbettbetreuung nach der Geburt Beleghebamme','2012-07-01','9999-12-31',0,'','1811','1811','1811',0,'+1900');
+#
+# PosNr. 1802
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1802' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1802','C','Wochenbettbetreuung Beleghebamme 1:1',27.08,'aufsuchende Wochenbettbetreuung nach der Geburt Beleghebamme 1:1','2012-07-01','9999-12-31',0,'','1812','1812','1812',0,'+1900');
+#
+#
+# PosNr. 1810
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1810' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1810','C','Wochenbettbetreuung Nacht,Sa,So',32.48,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1','2012-07-01','9999-12-31',0,'','','','',0,'+1900');
+#
+# PosNr. 1811
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1811' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1811','C','Wochenbettbetreuung Nacht,Sa,So Beleghebamme',32.48,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2012-07-01','9999-12-31',0,'','','','',0,'+1900');
+#
+# PosNr. 1812
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1812' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1812','C','Wochenbettbetreuung Nacht,Sa,So Beleghebamme 1:1',32.48,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2012-07-01','9999-12-31',0,'','','','',0,'+1900');
+#
+#
+#
+# PosNr 2001
+#
+WWWRUN	INSERT	Leistungsart	POSNR='2001' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2001','C','Wochenbettbetreuung in K-Haus Belegheb.',13.24,'aufsuchende Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme','2012-07-01','9999-12-31',0,'','2011','2011','2011',0,'');
+#
+# PosNr 2002
+#
+WWWRUN	INSERT	Leistungsart	POSNR='2002' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2002','C','Wochenbettbetreuung in K-Haus Belegheb. 1:1',13.24,'aufsuchende Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme 1:1','2012-07-01','9999-12-31',0,'','2012','2012','2012',0,'');
+#
+#
+# PosNr 2011
+#
+WWWRUN	INSERT	Leistungsart	POSNR='2011' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2011','C','Wochenbettbetr. in K-Haus Nacht,Sa,So Belegheb.',15.87,'Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2012-07-01','9999-12-31',0,'','','','',0,'');
+#
+# PosNr 2012
+#
+WWWRUN	INSERT	Leistungsart	POSNR='2012' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2012','C','Wochenbettbetr. in K-Haus Nacht,Sa,So Belegheb. 1:1',15.87,'Wochenbettbetreuung in einem Krankenhaus oder in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2012-07-01','9999-12-31',0,'','','','',0,'');
+#
+#
+# PosNr. 2100
+#
+WWWRUN	INSERT	Leistungsart	POSNR='2100' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2100','C','Wochenbettbetreuung in Einr. Leitung Heb.',22.08,'aufsuchende Wochenbettbetreuung in einer von Hebammen geleiteten Einrichtung nach der Geburt','2012-07-01','9999-12-31',0,'','2110','2110','2110',0,'');
+#
+#
+# PosNr. 2110
+#
+WWWRUN	INSERT	Leistungsart	POSNR='2110' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2110','C','Wochenbettbetr. in Einr. Leitung Heb. Nacht,Sa,So',26.48,'aufsuchende Wochenbettbetreuung in einer von Hebammen geleiteten Einrichtung nach der Geburt mit Zuschlag gem‰ﬂ ß5 Abs. 1','2012-07-01','9999-12-31',0,'','','','',0,'');
 #
 #
 # -------- neue Positionsnummern w/ Betriebskostenpauschale ab 27.06.2011
