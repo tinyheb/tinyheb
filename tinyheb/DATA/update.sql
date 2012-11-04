@@ -1,17 +1,17 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.24 2012-08-05 07:55:47 thomas_baum Exp $
+# $Id: update.sql,v 1.25 2012-11-04 16:29:43 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 #
 # neues Feld Lastupdate in Tabelle Leistungsart einführen
 #
-ROOT	ALTER	Leistungsart		alter table Leistungsart add LASTUPDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL AFTER NICHT;
+#ROOT	ALTER	Leistungsart		alter table Leistungsart add LASTUPDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL AFTER NICHT;
 #
 #
 # Kurzbezeichnung erweitern
 #
-ROOT	ALTER	Leistungsart		alter table Leistungsart MODIFY COLUMN KBEZ VARCHAR(60);
+#ROOT	ALTER	Leistungsart		alter table Leistungsart MODIFY COLUMN KBEZ VARCHAR(60);
 #
 #
 # zunächst alte GO ungültig machen
