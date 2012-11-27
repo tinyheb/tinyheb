@@ -1,6 +1,6 @@
 # Updates f¸r tinyHeb
 #
-# $Id: update.sql,v 1.26 2012-11-04 17:17:40 thomas_baum Exp $
+# $Id: update.sql,v 1.27 2012-11-27 15:06:12 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 #
@@ -25,6 +25,13 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2010-06-30' where
 #
 #
 # Geb¸hrenordnung vor dem 01.07.2012 f¸r bestimmte Positionsnummern ung¸ltig machen
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2012-06-30' where GUELT_VON = '2010-01-01' and GUELT_BIS = '9999-12-31' and POSNR in ('0901','0902','0911','0912','1000','1010');
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2012-06-30' where GUELT_VON = '2010-07-01' and GUELT_BIS = '9999-12-31' and POSNR in ('1100','1110','1200','1210');
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2012-06-30' where GUELT_VON = '2010-01-01' and GUELT_BIS = '9999-12-31' and POSNR in ('1600','1601','1602','1610','1611','1612','1700','1701','1702','1710','1711','1712');
+#
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2012-06-30' where GUELT_VON = '2010-07-01' and GUELT_BIS = '9999-12-31' and POSNR in ('1800','1801','1802','1810','1811','1812','2100','2110');
 #
 #
@@ -148,31 +155,31 @@ WWWRUN	INSERT	Leistungsart	POSNR='0800' and GUELT_VON='2010-01-01' and GUELT_BIS
 #
 # PosNr 0901
 #
-WWWRUN	INSERT	Leistungsart	POSNR='0901' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0901','B','Geburt im Krankenhaus Belegheb.',237.85,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus Beleghebamme','2010-01-01','9999-12-31',0,'','0911','0911','0911',0);
+WWWRUN	INSERT	Leistungsart	POSNR='0901' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0901','B','Geburt im Krankenhaus Belegheb.',237.85,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus Beleghebamme','2010-01-01','2012-06-30',0,'','0911','0911','0911',0);
 #
 # PosNr 0902
 #
-WWWRUN	INSERT	Leistungsart	POSNR='0902' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0902','B','Geburt im Krankenhaus Belegheb. 1:1',237.85,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus Beleghebamme 1:1','2010-01-01','9999-12-31',0,'','0912','0912','0912',0);
+WWWRUN	INSERT	Leistungsart	POSNR='0902' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0902','B','Geburt im Krankenhaus Belegheb. 1:1',237.85,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus Beleghebamme 1:1','2010-01-01','2012-06-30',0,'','0912','0912','0912',0);
 #
 #
 #
 # PosNr 0911
 #
-WWWRUN	INSERT	Leistungsart	POSNR='0911' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0911','B','Geburt im K-Haus, Nacht,Sa,So Belegheb.',285.42,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','9999-12-31',0,'','','','',0);
+WWWRUN	INSERT	Leistungsart	POSNR='0911' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0911','B','Geburt im K-Haus, Nacht,Sa,So Belegheb.',285.42,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','2012-06-30',0,'','','','',0);
 #
 #
 # PosNr 0912
 #
-WWWRUN	INSERT	Leistungsart	POSNR='0912' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0912','B','Geburt im K-Haus, Nacht,Sa,So Belegheb. 1:1',285.42,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2010-01-01','9999-12-31',0,'','','','',0);
+WWWRUN	INSERT	Leistungsart	POSNR='0912' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0912','B','Geburt im K-Haus, Nacht,Sa,So Belegheb. 1:1',285.42,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2010-01-01','2012-06-30',0,'','','','',0);
 #
 #
 # PosNr 1000
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1000' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1000','B','Geburt auﬂerkl. ‰rztl. Leitung',237.85,'Hilfe bei einer auﬂerklinischen Geburt in einer Einrichtung unter ‰rztlicher Leitung','2010-01-01','9999-12-31',0,'+3600','1010','1010','1010',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1000' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1000','B','Geburt auﬂerkl. ‰rztl. Leitung',237.85,'Hilfe bei einer auﬂerklinischen Geburt in einer Einrichtung unter ‰rztlicher Leitung','2010-01-01','2012-06-30',0,'+3600','1010','1010','1010',0);
 #
 # PosNr 1010
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1010' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1010','B','Geburt auﬂerkl. ‰rztl. Leitung, Nacht,Sa,So',285.42,'Hilfe bei einer auﬂerklinischen Geburt in einer Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-01-01','9999-12-31',0,'+3600','','','',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1010' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1010','B','Geburt auﬂerkl. ‰rztl. Leitung, Nacht,Sa,So',285.42,'Hilfe bei einer auﬂerklinischen Geburt in einer Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-01-01','2012-06-30',0,'+3600','','','',0);
 #
 # PosNr 1100
 #
@@ -247,54 +254,54 @@ WWWRUN	INSERT	Leistungsart	POSNR='1502' and GUELT_VON='2010-01-01' and GUELT_BIS
 #
 # PosNr 1600
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1600' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1600','B','Hilfe bei nicht vollendeter Geburt',172.8,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung','2010-01-01','9999-12-31',0,'','1610','1610','1610',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1600' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1600','B','Hilfe bei nicht vollendeter Geburt',172.8,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung','2010-01-01','2012-06-30',0,'','1610','1610','1610',0);
 #
 # PosNr 1601
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1601' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1601','B','Hilfe bei nicht vollendeter Geb. Belegheb.',172.8,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme','2010-01-01','9999-12-31',0,'','1611','1611','1611',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1601' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1601','B','Hilfe bei nicht vollendeter Geb. Belegheb.',172.8,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme','2010-01-01','2012-06-30',0,'','1611','1611','1611',0);
 #
 # PosNr 1602
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1602' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1602','B','Hilfe bei nicht vollendeter Geb. Belegheb. 1:1',172.8,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme','2010-01-01','9999-12-31',0,'','1612','1612','1612',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1602' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1602','B','Hilfe bei nicht vollendeter Geb. Belegheb. 1:1',172.8,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme','2010-01-01','2012-06-30',0,'','1612','1612','1612',0);
 #
 #
 # PosNr 1610
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1610' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1610','B','Hilfe bei nicht vollendeter Geburt Nacht,Sa,So',207.36,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-01-01','9999-12-31',0,'','','','',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1610' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1610','B','Hilfe bei nicht vollendeter Geburt Nacht,Sa,So',207.36,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-01-01','2012-06-30',0,'','','','',0);
 #
 # PosNr 1611
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1611' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1611','B','Hilfe bei nicht vollendeter Geb. Nacht,Sa,So Belegheb.',207.36,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','9999-12-31',0,'','','','',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1611' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1611','B','Hilfe bei nicht vollendeter Geb. Nacht,Sa,So Belegheb.',207.36,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','2012-06-30',0,'','','','',0);
 #
 # PosNr 1612
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1612' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1612','B','Hilfe bei nicht vollendeter Geb. Nacht,Sa,So Belegheb. 1:1',207.36,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2010-01-01','9999-12-31',0,'','','','',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1612' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1612','B','Hilfe bei nicht vollendeter Geb. Nacht,Sa,So Belegheb. 1:1',207.36,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2010-01-01','2012-06-30',0,'','','','',0);
 #
 #
 # PosNr. 1700
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1700' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1700','B','2. Hebamme',20.60,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde','2010-01-01','9999-12-31','30','+3600','1710','1710','1710',240);
+WWWRUN	INSERT	Leistungsart	POSNR='1700' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1700','B','2. Hebamme',20.60,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde','2010-01-01','2012-06-30','30','+3600','1710','1710','1710',240);
 #
 # PosNr. 1701
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1701' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1701','B','2. Hebamme Beleghebamme',20.60,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde','2010-01-01','9999-12-31','30','+3600','1711','1711','1711',240);
+WWWRUN	INSERT	Leistungsart	POSNR='1701' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1701','B','2. Hebamme Beleghebamme',20.60,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde','2010-01-01','2012-06-30','30','+3600','1711','1711','1711',240);
 #
 # PosNr. 1702
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1702' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1702','B','2. Hebamme Beleghebamme 1:1',20.60,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde','2010-01-01','9999-12-31','30','+3600','1712','1712','1712',240);
+WWWRUN	INSERT	Leistungsart	POSNR='1702' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1702','B','2. Hebamme Beleghebamme 1:1',20.60,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde','2010-01-01','2012-06-30','30','+3600','1712','1712','1712',240);
 #
 #
 # PosNr. 1710
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1710' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1710','B','2. Hebamme Nacht,Sa,So',24.72,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-01-01','9999-12-31','30','+3600','','','',240);
+WWWRUN	INSERT	Leistungsart	POSNR='1710' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1710','B','2. Hebamme Nacht,Sa,So',24.72,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-01-01','2012-06-30','30','+3600','','','',240);
 #
 # PosNr. 1711
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1711' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1711','B','2. Hebamme Nacht,Sa,So Belegheb.',24.72,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','9999-12-31','30','+3600','','','',240);
+WWWRUN	INSERT	Leistungsart	POSNR='1711' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1711','B','2. Hebamme Nacht,Sa,So Belegheb.',24.72,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','2012-06-30','30','+3600','','','',240);
 #
 # PosNr. 1712
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1712' and GUELT_VON='2010-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1712','B','2. Hebamme Nacht,Sa,So Belegheb. 1:1',24.72,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','9999-12-31','30','+3600','','','',240);
+WWWRUN	INSERT	Leistungsart	POSNR='1712' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1712','B','2. Hebamme Nacht,Sa,So Belegheb. 1:1',24.72,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2010-01-01','2012-06-30','30','+3600','','','',240);
 #
 # ------------- Wochenbett ----------------------
 #
@@ -619,19 +626,19 @@ WWWRUN	INSERT	Leistungsart	POSNR='0800' and GUELT_VON='2010-07-01' and GUELT_BIS
 #
 # PosNr 1100
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1100' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1100','B','Geburt auﬂerkl. Leitung Hebammen',467.2,'Hilfe bei einer auﬂerklinischen Geburt in einer von Hebammen geleiteten Einrichtung','2010-07-01','9999-12-31',0,'+3600','1110','1110','1110',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1100' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1100','B','Geburt auﬂerkl. Leitung Hebammen',467.2,'Hilfe bei einer auﬂerklinischen Geburt in einer von Hebammen geleiteten Einrichtung','2010-07-01','2012-06-30',0,'+3600','1110','1110','1110',0);
 #
 # PosNr 1110
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1110' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1110','B','Geburt auﬂerkl. Leitung Hebammen Nacht,Sa,So',560.65,'Hilfe bei einer auﬂerklinischen Geburt in einer von Hebammen geleiteten Einrichtung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-07-01','9999-12-31',0,'+3600','','','',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1110' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1110','B','Geburt auﬂerkl. Leitung Hebammen Nacht,Sa,So',560.65,'Hilfe bei einer auﬂerklinischen Geburt in einer von Hebammen geleiteten Einrichtung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-07-01','9999-12-31',0,'+3600','','','',0);
 #
 # PosNr 1200
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1200' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1200','B','Hilfe bei Hausgeburt',548.80,'Hilfe bei Hausgeburt','2010-07-01','9999-12-31',0,'+3600','1210','1210','1210',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1200' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1200','B','Hilfe bei Hausgeburt',548.80,'Hilfe bei Hausgeburt','2010-07-01','2012-06-30',0,'+3600','1210','1210','1210',0);
 #
 # PosNr 1210
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1210' and GUELT_VON='2010-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1210','B','Hilfe bei Hausgeburt Nacht,Sa,So',658.56,'Hilfe bei Hausgeburt mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-07-01','9999-12-31',0,'+3600','','','',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1210' and GUELT_VON='2010-07-01' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1210','B','Hilfe bei Hausgeburt Nacht,Sa,So',658.56,'Hilfe bei Hausgeburt mit Zuschlag gem‰ﬂ ß5 Abs. 1','2010-07-01','2012-06-30',0,'+3600','','','',0);
 #
 #
 #
@@ -702,6 +709,102 @@ WWWRUN	INSERT	Leistungsart	POSNR='2820' and GUELT_VON='2010-07-01' and GUELT_BIS
 #
 #
 # -------- ge‰nderte Positionsnummern ab 01.07.2012
+#
+# PosNr 0901
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0901' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0901','B','Geburt im Krankenhaus Belegheb.',243.85,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus Beleghebamme','2012-07-01','9999-12-31',0,'','0911','0911','0911',0);
+#
+# PosNr 0902
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0902' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0902','B','Geburt im Krankenhaus Belegheb. 1:1',250.85,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus Beleghebamme 1:1','2012-07-01','9999-12-31',0,'','0912','0912','0912',0);
+#
+#
+#
+# PosNr 0911
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0911' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0911','B','Geburt im K-Haus, Nacht,Sa,So Belegheb.',291.42,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2012-07-01','9999-12-31',0,'','','','',0);
+#
+#
+# PosNr 0912
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0912' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0912','B','Geburt im K-Haus, Nacht,Sa,So Belegheb. 1:1',298.42,'Hilfe bei der Geburt eines Kindes in einem Krankenhaus mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2012-07-01','9999-12-31',0,'','','','',0);
+#
+#
+# PosNr 1000
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1000' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1000','B','Geburt auﬂerkl. ‰rztl. Leitung',243.85,'Hilfe bei einer auﬂerklinischen Geburt in einer Einrichtung unter ‰rztlicher Leitung','2012-07-01','9999-12-31',0,'+3600','1010','1010','1010',0);
+#
+# PosNr 1010
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1010' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1010','B','Geburt auﬂerkl. ‰rztl. Leitung, Nacht,Sa,So',291.42,'Hilfe bei einer auﬂerklinischen Geburt in einer Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2012-07-01','9999-12-31',0,'+3600','','','',0);
+#
+# PosNr 1100
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1100' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1100','B','Geburt auﬂerkl. Leitung Hebammen',492.80,'Hilfe bei einer auﬂerklinischen Geburt in einer von Hebammen geleiteten Einrichtung','2012-07-01','9999-12-31',0,'+3600','1110','1110','1110',0);
+#
+# PosNr 1110
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1110' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1110','B','Geburt auﬂerkl. Leitung Hebammen Nacht,Sa,So',586.24,'Hilfe bei einer auﬂerklinischen Geburt in einer von Hebammen geleiteten Einrichtung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2012-07-01','9999-12-31',0,'+3600','','','',0);
+#
+# PosNr 1200
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1200' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1200','B','Hilfe bei Hausgeburt',626.80,'Hilfe bei Hausgeburt','2012-07-01','9999-12-31',0,'+3600','1210','1210','1210',0);
+#
+# PosNr 1210
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1210' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1210','B','Hilfe bei Hausgeburt Nacht,Sa,So',736.56,'Hilfe bei Hausgeburt mit Zuschlag gem‰ﬂ ß5 Abs. 1','2012-07-01','9999-12-31',0,'+3600','','','',0);
+#
+#
+# PosNr 1600
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1600' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1600','B','Hilfe bei nicht vollendeter Geburt',184.8,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung','2012-07-01','9999-12-31',0,'','1610','1610','1610',0);
+#
+# PosNr 1601
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1601' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1601','B','Hilfe bei nicht vollendeter Geb. Belegheb.',184.8,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme','2012-07-01','9999-12-31',0,'','1611','1611','1611',0);
+#
+# PosNr 1602
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1602' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1602','B','Hilfe bei nicht vollendeter Geb. Belegheb. 1:1',184.8,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung Beleghebamme','2012-07-01','9999-12-31',0,'','1612','1612','1612',0);
+#
+#
+# PosNr 1610
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1610' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1610','B','Hilfe bei nicht vollendeter Geburt Nacht,Sa,So',219.36,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1','2012-07-01','9999-12-31',0,'','','','',0);
+#
+# PosNr 1611
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1611' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1611','B','Hilfe bei nicht vollendeter Geb. Nacht,Sa,So Belegheb.',219.36,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2012-07-01','9999-12-31',0,'','','','',0);
+#
+# PosNr 1612
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1612' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1612','B','Hilfe bei nicht vollendeter Geb. Nacht,Sa,So Belegheb. 1:1',219.36,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer auﬂerklinischen Einrichtung unter Leitung einer Hebammen d) in einer auﬂerklinischen Einrichtung unter ‰rztlicher Leitung mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme 1:1','2012-07-01','9999-12-31',0,'','','','',0);
+#
+#
+# PosNr. 1700
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1700' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1700','B','2. Hebamme',25.60,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde','2012-07-01','9999-12-31','30','+3600','1710','1710','1710',240);
+#
+# PosNr. 1701
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1701' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1701','B','2. Hebamme Beleghebamme',25.60,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde','2012-07-01','9999-12-31','30','+3600','1711','1711','1711',240);
+#
+# PosNr. 1702
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1702' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1702','B','2. Hebamme Beleghebamme 1:1',25.60,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde','2012-07-01','9999-12-31','30','+3600','1712','1712','1712',240);
+#
+#
+# PosNr. 1710
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1710' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1710','B','2. Hebamme Nacht,Sa,So',29.72,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde mit Zuschlag gem‰ﬂ ß5 Abs. 1','2012-07-01','9999-12-31','30','+3600','','','',240);
+#
+# PosNr. 1711
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1711' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1711','B','2. Hebamme Nacht,Sa,So Belegheb.',29.72,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2012-07-01','9999-12-31','30','+3600','','','',240);
+#
+# PosNr. 1712
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1712' and GUELT_VON='2012-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1712','B','2. Hebamme Nacht,Sa,So Belegheb. 1:1',29.72,'Hilfe bei einer auﬂerklinischen Geburt oder Fehlgeburt durch eine zweite Hebamme, f¸r jede angefangene halbe Stunde mit Zuschlag gem‰ﬂ ß5 Abs. 1 Beleghebamme','2012-07-01','9999-12-31','30','+3600','','','',240);
 #
 # PosNr. 1800
 #
