@@ -1,3 +1,12 @@
+Release 1.6.3
+
+Aufnahme und Anpassungen Positionsnummern w/ Betriebskostenpauschale
+
+Alle Änderungen w/ angepasster Positionsnummern zum 01.07.2012 und 01.01.2013
+
+Vorbereitung auf Version 8 das Datenaustauschs
+
+
 Release 1.6.2
 
 Aufnahme neuer Positionsnummern für Auslagenersatz
