@@ -4,10 +4,10 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.61 2012-03-10 16:26:59 thomas_baum Exp $
+# $Id: ps2html.pl,v 1.62 2012-12-30 12:24:06 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005 - 2012 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -282,6 +282,7 @@ if ($q->user_agent =~ /Windows/ || $q->user_agent =~ /Macintosh/) {
   } elsif ($^O =~ /MSWin32/) {
     unlink('/tmp/wwwrun/file.pdf');
     my $gswin=$h->suche_gswin32();
+    $gswin='"'.$gswin.'"';
     system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
   } else {
     die "kein Konvertierungsprogramm ps2pdf gefunden\n";
