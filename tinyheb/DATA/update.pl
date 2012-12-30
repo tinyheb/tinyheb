@@ -3,10 +3,10 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.11 2012-08-26 13:46:25 thomas_baum Exp $
+# $Id: update.pl,v 1.12 2012-12-30 12:25:31 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2007 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@ use DBI;
 use Getopt::Long;
 #use Data::Dumper;
 
-my $id='$Id: update.pl,v 1.11 2012-08-26 13:46:25 thomas_baum Exp $';
+my $id='$Id: update.pl,v 1.12 2012-12-30 12:25:31 thomas_baum Exp $';
 
 write_LOG("Starte update ----------------------------");
 write_LOG("$id");
