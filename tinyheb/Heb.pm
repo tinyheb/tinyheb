@@ -1,9 +1,9 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.18 2012-05-31 16:49:14 thomas_baum Exp $
+# $Id: Heb.pm,v 1.19 2012-12-30 12:36:03 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2003 - 2010 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2003 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -317,6 +317,17 @@ sub suche_gswin32 {
     $gswin32=$pfad if (-e "$pfad.exe");
     $i++;
   }
+
+
+  $i=0;
+  # Suche unterhalb /Program Files/gs
+  while ($i<100) {
+    my $pfad="/Program Files/gs/gs8.$i/bin/gswin32c";
+    $gswin32=$pfad if (-e "$pfad.exe");
+    $i++;
+  }
+
+
 
   return $gswin32;
 }
