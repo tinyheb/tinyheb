@@ -1,9 +1,9 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.65 2012-04-02 17:47:22 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.66 2012-12-30 12:33:35 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005 - 2012 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ my $d = new Heb_datum;
 
 my %sondertarifkz = (); # Positionsnummern bei denen Sondertarif KZ mitgegeben werden muss
 
-$sondertarifkz{$_}=1 for qw (900 0900 910 0910 920 0920 930 0930 940 0940 950 0950);
+$sondertarifkz{$_}=1 for qw (9000 0900 9100 0910 9200 0920 9300 0930 9400 0940 9500 0950);
 
 my $delim = "'\x0d\x0a"; # Trennzeichen
 my $crlf = "\x0d\x0a";
@@ -435,7 +435,6 @@ sub SLGA_REC {
 
 sub SLGA_UST {
   # generiert SLGA UST Segment
-  # ist für Version 6.0 identisch
 
   my $self = shift;
   my $ustid = shift;
@@ -462,9 +461,9 @@ sub SLGA_GES {
   my $erg = 'GES+';
   $erg .= $status.'+'; # Status 00 = Gesamtsumme aller Stati
   $erg .= $gesamtsumme; # Gesamtrechnungsbetrag
+  $erg .= '+'.$gesamtsumme; # Gesamtbruttobetrag
   # Gesamtbetrag Zuzahlungen nicht übermitteln
   # weil K Feld und identisch zu Gesamtrechnungsbetrag
-  $erg .= '+'.$gesamtsumme; # Gesamtbruttobetrag
   $erg .= $delim; # Zeilentrennung anfügen
 
   return $erg;
@@ -490,7 +489,6 @@ sub SLGA_NAM {
 
 sub SLLA_FKT {
   # generiert SLLA_FKT Segment
-  # Version 6 ist identisch
 
   my $self=shift; # package Namen vom stack nehmen
 
@@ -542,7 +540,7 @@ sub SLLA_INV {
   $erg .= $kvs_1.'000'.$kvs_2.'+'; # Versichertenstatus
   $erg .= '+'; # Freifeld
   $erg .= $rechnr; # Belegnummer
-  # in Version 6 gibt es Feld besondere Versorgungsform, wird weggelassen,
+  # ab Version 6 gibt es Feld besondere Versorgungsform, wird weggelassen,
   # da optional
   $erg .= $delim; # Zeilentrennung anfügen
 
@@ -640,7 +638,9 @@ sub SLLA_EHB {
   $preis = sprintf "%.2f",$preis;
   $preis =~ s/\./,/g;
   $erg .= $preis.'+'; # Einzelpreis der Abrechnungsposition
-  $erg .= $pzn ? sprintf "%7.7u+",$pzn : '+'; # Pharmazentralnummer nur angeben, wenn vorhanden
+#  $erg .= $pzn ? sprintf "%7.7u+",$pzn : '+'; # Pharmazentralnummer nur angeben, wenn vorhanden
+  # ab Version 8 ist die PZN 8-stellig alpha, Datenhaushalt muss geändert werden
+  $erg .= $pzn ? sprintf "%u+",$pzn : '+'; # Pharmazentralnummer nur angeben, wenn vorhanden
   $erg .= $zeit_von ? "$zeit_von+" : "+"; # Uhrzeit von
   $erg .= $zeit_bis ? "$zeit_bis+" : "+"; # Uhrzeit bis
   $erg .= $dauer ? "$dauer+" : "+"; # Dauer
@@ -657,7 +657,6 @@ sub SLLA_EHB {
 
 sub SLLA_TXT {
   # generiert SLLA TXT Segment
-  # Version 6 identisch
 
   my $self=shift;
   
@@ -688,7 +687,6 @@ sub SLLA_ZHB {
   #$erg .= $h->parm_unique('HEB_IK_BELEG_KKH').'+'; # IK Belegkrankenhaus
   # $erg .= '999999999+'; # Betriebsstättennummer default angeben, bis Beschw.
   $erg .= '+'; # Betriebsstättennummer kann Feld
-  # $erg .= '999999999+'; # Vertragsarztnummer default angeben, bis Beschw.
   $erg .= '+'; # Vertragsarztnummer kann Feld
   $erg .= $self->{kzetgt}.':'.$self->{geb_kind}.'+'; # Geburtsdatum kind
   $erg .= $self->{geb_zeit}.'+'; # Geburtszeit
@@ -703,7 +701,7 @@ sub SLLA_ZHB {
 
 sub SLLA_DIA {
   # generiert SLLA DIA Segment Diagnose Fall Hebammen
-  # nur in Version 6 vorhanden
+  # ab Version 6 vorhanden
 
   my $self=shift;
   my ($dia_schl,$dia_text)=@_;
@@ -748,7 +746,10 @@ sub UNH {
   $erg .= $lfdnr.'+'; # laufender Nummer der UNH Segmente
   $erg .= $typ;
   # Nachrichtenkennung ab 01.04.2012 Version 07
-  $erg .= $TODAY_jmt > 20120331 ? ':07:0:0' : ':06:0:0';
+  # ab 01.01.2013 Version 08, Übergangsregelung bis 31.03.2013
+  # ab 01.10.2013 Version 09
+
+  $erg .= $TODAY_jmt > 20130228 ? ':08:0:0' : ':07:0:0';
   $erg .= $delim;
 
   return $erg;
@@ -758,7 +759,6 @@ sub UNH {
 
 sub UNT {
   # generiert UNT Segment
-  # Version 6.0 identisch
 
   my $self=shift;
 
