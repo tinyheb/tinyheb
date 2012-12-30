@@ -1,9 +1,9 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.32 2010-02-15 07:28:15 thomas_baum Exp $
+# $Id: Heb_leistung.pm,v 1.33 2012-12-30 12:31:39 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2003 - 2010 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2003 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ $zeit_ende{$_}=1 for qw(0500 0501 0502 0510 0511 0512 0901 0902 0911 0912 1000 1
 my $dbh=$h->connect;
 
 my %leistungsdaten_pruef_zus=(); # für Zuschlagspflichtige Posnr
-foreach my $wert qw(SAMSTAG SONNTAG NACHT) {
+foreach my $wert (qw(SAMSTAG SONNTAG NACHT)) {
   my $zus = $dbh->prepare("select distinct $wert,guelt_von,guelt_bis ".
 		       "from Leistungsart ".
 		       "where $wert > 0;")
