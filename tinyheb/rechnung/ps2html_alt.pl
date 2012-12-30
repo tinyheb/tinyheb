@@ -4,10 +4,10 @@
 # Ausgabe von alten Rechnungen, entweder Postscript Format oder Edifact
 # wird ausgegeben
 
-# $Id: ps2html_alt.pl,v 1.13 2009-11-17 08:49:44 thomas_baum Exp $
+# $Id: ps2html_alt.pl,v 1.14 2012-12-30 12:24:38 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -61,6 +61,7 @@ if ($rechtyp == 1) {
     } elsif ($^O =~ /MSWin32/) {
       unlink('/tmp/wwwrun/file.pdf');
       my $gswin=$h->suche_gswin32();
+      $gswin='"'.$gswin.'"';
       system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
     } else {
       die "kein Konvertierungsprogramm ps2pdf gefunden\n";
