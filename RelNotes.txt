@@ -1,0 +1,814 @@
+Release 1.6.3
+
+Aufnahme und Anpassungen Positionsnummern w/ Betriebskostenpauschale
+
+Alle Änderungen w/ angepasster Positionsnummern zum 01.07.2012 und 01.01.2013
+
+Vorbereitung auf Version 8 das Datenaustauschs
+
+
+Release 1.6.2
+
+Aufnahme neuer Positionsnummern für Auslagenersatz
+
+
+Release 1.6.1
+
+Bug fix: elektronische Rechnungen wurden durch die Datenannahmestellen wegen einem Problem im ZHB Segment nicht mehr angenommen 
+
+
+Release 1.6.0
+
+Berücksichtigung Version 7 der technischen Anlage 1
+
+Bug fix: Runden geht auch bei negativen Zahlen richtig
+
+Bug fix: , als Sonderzeichen wird in elektronischen Rechnung mit ESC Sequenz versehen.
+
+Bug fix: ITSG benutzt neue Zertifikatkette seit 07.12.2011 
+
+Bug fix:lange Bezeichnungen der Datenannahmestellen führten zum Abbruch
+
+Berücksichtigung Sonderkennzeichen wegen Betriebskostenpauschale bei bestimmten Positionsnummern.
+
+
+Release 1.5.0
+
+neue Gebührenordnung gültig ab 01.07.2010
+
+in der Frauensuche lässt sich nach unterschiedlichen Statuswerten suchen
+
+neues setup.pl Programm kommt auch ohne kopieren der my.ini Datei klar.
+
+Bug fix: In der Leistungsartenmaske funktionierte das vor- und zurückspringen zum nächsten Datensatz nicht, wenn die Maske leer war
+
+
+Release 1.4.0
+
+neue Gebührenordnung gültig ab 01.01.2010
+
+Versichertenbesätigungen mit neuen Positionsnummern
+
+in Frauensuchmaske wird Datenannahmestelle angezeigt
+
+in Stammdatenerfassung wird Datenannahmestellt angezeigt
+
+Bug fix: Beim Einlesen der Kostenträgerdateien konnte wurde in SEHR seltenen 
+Fällen die falsche Datenannahmestelle ermittelt.
+
+Bug fix: Bei Generierung des eigenen Zertifikates wurde bei SHA1 Hash 
+Ermittlung ein schwerer OpenSSL Fehler ausgewiesen, obwohl keiner 
+vorhanden war. Richtigen Filehandle geschlossen und zusätzliche prints 
+eingebaut.
+
+Bug fix: Rechnungen an Mendent können mit Schlüsseln signiert werden, die nach dem 10.12.2009 vergeben wurden
+
+Zusätzliche Plausiprüfung bei Material, übergeordnete Positionsnummer muss
+gültig sein.
+
+
+
+Release 1.3.0
+
+neue Plausiprüfung für Positionsnummer 230, 2x am gleichen Tag nur mit 
+Begründung. Steht zwar nicht in Gebührenordnung, wird aber ohne Begründung 
+von den Krankenkassen gekürzt.
+
+Bug fix: Positionsnummern 280, 281, 290 sind auch nach 9 Monaten noch
+abrechenbar
+
+neues Bundesland Baden-Württemberg
+
+Layout der Frauen Suchmaske verbessert.
+
+Falzmarkierung bei Urbelegen aufgenommen.
+
+
+
+Release 1.2.1
+
+Bug fix: Plausiprüfung für zweiten Besuch am selben Tag innerhalb 10 Tage war nicht ganz korrekt.
+
+Bug fix: Return Codes aus OpenSSL wurden nicht immer korrekt abgefragt.
+
+Bug fix: Zertifikatsanfrage wurde nicht mehr an ITSG geschickt.
+Bug fix: Zertifikatsanfrage konnte nur generiert werden, wenn privater Schlüssel schon vorhanden war
+
+Jahressummen in der Maske Rechnungsbearbeitung wurden in Firefox 3.0 nicht korrekt dargestellt.
+
+
+
+Release 1.2.0
+
+In der Maske Rechnungsbearbeitung wird bei den Rechnungssummen nach aktuellen und Gesamtbeträgen unterschieden.
+
+Neue Plausiprüfung: es können keine Rechnungsposten erfasst werden, die mehr als eine Woche in der Zukunft liegen.
+
+Bug fix: Auch bei gemahnten Rechnungen muss es möglich sein, die elektronische Rechnung nochmal zu schicken.
+
+Bug fixes:
+Zeit von soll nach Auswahl der Positionsnummer den Focus erhalten.
+Datum soll nach Speichern den Focus erhalten.
+Wochentag muss nach Eingabe des Datums ermittelt werden.
+Zuschläge dürfen kein KM Geld haben
+
+Logo wird mit angedruckt, wenn Datei logo.eps im Verzeichnis rechnung existiert.
+
+Bug fix: im Opera unter Windows wurden iframes mit about:blank nicht korrekt angezeigt. Jetzt wieder leere Seite
+
+Posnr. 280,281,290 lassen sich mit ärztlichem Attest mehr als 4mal und auch nach 9 Monaten noch erfassen.
+
+Windows Setup berücksichtigt, dass für Windows perl 5.8.x zusätzliche Repository
+Quellen notwendig sind.
+
+genreq.pl berücksichtigt, wenn schon privater Schlüssel und Zertifikat existieren.
+
+Bug fix: OpenSSL Aufruf kann Zertifikate in Verzeichnissen verarbeiten, die blanks enthalten.
+
+Es wird geprüft, ob alle Zertifikate der Zertifizierungskette vorhanden sind.
+
+GUI für das Einlesen des eigenen Zertifikates
+
+Brandenburg und Berlin als Bundesländer aufgenommen
+
+
+Release 1.1.0
+
+Bug fix: speichern des Privat Faktors in den Stammdaten funktionierte nicht.
+
+Aus xauftrag.pl lassen sich die Mail Einstellungen ändern und speichern
+
+Bug fix: Cursor springt nach Speichern von Rechnungsposten wieder ins Datumsfeld
+
+Bug fix: bei massiv paralleler Erfassung konnte es zu race-conditions kommen. Durch advisory locking verhindert.
+
+Teile der Packages um POD erweitert.
+
+Teile der Anwendung sind unter mod_perl2 lauffähig
+
+Quittierungsbögen lassen sich aus der Anwendung Drucken
+
+Bug fix: Knöpfe in der Auflistung alter Rechnungen und einzelner Rechnungsposten hatten je nach Browser nicht die optimale Größe
+
+Bug fix: es darf maximal ein TXT Segment pro Rechnungsposten übertragen werden
+
+Bug fix: nach Nutzung der neuen Gebührenordnung konnte es zu Rundungsfehlern kommen.
+
+
+
+Release 1.0.0
+
+Privat Faktor kann bei jeder Frau individuell vorgegeben werden
+
+Positionsnummer 010 mehr als einmal pro Tag nur mit Begründung
+
+zusätzliche Plausiprüfungen für Positionsnummer 020
+
+zusätzliche Plausiprüfung für Positionsnummer 270, nur nach der Geburt
+
+Verbessertes Fehlerhandling bei der Generierung von elektronischen Rechnungen
+
+Überarbeitung Handbuch
+
+Materialpauschalen haben ab 01.07.08 auch einen neuen Preis
+
+"Bug fix" Einspielen einer Sicherung funktionierte nicht mehr unter ubuntu 8.04 (Hardy)
+
+
+Release 0.19.0
+
+Layout der erfassten Positionen in Maske "Rechnungsposten erfassen" verbessert
+
+Geburtszeit Kind wird auf Rechnung mit angedruckt, falls diese Zeit vorhanden ist
+
+Nur die Uhrzeiten müssen erfasst sein, die wirklich notwendig sind
+Alle erfassten Uhrzeiten werden auch in elektronischer Rechnung übertragen
+
+Config File möglich
+
+In Feldüberschriften wird angegeben, ob errechneter oder Geburtstermin des Kindes angegeben ist
+
+Code Cleanup: alte Version Datenaustausch ausgebaut
+
+Performance der Anwendung verbessert
+
+Bug Fix: Rechnungsposten mit Pharmazentralnummer wurden falsch übertragen
+
+Aufnahme der ab 01.07.08 gültigen Gebührenordnung 
+
+verbesserte setup.pl für Perl 5.10, Apache2.2 und Vista
+
+Beim Signieren wird Zertifikat der Zertifizierungsstelle mit übertragen
+
+Bug fix: auch Positionsnummern 090 bid 167 nach Zeit Ende berechnet
+
+In auftrag.pl kann Passwort übergeben werden
+
+Bug fix: Korrektur Rechtschreibfehler in Frauenauswahl
+
+Prüfung ob genutzte Zertifikate noch gültig sind.
+
+
+Release 0.18.0
+
+Bug fix: Positionsnummern mit Zuschlägen konnten Samstag ohne Angabe der Uhrzeit gespeichert werden.
+
+Bug fix: ZHB Segment wurde falsch aufgebaut
+Bug fix: GES Segment Nachkommastellen fehlten bei Beträgen.
+
+Performance der Anwendung verbessert.
+
+Neuer Versichertenstatus 5 9
+
+Bei Mahnungen wird das aktuelle Datum mit angedruckt.
+
+zusätzliche Plausiprüfung, falls Versichertenstatus privat und IK-Nummer Krankenkasse angegeben ist, kann keine Rechnung produziert werden.
+
+zusätzliche Plausiprüfung, erfasste Zeiten dürfen sich innerhalb einer Positionsnummer nicht überschneiden
+bei Materialien muss Pharmazentralnummer vorhanden sein.
+
+DIA Segment wird übertragen
+
+elektronische Rechnungen können auch mit alten Perl Versionen generiert werden
+
+Neue Felder für Diagnoseschlüssel und -Text in Datenhaushalt aufgenommen
+
+bei Klinikgeburten darf nicht Pauschale 360 gerechnet werden
+
+Positionsnummern 16x sind nicht neben den Positionsnummern 090 bis 130 abrechenbar
+
+Diagnose Text und Schlüssel werden bei Rechnungserfassung automatisch eingeblendet, wenn
+Begründung Attest ausgewählt wird
+
+In der Leistungsartenerfassung Feld NICHT größer
+
+Bug fix: Bei unzulässiger Änderung von Positionsnummer 180 wurde manchmal nach Änderung und Fehlerhinweis 
+Positionsnummer 181 gespeichert
+
+Neues Hilfsprogramm zum zurücksetzen des MySQL root Passwortes für Windows Systeme
+
+Handbuch um Kapitel Beschreibung welche Zwischendateien bei der Rechnungsgenerierung erzeugt werden erweitert
+Handbuch um Kapitel Sicherheit in tinyheb erweitert.
+
+Bug fix: Wenn Zuschlag zusätzlich gespeichert, wurde nicht angegeben, welcher Zuschlag.
+
+
+Es wird vor Generierung der elektronischen Rechnung geprüft, ob die E-Mail Adresse der Datenannahmestelle bekannt ist.
+
+Handbuch überarbeitet.
+
+Bug fix: Uhrzeiten brauchen bei Materialzuschlägen nicht gespeichert zu werden.
+
+
+
+Release 0.17.0
+
+Datenaustauschversion 6.0 in wesentlichen Teilen umgesetzt. 
+Allerdings im ZHB Segment werden fast ausschließlich default Werte übertragen.
+Im EHB Segment werden keine Ortsangaben übertragen.
+DIA Segment wird nicht übertragen.
+Pharmazentralnummer wird nur übertragen, wenn vorhanden.
+
+Bei bestimmten Positionsnummern (050,051,260,261,280,281) wird in Abhängigkeit der Endezeit der Zuschlag
+ausgewählt.
+
+Rechnungssuchen im Modul Heb_leistung in Teilen auf Objektorientierung umgestellt.
+
+Bug fix: Geburtszeit des Kindes wurde im Format HH:MM:SS statt HH:MM geliefert
+
+Bug fix: in auftrag.pl wurde in jedem Fall update auf Datenbank gemacht, auch wenn der Schalter
+nicht gesetzt war.
+
+Wenn Zeiten erfasst werden, müssen von und bis Zeit erfasst werden, w/ Abhängigkeit der Endezeit
+
+Bug fix: Fehler wurde bei nicht existierender Positionsnummer nicht korrekt angezeigt.
+
+Bug fix: Fehlerhinweis bei KV Nummer muss auf 9-stellig hinweisen, nicht 10-stellig
+
+Bei Positionsnummern mit Nacht oder Samstagzuschlag wird in der Rechnung die Uhrzeit mit angedruckt.
+
+Bei Positionsnummern mit Nacht oder Samstagzuschlag wird in der elektronischen Rechnung die Uhrzeit
+mit übertragen.
+
+Beim Signieren einer Rechnung wird geprüft, ob eigenes Zertifikat und eigener privater Schlüssel
+vorhanden sind.
+
+Bug fix: Nachdem eine Mahnung erstellt wurde, war der Rechnungsbetrag nicht mehr in den offenen Rechnungen enthalten.
+
+Bug fix: bei Materialpauschale vor/nach 4 Tag p.p. wurde am 5 Tag falsch ausgewählt.
+
+Neue Positionsnummern 161 bis 167 ab 01.02.2008
+
+Verbessertes Fehlerhandlung bei setup.pl.
+
+Bug fix: bei Zuschlägen und Pauschalen wurde Uhrzeit mit gespeichert
+
+
+
+Release 0.16.0
+In Maske Rechnungsbearbeitung wird die Datenaustauschreferenz angezeigt.
+
+Bug Fix:
+Restore konnte unter Windows nur durchgeführt werden, wenn mysql im Suchpfad lag.
+
+Code Cleanup als Vorbereitung für Version 6.0 der Spezifikation zum Datenaustausch.
+
+IK Nummer des Belegkrankenhauses in Datenhaushalt aufgenommen
+Uhrzeit Geburt Kind in Datenhaushalt aufgenommen
+Pharmazentralnummer in Datenhaushalt aufgenommen
+Schalter ET/ Geburtstermin in Datenhaushalt aufgenommen.
+
+Schalter Kilometer erfassbar (j/n) in Datenhaushalt aufgenommen
+Entsprechend sind in Maske Rechnungsposten erfassen die Kilometer freigeschaltet oder nicht.
+
+Plausiprüfung Pos. 260, 261 nur auf ärztliche Anordnung
+
+Plausiprüfung Pos. 280,281, 290 maximal 4 mal
+
+Verbessertes Fehlerhandling bei Update der Datenbank.
+
+Daten aus Entfernung in Stammdaten soll in Maske Rechnungsposten Erfassung übernommen werden
+
+Neues Bundesland Sachsen
+
+Bug fix: Rundungsfehler konnte bei Kilometergeld auftreten
+
+Performance Verbesserung bei Einlesen der öffentlichen Schlüssel
+
+
+Release 0.15.1
+
+Aufnahme Positionsnummern für anteiliges Wegegeld und Materialien.
+
+Bug fix:
+Seitenumbruch bei Wegegeld war in seltenen Fällen nicht korrekt.
+Layout bei anteiligem Wegegeld war nicht korrekt.
+
+Bug fix:
+Backup konnte unter Windows nur angelegt werden, wenn mysqldump im Suchpfad lag.
+
+
+Release 0.15.0
+
+Kostenträgerdateien im Unix Dateiformat können verarbeitet werden.
+
+Neue Hebammengebührenordnung (Hebammen-Vergütungsvereinbarung)
+
+Rechnungen nach Gebührenordnung Ost (Tarif-Kennzeichen 25) sind nicht mehr möglich
+
+Zeit von muss erfasst werden, wenn "Nacht" Positionsnummer gewählt wurde
+an einem Wochentag oder Samstag.
+
+Bug fix:
+Bei elektronischen Rechnungen wurde unter Windows nicht immer korrektes Zeilenende generiert.
+Bei signieren und verschlüsselten elektronischen Rechnungen konnte es in seltenen Fällen zu Problemen komen.
+
+Release 0.14.0
+
+Bug fix:
+Bei Einlesen der Kostenträgerdateien wurde falsche Annahmestelle bei 
+AOK Niedersachsen in Datenhaushalt übernommen.
+
+Bug fix:
+Bei Zertifikatsgenerierung konnte bei bestimmten Mailprovidern (T-Online) die 
+Zertifikatsanfrage nicht an die ITSG gesendet werden.
+
+Handbuch Erweiterung um Kapitel Danksagungen und Ein eigenes Zertifikat
+
+
+Release 0.13.2
+
+neuer Parameter -c bei Kommandozeilentool key.pl speichert das Zertifikat der Hebamme, falls es in der Eingabe
+enthalten ist.
+
+Bug fix:
+setup.pl war nicht lauffähig w/ nicht deklarierter Variable
+
+setup.pl schreibt zusätzlich Logfile und Fehler bei der Installation leichter erkennen zu können.
+
+Release 0.13.0
+
+Bug fix:
+Bei elektronischen Rechnungen: Wegegeld bei Tag und Nacht Wegegeld wurde Tag nicht berücksichtigt.
+Bei elektronischen Rechnungen: Summenstatus wurde nicht korrekt übermittelt, führte zu Fehler bei Interforum
+Bei elektronischen Rechnungen: Signierte und Verschlüsselte Rechnungen konnten nicht korrekt entschlüsselt werden
+
+Neues Bundesland: Sachsen-Anhalt
+
+Bug fix:
+Bei Neuanlage einer Krankenkasse wurde nach dem Speichern in der Maske die IK-Nummer auf 1 gesetzt
+Bei Löschen einer Krankenkasse wurde nach dem Löschen in die Stammdatenerfassungsmaske gesprungen
+
+Openssl muss nicht mehr unbedingt unter /OpenSSL/bin/ liegen.
+
+neue Plausi für Positionsnummer 6, mehr als 2x nur auf ärztliche Anordnung.
+
+In xauftrag.pl:
+Name Krankenkasse, Kostenträger, Name der Frau werden breiter dargestellt.
+
+Neuer Versicherungsstatus SOZ für Rechnungen an Sozialämter
+Rechnungen an Sozialämter können generiert werden.
+
+Bug fix:
+Maskenlayout Mahnungsgenerierung wurde im IE nicht korrekt angezeigt
+Maskenlayout Rechnungsgenerierung wurde im IE nicht korrekt angezeigt
+Maskenlayout einlesen öffentliche Schlüssel wurde im IE nicht korrekt angezeigt
+Maskenlayout einlesen Kostenträgerdateien wurde im IE nicht korrekt angezeigt
+
+Bug fix:
+Kostenträgerdateien konnten unter Windows nicht eingelesen werden.
+
+Bug fix:
+öffentliche Schlüssel konnten unter Windows nicht eingelesen werden.
+
+Verbesserung Mini Setup, es wird geprüft, ob tinyHeb im richtigen Verzeichnis installiert ist.
+Verbesserung Mini Setup, es wird geprüft, ob die Windows Version installiert ist.
+
+
+Suche nach gs in zentrales Modul ausgelagert.
+
+Suche nach OpenSSL in zentrales Modul ausgelagert.
+
+Release 0.12.0
+
+Bug fix:
+Es konnte keine Sicherung generiert werden, wenn das Passwort des DB-Admin benötigt wurde.
+
+mysqldump muss unter windows nicht mehr im Suchpfad des Systems liegen.
+
+Bug fix:
+Es konnte keine Sicherung eingespielt werden, wenn das Passwort des DB-Admin benötigt wurde.
+
+Bug fix:
+Unter Windows war es nicht möglich Mahnungen zu produzieren, w/ falschen Wert gswin32c
+
+Bug fix:
+von 08:00 bis 20:00 ist Tag, tinyHeb erkannte Tag von 09:00 bis 20:00
+
+Bug fix:
+Layout "Anzeige alte Rechnungen" war unter Internet Explorer nicht korrekt.
+
+Bug fix:
+PDF Dateien müssen im binmode an den Browser übertragen werden.
+
+Neuer Index auf Tabelle Leistungsarten.
+Neuer Index auf Tabelle Leistungsdaten.
+
+In der Maske "Rechnungsposten erfassen" können im Feld Posnr: nur noch solche Positionsnummern erfasst werden, die einen Preis größer Null haben. Andere Positionsnummern werden automatisch ausgewählt.
+
+weiteres CodeCleanup w/ neuer Gebührenordnung
+
+privat Gebührenordnung Thüringen
+
+unter Windows wird beim elektronischen Rechnungsversand localhost nicht mehr vorgegeben.
+
+Bug fix:
+In der Rechnungspostenerfassung wurde das Feld anzahl_frauen nicht immer korrekt initialisiert.
+
+Falls bei Rechnungspostenerfassung Pos 7 oder 40 angewählt wird, kann die Anzahl der Kurse vorgegeben
+werden, die einzelnen Rechnungsposten werden dann automatisch generiert.
+
+Neue Plausiprüfung für Positionsnummer 8, analog Positionsnummer 7
+
+Aus der Stammdatenerfassung kann Google Maps aufgerufen werden, es wird die Wegbeschreibung von der
+Adresse der Hebamme zur Kundin angezeigt.
+
+Mahnungen für privat Versicherte Kundinnen sind möglich.
+
+Zusätzlicher Hinweis auf Rechnung, dass Hebmammen Leistungen von der USt befreit sind.
+
+Es muss nicht mehr zwingend gs8.15 auf Windows Systemen genutzt werden. Der Pfad wird automatisch ermittelt
+
+
+
+Release 0.11.0
+
+Datum lässt sich im Format ttmmjj erfassen
+
+Bug fix: Verschüsselte Nutzdaten müssen binär eingelesen werden
+
+Neue Maske: Einlesen der Kostenträgerdateien
+Neue Maske: Einlesen der öffentlichen Schlüssel der Datenannahmestellen
+
+Plausiprüfungen der HebGO in Paket Heb_GO.pm ausgelagert
+
+In Maske Rechnungsbearbeitung lässt sich die Anzeige einschränken auf nicht erledigte Rechnungen
+
+Korrektur Hebammengebührenordnung Bayern, auch Wegegeld lässt sich mit Faktor (1,8) abrechnen
+
+Bug Fix:
+im Internet Explorer wurde Maske Rechnungsbearbeitung nicht korrekt angezeigt
+
+Rechnungen lassen sich jetzt stornieren.
+
+Aus der Backup Maske kann man direkt in das Wartungsmenue springen
+
+Aus der Restore Maske kann man direkt in das Wartungsmenue springen
+
+Restrukturierung der Kommandos key.pl, zusätzlicher Parameter -s nur wenn dieser gesetzt ist,
+werden die einzelnen Schlüssel abgespeichert
+
+Restrukturierung des Kommandos kostentraeger.pl, zusätzlicher Parameter -t, wenn dieser gesetzt ist,
+erfolgt Ausgabe in HTML
+
+Überarbeitung setup.pl, MySQL und Apache werden automatisch neu gestartet, nachdem die veränderte
+Konfiguration kopiert wurde (nur WinXP)
+
+
+Release 0.10.0
+
+Schlüsseldateien der Datenannahmestellen können auch auf Windows Systemen eingelesen werden
+
+Eigene Erfassung- und Bearbeitungsmaske für Datenannahmestellen
+
+update auf Positionsnummer 24, da Geburtstag des Kindes als Tag 1 berechnet wurde.
+
+neue Maske zur Erstellung einer Sicherung der tinyHeb Datenbank.
+neue Maske um Sicherung wieder einzuspielen.
+
+Bug fix, durch Einlesen der Kostenträgerdateien auf Windows-Systemen wurde der Datenhaushalt der
+Krankenkassen unbrauchbar.
+
+privat Rechnungen für Rheinland-Pfalz
+
+Neue Maskenstruktur für Wartungspunkte
+
+Neues Tarifkennzeichen "bundeseinheitlicher Tarif"
+
+Neue Versicherungsstatus: '1 9','3 9','1 7','3 7','1 8','3 8', '5 1'
+
+Bug fix: trotz fehlenden Geburtsdatum des Kindes wurde Rechnung generiert.
+
+Datumsfelder lassen sich jetzt auch mit Komma , statt Punkt erfassen, z.B. 01,01,2007
+
+Release 0.9.0
+
+zusätzliche Plausiprüfung auf Prüfziffer der IK-Nummer
+
+privat Rechnungen für Bayern, Niedersachsen, Hessen und Hamburg.
+
+Eigene Erfassungsmaske für Angaben zur Hebamme.
+
+In Stammdatenerfassungsmaske wird sofort angezeigt, ob elektronischer Datenaustausch möglich ist.
+
+Neue Plausiprüfungen für Positionsnummer 7 (mehr als 14 Stunden) und Positionsnummer 40 (mehr als 10 Stunden)
+
+Bug fix:
+es konnte Mahnung ohne vorherige Rechnung generiert werden.
+
+Bug fix:
+Bei der Änderung von Rechnungsposten konnte es zu Fehler kommen, wenn abhängige Positionsnummern existierten.
+
+Bug fix:
+alte Rechnungen konnten unter Windows nicht angezeigt werden.
+temporäre Files wurden bei Anzeige alter Rechnungen nicht korrekt angelegt.
+
+neue Funktionalität bei Rechnungsbearbeitung:
+Rechnungen können auch auf erledigt gesetzt werden, wenn gezahlter Betrag größer oder kleiner des Rechnungsbetrages ist.
+
+Bug fix:
+In Rechnungsbearbeitung wurde nicht immer die korrekte Summe der offenen und erledigten Rechnungen angezeigt.
+
+Bug fix:
+bei elektronischen Rechnungen wurden temporäre Files unter Windows nicht korrekt angelegt.
+Pfad zu openssl wurde für Verschlüsselung auf Windows Systemen nicht korrekt angesprochen.
+
+------------------------------------------------------------------------------------
+Release 0.8.0
+
+Bug fix:
+In Rechnungsbearbeitung wurde nicht auf Stylesheet Heb.css zugegriffen.
+Rundungsfehler bei Kleinstbeträgen.
+
+Layout Verbesserung bei Anzeige alter Rechnungen
+
+Rechnungsposten Erfassung
+zusätzliche Plausiprüfung, ob erfasste Kilometer numerisch.
+
+Berücksichtigung der Hebammengebhrenordnung OST.
+
+Heb_Edi
+Prüfung ob Verschlüsselung und Signatur erfolgreich.
+Einbau Gebührenordnung OST
+Prüfung ob E-Mail Adresse der Hebamme und der Datenannahmestelle vorhanden sind
+
+Frauenauswahl
+zusätzliche Plausiprüfungen auf erfasste Werte
+
+Krankenkassenerfassung
+zusätzliche Plausiprüfungen auf erfasste Werte
+
+xauftrag.pl
+Wenn Steuerdatei .xauftragrc nicht vorhanden ist, wird diese automatisch mit Beispieleinträgen angelegt.
+
+Handbuch
+Korrektur von Fehlern.
+Überarbeitung des Kapitels "Verschicken der Rechnung per E-Mail"
+neues Kapitel "1.4 Über dieses Handbuch"
+
+Rechnungsgenerierung:
+Bug fix:
+Bei Windows-Systemen wurde temporäres Verzeichnis nicht korrekt angelegt.
+
+----------------------------------------------
+Release 0.7.2
+
+Bug fix:
+Bei der Krankenkassensuche ist jetzt die Vorgabe der PLZ des Postfaches möglich
+
+Bug fix:
+In der Leistungsarten Maske war ein Blättern auf den nächsten Datensatz nicht möglich, wenn
+keine Leistungsart angezeigt war.
+
+Bug fix:
+Bei Leistungsartenauswahl hatte Vorgabe des Datums keine Wirkung.
+Bei Leistungsartenauswahl wird Fenster in Vordergrund geholt, wenn Fenster schon geöffnet war.
+
+Nutzung eines generellen Stylesheets Heb.css für einheitliches aussehen der Masken.
+
+wesentliche Erweiterung der Anleitung.
+
+Bug fix:
+Bei Feiertagsauswahl wird Fenster in Vordergrund geholt, wenn Fenster schon geöffnet war.
+
+Bug fix:
+Datum Prüfung bei Feiertagsauswahl war nicht implementiert.
+
+Bug fix:
+In Maske Stammdaten konnte Krankenversicherungsnummer fehlerhaft gespeichert werden.
+
+Bug fix:
+Bei der Rechnungsgenerierung konnte es bei Windows Installationen passieren, dass alte Rechnungen
+angezeigt wurden.
+Bei fehlender Krankenversicherungsnummer, Versichertenstatus oder Geburtsdatum Kind, wurde kein
+Fehler ausgegeben, trotzdem wurde die Rechnung nicht gespeichert.
+
+Bug fix:
+fehlende E-Mail Adressen einiger Datenannahmestellen
+fehlerhafte Leistungsarten bei Positionsnummern 6,7,8,15 und 40.
+---------------------------------------------------
+Release 0.7.1
+
+beim Einlesen der Schlüsseldateien werden automatisch die notwendigen Parameter angelegt,
+wenn die Datenannahmestelle noch nicht parametrisiert ist.
+
+Rechnungspostenerfassung:
+Plausiprüfung auf Begründungspflicht eingeführt.
+
+Hauptmenue:
+Aus dem Hauptmenue kann direkt auf die PDF Dokumenation zugegriffen werden.
+
+elektronische Rechnungen:
+es wird wie von ARZ Emmendingen gewünscht zusätzlich ZUV Segment gesendet.
+weitere Schritte in Richtung echte Objektorientierung.
+
+Bug fix:
+Bei Krankenkassen mit ' im Namen konnte keine Rechnung gedruckt werden.
+
+Bug fix:
+Rundungsfehler auf Papierrechnung bei Kilometergeld.
+
+Bug fix:
+in xauftrag.pl wurde Teil der E-Mail schon generiert, auch wenn Fehler bei Rechnungsgenerierung auftrat, dadurch wurden E-Mail ohne Nutzdaten an Datenannahmestellen übermittelt.
+
+
+
+-------------------------------------------------
+Release 0.7.0
+
+Heb.js:
+auch aus Mahnungsgenerierung kann Frauenauswahl aufgerufen werden.
+
+
+Es wird erkannt, auf welchem OS das Programm läuft und entsprechend der Pfad für openssl gesetzt.
+Pfade für temporäre Dateien werden automatisch angelegt.
+
+kostentraeger.pl:
+verbesserte Ausgabe von Informationen bei verbose für PLZ und Postfächer.
+Bug fix:
+Bei ' im Namen oder Kurznamen der Krankenkasse werden diese jetzt
+korrekt in den Datenhaushalt übernommen.
+enthält der Name der Krankenkasse numerische Werte, werden diese korrekt übernommen.
+
+
+Heb_Edi:
+Falls nicht verschlüsselt oder signiert wird, wird Datei nicht per Pipe gelesen sondern mit "normalen" perl Funktionen.
+
+Heb_Leistung:
+Mahnstatus' werden berücksichtigt.
+
+Link auf GPL Lizenz eingefügt.
+
+xauftrag.pl:
+JBrowseEntry wird nicht mehr genutzt, nur noch BrowseEntry.
+
+Krankenkassenerfassung:
+PLZ mit weniger als 5-stellen werden korrekt angezeugt.
+Bug fixes:
+Bei ' im Namen oder Kurznamen der Krankenkasse werden diese jetzt 
+korrekt angezeigt.
+Postfach wird mit 6-Stellen angezeigt.
+
+Stammdatenerfassung:
+Frau_ID ist nicht mehr erfassbar.
+
+Rechnungsgenerierung:
+Falz wird mit ausgedruckt.
+Nach Rechnung fertigstellen wird angezeigt, wie mit der Rechnung zu verfahren ist, Drucken und/oder per
+Mail verschicken.
+
+Bug Fix:
+bei Privatrechnungen müssen bestimmte Felder nicht gefüllt sein.
+
+Ausgabe alte Rechnungen:
+Es wird erkannt, von welchem OS das Programm aufgerufen wird und entweder PostScript oder PDF als
+Ausgabe erzeugt.
+
+Es können Mahnungen generiert werden.
+
+allgemeine Plausiprüfungen an Möglichkeiten in Firefox 1.5.0.2 angepasst.
+
+Bug fix:
+Inhalte der Comboboxen wurden im IE6 nicht korrekt berücksichtigt.
+
+Rechnungspostenerfassung:
+Layout wurde im IE6 nicht korrekt angezeigt.
+Anpassung wegen neuer offizieller Positionsnummern für Auslagen.
+
+Leistungsartenerfassung:
+nach Änderung bleibt die alte ID erhalten.
+Wird der Knopf nächster oder vorheriger Datensatz gedrückt, wird auf die vorherige oder nachfolgende Positionsnummer gesprungen.
+
+Bug fix:
+Alphanumerische Positionsnummern wurden nicht korrekt verarbeitet.
+
+Rechnungsgenerierung:
+Verbesserter Umgang mit nicht initialisierten numerischen Feldern.
+Anpassung wegen neuer offizieller Positionsnummern für Auslagen.
+Bei Aufruf der Funktion von einem Browser unter Windows wird pdf als Ausgabe erzeugt. 
+Dazu wird ps2pdf unter linux und gs32winc unter Windows genutzt.
+Damit sind temporäre Dateien notwendig, das entsprechende Verzeichnis wird automatisch angelegt.
+
+
+
+Release 0.6.0
+Bei der Ausgabe der Rechnung als Postscript wird nicht mehr mit temporären Dateien gearbeitet.
+
+In Rechnungserfassung:
+Bei Rechnungserfassung behält die Auswahlbox zu Strecke den erfassen Wert.
+Bug fix:
+Abfrage auf Initialisierte Werte in Rechnungserfassung.
+
+
+In Rechnungsgenerierung:
+Solange nicht Knopf entgültig Drucken geklickt wird, wird Rechnungsvorschau auf Rechnung
+angezeigt.
+Falls Datenannahmestelle in Echtbetrieb, wird im Anschluss an Rechnung Begleitzettel
+für Urbelege gedruckt.
+Steuernummer der Hebamme wird agedruckt, wenn vorhanden.
+Auslagen werden angedruckt.
+
+In Frauenauswahl:
+Optionen 'erl.' und 'ungleich erl.' wurde bei Netscape Browser nicht korrekt angezeigt.
+
+In Parameterauswahl:
+Bug fix:
+Werte > und < können nicht in HTML angezeigt werden, statt dess &lt; und &gt; genutzt.
+Das Fenster erhält Fokus, wenn aus anderer Maske aufgerufen.
+
+In Maske Parameter:
+Bug fix:
+Der Knogf Inhalt löschen hatte keine Funktionalität.
+
+In Feiertagsauswahl:
+Feldüberschriften ausschließlich in schwarz.
+
+Neue Funktion:
+xauftrag.pl
+grafische Oberfläche zum Verschicken von elektronischen Rechnungen.
+verbessertes Fehlerhandling.
+
+auftrag.pl
+Zum Kopieren der Dateien werden keine Betriebssystem spezifischen Funktionen genutzt.
+Der Pfad zu temporären Dateien wird automatisch angelegt, wenn er nicht exisitiert.
+Objektorientierung von Heb_Edi berücksichtigt.
+
+in Hauptmenue:
+Copyright eingefügt.
+Release mit ausgeben.
+
+In elektronischer Rechnungsgenerierung:
+CRLF wird jetzt als 0d0a dargestellt, damit auf allen OS ablauffähig.
+Neues Segment UST für Steuernummer eingefügt.
+Zusätzliche Debugging Einstellungen eingefügt.
+Erste Schritte in echte Objektorientierung.
+
+Bug Fix:
+Zeilentrennung war falsch 0d0d0a.
+
+Rel myHeb-0-1-0:
+erstes Release, wesentliche Funktionalitäten sind vorhanden,
+siehe Doku in concept/doku.tex.
+Installation bzgl. Datenbank noch nicht wie in Doku beschrieben,
+Initialisierung funktioniert nicht.
+
