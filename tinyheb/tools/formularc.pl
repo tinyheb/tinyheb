@@ -4,10 +4,10 @@
 
 # Erzeugen Formular Versichertenbestätigung C und Druckoutput (Postscript)
 
-# $Id: formularc.pl,v 1.2 2009-12-31 16:49:35 thomas_baum Exp $
+# $Id: formularc.pl,v 1.3 2013-01-13 09:02:08 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2008 - 2010 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2008 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -176,14 +176,14 @@ $p->setlinewidth(0.05);
 $p->line(6.4,$y2,6.4,1.5); # erste Linie dick
 
 $p->setlinewidth(0.02);
-$x1=7.05;
+$x1=6.9;
 $p->setfont($font,6);
 $p->text({align => 'center'},$x1-0.25,10.9,'A/E');
 $p->text({rotate => 90},$x1-0.25,11.45,'0200');
 $p->text({rotate => 90},$x1-0.25,12.4,'Vorgespräch');
 
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.6;
+$x1+=0.5;
 $p->text({rotate => 90},$x1-0.25,11.45,'0300');
 $p->text({rotate => 90},$x1-0.25,12.4,'Vorsorge');
 
@@ -228,19 +228,19 @@ $p->text({rotate => 90},$x1-0.4,12.4,'Geburtshilfe');
 $p->text({rotate => 90},$x1-0.1,12.4,'außerkl. Einricht.');
 
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.8;
+$x1+=0.7;
 $p->text({align => 'center'},$x1-0.25,10.9,'Z');
 $p->text({rotate => 90},$x1-0.4,11.45,'1200,');
 $p->text({rotate => 90},$x1-0.1,11.45,'1210');
 $p->text({rotate => 90},$x1-0.25,12.4,'Hausgeburt');
 
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.8;
+$x1+=0.65;
 $p->text({align => 'center'},$x1-0.25,10.9,'Z');
 $p->text({rotate => 90},$x1-0.4,11.45,'130x,');
-$p->text({rotate => 90},$x1-0.1,11.45,'131x');
+$p->text({rotate => 90},$x1-0.15,11.45,'131x');
 $p->text({rotate => 90},$x1-0.4,12.4,'Hilfe bei');
-$p->text({rotate => 90},$x1-0.1,12.4,'Fehlgeburt');
+$p->text({rotate => 90},$x1-0.15,12.4,'Fehlgeburt');
 
 $p->line($x1,$y2,$x1,1.5);
 $x1+=0.8;
@@ -252,51 +252,60 @@ $p->text({rotate => 90},$x1-0.35,12.4,'nicht vollendeter');
 $p->text({rotate => 90},$x1-0.15,12.4,'Geburt');
 
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.8;
+$x1+=0.65;
 $p->text({align => 'center'},$x1-0.25,10.9,'A/E');
 $p->text({rotate => 90},$x1-0.25,11.45,'170x,');
 $p->text({rotate => 90},$x1-0.25,11.45,'171x');
 $p->text({rotate => 90},$x1-0.4,12.4,'Hilfe bei Geburt');
-$p->text({rotate => 90},$x1-0.1,12.4,'2. Hebamme');
+$p->text({rotate => 90},$x1-0.15,12.4,'2. Hebamme');
 
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.8;
+$x1+=0.65;
 $p->text({align => 'center'},$x1-0.25,10.9,'');
 $p->text({rotate => 90},$x1-0.25,11.45,'240x');
 $p->text({rotate => 90},$x1-0.4,12.4,'Erstuntersuchung');
-$p->text({rotate => 90},$x1-0.1,12.4,'U1');
+$p->text({rotate => 90},$x1-0.15,12.4,'U1');
 
 
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.8;
+$x1+=0.65;
+$p->text({align => 'center'},$x1-0.25,10.9,'');
+$p->text({align => 'center'},$x1-0.25,10.9,'Z');
+$p->text({rotate => 90},$x1-0.25,11.45,'3810');
+$p->text({rotate => 90},$x1-0.4,12.4,'Neugeborenen-');
+$p->text({rotate => 90},$x1-0.1,12.4,'Screening');
+
+
+$p->line($x1,$y2,$x1,1.5);
+$x1+=0.65;
 $p->text({align => 'center'},$x1-0.25,10.9,'');
 $p->text({rotate => 90},$x1-0.25,11.45,'250x');
 $p->text({rotate => 90},$x1-0.4,12.4,'Entnahme von');
-$p->text({rotate => 90},$x1-0.1,12.4,'Körpermaterial');
+$p->text({rotate => 90},$x1-0.15,12.4,'Körpermaterial');
 
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.8;
-$p->text({align => 'center'},$x1-0.25,10.9,'A/E');
+$x1+=0.75;
+$p->text({align => 'center'},$x1-0.3,10.9,'A/E');
 $p->text({rotate => 90},$x1-0.4,11.45,'260x,');
-$p->text({rotate => 90},$x1-0.1,11.45,'261x');
+$p->text({rotate => 90},$x1-0.15,11.45,'261x');
 $p->text({rotate => 90},$x1-0.4,12.4,'Überwachnung');
-$p->text({rotate => 90},$x1-0.1,12.4,'ärztl. Anordnung');
+$p->text({rotate => 90},$x1-0.15,12.4,'ärztl. Anordnung');
 
 
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.8;
+$x1+=0.7;
 $p->text({align => 'center'},$x1-0.25,10.9,'A');
 $p->text({rotate => 90},$x1-0.4,11.45,'1800,');
-$p->text({rotate => 90},$x1-0.1,11.45,'1810');
+$p->text({rotate => 90},$x1-0.15,11.45,'1810');
 $p->text({rotate => 90},$x1-0.4,12.4,'Wochenbett-');
-$p->text({rotate => 90},$x1-0.1,12.4,'betreuung');
+$p->text({rotate => 90},$x1-0.15,12.4,'betreuung');
 
 
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.9;
+$x1+=0.75;
 $p->text({align => 'center'},$x1-0.35,10.9,'A');
 $p->text({rotate => 90},$x1-0.4,11.45,'2100,');
-$p->text({rotate => 90},$x1-0.1,11.45,'2110');
+$p->text({rotate => 90},$x1-0.2,11.45,'2110');
 $p->text({rotate => 90},$x1-0.55,12.4,'Wobettbetreuung');
 $p->text({rotate => 90},$x1-0.35,12.4,'in außerklinischer');
 $p->text({rotate => 90},$x1-0.15,12.4,'Einrichtung');
@@ -304,17 +313,22 @@ $p->text({rotate => 90},$x1-0.15,12.4,'Einrichtung');
 
 
 
-
 $p->line($x1,$y2,$x1,1.5);
-$x1+=0.9;
+$x1+=0.8;
 $p->text({align => 'center'},$x1-0.35,10.9,'A');
 $p->text({rotate => 90},$x1-0.4,11.45,'200x,');
-$p->text({rotate => 90},$x1-0.1,11.45,'201x');
+$p->text({rotate => 90},$x1-0.2,11.45,'201x');
 $p->text({rotate => 90},$x1-0.55,12.4,'Wochenbett-');
 $p->text({rotate => 90},$x1-0.35,12.4,'betreuung im');
 $p->text({rotate => 90},$x1-0.15,12.4,'Krankenhaus');
 
 
+$p->line($x1,$y2,$x1,1.5);
+$x1+=0.7;
+$p->text({rotate => 90},$x1-0.4,11.45,'3900,');
+$p->text({rotate => 90},$x1-0.15,11.45,'3910');
+$p->text({rotate => 90},$x1-0.4,12.4,'Fäden/Klammern');
+$p->text({rotate => 90},$x1-0.15,12.4,'bei Naht entf.');
 
 
 
@@ -418,6 +432,7 @@ if ($q->user_agent =~ /Windows/) {
   } elsif ($^O =~ /MSWin32/) {
     unlink('/tmp/wwwrun/file.pdf');
     my $gswin=$h->suche_gswin32();
+    $gswin='"'.$gswin.'"';
     system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
   } else {
     die "kein Konvertierungsprogramm ps2pdf gefunden\n";
