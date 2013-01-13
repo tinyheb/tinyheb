@@ -1,6 +1,6 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.66 2012-12-30 12:33:35 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.67 2013-01-13 17:27:48 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
@@ -351,7 +351,6 @@ sub gen_auf {
 
 sub UNB {
   # generiert UNB Segment, Kopfsegment der Nutzendatei
-  # für Version 6.0 fast identisch, siehe Feld Leistungsbereich
   
   my $self=shift; # package Namen vom stack nehmen
 
@@ -378,7 +377,6 @@ sub UNB {
 
 sub UNZ {
   # generiert UNZ Segment, Endesegment der Nutzendatei
-  # für Version 6 identisch
 
   my $self=shift;
 
@@ -398,8 +396,6 @@ sub SLGA_FKT {
   # ist analog SLLA_FKT Segment, weil keine Sammelabrechnung erstellt wird
   # muss aber noch Absender zusätzlich enthalten
 
-  # Ist für Version 6.0 identisch
-
   my $self=shift; # package Namen vom stack nehmen
 
   my ($ik_kostentraeger,$ik_krankenkasse) = @_;
@@ -418,7 +414,7 @@ sub SLGA_FKT {
 
 sub SLGA_REC {
   # generiert SLGA REC Segment 
-  # Version 6 fast identisch, siehe Währungskennzeichen
+
   my $self=shift; # package Namen vom stack nehmen
 
   my ($rechnr,$rechdatum) = @_;
@@ -913,6 +909,8 @@ sub SLLA {
       $leistdat[5]=substr($leistdat[5],0,5); # nur HH:MM aus Ergebniss
       $leistdat[6]=substr($leistdat[6],0,5); # nur HH:MM aus Ergebniss
 
+      warn "Bearbeite Position: ",(join ":",@leistdat) if ($debug > 100);
+
       # a. zuerst normale posnr füllen
       my ($bez,$fuerzeit,$epreis,$ltyp,$zus1,$pzn)=$l->leistungsart_such_posnr("KBEZ,FUERZEIT,EINZELPREIS,LEISTUNGSTYP,ZUSATZGEBUEHREN1,PZN ",$leistdat[1],$leistdat[4]);
       my $fuerzeit_flag='';
@@ -1003,10 +1001,13 @@ sub SLLA {
 	  return undef;
 	}
       
-	$gesamtsumme += $leistdat[10];
-	$ges_sum{$ltyp} += $leistdat[10];
+	$gesamtsumme += sprintf "%.2f",$h->runden($leistdat[10]);
+	$ges_sum{$ltyp} += sprintf "%.2f",$h->runden($leistdat[10]);
       }
       
+      # gesamtsumme muss gerundet werden, weil es sonst bei der Addition zu
+      # Rundungsfehlern kommen kann
+      $gesamtsumme = $h->runden($gesamtsumme);
       print "Zwischensumme ohne Wegegeld: $gesamtsumme\n" if ($debug>100);
       print "Typ A:",$ges_sum{A},"\tTyp B:",$ges_sum{B},"\tTyp C:",$ges_sum{C},"\tTyp M:",$ges_sum{M},"\n" if ($debug > 50);
       
@@ -1177,6 +1178,7 @@ sub SLLA {
 
   # 9. BES Segment ausgeben
   $gesamtsumme += $summe_km;
+  $gesamtsumme = $h->runden($gesamtsumme);
   $erg .= $self->SLLA_BES($gesamtsumme);
 
   # 10. UNT Endesegment ausgeben
