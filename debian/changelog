@@ -1,0 +1,115 @@
+tinyheb (1.6.3-1) jaunty; urgency=low
+
+  * new upstream release
+
+ -- robert <robert.sailer@tinyheb.de>  Sun, 30 Dec 2012 17:34:49 +0100
+
+tinyheb (1.6.2-3) jaunty; urgency=low
+
+  * neues update.sql file
+
+ -- robert <robert.sailer@tinyheb.de>  Fri, 30 Nov 2012 13:28:30 +0100
+
+tinyheb (1.6.2-2) jaunty; urgency=low
+
+  * neues update.sql file
+
+ -- robert <robert.sailer@tinyheb.de>  Mon, 05 Nov 2012 21:12:04 +0200
+
+
+tinyheb (1.6.2-1) jaunty; urgency=low
+
+  * new upstream release
+  * genderte Materialpauschalen ab 01.08.2012
+
+ -- robert <robert.sailer@tinyheb.de>  Sun, 05 Aug 2012 20:33:34 +0200
+
+tinyheb (1.6.1-1) jaunty; urgency=low
+
+  * new upstram release (skipped Version 1.6.0)
+
+ -- robert <robert.sailer@tinyheb.de>  Wed, 11 Apr 2012 20:32:08 +0100
+
+tinyheb (1.5.2-1) hardy; urgency=low
+
+  * bugfix upstream release includes Thomas's latest changes
+  * new maintainer key
+  * still supports Ubuntu 6.06.2 even when its end of life at 06.2011
+  * tested on hardy and dapper
+
+ -- robert <robert.sailer@tinyheb.de>  Sun, 07 Aug 2011 09:07:53 +0200
+
+tinyheb (1.5.1-1) hardy; urgency=low
+
+  * new upstream release
+
+ -- robert <robert.sailer@tinyheb.de>  Wed, 11 Aug 2010 07:46:29 +0200
+
+tinyheb (1.4.0-1) hardy; urgency=low
+
+  * new upstream release 
+
+ -- robert <robert.sailer@tinyheb.de>  Sun, 07 Feb 2010 19:44:30 +0100
+
+tinyheb (1.3.0-1) hardy; urgency=low
+
+  * bugfix release 
+
+ -- robert <robert.sailer@tinyheb.de>  Tue, 24 Nov 2009 21:59:40 +0100
+
+tinyheb (1.2.1-1) hardy; urgency=low
+
+  * bugfix release
+
+ -- robert <robert.sailer@tinyheb.de>  Tue,  2 Jun 2009 20:00:31 +0200
+
+tinyheb (1.2.0-1) hardy; urgency=low
+
+  * new upstream release 
+
+ -- robert <robert.sailer@tinyheb.de>  Sun, 08 Mar 2009 16:39:18 +0100
+
+tinyheb (1.1.0-1) unstable; urgency=low
+
+  * new upstream release 
+
+ -- robert <robert.sailer@tinyheb.de>  Mon, 13 Oct 2008 19:20:47 +0200
+
+tinyheb (1.0.0) unstable; urgency=low
+
+  * new/final upstream release 
+
+ -- robert <robert.sailer@tinyheb.de>  Sun,  3 Aug 2008 19:59:35 +0200
+
+tinyheb (0.19.0-1) unstable; urgency=low
+
+  * new upstream release  
+
+ -- robert <robert.sailer@tinyheb.de>  Fri,  2 May 2008 12:15:19 +0200
+
+tinyheb (0.18.0-1) unstable; urgency=low
+
+  * new upstream release
+   
+
+ -- robert <robert.sailer@tinyheb.de>  Fri,  2 May 2008 12:14:21 +0200
+
+tinyheb (0.17.0-1) unstable; urgency=low
+
+  * new upstream relase 
+
+ -- Robert Sailer <robert.sailer@tinyheb.de>  Fri, 14 Dec 2007 19:03:50 +0100
+
+
+tinyheb (0.16.0-1) unstable; urgency=low
+
+  * upstream update for the package
+
+ -- Robert Sailer <robert.sailer@tinyheb.de>  Fri, 14 Dec 2007 19:01:56 +0100
+
+tinyheb (0.15.1-1) unstable; urgency=low
+
+  * Initial release for debian/ubuntu
+
+ -- Robert Sailer <robert.sailer@tinyheb.de>  Sun, 30 Sep 2007 21:49:46 +0200
+
