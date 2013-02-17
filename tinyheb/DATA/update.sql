@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.28 2012-12-30 12:28:37 thomas_baum Exp $
+# $Id: update.sql,v 1.29 2013-02-17 17:22:51 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 #
@@ -11,7 +11,7 @@
 #
 # Kurzbezeichnung erweitern
 #
-#ROOT	ALTER	Leistungsart		alter table Leistungsart MODIFY COLUMN KBEZ VARCHAR(60);
+ROOT	ALTER	Leistungsart		alter table Leistungsart CHANGE COLUMN PZN PZN VARCHAR(10) DEFAULT '';
 #
 #
 # zunächst alte GO ungültig machen
