@@ -3,7 +3,7 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.12 2012-12-30 12:25:31 thomas_baum Exp $
+# $Id: update.pl,v 1.13 2013-03-02 14:52:38 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 - 2013 Thomas Baum <thomas.baum@arcor.de>
@@ -29,7 +29,7 @@ use DBI;
 use Getopt::Long;
 #use Data::Dumper;
 
-my $id='$Id: update.pl,v 1.12 2012-12-30 12:25:31 thomas_baum Exp $';
+my $id='$Id: update.pl,v 1.13 2013-03-02 14:52:38 thomas_baum Exp $';
 
 write_LOG("Starte update ----------------------------");
 write_LOG("$id");
@@ -232,7 +232,7 @@ sub do_alter {
       # ok, mache nix, INDEX oder Spalte war schon da
       # 1091 Index oder Spalte ist schon gelöscht
     } else {
-      error("unbekanntes Problem aufgetreten $DBI::errstr $DBI::err erg:$erg\n");
+      error("unbekanntes Problem aufgetreten errstr: $DBI::errstr, err: $DBI::err, erg: $erg\n");
     }
   }
 
