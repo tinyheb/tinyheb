@@ -1,6 +1,6 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.30 2013-03-03 08:55:29 thomas_baum Exp $
+# $Id: update.sql,v 1.31 2013-03-03 14:18:41 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 #
 #
@@ -293,12 +293,12 @@ WWWRUN	INSERT	Leistungsart	POSNR='1601' and GUELT_VON='2013-01-01' and GUELT_BIS
 #
 # PosNr 1602
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1602' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-06-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1602','B','Hilfe bei nicht vollendeter Geb. Belegheb. 1:1',206.14,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer außerklinischen Einrichtung unter Leitung einer Hebammen d) in einer außerklinischen Einrichtung unter ärztlicher Leitung Beleghebamme','2013-01-01','9999-12-31',0,'','1612','1612','1612',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1602' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1602','B','Hilfe bei nicht vollendeter Geb. Belegheb. 1:1',206.14,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer außerklinischen Einrichtung unter Leitung einer Hebammen d) in einer außerklinischen Einrichtung unter ärztlicher Leitung Beleghebamme','2013-01-01','9999-12-31',0,'','1612','1612','1612',0);
 #
 #
 # PosNr 1610
 #
-WWWRUN	INSERT	Leistungsart	POSNR='1610' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1610','B','Hilfe bei nicht vollendeter Geburt Nacht,Sa,So',244.97,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer außerklinischen Einrichtung unter Leitung einer Hebammen d) in einer außerklinischen Einrichtung unter ärztlicher Leitung mit Zuschlag gemäß §5 Abs. 1','2013-01-01','9999-12-31',0,'','','','',0);
+WWWRUN	INSERT	Leistungsart	POSNR='1610' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1610','B','Hilfe bei nicht vollendeter Geburt Nacht,Sa,So',244.97,'Hilfe bei einer nicht vollendeten Geburt a) im Krankenhaus, b) zu Hause, c) in einer außerklinischen Einrichtung unter Leitung einer Hebammen d) in einer außerklinischen Einrichtung unter ärztlicher Leitung mit Zuschlag gemäß §5 Abs. 1','2013-01-01','9999-12-31',0,'','','','',0);
 #
 # PosNr 1611
 #
@@ -438,52 +438,52 @@ WWWRUN	INSERT	Leistungsart	POSNR='2502' and GUELT_VON='2013-01-01' and GUELT_BIS
 # 
 # PosNr 2600
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2600' and GUELT_VON='2010-01-01' and GUELT_BIS='2600-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2600','D','Überwachung',15.00,'Überwachung, je angefangene halbe Stunde','2010-01-01','2600-12-31','30','','2610','2610','2610',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2600' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2600','D','Überwachung',16.85,'Überwachung, je angefangene halbe Stunde','2013-01-01','9999-12-31','30','','2610','2610','2610',0,'');
 #
 # PosNr 2601
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2601' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2601','D','Überwachung Beleghebamme',15.00,'Überwachung, je angefangene halbe Stunde durch Beleghebamme','2010-01-01','2012-12-31','30','','2611','2611','2611',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2601' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2601','D','Überwachung Beleghebamme',16.85,'Überwachung, je angefangene halbe Stunde durch Beleghebamme','2013-01-01','9999-12-31','30','','2611','2611','2611',0,'');
 #
 # PosNr 2602
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2602' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2602','D','Überwachung Beleghebamme 1:1',15.00,'Überwachung, je angefangene halbe Stunde durch Beleghebamme 1::1','2010-01-01','2012-12-31','30','','2612','2612','2612',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2602' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2602','D','Überwachung Beleghebamme 1:1',16.85,'Überwachung, je angefangene halbe Stunde durch Beleghebamme 1::1','2013-01-01','9999-12-31','30','','2612','2612','2612',0,'');
 #
 #
 # PosNr 2610
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2610' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2610','D','Überwachung Nacht,Sa,So',18.00,'Überwachung, je angefangene halbe Stunde mit Zuschlag gemäß §5 Abs. 1','2010-01-01','2012-12-31','30','','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2610' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2610','D','Überwachung Nacht,Sa,So',20.22,'Überwachung, je angefangene halbe Stunde mit Zuschlag gemäß §5 Abs. 1','2013-01-01','9999-12-31','30','','','','',0,'');
 #
 # PosNr 2611
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2611' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2611','D','Überwachung Nacht,Sa,So Belegheb.',18.00,'Überwachung, je angefangene halbe Stunde mit Zuschlag gemäß §5 Abs. 1 Beleghebamme','2010-01-01','2012-12-31','30','','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2611' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2611','D','Überwachung Nacht,Sa,So Belegheb.',20.22,'Überwachung, je angefangene halbe Stunde mit Zuschlag gemäß §5 Abs. 1 Beleghebamme','2013-01-01','9999-12-31','30','','','','',0,'');
 #
 # PosNr 2612
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2612' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2612','D','Überwachung Nacht,Sa,So Belegheb. 1:1',18.00,'Überwachung, je angefangene halbe Stunde mit Zuschlag gemäß §5 Abs. 1 Beleghebamme 1:1','2010-01-01','2012-12-31','30','','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2612' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2612','D','Überwachung Nacht,Sa,So Belegheb. 1:1',20.22,'Überwachung, je angefangene halbe Stunde mit Zuschlag gemäß §5 Abs. 1 Beleghebamme 1:1','2013-01-01','9999-12-31','30','','','','',0,'');
 #
 #
 # PosNr 2700
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2700' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2700','D','Rückbildungsgymnastik Gruppe',5.71,'Rückbildungsgymnastik bei Unterweisung in der Gruppe, bis zu zehn Teilnehmerinnen je Gruppe und höchstens zehn Stunden, für jede Teilnehmerin je Unterrichtsstunde (60 Minute)','2010-01-01','2012-12-31','E60','','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2700' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2700','D','Rückbildungsgymnastik Gruppe',6.42,'Rückbildungsgymnastik bei Unterweisung in der Gruppe, bis zu zehn Teilnehmerinnen je Gruppe und höchstens zehn Stunden, für jede Teilnehmerin je Unterrichtsstunde (60 Minute)','2013-01-01','9999-12-31','E60','','','','',0,'');
 #
 #
 # PosNr 2800
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2800' and GUELT_VON='2010-01-01' and GUELT_BIS='2010-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2800','D','Beratung bei Stillschwierigkeiten',26.52,'Beratung der Mutter bei Stillschwierigkeiten oder Ernährungsproblemen des Säuglings','2010-01-01','2010-06-30',0,'','2810','2810','2810',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2800' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2800','D','Beratung bei Stillschwierigkeiten',30.33,'Beratung der Mutter bei Stillschwierigkeiten oder Ernährungsproblemen des Säuglings','2013-01-01','9999-12-31',0,'','2810','2810','2810',0,'');
 #
 #
 # PosNr 2810
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2810' and GUELT_VON='2010-01-01' and GUELT_BIS='2010-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2810','D','Beratung bei Stillschw. Nacht,Sa,So',31.82,'Beratung der Mutter bei Stillschwierigkeiten oder Ernährungsproblemen des Säuglings mit Zuschlag gemäß §5 Abs. 1','2010-01-01','2010-06-30','','','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2810' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2810','D','Beratung bei Stillschw. Nacht,Sa,So',36.40,'Beratung der Mutter bei Stillschwierigkeiten oder Ernährungsproblemen des Säuglings mit Zuschlag gemäß §5 Abs. 1','2013-01-01','9999-12-31','','','','','',0,'');
 #
 # PosNr 2820
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2820' and GUELT_VON='2010-01-01' and GUELT_BIS='2010-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2820','D','Zuschlag Zwillinge bei Stillschw.',8.87,'Zuschlag für die Beratung der Mutter bei Stillschwierigkeiten oder Ernührungsproblemen bei Zwillingen und mehr Kindern zu den Gebühren nach 2800 und 2810 für das zweite und jedes weitere Kind, je Kind','2010-01-01','2010-06-30','','','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2820' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2820','D','Zuschlag Zwillinge bei Stillschw.',10.45,'Zuschlag für die Beratung der Mutter bei Stillschwierigkeiten oder Ernührungsproblemen bei Zwillingen und mehr Kindern zu den Gebühren nach 2800 und 2810 für das zweite und jedes weitere Kind, je Kind','2013-01-01','9999-12-31','','','','','',0,'');
 #
 #
 # PosNr 2900
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2900' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2900','D','Beratung bei Stillschw. per Kommunikationsmedium',5.1,'Beratung der Mutter bei Stillschwierigkeiten oder Ernährungsproblemen des Säuglings mittels Kommunikationsmedium','2010-01-01','2012-12-31','','','','','',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2900' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2900','D','Beratung bei Stillschw. per Kommunikationsmedium',5.73,'Beratung der Mutter bei Stillschwierigkeiten oder Ernährungsproblemen des Säuglings mittels Kommunikationsmedium','2013-01-01','9999-12-31','','','','','',0,'');
 #
 ##
 # ------------ Wegegeld -------------------------
@@ -492,38 +492,42 @@ WWWRUN	INSERT	Leistungsart	POSNR='2900' and GUELT_VON='2010-01-01' and GUELT_BIS
 #
 # PosNr 3000 Wegegeld nicht mehr als 2 KM Tag
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3000' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3000','W','Wegegeld nicht mehr als 2 KM bei Tag',1.68,'Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung','2010-01-01','2012-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3000' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3000','W','Wegegeld nicht mehr als 2 KM bei Tag',1.89,'Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung','2013-01-01','9999-12-31',0);
 #
 # PosNr 3010 anteiliges Wegegeld nicht mehr als 2 KM Tag
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3010' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3010','W','ant. Wegegeld nicht mehr als 2 KM bei Tag',1.68,'anteiliges Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung','2010-01-01','2012-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3010' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3010','W','ant. Wegegeld nicht mehr als 2 KM bei Tag',1.89,'anteiliges Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung','2013-01-01','9999-12-31',0);
 #
 # PosNr 3100 Wegegeld nicht mehr als 2 KM Nacht
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3100' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3100','W','Wegegeld nicht mehr als 2 KM bei Nacht',2.38,'Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00','2010-01-01','2012-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3100' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3100','W','Wegegeld nicht mehr als 2 KM bei Nacht',2.67,'Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00','2013-01-01','9999-12-31',0);
 #
 # PosNr 3110 anteiliges Wegegeld nicht mehr als 2 KM Nacht
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3110' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3110','W','ant. Wegegeld nicht mehr als 2 KM bei Nacht',2.38,'anteiliges Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00','2010-01-01','2012-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3110' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3110','W','ant. Wegegeld nicht mehr als 2 KM bei Nacht',2.67,'anteiliges Wegegeld bei einer Entfernung von nicht mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00','2013-01-01','9999-12-31',0);
 #
 # PosNr 3200 Wegegeld mehr als 2 KM Tag
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3200' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3200','W','Wegegeld von mehr als 2 KM bei Tag',0.59,'Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung, für jeden zurückgelegten Kilometer','2010-01-01','2012-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3200' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3200','W','Wegegeld von mehr als 2 KM bei Tag',0.66,'Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung, für jeden zurückgelegten Kilometer','2013-01-01','9999-12-31',0);
 #
 # PosNr 3210 anteiliges Wegegeld mehr als 2 KM Tag
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3210' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3210','W','ant. Wegegeld von mehr als 2 KM bei Tag',0.59,'anteiliges Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung, für jeden zurückgelegten Kilometer','2010-01-01','2012-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3210' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3210','W','ant. Wegegeld von mehr als 2 KM bei Tag',0.66,'anteiliges Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung, für jeden zurückgelegten Kilometer','2013-01-01','9999-12-31',0);
 #
 # PosNr 3300 Wegegeld mehr als 2 KM Nacht
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3300' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3300','W','Wegegeld von mehr als 2 KM bei Nacht',0.81,'Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00, für jeden zurückgelegten Kilometer','2010-01-01','2012-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3300' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3300','W','Wegegeld von mehr als 2 KM bei Nacht',0.91,'Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00, für jeden zurückgelegten Kilometer','2013-01-01','9999-12-31',0);
 #
 #
 # PosNr 3310 anteiliges Wegegeld mehr als 2 KM Nacht
 #
-WWWRUN	INSERT	Leistungsart	POSNR='3310' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3310','W','ant. Wegegeld von mehr als 2 KM bei Nacht',0.81,'anteiliges Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00, für jeden zurückgelegten Kilometer','2010-01-01','2012-12-31',0);
+WWWRUN	INSERT	Leistungsart	POSNR='3310' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3310','W','ant. Wegegeld von mehr als 2 KM bei Nacht',0.91,'anteiliges Wegegeld bei einer Entfernung von mehr als zwei Kilometern zwischen der Wohnung oder Praxis der Hebamme und der Stelle der Leistung in der Zeit von 20:00 bis 8:00, für jeden zurückgelegten Kilometer','2013-01-01','9999-12-31',0);
 #
-
+# ------- Auslagenersatz --------
+#
+# PosNr. 4000
+#
+WWWRUN	INSERT	Leistungsart	POSNR='4000' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'4000','M','Perinatalerhebung',8.43,'Perinatalerhebung bei einer außerklinischen Geburt nach vorgeschriebenem Formblatt einschließlich Versand- und Portokosten','2013-01-01','9999-12-31',0);
 #
 # --------------------------------------------------------------------------------
 #
@@ -902,7 +906,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='2502' and GUELT_VON='2010-01-01' and GUELT_BIS
 # 
 # PosNr 2600
 #
-WWWRUN	INSERT	Leistungsart	POSNR='2600' and GUELT_VON='2010-01-01' and GUELT_BIS='2600-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2600','D','Überwachung',15.00,'Überwachung, je angefangene halbe Stunde','2010-01-01','2600-12-31','30','','2610','2610','2610',0,'');
+WWWRUN	INSERT	Leistungsart	POSNR='2600' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2600','D','Überwachung',15.00,'Überwachung, je angefangene halbe Stunde','2010-01-01','2012-12-31','30','','2610','2610','2610',0,'');
 #
 # PosNr 2601
 #
