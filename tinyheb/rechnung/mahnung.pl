@@ -3,10 +3,10 @@
 
 # Erzeugen einer Mahnung und Druckoutput (Postscript)
 
-# $Id: mahnung.pl,v 1.10 2008-04-25 15:36:42 thomas_baum Exp $
+# $Id: mahnung.pl,v 1.11 2013-03-05 17:47:20 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2006 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -23,13 +23,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+use lib "../";
 use PostScript::Simple;
 use Date::Calc qw(Today);
 use strict;
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);
 
-use lib "../";
 use Heb_stammdaten;
 use Heb_krankenkassen;
 use Heb_leistung;
@@ -176,25 +176,25 @@ $p->text($x1,$y1,"Mit freundlichen Grüßen");
 
 # in Browser schreiben, falls Windows wird PDF erzeugt, sonst Postscript
 my $all_rech=$p->get();
-if ($q->user_agent !~ /Windows/) {
+if ($q->user_agent !~ /Windows/ && $q->user_agent !~ /Macintosh/) {
   print $q->header ( -type => "application/postscript", -expires => "-1d");
   $all_rech =~ s/PostScript::Simple generated page/${nachname}_${vorname}/g;
   print $all_rech;
 }
 
-if ($q->user_agent =~ /Windows/) {
+if ($q->user_agent =~ /Windows/ || $q->user_agent =~ /Macintosh/) {
   print $q->header ( -type => "application/pdf", -expires => "-1d");
   mkdir "/tmp" if (!(-d "/tmp"));
   mkdir "/tmp/wwwrun" if(!(-d "/tmp/wwwrun"));
   unlink('/tmp/wwwrun/file.ps');
   $p->output('/tmp/wwwrun/file.ps');
 
-  if ($^O =~ /linux/) {
+  if ($^O =~ /linux/ || $^O =~ /darwin/) {
     system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
   } elsif ($^O =~ /MSWin32/) {
     unlink('/tmp/wwwrun/file.pdf');
     my $gswin=$h->suche_gswin32();
-
+    $gswin='"'.$gswin.'"';
     system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
   } else {
     die "kein Konvertierungsprogramm ps2pdf gefunden\n";
