@@ -3,10 +3,10 @@
 # erstellen der Auftragsdatei mit GUI für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
-# Id: $Id: xauftrag.pl,v 1.19 2009-11-07 08:19:31 thomas_baum Exp $
+# Id: $Id: xauftrag.pl,v 1.20 2013-05-11 09:08:45 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005,2006,2007,2008,2009 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -283,6 +283,7 @@ RECH:  foreach (@sel) {
 				   auth => 'LOGIN',
 				   authid => $user_sel,
 				   authpwd => $user_pass,
+				   TLS_allowed => 0,
 				   debug_level => 3,
 				   boundary => 'tinyheb-'.$rechnr});
     } else {
