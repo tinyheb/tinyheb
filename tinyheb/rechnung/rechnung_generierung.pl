@@ -5,7 +5,7 @@
 
 # Rechnungen generieren und drucken
 
-# $Id: rechnung_generierung.pl,v 1.30 2009-11-17 08:54:53 thomas_baum Exp $
+# $Id: rechnung_generierung.pl,v 1.31 2013-08-13 17:21:17 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
@@ -203,7 +203,9 @@ my $test_ind = $k->krankenkasse_test_ind($ik_krankenkasse);
 $test_ind = -1 unless(defined($test_ind));
 if ($l->leistungsdaten_offen($frau_id,'')) {
   $name_krankenkasse =~ s/'//g;
+  $name_krankenkasse =~ s/\r|\n//g;
   print "<td><input type='button' name='pdruck' value='Rechnung fertigstellen' onclick='druck_fertig(\"$frau_id\",\"$vorname\",\"$nachname\",\"$geb_frau\",\"$geb_kind\",\"$plz\",\"$ort\",\"$strasse\",\"$kv_nummer\",\"$kv_gueltig\",\"$versichertenstatus\",\"$name_krankenkasse\",\"$test_ind\",rechnungen_gen);'</td>";
+
 } else {
   print "<td><input type='button' disabled name='pdruck' value='entgültig Drucken'></td>";
 }
