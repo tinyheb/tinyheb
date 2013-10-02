@@ -5,10 +5,10 @@
 
 # Rechnungen bearbeiten für einzelne Rechnungen
 
-# $Id: rechposbear.pl,v 1.21 2009-07-26 07:13:45 thomas_baum Exp $
+# $Id: rechposbear.pl,v 1.22 2013-10-02 19:48:03 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -309,6 +309,9 @@ sub stornieren {
   # d.h. Rechnung geht auf Status 80 (Storniert)
   # die einzelnen Rechnungposten in Status 10 (Bearbeitung)
 
+  my $betraggez_s = $betraggez;
+  $betraggez_s =~ s/,/\./g;
+
   # erst Plausiprüfungen
   if($r_rechnr eq '') {
     $hint .= "Bitte Rechnung zum Stornieren auswählen, nichts gespeichert";
@@ -324,7 +327,12 @@ sub stornieren {
     $hint .= "Rechnung ist schon zum Teil gezahlt, Storno nicht möglich";
     return;
   }
-  
+
+  if($betraggez_s > 0) {
+    $hint .= "Betrag erfasst und Storno, nichts gespeichert";
+    return;
+  }
+
   $l->rechnung_up($r_rechnr,'0000-00-00',0,80);
   # update auf einzelne Leistungspositionen muss noch erfolgen
   $l->leistungsdaten_such_rechnr("ID",$r_rechnr);
