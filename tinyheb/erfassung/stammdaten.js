@@ -1,10 +1,10 @@
 /* script für Plausiprüfungen und Navigation 
 # im Rahmen der Stammdatenerfassung
 
-# Copyright (C) 2004 - 2012 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
-# $Id: stammdaten.js,v 1.26 2012-02-05 17:41:27 thomas_baum Exp $
+# $Id: stammdaten.js,v 1.27 2013-10-02 19:29:23 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # This program is free software; you can redistribute it and/or modify
@@ -111,6 +111,24 @@ function frauenauswahl(formular) {
   return true;
 }
 
+function frau_alter_check(datum) {
+  // Alter der Frau sollte mindestens 12 Jahre sein
+
+  var heute = new Date();
+
+  if (datum.value == '') { return true; }
+  re=/^(\d{1,2})[\.,](\d{1,2})[\.,](\d{1,4})$/;
+  var ret = re.exec(datum.value);
+  var j = Number (RegExp.$3);
+  var m = Number (RegExp.$2);
+  var t = Number (RegExp.$1);
+
+  if(heute.getFullYear()-j < 14) {
+    alert("Frau ist keine 14 Jahre alt");
+    return false;
+  }
+  return true;
+}
 
 function frau_speicher(formular) {
   // plausiprüfungen bevor formular gespeichert wird.
@@ -118,6 +136,10 @@ function frau_speicher(formular) {
   if (!datum_check(formular.geburtsdatum_frau)) {
     return false;
   }
+  if (!frau_alter_check(formular.geburtsdatum_frau)) {
+    return false;
+  }
+  
   if (!datum_check(formular.geburtsdatum_kind)) {
     return false;
   }

@@ -5,10 +5,10 @@
 
 # Stammdaten erfassen
 
-# $Id: stammdatenerfassung.pl,v 1.50 2011-06-19 08:23:54 thomas_baum Exp $
+# $Id: stammdatenerfassung.pl,v 1.51 2013-10-02 19:29:54 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2004 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -198,7 +198,7 @@ print "<td><input type='text' name='vorname' value='$vorname' size='30' maxlengt
 # z2 s2
 print "<td><input type='text' name='nachname' value='$nachname' size='47' maxlength='47'></td>";
 # z2 s3
-print "<td><input type='text' name='geburtsdatum_frau' value='$geb_frau' size='10' maxlength='10' onChange='datum_check(this)'></td>";
+print "<td><input type='text' name='geburtsdatum_frau' value='$geb_frau' size='10' maxlength='10' onChange='datum_check(this);frau_alter_check(this);'></td>";
 print "<td><input type='button' name='frau_suchen' value='Suchen' onClick='return frausuchen(stammdaten.vorname,stammdaten.nachname,stammdaten.geburtsdatum_frau,form);'></tr>";
 print '</table>';
 print "\n";
