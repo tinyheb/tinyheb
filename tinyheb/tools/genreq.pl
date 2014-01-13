@@ -2,7 +2,7 @@
 
 # erstellen eines Zertifikatrequest und senden an die ITSG
 
-# $Id: genreq.pl,v 1.11 2013-08-06 17:23:45 thomas_baum Exp $
+# $Id: genreq.pl,v 1.12 2014-01-13 17:19:03 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 - 2010 Thomas Baum <thomas.baum@arcor.de>
@@ -639,6 +639,7 @@ sub gen_mail {
 				 auth => 'LOGIN',
 				 authid => $user_sel,
 				 authpwd => $user_pass,
+				 TLS_allowed => 0,
 				 debug_level => 2,
 				 boundary => 'tinyheb-certreq-1'
 				});
