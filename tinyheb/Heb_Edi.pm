@@ -1,9 +1,9 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.67 2013-01-13 17:27:48 thomas_baum Exp $
+# $Id: Heb_Edi.pm,v 1.68 2014-01-27 18:57:29 thomas_baum Exp $
 # Tag $Name: not supported by cvs2svn $
 
-# Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
+# Copyright (C) 2005 - 2014 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
 # This program is free software; you can redistribute it and/or modify
@@ -745,7 +745,7 @@ sub UNH {
   # ab 01.01.2013 Version 08, Übergangsregelung bis 31.03.2013
   # ab 01.10.2013 Version 09
 
-  $erg .= $TODAY_jmt > 20130228 ? ':08:0:0' : ':07:0:0';
+  $erg .= ':09:0:0';
   $erg .= $delim;
 
   return $erg;
@@ -1239,6 +1239,7 @@ sub sig {
 
     # 
     my $cert_opts='';
+    $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg8.pem"! if ($cert_info == 5);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg7.pem"! if ($cert_info == 4);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg6.pem"! if ($cert_info == 3);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg4.pem"! if ($cert_info == 2);
@@ -1257,7 +1258,9 @@ sub sig {
     if ($cert_info == 4 && !(-r "$cert_path".'certs/itsg7.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg7.pem) konnte nicht gefunden werden",0);
     }
-
+    if ($cert_info == 5 && !(-r "$cert_path".'certs/itsg8.pem')) {
+      return ("Ein Zertifikat der Zertifizierungskette (itsg8.pem) konnte nicht gefunden werden",0);
+    }
 
 #    print "OpenSSL Befehl: $openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem $cert_opts -passin pass:\" test \" -inkey $path/privkey/privkey.pem";
 
@@ -1644,7 +1647,8 @@ sub get_cert_info {
   return ("Zertifikat mit Zertifizierungscert 01",1) if ($guelt_von < 20071213);
   return ("Zertifikat mit Zertifizierungscert 14",2) if ($guelt_von < 20091210);
   return ("Zertifikat mit Zertifizierungscert 56",3) if ($guelt_von < 20111208);
-  return ("Zertifikat mit Zertifizierungscert root67",4);
+  return ("Zertifikat mit Zertifizierungscert 67",4) if ($guelt_von < 20131204);
+  return ("Zertifikat mit Zertifizierungscert x23 und x1e",5);
 
 }
 
