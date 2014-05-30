@@ -3,8 +3,8 @@
 # erstellen der Auftragsdatei mit GUI für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
-# Id: $Id: xauftrag.pl,v 1.20 2013-05-11 09:08:45 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
+# Id: $Id: xauftrag.pl,v 1.20 2013/05/11 09:08:45 thomas_baum Exp $
+# Tag $Name:  $
 
 # Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -33,6 +33,9 @@ use Tk::ItemStyle;
 use Tk::DialogBox;
 
 #use Data::Dumper;
+use Mozilla::CA; 
+use IO::Socket::SSL;
+IO::Socket::SSL::set_ctx_defaults( SSL_ca_file => Mozilla::CA::SSL_ca_file(), );
 
 use Mail::Sender;
 use File::stat;
@@ -283,7 +286,7 @@ RECH:  foreach (@sel) {
 				   auth => 'LOGIN',
 				   authid => $user_sel,
 				   authpwd => $user_pass,
-				   TLS_allowed => 0,
+				   TLS_allowed => 1,
 				   debug_level => 3,
 				   boundary => 'tinyheb-'.$rechnr});
     } else {
