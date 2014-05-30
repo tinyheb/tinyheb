@@ -33,6 +33,9 @@ use Tk::ItemStyle;
 use Tk::DialogBox;
 
 #use Data::Dumper;
+use Mozilla::CA;
+use IO::Socket::SSL;
+IO::Socket::SSL::set_ctx_defaults( SSL_ca_file => Mozilla::CA::SSL_ca_file(), );
 
 use Mail::Sender;
 use File::stat;
@@ -136,7 +139,7 @@ my $hlist = $h_frame->Scrolled('HList',
 			       -itemtype => 'text',
 			       -selectforeground => 'blue',
 			       -selectmode => 'extended');
-$hlist->pack(-expand => 1, 
+$hlist->pack(-expand => 1,
 	     -fill => 'both');
 $hlist->headerCreate(0,-text => "RechNr.");
 $hlist->headerCreate(1,-text => "Name Frau");
@@ -283,7 +286,7 @@ RECH:  foreach (@sel) {
 				   auth => 'LOGIN',
 				   authid => $user_sel,
 				   authpwd => $user_pass,
-				   TLS_allowed => 0,
+				   TLS_allowed => 1,
 				   debug_level => 3,
 				   boundary => 'tinyheb-'.$rechnr});
     } else {
@@ -335,7 +338,7 @@ RECH:  foreach (@sel) {
     $msg_body .= $h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME').$crlf; # Absender Ansprechpartner
     $msg_body .= $user_from.$crlf;
     $msg_body .= $h->parm_unique('HEB_TEL').$crlf;
-    
+
     if ($sender->Body({charset => 'iso-8859-1',
 		       ctype => 'text/plain',
 		       encoding => 'Base64',
@@ -440,7 +443,7 @@ sub hinweis {
 
 
 sub fill_hlist {
-  
+
   $hlist->delete('all');
   $l->rechnung_such("RECHNUNGSNR,BETRAG,STATUS,FK_STAMMDATEN,IK");
 
@@ -452,7 +455,7 @@ sub fill_hlist {
     my $test_ind = $k->krankenkasse_test_ind($erg[4]);
     my ($name_da)=$k->krankenkasse_sel("KNAME",$da);
     my ($name_ktr)=$k->krankenkasse_sel("KNAME",$ktr);
-    
+
     if (defined($test_ind) && $erg[2] < $ignore) {
       $hlist->add($erg[0]);
       $hlist->itemCreate($erg[0],0,-text => $erg[0]);
@@ -480,7 +483,7 @@ sub fill_hlist {
 			 -style=> $style);
     }
   }
-} 
+}
 
 
 sub prov_neu {
@@ -536,7 +539,7 @@ sub einstellungen {
       push @einst_name,$prov{$p}{user_name};
       push @einst_from,$prov{$p}{user_from};
       push @einst_pass,$prov{$p}{user_pass};
-      
+
       my $line_f = $tl->Frame(
 			      # -borderwidth => 3,
 			      # -relief => 'raised'
@@ -551,7 +554,7 @@ sub einstellungen {
 		  {-textvariable => \$einst_provider[$i],
 		   -state => $state,
 		   -width => 20})->pack(-side => 'left');
-      
+
       HebLabEntry($line_f,'Benutzer Name',
 		  {-textvariable => \$einst_name[$i],
 		   -width => 25})->pack(-side => 'left');
@@ -590,7 +593,7 @@ sub einstellungen {
     $tl->deiconify();
     $tl->raise();
   }
-  
+
 }
 
 
