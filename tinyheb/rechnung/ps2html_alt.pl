@@ -31,7 +31,7 @@ use CGI::Carp qw(fatalsToBrowser);
 use lib "../";
 use Heb;
 use Heb_leistung;
-
+use tiny_string_helpers;
 
 my $l = new Heb_leistung;
 my $q = new CGI;
@@ -46,7 +46,8 @@ my ($rech,$edi_auf,$edi_nutz)=$l->rechnung_such_next();
 
 if ($rechtyp == 1) {
   if ($q->user_agent =~ /Windows/) {
-    print $q->header ( -type => "application/pdf", -expires => "-1d");
+    my $filename = string2filename("Rechnung_${rech_id}_alt.pdf");
+    print $q->header ( -type => "application/pdf", -expires => "-1d", -content_disposition => "inline; filename=$filename");
     if (!(-d "/tmp/wwwrun")) {
       mkdir "/tmp" if (!(-d "/tmp"));
       mkdir "/tmp/wwwrun";
@@ -76,7 +77,8 @@ if ($rechtyp == 1) {
     }
     close AUSGABE;
   } else {
-    print $q->header ( -type => "application/postscript", -expires => "-1d");
+    my $filename = string2filename("Rechnung_${rech_id}_alt.ps");
+    print $q->header ( -type => "application/postscript", -expires => "-1d", -content_disposition => "inline; filename=$filename");
     print $rech;
   }
 }
