@@ -40,6 +40,7 @@ use Heb_stammdaten;
 use Heb_krankenkassen;
 use Heb_leistung;
 use Heb_datum;
+use tiny_string_helpers;
 
 our $s = new Heb_stammdaten;
 our $k = new Heb_krankenkassen;
@@ -262,13 +263,15 @@ my $all_rech=$p->get();
 #warn "OS :",$^O;
 
 if ($q->user_agent !~ /Windows/ && $q->user_agent !~ /Macintosh/) {
-  print $q->header ( -type => "application/postscript", -expires => "-1d");
+  my $filename = string2filename("Rechnung_${nachname}_${rechnungsnr}.ps");
+  print $q->header ( -type => "application/postscript", -expires => "-1d", -content_disposition => "inline; filename=$filename");
   $all_rech =~ s/PostScript::Simple generated page/${nachname}_${vorname}/g;
   print $all_rech;
 }
 
 if ($q->user_agent =~ /Windows/ || $q->user_agent =~ /Macintosh/) {
-  print $q->header ( -type => "application/pdf", -expires => "-1d");
+  my $filename = string2filename("Rechnung_${nachname}_${rechnungsnr}.pdf");
+  print $q->header ( -type => "application/pdf", -expires => "-1d", -content_disposition => "inline; filename=$filename");
   if (!(-d "/tmp/wwwrun")) {
     mkdir "/tmp" if (!(-d "/tmp"));
     mkdir "/tmp/wwwrun";
