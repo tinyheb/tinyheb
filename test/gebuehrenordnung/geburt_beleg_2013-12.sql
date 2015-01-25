@@ -1,0 +1,1 @@
+'SELECT PREIS FROM Leistungsdaten;'
