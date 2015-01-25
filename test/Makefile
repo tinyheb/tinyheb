@@ -61,9 +61,9 @@ $(SD_TEST_OUTFILES): %.out: %.lynx %.sql
 	$(LYNX) -cmd_script=$*.lynx $(URL)
 	$(MYSQL) -u $(SQL_USER) -h $(SQL_HOST) -e $(shell $(CAT) $*.sql) $(SQL_DB) > $@
 
-$(GO_TEST_OUTFILES): %.out: %.lynx %.sql stammdaten/lieschen_mueller
+$(GO_TEST_OUTFILES): %.out: %.lynx $(GO_DIR)/preis.sql stammdaten/lieschen_mueller
 	$(LYNX) -cmd_script=$*.lynx $(URL)/erfassung/rechnungserfassung.pl?frau_id=2
-	$(MYSQL) -u $(SQL_USER) -h $(SQL_HOST) -e $(shell $(CAT) $*.sql) $(SQL_DB) > $@
+	$(MYSQL) -u $(SQL_USER) -h $(SQL_HOST) -e $(shell $(CAT) $(GO_DIR)/preis.sql) $(SQL_DB) > $@
 
 
 clean:
