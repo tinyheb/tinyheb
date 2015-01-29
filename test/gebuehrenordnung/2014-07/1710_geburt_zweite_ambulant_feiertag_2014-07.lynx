@@ -1,0 +1,62 @@
+# Command logfile created by Lynx 2.8.9dev.1 (12 Mar 2014)
+# Arg0 = lynx
+# Arg1 = -cmd_log=geburt_zweite_ambulant_2014-01.lynx
+# Arg2 = http://192.168.1.9/tinyheb/erfassung/rechnungserfassung.pl?frau_id=2
+key Up Arrow
+key ^J
+key <delete>
+key <delete>
+key <delete>
+key <delete>
+key <delete>
+key <delete>
+key <delete>
+key <delete>
+key <delete>
+key <delete>
+key 0
+key 6
+key .
+key 0
+key 7
+key .
+key 2
+key 0
+key 1
+key 4
+key <tab>
+key ^J
+key /
+key 1
+key 7
+key 0
+key 0
+key ^J
+key ^J
+key Down Arrow
+key Down Arrow
+key Down Arrow
+key 0
+key 8
+key :
+key 0
+key 0
+key Down Arrow
+key 0
+key 9
+key :
+key 0
+key 0
+key <tab>
+key <tab>
+key <tab>
+key <tab>
+key <tab>
+key <tab>
+key <tab>
+key <tab>
+key <tab>
+key ^J
+key Down Arrow
+key q
+key y
