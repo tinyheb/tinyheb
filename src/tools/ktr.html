@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- $Id: ktr.html,v 1.9 2014-02-20 12:28:52 thomas_baum Exp $ -->
+<!-- Tag $Name -->
+  <head>
+    <title>Kostenträgerdatei einspielen</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <script language="javascript" src="../Heb.js"></script>
+    <link href="../Heb.css" rel="stylesheet" type="text/css">
+    <script>
+      var fenster;
+      function oeffnen (url) {
+      if (!(fenster instanceof Window) || fenster.closed)
+      // Fenster nicht geöffnet -> Fenster mit Bild Öffnen
+      fenster = window.open (url, 'Kostentraeger');
+      else {
+      // Bild in bereits geöffnetem Fenster laden
+      fenster.location = url;
+      fenster.focus();
+      }
+      }
+    </script>
+  </head>
+
+  <body>
+    <div align="center">
+      <h1>Kostenträgerdateien einspielen</h1>
+      <hr width="90%">
+    </div>
+    <br/>
+    <form name="ktr" action="ktr.pl" method="post" enctype="multipart/form-data" target='ktr_erg' bgcolor=white>
+      <table border="0" width="700" align="left">
+	  <tr><td>
+	      <table border="0" align="left">
+		  <tr>
+		    <td><b>Dateiname der Kostenträgerdatei</b></td>
+		  </tr>
+		  <tr>
+		    <td  style="font-size: small">Die Kostenträgerdateien müssen vorher aus dem <a href="javascript:oeffnen('http://www.gkv-datenaustausch.de/leistungserbringer/sonstige_leistungserbringer/kostentraegerdateien_sle/kostentraegerdateien.jsp','neu')">Internet</a> geladen werden</td>
+		  </tr>
+		  <tr>
+		    <td><input type='file' name='datei' size='80'></td>
+		  </tr>
+	      </table>
+	  <tr>
+	    <td><table border="0" align="left">
+		  <tr>
+		    <td><b>Update oder Testlauf</b></td>
+		  </tr>
+	  </tr>
+	  <tr>
+	    <td><input type='radio' name='update' value='-u'>Update durchführen</td>
+	  </tr>
+	  <tr>
+	    <td><input type='radio' name='update' value='' checked>Testlauf</td>
+	  </tr>
+      </table>
+      <tr>
+	<td>
+	  <table border="0" align="left">
+	    <tr>
+		<td><input type="submit" name="abschicken" value="Kostenträgerdatei einspielen"></td>
+		<td><input type="button" name="hauptmenue" value="Hauptmenue" onClick="haupt();"></td>
+		<td><input type="button" name="wartungsmenue" value="Wartungsmenue" onClick="window.location='../wartung.html';"></td>
+	      </tr>
+	  </table>
+    </form>
+  </tr>
+
+    <tr>
+      <td>
+	<iframe src='../blank.html' name='ktr_erg' width='800' height='400' scrolling='yes' frameborder='1' align='left'>
+	</iframe>
+      </td>
+    </tr>
+  </table>
+  </body>
+</html>
