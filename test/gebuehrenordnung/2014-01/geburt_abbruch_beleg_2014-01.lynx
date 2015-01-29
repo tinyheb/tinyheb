@@ -1,7 +1,3 @@
-# Command logfile created by Lynx 2.8.9dev.1 (12 Mar 2014)
-# Arg0 = lynx
-# Arg1 = -cmd_log=geburt_beleg_2013-12.lynx
-# Arg2 = http://192.168.1.9/tinyheb//erfassung/rechnungserfassung.pl?frau_id=2
 key Up Arrow
 key ^J
 key <delete>
@@ -14,21 +10,21 @@ key <delete>
 key <delete>
 key <delete>
 key <delete>
-key 1
-key 1
-key .
-key 1
+key 0
 key 2
+key .
+key 0
+key 1
 key .
 key 2
 key 0
 key 1
-key 3
+key 4
 key Down Arrow
 key ^J
 key /
-key 0
-key 9
+key 1
+key 6
 key 0
 key 1
 key ^J
