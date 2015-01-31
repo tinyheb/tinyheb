@@ -2,5 +2,5 @@ srv/
 usr/
 usr/man/
 usr/man/man1/
-etc/apache2/conf.d/
+etc/apache2/conf-available/
 etc/tinyheb/

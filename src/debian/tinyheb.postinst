@@ -65,21 +65,22 @@ case "$1" in
         srcPath='/srv/www/cgi-bin/tinyheb'
         # echo "DEBUG $0 pwd=:`pwd`:" >>/tmp/debug
 
-        # das geht eigentlich noch nicht, weil der Thomas das file beim
-        # install kopiert und somit ist es dann schon da. Es geht
-        # voellig in die Hose wenn kein Apache2 installiert ist
-        for server in $webservers
-        do
-            destDir="/etc/${server}/conf.d"
-            if [ -d "$destDir" ]
-            then
-                if [ ! -e ${destDir}/tinyheb.conf ]
-                then 
-                    # aus dem InstallDir unter /srv/www/cgi-bin/tinyheb/apache.conf verlinken
-                    echo ln -s ${srcPath}/apache.conf ${destDir}/tinyheb.conf
-                fi
+#        for server in $webservers
+#        do
+#            destDir="/etc/${server}/conf.d"
+        destDir="/etc/apache2/conf-enabled"
+        if [ -d "$destDir" ]
+        then
+            if [ ! -e ${destDir}/tinyheb.conf ]
+            then 
+                ln -s /etc/apache2/conf-available/tinyheb.conf ${destDir}/tinyheb.conf
             fi
-        done
+        fi
+#        done
+
+        # enable cgi module
+        a2enmod cgi
+
 
         # abfragen im dialog ob die Datenbank angelegt werden soll
         # im config-Dialog wurden die Variablen abgefragt
@@ -123,20 +124,18 @@ case "$1" in
         # echo "DEBUG: $0 1=$1 2=$2" >>/tmp/debug
         if [ "x$2" != "x" ]
         then
-            # ATTN Datenbank ist schon da dann das update script aufrufen
-            # echo "update-script aufrufen in :$srcPath/DATA:" >>/tmp/debug
-            ( 
-	    echo "Fuehre jetzt den update der Datenbank durch "
-            cd "${srcPath}/DATA"; ./update.pl --rpm 
-            ) || true
+            echo "Fuehre jetzt den update der Datenbank durch "
         else
-	    echo "Erzeuge Datenbankstruktur..."
+		    echo "Erzeuge Datenbankstruktur..."
             # die Datenbank anlegen
             # echo "debug: Datenbank anlegen" >>/tmp/debug
             # echo "DEBUG: cmd=${mysqlcmd}" >>/tmp/debug
             ${mysqlcmd} < "$srcPath/DATA/init.sql" || true
         fi
 
+        # echo "update-script aufrufen in :$srcPath/DATA:" >>/tmp/debug
+        cd "${srcPath}/DATA"; ./update.pl --rpm || true
+ 
         # echo "DEBUG: nach dem Konfigzweig sql" >>/tmp/debug
 
         # webserver neu starten wenn gewuenscht

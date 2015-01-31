@@ -21,6 +21,7 @@ set -e
 case "$1" in
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
         # mach erstmal nix bis das loeppt
+        rm -rf /etc/apache2/conf-enabled/tinyheb.conf
         echo "Die Daten im mysql sind noch vorhanden"
     ;;
     purge)
