@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ $# -ne 5 ]; then
+    echo "usage: $0 <test name> <service number> <date> <price(s)>"
+fi
+
 # write lynx command file
 echo "key Up Arrow" > $1.lynx
 echo "key ^J" >> $1.lynx
