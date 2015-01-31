@@ -59,7 +59,7 @@ $(SD_TEST_N_CLEAN): %.clean: %
 	$(do-clean)
 
 $(GO_TEST_N_CLEAN): %.clean: %
-	$(do-clean)
+	$(MYSQL) -u $(SQL_USER) -h $(SQL_HOST) -e 'TRUNCATE Leistungsdaten;' $(SQL_DB)
 
 $(SD_TEST_TARGETS): %: %.out %.in
 	$(evaluate-test)

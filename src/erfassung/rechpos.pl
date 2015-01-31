@@ -174,8 +174,8 @@ print '<td><b>Begründung</b></td>';
 print '</tr>';
 
 print '<tr>';
-print "<td><input type='text' disabled class='disabled' name='zeit_von' value='$zeit_von' size='5' maxlength='5' onchange='uhrzeit_check(this);wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);'></td>";
-print "<td><input type='text' disabled class='disabled' name='zeit_bis' value='$zeit_bis' size='5' maxlength='5' onchange='uhrzeit_check(this)'></td>";
+print "<td><input type='text' name='zeit_von' value='$zeit_von' size='5' maxlength='5' onchange='uhrzeit_check(this);wo_tag(document.rechpos.datum.value,document.rechpos.zeit_von.value,document.rechpos);'></td>";
+print "<td><input type='text' name='zeit_bis' value='$zeit_bis' size='5' maxlength='5' onchange='uhrzeit_check(this)'></td>";
 print "<td><input type='text' class='disabled' disabled name='dauer' value='' size='5'></td>";
 printauswahlboxbegr();
 print "<td><input type='hidden' name='leist_id' value='$leist_id' size='5'></td>";
