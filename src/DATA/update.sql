@@ -103,7 +103,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='0500' and GUELT_VON='2014-07-01' and GUELT_BIS
 #
 # PosNr 0501
 #
-WWWRUN	INSERT	Leistungsart	POSNR='0501' and GUELT_VON='2014-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0501','A','Hilfe bei Beschw. Belegheb.',16.89,'Hilfe bei Schwangerschaftsbeschwerden oder bei Wehen, für jede angefangenen 30 Minuten Beleghebamme','9999-12-31','2014-06-30',30,'+3500','0511','0511','0511',180);
+WWWRUN	INSERT	Leistungsart	POSNR='0501' and GUELT_VON='2014-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0501','A','Hilfe bei Beschw. Belegheb.',16.89,'Hilfe bei Schwangerschaftsbeschwerden oder bei Wehen, für jede angefangenen 30 Minuten Beleghebamme','2014-07-01','9999-12-31',30,'+3500','0511','0511','0511',180);
 #
 # PosNr 0502
 # 
