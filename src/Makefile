@@ -5,7 +5,7 @@
 
 PM=*.pm
 HTML=*.html
-TXT=*.txt README
+TXT=../*.txt ../README
 JS=*.js
 CSS=*.css
 
@@ -19,7 +19,7 @@ VERBOSE=
 #DESTDIR=
 
 INST_DIR=$(DESTDIR)/srv/www/cgi-bin/tinyheb
-APACHE_CONF=$(DESTDIR)/etc/apache2/conf.d
+APACHE_CONF=$(DESTDIR)/etc/apache2/conf-available
 CONFDIR=$(DESTDIR)/etc/tinyheb/
 
 nix:
@@ -29,7 +29,8 @@ clean:
 	@echo mache nix
 
 deb:
-	dpkg-buildpackage -rfakeroot -k$(PGP_KEY)
+	cd .. && dpkg-buildpackage -rfakeroot -k$(PGP_KEY)
+#	dpkg-buildpackage -rfakeroot -uc -us
 
 install:
 	@echo tinyheb.conf
