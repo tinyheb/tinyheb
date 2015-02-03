@@ -499,8 +499,8 @@ sub gen_cert {
   $erg->insert('end',"$pruefsumme\n");
   
   
-  # SHA1 Prüfsumme
-  $hilf=open SHA1,"$openssl dgst -sha1 -c $path/pubkey_itsg.der |";
+  # SHA256 Prüfsumme
+  $hilf=open SHA256,"$openssl dgst -sha256 -c $path/pubkey_itsg.der |";
   if (!defined($hilf)) {
     $erg->insert('end',"konnte Prüfsumme nicht berechnen");
     fehler("konnte Signatur (Prüfsumme) nicht berechnen");
@@ -510,20 +510,20 @@ sub gen_cert {
   $pruefsumme='';
   $help_p='';
   #  $erg->insert('end',"Prüfsumme:\n");
-  while (my $zeile=<SHA1>) {
+  while (my $zeile=<SHA256>) {
     #    $erg->insert('end',$zeile);
     ($help_p,$pruefsumme)=split '=',$zeile;
   }
   close AUS;
-  $cl=close SHA1;
+  $cl=close SHA256;
   if (!$cl && $? != 0) {
     print "Close Wert $cl, $?\n";
-    $erg->insert('end',"schwerer OpenSSL Fehler bei SHA1 Prüfsumme aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen $cl,$? "); # openssl hat Fehler gemeldet
-    fehler("schwerer OpenSSL Fehler bei SHA1 Prüfsumme aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
+    $erg->insert('end',"schwerer OpenSSL Fehler bei SHA256 Prüfsumme aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen $cl,$? "); # openssl hat Fehler gemeldet
+    fehler("schwerer OpenSSL Fehler bei SHA256 Prüfsumme aufgetreten, bitte OpenSSL Installation prüfen, Zertifikatgenerierung wird abgebrochen"); # openssl hat Fehler gemeldet
     exit(1);
   }
-  $erg->insert('end',"Habe SHA1 Signatur (Prüfsumme) berechnet\n");
-  $erg->insert('end',"SHA1 Signatur (Prüfsumme) des Zertifikates ist:\n");
+  $erg->insert('end',"Habe SHA256 Signatur (Prüfsumme) berechnet\n");
+  $erg->insert('end',"SHA256 Signatur (Prüfsumme) des Zertifikates ist:\n");
   $erg->insert('end',"$pruefsumme\n");
 
   fehler("Bitte die Signaturen (Prüfsummen) mit Bezeichnung genau notieren, diese müssen per Brief/Fax unterschrieben an die ITSG geschickt werden");
