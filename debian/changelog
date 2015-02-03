@@ -1,3 +1,9 @@
+tinyheb (1.6.4-1) trusty; urgency=low
+
+  * just for daily builds
+
+ -- Johannes <hummlbach@web.de>  Sun, 30 Jan 2015 17:34:49 +0100
+
 tinyheb (1.6.3-1) jaunty; urgency=low
 
   * new upstream release
