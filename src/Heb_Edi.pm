@@ -1239,6 +1239,7 @@ sub sig {
 
     # 
     my $cert_opts='';
+    $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg9.pem"! if ($cert_info == 6);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg8.pem"! if ($cert_info == 5);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg7.pem"! if ($cert_info == 4);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg6.pem"! if ($cert_info == 3);
@@ -1261,6 +1262,10 @@ sub sig {
     if ($cert_info == 5 && !(-r "$cert_path".'certs/itsg8.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg8.pem) konnte nicht gefunden werden",0);
     }
+    if ($cert_info == 6 && !(-r "$cert_path".'certs/itsg9.pem')) {
+      return ("Ein Zertifikat der Zertifizierungskette (itsg9.pem) konnte nicht gefunden werden",0);
+    }
+
 
 #    print "OpenSSL Befehl: $openssl smime -sign -binary -in $path/tmp/$dateiname -nodetach -outform DER -signer $path/privkey/".$self->{HEB_IK}.".pem $cert_opts -passin pass:\" test \" -inkey $path/privkey/privkey.pem";
 
@@ -1648,8 +1653,24 @@ sub get_cert_info {
   return ("Zertifikat mit Zertifizierungscert 14",2) if ($guelt_von < 20091210);
   return ("Zertifikat mit Zertifizierungscert 56",3) if ($guelt_von < 20111208);
   return ("Zertifikat mit Zertifizierungscert 67",4) if ($guelt_von < 20131204);
-  return ("Zertifikat mit Zertifizierungscert x23 und x1e",5);
 
+  open READSIGNAME,"$openssl x509 -in $certfile -text -certopt no_sigdump,no_header,no_version,no_serial,no_issuer,no_subject,no_pubkey,no_validity -noout |" or return ("konnte keine Informationen zum Zertifikat $certfile lesen",0);
+
+  my $signame=<READSIGNAME>;
+
+  close(READSIGNAME);
+
+  if ($signame =~ /sha1/)
+  {
+    return ("Zertifikat mit Zertifizierungscert x23 und x1e",5);
+  }
+
+  if ($signame =~ /sha256/)
+  {
+    return ("Zertifikat mit Zertifizierungscert x2d",6);
+  }
+
+  return ("Signatur Algorithmus zum Zertifikat $certfile nicht unterstützt",0);
 }
 
 1;
