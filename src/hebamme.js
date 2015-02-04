@@ -25,7 +25,7 @@ window.onload=function() {
   var version=document.getElementById('version');
   
   // Versionsnummer ermitteln
-  var id='$Name: tinyheb-1-6-4 $';
+  var id='$Name: tinyheb-1-7-0 $';
   //var id="$Name: not supported by cvs2svn $";
   id=id.slice(1,-1);
   //  alert("ID"+id);
