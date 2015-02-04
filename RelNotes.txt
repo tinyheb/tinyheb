@@ -1,3 +1,13 @@
+Release 1.7.0
+  * updated to new fee schedule (see update.sql)
+  * adapted config files for apache 2.4
+  * now using encrypted authentication with mail servers
+    (needs Mail::Sender >= 0.8.22, Mozilla::CA and IO::Socket::SSL)
+  * pass ps- and pdf-files with the right suffix and meaningful names
+  * electronic data exchange version 9
+  * distinguish between sha1 and sha256 signed certificate chains
+
+
 Release 1.6.3
 
 Aufnahme und Anpassungen Positionsnummern w/ Betriebskostenpauschale
