@@ -46,7 +46,7 @@ my ($rech,$edi_auf,$edi_nutz)=$l->rechnung_such_next();
 
 if ($rechtyp == 1) {
   if ($q->user_agent =~ /Windows/) {
-    my $filename = string2filename("Rechnung_${rech_id}_alt.pdf");
+    my $filename = tiny_string_helpers::string2filename("Rechnung_${rech_id}_alt.pdf");
     print $q->header ( -type => "application/pdf", -expires => "-1d", -content_disposition => "inline; filename=$filename");
     if (!(-d "/tmp/wwwrun")) {
       mkdir "/tmp" if (!(-d "/tmp"));
@@ -77,7 +77,7 @@ if ($rechtyp == 1) {
     }
     close AUSGABE;
   } else {
-    my $filename = string2filename("Rechnung_${rech_id}_alt.ps");
+    my $filename = tiny_string_helpers::string2filename("Rechnung_${rech_id}_alt.ps");
     print $q->header ( -type => "application/postscript", -expires => "-1d", -content_disposition => "inline; filename=$filename");
     print $rech;
   }
