@@ -263,14 +263,14 @@ my $all_rech=$p->get();
 #warn "OS :",$^O;
 
 if ($q->user_agent !~ /Windows/ && $q->user_agent !~ /Macintosh/) {
-  my $filename = string2filename("Rechnung_${nachname}_${rechnungsnr}.ps");
+  my $filename = tiny_string_helpers::string2filename("Rechnung_${nachname}_${rechnungsnr}.ps");
   print $q->header ( -type => "application/postscript", -expires => "-1d", -content_disposition => "inline; filename=$filename");
   $all_rech =~ s/PostScript::Simple generated page/${nachname}_${vorname}/g;
   print $all_rech;
 }
 
 if ($q->user_agent =~ /Windows/ || $q->user_agent =~ /Macintosh/) {
-  my $filename = string2filename("Rechnung_${nachname}_${rechnungsnr}.pdf");
+  my $filename = tiny_string_helpers::string2filename("Rechnung_${nachname}_${rechnungsnr}.pdf");
   print $q->header ( -type => "application/pdf", -expires => "-1d", -content_disposition => "inline; filename=$filename");
   if (!(-d "/tmp/wwwrun")) {
     mkdir "/tmp" if (!(-d "/tmp"));
