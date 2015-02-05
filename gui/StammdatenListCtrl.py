@@ -1,15 +1,31 @@
 # -*- coding: utf-8 -*-
 
 import wx
+from ObjectListView import ObjectListView, ColumnDefn
+from data.models import Stammdatum
 
-class StammdatenListCtrl(wx.ListCtrl):
 
-    def __init__(self, *args, **kwds):
-        wx.ListCtrl.__init__(self, *args, **kwds)
+COLUMNS = [
+    ColumnDefn(title="Name", valueGetter="name", minimumWidth=100, isSpaceFilling=True),
+    ColumnDefn(title="Vorname", valueGetter="vorname", minimumWidth=100, isSpaceFilling=True),
+    ColumnDefn(title=u"Straße", valueGetter="strasse", minimumWidth=100, isSpaceFilling=True),
+    ColumnDefn(title=u"PLZ", valueGetter="plz", minimumWidth=80, isSpaceFilling=True),
+    ColumnDefn(title=u"Ort", valueGetter="ort", minimumWidth=100, isSpaceFilling=True),
+    ColumnDefn(title=u"Krankenkasse", valueGetter="krankenkasse", minimumWidth=100, isSpaceFilling=True),
+]
 
-        self.InsertColumn(0, "Name")
-        self.InsertColumn(1, "Vorname")
-        self.InsertColumn(2, u"Straße")
-        self.InsertColumn(3, "PLZ")
-        self.InsertColumn(4, "Ort")
-        self.InsertColumn(5, "Krankenkasse")
+class StammdatenListCtrl(ObjectListView):
+
+    def __init__(self, parent):
+        ObjectListView.__init__(
+            self, parent, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+
+        self.evenRowsBackColor = wx.SystemSettings.GetColour(
+            wx.SYS_COLOUR_LISTBOX)
+        self.oddRowsBackColor = wx.SystemSettings.GetColour(
+            wx.SYS_COLOUR_3DLIGHT)
+
+        self.SetColumns(COLUMNS)
+        objects = list(Stammdatum.select())
+        print objects
+        self.SetObjects(objects)

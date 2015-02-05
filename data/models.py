@@ -1,6 +1,11 @@
-from sqlobject import SQLObject, StringCol
+# -*- coding: utf-8 -*-
+
+from sqlobject import SQLObject, StringCol, IntCol
 
 class Stammdatum(SQLObject):
-    fname = StringCol()
-    mi = StringCol(length=1, default=None)
-    lname = StringCol()
+    name = StringCol()
+    vorname = StringCol()
+    strasse = StringCol()
+    plz = IntCol()
+    ort = StringCol()
+    krankenkasse = StringCol()

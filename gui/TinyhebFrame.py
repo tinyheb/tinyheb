@@ -19,7 +19,7 @@ class TinyhebFrame(wx.Frame):
         wx.Frame.__init__(self, *args, **kwds)
         self.main_notebook = wx.Notebook(self, -1, style=0)
         self.main_notebook_pane_stammdaten = wx.Panel(self.main_notebook, -1)
-        
+
         # Menu Bar
         self.tinyheb_frame_menubar = wx.MenuBar()
         wxglade_tmp_menu = wx.Menu()
@@ -35,12 +35,12 @@ class TinyhebFrame(wx.Frame):
         self.SetMenuBar(self.tinyheb_frame_menubar)
         # Menu Bar end
         self.tinyheb_frame_statusbar = self.CreateStatusBar(1, 0)
-        
+
         # Tool Bar
         self.tinyheb_frame_toolbar = wx.ToolBar(self, -1, style=wx.TB_HORIZONTAL|wx.TB_TEXT)
         self.SetToolBar(self.tinyheb_frame_toolbar)
-        self.tinyheb_frame_toolbar.AddLabelTool(wx.NewId(), "Rechnungsposten erfassen", (wx.ArtProvider.GetBitmap(wx.ART_NEW, wx.ART_TOOLBAR)), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        self.tinyheb_frame_toolbar.AddLabelTool(wx.NewId(), "Neues Stammdatum", (wx.ArtProvider.GetBitmap(wx.ART_NEW_DIR, wx.ART_TOOLBAR)), wx.NullBitmap, wx.ITEM_NORMAL, "Neues Stammdatum", "Neues Stammdatum anlegen")
+        self.tinyheb_frame_toolbar.AddLabelTool(wx.NewId(), "Rechnungsposten\nerfassen", (wx.ArtProvider.GetBitmap(wx.ART_NEW, wx.ART_TOOLBAR)), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        self.tinyheb_frame_toolbar.AddLabelTool(wx.NewId(), "Neues\nStammdatum", (wx.ArtProvider.GetBitmap(wx.ART_NEW_DIR, wx.ART_TOOLBAR)), wx.NullBitmap, wx.ITEM_NORMAL, "Neues Stammdatum", "Neues Stammdatum anlegen")
         self.tinyheb_frame_toolbar.AddLabelTool(wx.NewId(), "Datensicherung", (wx.ArtProvider.GetBitmap(wx.ART_FILE_SAVE, wx.ART_TOOLBAR)), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
         self.tinyheb_frame_toolbar.AddSeparator()
         self.tinyheb_frame_toolbar.AddLabelTool(wx.NewId(), "Beenden", (wx.ArtProvider.GetBitmap(wx.ART_QUIT, wx.ART_TOOLBAR)), wx.NullBitmap, wx.ITEM_NORMAL, "tinyheb beenden", "tinyheb beenden")
@@ -66,7 +66,8 @@ class TinyhebFrame(wx.Frame):
         self.tinyheb_frame_toolbar.Realize()
         # end wxGlade
 
-        self.stammdaten_list_ctrl = StammdatenListCtrl(self.main_notebook_pane_stammdaten, -1, style=wx.LC_REPORT|wx.SUNKEN_BORDER)
+        self.stammdaten_list_ctrl = StammdatenListCtrl(
+            self.main_notebook_pane_stammdaten)
 
     def __do_layout(self):
         # begin wxGlade: TinyhebFrame.__do_layout
