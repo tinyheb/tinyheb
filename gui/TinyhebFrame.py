@@ -57,7 +57,6 @@ class TinyhebFrame(wx.Frame):
 
     def __set_properties(self):
         # begin wxGlade: TinyhebFrame.__set_properties
-        self.SetTitle("tinyheb_frame")
         self.tinyheb_frame_statusbar.SetStatusWidths([-1])
         # statusbar fields
         tinyheb_frame_statusbar_fields = ["tinyheb_frame_statusbar"]
@@ -66,6 +65,7 @@ class TinyhebFrame(wx.Frame):
         self.tinyheb_frame_toolbar.Realize()
         # end wxGlade
 
+        self.SetTitle("tinyHeb")
         self.stammdaten_list_ctrl = StammdatenListCtrl(
             self.main_notebook_pane_stammdaten)
 

@@ -6,7 +6,16 @@ from models import Stammdatum
 
 # create connection to sqlite
 db_filename = os.path.abspath("tinyheb.db")
-connection = connectionForURI("sqlite://%s" % db_filename)
+
+if os.name == "nt":
+    print "on win"
+    conn_string = "sqlite:/%s" % db_filename
+else:
+    print "Non win"
+    conn_string = "sqlite://%s" % db_filename
+
+print "Using sqlite file: %s" % db_filename
+connection = connectionForURI(conn_string)
 sqlhub.processConnection = connection
 
 # initialize database
