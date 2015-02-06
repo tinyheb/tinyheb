@@ -1,0 +1,9 @@
+*~
+.DS_Store
+ThumbsDB
+\#*#
+.#*
+
+# debian package build
+build-stamp
+configure-stamp
