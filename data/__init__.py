@@ -8,14 +8,14 @@ from models import Stammdatum
 db_filename = os.path.abspath("tinyheb.db")
 
 if os.name == "nt":
-    print "on win"
     conn_string = "sqlite:/%s" % db_filename
 else:
-    print "Non win"
     conn_string = "sqlite://%s" % db_filename
 
 print "Using sqlite file: %s" % db_filename
 connection = connectionForURI(conn_string)
+
+# pass connection to sqlobject
 sqlhub.processConnection = connection
 
 # initialize database

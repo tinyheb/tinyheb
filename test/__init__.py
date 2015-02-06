@@ -2,12 +2,9 @@
 
 import os
 from sqlobject import sqlhub, connectionForURI
+from data import connection
 from data.models import Stammdatum
 
-
-db_filename = os.path.abspath("tinyheb.db")
-connection = connectionForURI("sqlite://%s" % db_filename)
-sqlhub.processConnection = connection
 
 def setup():
     stammdaten = (
@@ -18,6 +15,10 @@ def setup():
     for name, vorname, strasse, plz, ort, krankenkasse in stammdaten:
         sd = Stammdatum(name=name, vorname=vorname, strasse=strasse, plz=plz,
                         ort=ort, krankenkasse=krankenkasse)
+
+def trivial_test():
+    print "This test is always passed."
+    pass
 
 def teardown():
     pass
