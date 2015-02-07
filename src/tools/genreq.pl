@@ -639,7 +639,7 @@ sub gen_mail {
 				 auth => 'LOGIN',
 				 authid => $user_sel,
 				 authpwd => $user_pass,
-				 TLS_allowed => 0,
+				 TLS_allowed => 1,
 				 debug_level => 2,
 				 boundary => 'tinyheb-certreq-1'
 				});
