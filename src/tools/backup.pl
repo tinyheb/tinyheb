@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Backup der tinyHeb Datenbank anlegen
-
-# $Id: backup.pl,v 1.6 2008-05-22 17:26:17 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -127,4 +124,3 @@ print '</table>';
 
 print "</body>";
 print "</html>";
-

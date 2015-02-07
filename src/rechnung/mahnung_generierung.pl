@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Mahnungen generieren und drucken
-
-# $Id: mahnung_generierung.pl,v 1.10 2009-01-09 18:01:04 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -92,7 +89,7 @@ print '</div>';
 print '<form name="mahnung_gen" action="mahnung_generierung.pl" method="get" target=_top bgcolor=white>';
 print '<table border="0" width="700" align="left">';
 
-# Zeile mit Frauen Daten 
+# Zeile mit Frauen Daten
 # z1 s1
 print '<tr><td><table border="0" align="left">';
 print '<tr>';
@@ -177,5 +174,3 @@ print "</table>\n";
 
 print "</body>";
 print "</html>";
-
-

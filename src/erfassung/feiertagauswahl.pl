@@ -1,12 +1,9 @@
 #!/usr/bin/perl -w
 #-w
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Bearbeitung von Feiertagen
-
-# $Id: feiertagauswahl.pl,v 1.8 2010-01-31 12:24:12 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany

@@ -1,13 +1,10 @@
 #!/usr/bin/perl -w
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Einspielen der Kostenträgerdateien in tinyHeb Datenbank und
 # Ausgabe in GUI Fenster
-
-# $Id: ktr.pl,v 1.5 2008-10-05 13:52:38 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany

@@ -4,9 +4,6 @@
 # Zeilenende werden angepasst,
 # Shebang Zeile geändert
 
-# $Id: linux2win.pl,v 1.5 2008-04-26 08:53:55 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -44,12 +41,12 @@ foreach my $dir (@dirs) {
   foreach  my $file (@allfiles) {
     if (-f "$base_dir/../$dir/$file") {
       print "Bearbeite Datei $file\n";
-      open FILE,"$base_dir/../$dir/$file" or 
+      open FILE,"$base_dir/../$dir/$file" or
 	die "konnte Datei $base_dir/../$dir/$file nicht lesen $!\n";
       my @alllines=<FILE>;
       close FILE;
       my @winlines = grep { chomp } @alllines;
-      
+
       for my $i (0  .. $#winlines) {
 	$winlines[$i] =~ s/!\/usr\/bin\/perl/!perl/i;
       }

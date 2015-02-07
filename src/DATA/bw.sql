@@ -1,7 +1,5 @@
 # Updates für tinyHeb
 #
-# $Id: bw.sql,v 1.1 2009-11-17 10:07:10 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 #
 # Hebammengebührenordnung für Baden-Würtemberg
 #
@@ -122,7 +120,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='12b' and GUELT_VON='1999-09-01' and GUELT_BIS=
 #
 #
 #
-# Leistungsgruppe C 
+# Leistungsgruppe C
 # Leistungen nach der Geburt
 #
 # PosNr 13aa

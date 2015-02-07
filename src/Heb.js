@@ -1,9 +1,6 @@
 /* script für generelle Plausiprüfungen und Navigation
 # im Rahmen der Leistungserfassung
 
-# $Id: Heb.js,v 1.16 2009-05-31 04:48:19 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2004 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -81,14 +78,14 @@ function datum_check(datum) {
     ret = re.exec(datum.value);
     j = Number (RegExp.$3);
     m = Number (RegExp.$2);
-    t = Number (RegExp.$1);   
+    t = Number (RegExp.$1);
     if(!ret) {
       alert("Bitte Datum im Format tt.mm.jjjj erfassen");
       datum.select();
       datum.focus();
       return false;
     }
-  } 
+  }
 
   if (j>99 && j<1900) {
     alert("Bitte gültiges Datum erfassen");
@@ -154,7 +151,7 @@ while ( i >= 1 ) {
 formular.elements[y].focus();
 formular.elements[y].select();
 }
-  
+
 function auswahl_wechsel (formular) {
 // in Abhängigkeit der gewählten Funktion werden Knöpfe disabled/enabled
 	var wert=formular.auswahl.value;
@@ -199,6 +196,6 @@ function auswahl_wechsel (formular) {
 		alert("default");
 		}
 	}
-}		
+}
 
 //alert("heb.js ist geladen");

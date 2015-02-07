@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Rechnungen generieren und drucken
-
-# $Id: rechnung_generierung.pl,v 1.31 2013-08-13 17:21:17 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -94,7 +91,7 @@ print '</div>';
 print '<form name="rechnungen_gen" action="rechnung_generierung.pl" method="get" target=_top bgcolor=white>';
 print '<table border="0" width="700" align="left">';
 
-# Zeile mit Frauen Daten 
+# Zeile mit Frauen Daten
 # z1 s1
 print '<tr><td><table border="0" align="left">';
 print '<tr>';
@@ -230,5 +227,3 @@ print "</table>\n";
 
 print "</body>";
 print "</html>";
-
-

@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # erfasste Rechnungen ausgeben
-
-# $Id: list_rech.pl,v 1.17 2010-01-31 12:32:12 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -59,7 +56,7 @@ print '<script language="javascript" src="rechnung.js"></script>';
 print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 
-# Alle Felder zur Eingabe ausgeben 
+# Alle Felder zur Eingabe ausgeben
 print '<table rules=rows style="margin:0em;table-layout:fixed" border="1" width="100%" align="left">';
 
 # jetzt Rechnungsposten ausgeben
@@ -72,7 +69,7 @@ while (my @erg=$l->rechnung_such_next()) {
 #    print "<td style='margin-left:0em;margin-right:0em'>";
     print "<input style='font-size:8pt;padding-left:1pt;padding-right:0pt' type='button' name='bearb' value='Bearbeiten' onclick='bearb_rech($erg[0],$erg[5]);'></td>\n";
     print "<td style='width:50pt;padding-left:3pt'><input style='font-size:8pt;padding-left:1pt;padding-right:1pt' type='button' name='anseh' value='Ansehen' onclick='anseh_rech($erg[0],$erg[5]);'></td>\n";
-    
+
     print "<td style='width:35pt;text-align:right'>$erg[0]</td>"; # Rechnungsnr
 #    print "<td style='width:35pt;padding-left:1pt;text-align:right'>$erg[0]</td>"; # Rechnungsnr
     my $aus_ref='';
@@ -88,7 +85,7 @@ while (my @erg=$l->rechnung_such_next()) {
       $name = 'unbekannt';
       $name='Privat Rechnung' if ($erg_frau[12] eq 'privat');
     }
-    
+
     print "<td style='width:80pt;text-align:left;padding:2pt'>$name</td>"; # Name Krankenkasse
     print "<td style='width:40pt;text-align:right;padding:2pt'>$erg[1]</td>"; # Datum Rech
     my $g_preis = sprintf "%.2f",$erg[4];$g_preis =~ s/\./,/g;
@@ -99,7 +96,7 @@ while (my @erg=$l->rechnung_such_next()) {
     print "<td style='width:46pt;text-align:right;padding:2pt'>$erg[3]</td>"; # Eingang
     my $betraggez = sprintf "%.2f",$erg[6];$betraggez=~ s/\./,/g;
     print "<td style='width:28pt;text-align:right;padding:2pt'>$betraggez</td>"; # Betrag
-    
+
     my $status = $l->status_text($erg[5]);
     print "<td style='width:45pt;text-align:left;padding:1pt'>$status</td>"; # Status der Position
     print '</tr>';
@@ -111,5 +108,3 @@ print "\n";
 print "<script>window.scrollBy(0,10000);</script>";
 print "</body>";
 print "</html>";
-
-

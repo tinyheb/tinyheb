@@ -1,8 +1,5 @@
 # Package um Leistunsarten und Leistungsdaten aus Datenbank zu verarbeiten
 
-# $Id: Heb_leistung.pm,v 1.33 2012-12-30 12:31:39 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2003 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -112,7 +109,7 @@ sub leistungsdaten_ins {
   # fügt Leistungsdaten in Datenbank ein
   my $self=shift;
 #  print "Leistungsdaten einfügen";
-  
+
   # zunächst neue ID für Leistungsdaten holen
   my $gl=$h->get_lock("LEISTUNG_ID");
   my $id = 1+$h->parm_unique('LEISTUNG_ID');
@@ -135,7 +132,7 @@ sub rechnung_ins {
 				   "values (?,?,?,?,?,?,?,?,?,?);")
     or die $dbh->errstr();
   $rechnung_ins->execute($rechnr,$rech_datum,'0000-00-00','0000-00-00',$gsumme,20,0,$fk_st,$ik,$text) or die $dbh->errstr();
-  $h->parm_up('RECHNR',$_[0]); 
+  $h->parm_up('RECHNR',$_[0]);
 }
 
 
@@ -166,7 +163,7 @@ sub rechnung_such {
   }
 
   $self->{rech_such} = $dbh->prepare("select $werte from Rechnung ".
-			     "$sel order by RECHNUNGSNR;") 
+			     "$sel order by RECHNUNGSNR;")
     or die $dbh->errstr();
   return $self->{rech_such}->execute() or die $dbh->errstr();
 }
@@ -174,7 +171,7 @@ sub rechnung_such {
 sub rechnung_such_next {
   my $self=shift;
   return $self->{rech_such}->fetchrow_array() or die $dbh->errstr();
-} 
+}
 
 
 sub rechnung_up_werte {
@@ -235,12 +232,12 @@ sub leistungsdaten_delete {
   # löscht Datensatz zu einer Frau und ID aus der Leistungsdatenbank,
   my $self=shift;
   my ($frau_id,$id)=@_;
-  my $leistungsdaten_delete = 
+  my $leistungsdaten_delete =
     $dbh->prepare("delete from Leistungsdaten ".
 		  "where FK_STAMMDATEN=? and ID=?;")
       or die $dbh->errstr();
   $leistungsdaten_delete->execute($frau_id,$id)
-    or die $dbh->errstr(); 
+    or die $dbh->errstr();
 }
 
 
@@ -307,7 +304,7 @@ sub leistungsart_pruef_zus {
   return 0 unless (exists $leistungsdaten_pruef_zus{$wert}{$posnr});
   return 1 if (!$datum); # falls keine Prüfung auf Datum
 
-  foreach my $von_bis 
+  foreach my $von_bis
     (@{$leistungsdaten_pruef_zus{$wert}{$posnr}}) {
       my ($von,$bis)=split':',$von_bis;
       $von =~ s/-//g;
@@ -325,7 +322,7 @@ sub leistungsart_pruef_zus {
 
 sub leistungsart_such {
   # Sucht gültige Leistungsarten in der Datenbank
-  
+
   my $self=shift;
   my ($datum,$ltyp) = @_;
   $leistung_such->execute($datum,$datum,$ltyp) or die $dbh->errstr();
@@ -341,7 +338,7 @@ sub leistungsart_such_posnr {
   # sucht Werte zu einer bestimmten Positionsnummer
   my $self=shift;
   my ($werte,$posnr,$datum) = @_;
-  my $leistungsart_such_posnr 
+  my $leistungsart_such_posnr
     = $dbh->prepare("select $werte from Leistungsart ".
 		    "where ?>= GUELT_VON and ? <= GUELT_BIS and POSNR=?;")
       or die $dbh->errstr();
@@ -381,7 +378,7 @@ sub leistungsart_next_id {
   $leistungsart_next_id->execute($erg[1]) or die $dbh->errstr();
   my @erg2 = $leistungsart_next_id->fetchrow_array();
 
-  @erg2 = $leistungsart_next_id->fetchrow_array() while ($erg2[0] != $id);  
+  @erg2 = $leistungsart_next_id->fetchrow_array() while ($erg2[0] != $id);
   @erg2 = $leistungsart_next_id->fetchrow_array();
   return $erg2[0];
 }
@@ -427,7 +424,7 @@ sub min_id {
   # holt die kleinste in der Datenbank befindliche LeistungsID
   my $self=shift;
   my $min_id = $dbh->prepare("select ID from Leistungsart order by ID limit 1;") or die $dbh->errstr();
-  
+
   $min_id->execute() or die $dbh->errstr();
   my ($min) = $min_id->fetchrow_array();
 #  warn "MIN $min\n";
@@ -445,7 +442,7 @@ sub leistungsart_id {
   $leistungsart_id->execute($id) or die $dbh->errstr();
   return $leistungsart_id->fetchrow_array();
 }
-  
+
 
 
 sub leistungsdaten_werte {
@@ -520,7 +517,7 @@ sub leistungsart_such_werte {
   # sucht nach leistungsarten
   my $self=shift;
   my ($posnr,$ltyp,$kbez,$guelt) = @_;
- 
+
   my $where='';
   $where = "POSNR = '$posnr' and " if ($posnr);
   $where = $where."GUELT_VON <= '$guelt' and GUELT_BIS >= '$guelt' and" if ($guelt);
@@ -548,7 +545,7 @@ sub leistungsart_such_werte_next {
 sub leistungsart_ins {
   # fügt neue Leistungsart in Datenbank ein
   my $self = shift;
-  
+
   my $id=1+$h->parm_unique('LEISTUNGSART_ID');
   my ($posnr,$bez,$ltyp,$epreis,$proz,
       $sonn,$nacht,$sam,$fuerz,$dau,$zwill,
@@ -567,7 +564,7 @@ sub leistungsart_ins {
 		  "FUERZEIT,DAUER,ZWILLINGE, ".
 		  "ZWEITESMAL,EINMALIG,BEGRUENDUNGSPFLICHT,ZUSATZGEBUEHREN1,".
 		  "ZUSATZGEBUEHREN2,ZUSATZGEBUEHREN3,ZUSATZGEBUEHREN4,".
-		  "GUELT_VON,GUELT_BIS,KBEZ,KILOMETER,PZN,NICHT) ".		  
+		  "GUELT_VON,GUELT_BIS,KBEZ,KILOMETER,PZN,NICHT) ".
 		  "values (?,?,?,?,?,".
 		  "?,?,?,?,".
 		  "?,?,?,".
@@ -597,10 +594,10 @@ sub zeit_ende {
   # undef sonst
   my $self=shift;
   my $posnr=shift;
-  
+
   return $zeit_ende{$posnr};
 }
-  
+
 
 sub timetoblank {
   # setzt zeit von und zeit bis auf Blank, falls nötig

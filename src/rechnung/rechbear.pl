@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Rechnungen bearbeiten
-
-# $Id: rechbear.pl,v 1.14 2009-05-31 06:54:59 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -124,7 +121,3 @@ print '</table>';
 
 print "</body>";
 print "</html>";
-
-
-
-

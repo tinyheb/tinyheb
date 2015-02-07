@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Leistungsarten erfassen, ändern, löschen
-
-# $Id: leistungsarterfassung.pl,v 1.15 2009-10-30 17:07:09 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -302,7 +299,7 @@ sub speichern {
   # print "Speichern in DB\n";
   # Datümer konvertierten
   my $leist_id_alt = shift;
- 
+
   my $g_von = $d->convert($guelt_von);
   my $g_bis = $d->convert($guelt_bis);
   $kilometer = 'J' if ($kilometer eq '');

@@ -3,9 +3,6 @@
 
 # Hilfsprogramm um root Passwort des MySQL zurückzusetzen
 
-# $Id: respw.pl,v 1.1 2008-01-19 14:24:54 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -87,7 +84,7 @@ print "ODER ueber den Task Manager den Prozess mysqld-nt.exe beenden\n";
 print "Danach die Datei mysql_init.txt aus dem Verzeichis \\ loeschen\n";
 
 my $mysql_erg=`"C:/Programme/MySQL/MySQL Server 5.0/bin/mysqld-nt.exe" --defaults-file="C:/Programme/MySQL/MySQL Server 5.0/my.ini" --init-file="C:/mysql_init.txt"`;
-    
+
 
 print "Es ist ein Problem aufgetreten, bitte Computer neu starten\n";
 print "Bitte die ENTER Taste zum Beenden des Passwort Reset druecken\n";

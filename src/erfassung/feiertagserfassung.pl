@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Feiertag erfassen, ändern, löschen
-
-# $Id: feiertagserfassung.pl,v 1.13 2008-10-05 13:18:30 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -205,7 +202,7 @@ sub aendern {
 
 
 sub hole_feiertag_daten {
-  
+
   $feiertag_id = $d->feiertag_next_id($feiertag_id) if ($func==1);
   $feiertag_id = $d->feiertag_prev_id($feiertag_id) if ($func==2);
   ($name,$bundesland,$datum)= $d->feiertag_feier_id($feiertag_id);

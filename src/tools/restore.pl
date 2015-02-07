@@ -1,12 +1,9 @@
 #!/usr/bin/perl -w
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Einspielen eines Backups der tinyHeb Datenbank
-
-# $Id: restore.pl,v 1.10 2010-07-18 09:38:39 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -189,6 +186,6 @@ sub restore {
     $hint="Sicherung konnte nicht erfolgreich in Datenbank eingespielt werden, bitte Passwort und Error-Log des Webserver überprüfen";
     return;
   }
-    
+
   $hint="Sicherung wurde in Datenbank eingespielt es wurden $line_counter Zeilen verarbeitet";
 }

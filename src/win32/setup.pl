@@ -3,9 +3,6 @@
 
 # Mini Setup für tinyHeb
 
-# $Id: setup.pl,v 1.14 2010-08-09 14:57:04 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2007 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -242,7 +239,7 @@ if ($^V ge v5.10.0) {
   write_LOG("Perl andere Quellen 5.10.x notwendig");
   # prüfen ob Paketquellen schon vorhanden
   my $ppm_rep = `ppm repo list`;
-  unless ($ppm_rep =~ /trouchelle/i && 
+  unless ($ppm_rep =~ /trouchelle/i &&
 	  $ppm_rep =~ /bribes/i &&
 	  $ppm_rep =~ /uwinnipeg/i) {
     print "muessen hinzugefuegt werden\n";
@@ -263,7 +260,7 @@ if ($^V lt v5.10.0) {
   write_LOG("Perl andere Quellen 5.8.x notwendig");
   # prüfen ob Paketquellen schon vorhanden
   my $ppm_rep = `ppm repo list`;
-  unless ($ppm_rep =~ /trouchelle/i && 
+  unless ($ppm_rep =~ /trouchelle/i &&
 	  $ppm_rep =~ /uwinnipeg/i) {
     print "muessen hinzugefuegt werden\n";
     write_LOG("muessen hinzugefuegt werden");
@@ -341,15 +338,15 @@ if ($os eq 'WinXP') {
       print "Konnte Apache nicht starten\n";
     }
   }
-  
+
   # Datenbank muss nicht mehr neu gestartet werden, wenn my.ini
   # nicht überschrieben wird
-  
+
   print "\nSoll ich die tinyHeb Datenbank initialisieren (ja/nein) [ja]";
   $eingabe = <STDIN>;
   chomp $eingabe;
   write_LOG("Frage MySQL init",$eingabe);
-  
+
   if ($eingabe =~ /ja/i || $eingabe eq '') {
     if(warte(1,'MySQL') ne '4') {
       print "Kann die Datenbank nicht initialisieren, weil der Server nicht gestartet werden konnte\nBitte manuell initialisieren\n";
@@ -374,7 +371,7 @@ if ($os eq 'WinXP') {
       print "Zeile $zeile\n";
     };
     my $cl=close(INIT);
-    if ($? == 0) { 
+    if ($? == 0) {
       print "Habe die Datenbank initialisiert\n";
       print "Jetzt kann tinyHeb in Deinem Browser unter dem Link\nhttp://localhost/tinyheb/hebamme.html aufgerufen werden\n";
     } else {
@@ -436,8 +433,8 @@ sub win32_openssl {
 #  my $openssl='';
   my $pfad="/OpenSSL/bin/openssl";
   return $pfad if (-e "$pfad.exe");
-  
-  
+
+
   # Suche unterhalb /Programme/
   $pfad="/Programme/OpenSSL/bin/openssl";
   return $pfad if (-e "$pfad.exe");
@@ -449,12 +446,12 @@ sub win32_openssl {
 
 sub win32_mysql {
   my $pfad='';
-  
+
   # Suche Server 5.1
   $pfad='/Programme/MySQL/MySQL Server 5.1/';
   return $pfad if (-e $pfad."bin/mysql.exe");
-  
-  
+
+
   # Suche Server 5.0
   $pfad='/Programme/MySQL/MySQL Server 5.0/';
   return $pfad if (-e $pfad."bin/mysql.exe");

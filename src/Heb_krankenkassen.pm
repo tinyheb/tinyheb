@@ -1,8 +1,5 @@
 # Package um Krankenkassen zu verarbeiten
 
-# $Id: Heb_krankenkassen.pm,v 1.19 2012-03-10 16:22:08 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2004 - 2012 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -87,10 +84,10 @@ sub krankenkasse_such {
   # Sucht nach Krankenkassen in der Datenbank
 
   my $self=shift; # package Namen vom stack nehmen
-		     
+
   my ($name,$kname,$plz_haus,$plz_post,$ort,$ik) = @_;
-  
-  $krank_such->execute($name,$kname,$plz_haus,$plz_post,$ort,$ik) or die $dbh->errstr(); 
+
+  $krank_such->execute($name,$kname,$plz_haus,$plz_post,$ort,$ik) or die $dbh->errstr();
 }
 
 sub krankenkasse_such_next {
@@ -124,7 +121,7 @@ sub da_such {
   push @erg,$_ foreach (sort keys %erg);
 
   return @erg;
-}  
+}
 
 
 
@@ -132,7 +129,7 @@ sub krankenkassen_ins {
   # fügt neue Krankenkasse in Datenbank ein
 
   my $self=shift;
-  
+
   # insert an DB vorbereiten
   my $krankenkassen_ins = $dbh->prepare("insert into Krankenkassen ".
 					"(IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
@@ -179,7 +176,7 @@ sub krankenkassen_up_pubkey {
     or die $dbh->errstr();
   return $erg;
 }
-					     
+
 
 sub krankenkassen_delete {
   # löscht Krankenkasse aus der Datenbank
@@ -207,7 +204,7 @@ zurückgeliefert.
 
   my $self=shift;
   my ($ik) = @_;
-  my $krankenkasse_next_ik = 
+  my $krankenkasse_next_ik =
     $dbh->prepare("select IK from Krankenkassen where ".
 		  "ik > ? limit 1;")
       or die $dbh->errstr();
@@ -221,10 +218,10 @@ sub krankenkasse_prev_ik {
 
 =head2 $k->krankenkasse_prev_ik($ik)
 
-liefert die IK der vorhergehenden Krankenkasse in der Datenbank bei 
+liefert die IK der vorhergehenden Krankenkasse in der Datenbank bei
 angebener IK.
 
-Existiert keine vorhergehende Krankenkasse, wird die übergebende IK als 
+Existiert keine vorhergehende Krankenkasse, wird die übergebende IK als
 Ergebnis zurückgeliefert.
 
 =cut
@@ -233,7 +230,7 @@ Ergebnis zurückgeliefert.
   # holt die zur angegebenen ik vorhergehende ik
   my $self=shift;
   my ($ik) = @_;
-  my $krankenkasse_prev_ik = 
+  my $krankenkasse_prev_ik =
     $dbh->prepare("select IK from Krankenkassen where ".
 		  "ik < ? order by ik desc limit 1;")
       or die $dbh->errstr();
@@ -247,7 +244,7 @@ Ergebnis zurückgeliefert.
 sub krankenkassen_krank_ik {
   # holt alle Daten zu einer Krankenkasse
   my $self=shift;
-  
+
   my $krank_ik = $dbh->prepare("select IK,KNAME,NAME,STRASSE,PLZ_HAUS,".
 			       "PLZ_POST,ORT,POSTFACH,ASP_NAME,ASP_TEL,".
 			       "ZIK,BEMERKUNG,PUBKEY,ZIK_TYP,BELEG_IK, ".

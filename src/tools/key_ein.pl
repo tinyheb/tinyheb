@@ -1,12 +1,9 @@
 #!/usr/bin/perl -w
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Einspielen von  Schlüsseldateien in tinyHeb Datenbank
-
-# $Id: key_ein.pl,v 1.3 2007-07-27 18:55:15 baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany

@@ -4,9 +4,6 @@
 
 # Erzeugen Formular Versichertenbestätigung C und Druckoutput (Postscript)
 
-# $Id: formularc.pl,v 1.3 2013-01-13 09:02:08 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2008 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -348,7 +345,7 @@ $p->line($x1,$y2,$x1,1.5); # letzte Linie auch dick
 # noch Kiste um Name der Versicherten
 $p->box($x1,$y2,$x2,19.0);
 # Linie über Rechnungsnummer
-$p->line($x1,$y2+0.8,$x2,$y2+0.8); 
+$p->line($x1,$y2+0.8,$x2,$y2+0.8);
 
 
 $p->setlinewidth(0.02);
@@ -451,4 +448,3 @@ if ($q->user_agent =~ /Windows/) {
   }
   close AUSGABE;
 }
-

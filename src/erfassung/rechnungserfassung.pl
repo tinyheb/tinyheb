@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # globaler Rahmen um Rechnungspositionen zu erfassen
-
-# $Id: rechnungserfassung.pl,v 1.16 2010-01-31 12:22:25 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -88,7 +85,7 @@ print '</div>';
 print '<form name="rechnung" action="rechnungserfassung.pl" method="get" target=_top bgcolor=white>';
 print '<table id="oben" border="0" width="700" align="left">';
 
-# Zeile mit Frauen Daten 
+# Zeile mit Frauen Daten
 # z1 s1
 print '<tr><td>';
 print '<table id="z1s1" border="0" align="left">';
@@ -162,5 +159,3 @@ print "</table>\n";
 
 print "</body>";
 print "</html>";
-
-

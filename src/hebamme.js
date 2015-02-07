@@ -1,6 +1,4 @@
 /* Gibt die Versionsnummer aus
-# $Id: hebamme.js,v 1.1 2008-05-22 17:34:14 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -23,7 +21,7 @@
 
 window.onload=function() {
   var version=document.getElementById('version');
-  
+
   // Versionsnummer ermitteln
   var id='$Name: tinyheb-1-7-0 $';
   //var id="$Name: not supported by cvs2svn $";

@@ -1,8 +1,5 @@
 #!/usr/bin/perl -w
 
-# $Id: auftrag.pl,v 1.15 2008-07-20 16:55:29 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # erstellen der Auftragsdatei für den Datenaustausch mit den
 # gestzlichen Krankenkassen
 
@@ -128,6 +125,3 @@ foreach my $ext ('','.AUF','.enc','.sig','.base64') {
     move("$path/tmp/$dateiname$ext","$path/tmp/$empf_phys/$dateiname$ext");
   }
 }
-
-
-	    

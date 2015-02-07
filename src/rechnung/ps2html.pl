@@ -4,9 +4,6 @@
 
 # Erzeugen einer Rechnung und Druckoutput (Postscript)
 
-# $Id: ps2html.pl,v 1.62 2012-12-30 12:24:06 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -147,7 +144,7 @@ if ($versichertenstatus ne 'privat') {
     $priv= sprintf "%.2f",$priv;
     $priv=~ s/\./,/g;
     $betreff.= " Faktor $priv";
-      
+
   }  else {
     $betreff.="PRIVAT GEBÜHRENORDNUNG UNBEKANNT, BITTE PARAMETER HEB_BUNDESLAND pflegen".uc $heb_bundesland;
   }
@@ -215,7 +212,7 @@ neue_seite(7);
 
 
 # Prüfen ob auch elektronisch versand wird
-if ($name_krankenkasse && $versichertenstatus ne 'privat' 
+if ($name_krankenkasse && $versichertenstatus ne 'privat'
    && $versichertenstatus ne 'SOZ') {
   # prüfen ob zu ik Zentral IK vorhanden ist
   my $text='';
@@ -394,7 +391,7 @@ sub neue_seite {
     $p->setfont($font,10);
     $p->text($x1,$y1,$text);$y1-=$y_font;
   }
-}    
+}
 
 
 sub print_begruendung {
@@ -408,7 +405,7 @@ sub print_begruendung {
 	}
 	if ($erg[14]) {
 	  $p->text($x1,$y1,"Diagnose Text: $erg[14]");$y1-=$y_font;
-	}	
+	}
       }
       neue_seite(4);
     }
@@ -428,7 +425,7 @@ sub print_material {
   NEXT: while (my @erg=$l->leistungsdaten_offen_next()) {
     my ($bez,$epreis,$zus1)=$l->leistungsart_such_posnr("KBEZ,EINZELPREIS,ZUSATZGEBUEHREN1 ",$erg[1],$erg[4]);
 
-    if($erg[1] =~ /^\d{1,4}$/) { # 
+    if($erg[1] =~ /^\d{1,4}$/) { #
       $bez = substr($bez,0,50);
       my $laenge_bez = length($bez)*0.2/2;
       if ($posnr ne $erg[1]) {
@@ -466,7 +463,7 @@ sub print_material {
 	$p->text($x1+2,$y1,$bez);
       } else {
 	# Hochkomma ausgeben, wenn kein Wechsel vorhanden
-	$p->text({align => 'center'},$x1+2+$laenge_bez_zus,$y1,'"');	
+	$p->text({align => 'center'},$x1+2+$laenge_bez_zus,$y1,'"');
       }
     }
     my $datum = $d->convert_tmj($erg[4]);
@@ -617,7 +614,7 @@ sub print_teil {
       }
       $epreis = sprintf "%.2f",$epreis;
     }
-    
+
     my $fuerzeit_flag='';
     ($fuerzeit_flag,$fuerzeit)=$d->fuerzeit_check($fuerzeit);
     $bez = substr($bez,0,60);
@@ -652,8 +649,8 @@ sub print_teil {
 	}
       }
     }
-    
-    # prüfen ob Zeitangabe notwendig 
+
+    # prüfen ob Zeitangabe notwendig
     my $vk = 1;
     if ($fuerzeit) {
       # fuerzeit ausgeben
@@ -720,7 +717,7 @@ sub anschrift {
   $p->text(15.1+2.4,27.8,$rechnungsnr);
   $p->text(15.1,27.8-$y_font,"Datum");
   $p->text(15.1+2.4,27.8-$y_font,$datum);
-  
+
   my $y1=27.7;
   # Kiste für Krankenkassen nur ausgeben, wenn keine privat Rechnung
   if ($versichertenstatus ne 'privat') {
@@ -739,7 +736,7 @@ sub anschrift {
     $p->setfont($font,10);
     $p->text(12.7,$y1-6*$y_font,$plz_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse > 0);
     $p->text(12.7,$y1-6*$y_font,$plz_post_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse == 0);
-    
+
     $y1=24.6;
     $p->box($x1,23.8,$x2,$y1);# Kiste für Mitglied y1=23.8 y2=24.6
     $p->setfont($font,8);
@@ -750,7 +747,7 @@ sub anschrift {
     $p->setfont($font,10);
     $p->text(12.7,$y1-2*$y_font,"geboren am");
     $p->text(15.1,$y1-2*$y_font,$geb_frau);
-    
+
     $y1=23.8;
     my $groesse_kiste = 2.1;
     $groesse_kiste-=(2.9*$y_font) if($versichertenstatus eq 'SOZ');
@@ -772,7 +769,7 @@ sub anschrift {
       my ($m,$j) = unpack("A2A2",$kv_gueltig);
       $p->text(15.1,$y1-4*$y_font,"$m/$j");
     }
-    
+
     $y1=21.3;
     $y1+=(3*$y_font) if($versichertenstatus eq 'SOZ');
     $p->box($x1,$y1-0.5,$x2,$y1);# Kiste für Kind y1=20.8 y2=21.3
@@ -807,7 +804,7 @@ sub anschrift {
       $p->text(12.7,$y1-$y_font,"unbekannt");
     }
   }
-  
+
   # Anschrift der Hebamme
   $p->setfont($font,10);
   $x1=2; $y1=27.8;
@@ -820,8 +817,8 @@ sub anschrift {
   $p->text($x1,$y1,$h->parm_unique('HEB_TEL'));
   $y1 -= $y_font;
   $p->text($x1,$y1,'IK: '.$h->parm_unique('HEB_IK'));
-  
-  # Absender 
+
+  # Absender
   $p->line($x1,24.6,$x1+9,24.6);
   $p->setfont($font,8);
   my $absender=$h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME').', '.$h->parm_unique('HEB_STRASSE').', '.$h->parm_unique('HEB_PLZ').' '.$h->parm_unique('HEB_ORT');
@@ -831,11 +828,11 @@ sub anschrift {
   if (-e "logo.eps") {
     $p->importepsfile("logo.eps",$x1+7.3,26.2,$x1+9.3,28.2);
   }
-  
+
   # Empfänger
   # zunächst richtige Annahmestelle für Belege holen
   # und zu dieser Anschrift holen,
-  
+
   my ($beleg_ik,$beleg_typ)=$k->krankenkasse_beleg_ik($ik_krankenkasse);
   my $beleg_parm = $h->parm_unique('BELEGE');
   $beleg_ik=$ik_krankenkasse if(!(defined($beleg_parm)) || $beleg_parm != 1);
@@ -846,7 +843,7 @@ sub anschrift {
        $ort_krankenkasse_beleg,
        $strasse_krankenkasse_beleg,
        $postfach_krankenkasse_beleg) = $k->krankenkasse_sel('NAME,KNAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$beleg_ik);
-  
+
   $name_krankenkasse_beleg = '' unless ($name_krankenkasse_beleg);
   $kname_krankenkasse_beleg = '' unless ($kname_krankenkasse_beleg);
   $plz_krankenkasse_beleg = 0 unless ($plz_krankenkasse_beleg);
@@ -854,11 +851,11 @@ sub anschrift {
   $strasse_krankenkasse_beleg = '' unless ($strasse_krankenkasse_beleg);
   $postfach_krankenkasse_beleg = '' unless ($postfach_krankenkasse_beleg);
   $ort_krankenkasse_beleg = '' unless ($ort_krankenkasse_beleg);
-  
+
   $plz_krankenkasse_beleg = sprintf "%5.5u",$plz_krankenkasse_beleg;
   $plz_post_krankenkasse_beleg = sprintf "%5.5u",$plz_post_krankenkasse_beleg;
-  
-  
+
+
   # nur dann, wenn keine privat Rechnung
   if ($versichertenstatus ne 'privat') {
     $p->setfont($font,10);
@@ -869,7 +866,7 @@ sub anschrift {
     $p->text($x1,$y1-3*$y_font,$plz_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
     $p->text($x1,$y1-3*$y_font,$plz_post_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg > 0);
   }
-  
+
   if ($versichertenstatus eq 'privat') {
     $p->setfont($font,10);
     $y1=23.8;
@@ -898,7 +895,7 @@ sub urbeleg {
   }
   $y1=18.5;
 
-  $p->setfont($font,10);  
+  $p->setfont($font,10);
   $p->text($x1,$y1,"Anzahl der übermittelten Belege: ");
   $y1-=$y_font;$y1-=$y_font;$y1-=$y_font;
   $p->text($x1,$y1,"Mit freundlichen Grüßen");

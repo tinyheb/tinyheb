@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # alte Rechnungen anzeigen
-
-# $Id: druck_alt_rech.pl,v 1.12 2009-11-17 08:48:59 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -90,5 +87,3 @@ print "</body>";
 print "<script>window.focus();</script>";
 
 print "</html>";
-
-

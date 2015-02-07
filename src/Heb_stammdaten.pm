@@ -1,8 +1,5 @@
 # Package um Stammdaten zu verarbeiten
 
-# $Id: Heb_stammdaten.pm,v 1.18 2010-03-13 17:40:09 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -96,12 +93,12 @@ sub stammdaten_ins {
   # fügt neue Person in Datenbank ein
 
 =head2 $s->stammdaten_ins(@stammdaten,$id_alt)
-    
-fügt eine neue Frau in die Tabelle stammdaten ein. 
+
+fügt eine neue Frau in die Tabelle stammdaten ein.
 
 =over
 
-=item Ist $id_alt nicht definiert oder 0, wird eine neue ID vergeben und der 
+=item Ist $id_alt nicht definiert oder 0, wird eine neue ID vergeben und der
 Datensatz eingefügt.
 
 =item Ist $id_alt definiert, wird der Datensatz unter dieser ID in die Datenbank
@@ -237,10 +234,10 @@ sub stammdaten_delete {
     or die $dbh->errstr();
   my $erg = $stammdaten_del->execute(@_)
     or die $dbh->errstr();
-   
+
   print "ergebnis $erg<br>\n" if $debug;
   return $erg;
-}  
+}
 
 
 sub stammdaten_frau_id {
@@ -330,7 +327,7 @@ sub stammdaten_werte {
 
 Sucht nach Frauen die der $where Bedinung entsprechen
 wenn where blank übergeben wird, werden alle Frauen ausgegeben
-      
+
 Als Ergebnis werden die in $werte angegebenen Felder übermittelt
 
 Bei Bedarf kann $order angeben werden, dann wird das Ergebnis in der

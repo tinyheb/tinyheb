@@ -1,8 +1,5 @@
 # Package für elektronische Rechnungen
 
-# $Id: Heb_Edi.pm,v 1.68 2014-01-27 18:57:29 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2005 - 2014 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -106,7 +103,7 @@ sub new {
     $ERROR="Keine Datennahmestelle vorhanden";
     return undef;
   }
-  
+
   # prüfen EMAIL der Hebamme vorhanden
   $self->{HEB_EMAIL}=$h->parm_unique('HEB_EMAIL');
   if (!defined($self->{HEB_EMAIL})) {
@@ -131,7 +128,7 @@ sub new {
     $ERROR="E-Mail Adresse der Annahmestelle nicht bekannt,\nbitte in den Parametern Parameter MAIL$zik nachpflegen\n";
     return undef;
   }
-  
+
   # physikalischen Empfänger ermitteln
   my $empf_physisch=$k->krankenkasse_empf_phys($zik);
   if (!defined($empf_physisch)) {
@@ -147,13 +144,13 @@ sub new {
       $begruendung_nicht_nae_heb,
       $kzetgt,
       $geb_zeit) = $s->stammdaten_frau_id($frau_id);
-  
+
   $geb_frau=$d->convert($geb_frau);$geb_frau =~ s/-//g;
   if($geb_frau eq 'error') {
     $ERROR="Geburtsdatum der Frau ist kein gültiges Datum, es kann keine elektronische Rechnung erstellt werden, bitte in den Stammdaten korrigieren";
     return undef;
   }
-  
+
   $geb_kind=$d->convert($geb_kind);$geb_kind =~ s/-//g;
   if($geb_kind eq 'error') {
     $ERROR="Geburtsdatum des Kindes ist kein gültiges Datum, es kann keine elektronische Rechnung erstellt werden, bitte in den Stammdaten korrigieren";
@@ -199,7 +196,7 @@ sub new {
   if ($sig_flag > 0 && !defined($self->{sig_pass})) {
     $ERROR ="Rechnung soll signiert werden, aber kein Passwort angegeben.\n";
     return undef;
-  } 
+  }
 
   my $schl_flag = $h->parm_unique('SCHL'.$zik);
   if (!defined($schl_flag)) {
@@ -269,7 +266,7 @@ sub new {
 
 
 sub gen_auf {
-  # generiert Auftragsdatei wie den Richtlinien für den Datenaustausch mit 
+  # generiert Auftragsdatei wie den Richtlinien für den Datenaustausch mit
   # den geetzlichen Krankenkassen beschrieben.
 
   my $self=shift; # package Namen vom Stack nehmen
@@ -308,7 +305,7 @@ sub gen_auf {
   substr($st,99,6) = '000000'; # Maßnahme laut Fehlerkatalog
 
   substr($st,105,11) = "SL".substr($h->parm_unique('HEB_IK'),2,6).'S'.$d->monat(); # Dateiname
-  
+
   my $erstelldatum = sprintf "%4.4u%2.2u%2.2u%2.2u%2.2u%2.2u",Today_and_Now(); # Datum Erstellung der Datei
   substr($st,116,14) = $erstelldatum;
   substr($st,130,14) = sprintf "%4.4u%2.2u%2.2u%2.2u%2.2u%2.2u",Today_and_Now(); # Datum Start der Übertragung
@@ -323,7 +320,7 @@ sub gen_auf {
   # Verschlüsselungsart und Signatur
   substr($st,207,2) = sprintf "%2.2u",$schl_ind; # Verschlüsselung
   substr($st,209,2) = sprintf "%2.2u",$sig_ind; #  Signatur
-  
+
   # 2. Teil Spezifische Information zur Bandverarbeitung
   substr($st,211,3)='   '; # Satzformat, bei DFÜ blank
   substr($st,214,5)='00000'; # Satzlänge, bei DFÜ 00000
@@ -337,11 +334,11 @@ sub gen_auf {
   substr($st,231,10)= $default_n x 10; # Verzögerter Versand
   substr($st,241,6)= $default_n x 6; # Info Fehlerfelder
   substr($st,247,28)= $default_an x 28; # Klartextfehlermeldung
-  
+
   # 4. Teil Spezifische Information zur Verarbeitung innerhalb eines RZ
   substr($st,275,44)=$default_an x 44; # E-Mail Absender
   substr($st,319,30)=$default_an x 30; # Variabler Bereich für Zusatz Info
-  
+
 
   $st=substr($st,1,$satzlaenge);
   $erstelldatum=substr($erstelldatum,0,8).':'.substr($erstelldatum,8,4);
@@ -351,7 +348,7 @@ sub gen_auf {
 
 sub UNB {
   # generiert UNB Segment, Kopfsegment der Nutzendatei
-  
+
   my $self=shift; # package Namen vom stack nehmen
 
   my ($ik_empfaenger,$datenaustauschref,$test_ind) = @_;
@@ -413,7 +410,7 @@ sub SLGA_FKT {
 
 
 sub SLGA_REC {
-  # generiert SLGA REC Segment 
+  # generiert SLGA REC Segment
 
   my $self=shift; # package Namen vom stack nehmen
 
@@ -435,7 +432,7 @@ sub SLGA_UST {
   my $self = shift;
   my $ustid = shift;
   $ustid =~ s/\// /g;
-  
+
   my $erg = 'UST+';
   $erg .= $ustid.'+';
   $erg .= 'J'; # Hebammen sind Umsatzsteuerbefreit
@@ -489,7 +486,7 @@ sub SLLA_FKT {
   my $self=shift; # package Namen vom stack nehmen
 
   my ($ik_kostentraeger,$ik_krankenkasse) = @_;
-  
+
   my $erg = 'FKT+';
   $erg .= '01+'; # Abrechnung ohne Besonderheiten
   $erg .= '+'; # Freifeld
@@ -524,7 +521,7 @@ sub SLLA_REC {
 sub SLLA_INV {
   # generiert SLLA INV Segment
   # zu Version 6 fast identisch, siehe Feld besondere Versorgungsform
-  
+
   my $self=shift; # package Namen vom stack nehmen
 
   my ($kvnr,$kvstatus,$rechnr) = @_;
@@ -576,7 +573,7 @@ sub SLLA_NAD {
   $erg .= $ort; # ort
   $erg .= "+$land" if ($land); # Länderkennzeichen
   $erg .= $delim; # Zeilentrennung
-  
+
   return $erg;
 }
 
@@ -591,7 +588,7 @@ sub SLLA_HEB {
   $erg .= $ik_hebamme.'+';
   $erg .= $h->parm_unique('HEB_IK_BELEG_KKH'); # IK Belegkrankenhaus
   $erg .= $delim;
-  
+
   return $erg;
 }
 
@@ -604,7 +601,7 @@ sub SLLA_HEL {
   my $erg='HEL+';
   $erg .= $datum; # Tag der Leistungserbringung
   $erg .= $delim; # Zeilentrennung
-  
+
   return $erg;
 }
 
@@ -619,7 +616,7 @@ sub SLLA_EHB {
 
   $zeit_von =~ s/://g if ($zeit_von);
   $zeit_bis =~ s/://g if ($zeit_bis);
-  
+
   $menge = sprintf "%.2f",$menge;
   $menge =~ s/\./,/g;
 
@@ -655,7 +652,7 @@ sub SLLA_TXT {
   # generiert SLLA TXT Segment
 
   my $self=shift;
-  
+
   my ($text)=@_;
   $text =~ s/'/\?'/g;$text =~ s/\+/\?\+/g; # Steuerzeichen aufbereiten
   $text =~ s/,/\?\,/g;
@@ -689,7 +686,7 @@ sub SLLA_ZHB {
   $erg .= $dia_datum ? $dia_datum.'+' : '+'; # Anordnungsdatum falls vorhanden
   $erg .= $self->{anz_kinder};
   $erg .= $delim;
-  
+
   return $erg;
 }
 
@@ -773,9 +770,9 @@ sub UNT {
 
 sub SLGA {
   # generiert kompletten Nachrichtentyp SLGA
-  # Version 6 identisch 
+  # Version 6 identisch
   # inkl. Kopf und Endesegment
-  
+
   my $self = shift;
 
   my ($rechnr,$zik,$ktr) = @_;
@@ -806,7 +803,7 @@ sub SLGA {
   if ($betrag_slla ne $betrag) {
     die "Betragsermittlung zu Papierrechnung unterschiedlich Edi:$betrag_slla, Papier: $betrag!!!\n";
   }
-  
+
   $erg .= $self->SLGA_GES($betrag_slla,'00');$lfdnr++;
 
   # 5. Schlüssel Summenstatus ermitteln und GES Segment erzeugen
@@ -824,13 +821,13 @@ sub SLGA {
 
 #  print "summenstatus: $summenstatus\n";
   $erg .= $self->SLGA_GES($betrag_slla,$summenstatus);$lfdnr++;
-  
+
   # 6. NAM Segment erzeugen
   $erg .= $self->SLGA_NAM();$lfdnr++;
 
   # 7. UNT Segment erzeugen
   $erg .= $self->UNT($lfdnr+1,$ref);
-  
+
   $self->{SLGA}=$erg;
   return $erg;
 }
@@ -859,13 +856,13 @@ sub SLLA {
 
   # Kopfsegment UNH produzieren
   $erg .= $self->UNH($ref,'SLLA');$lfdnr++;
-  
+
   my $rechdatum = $self->{rechdatum};
   my $betrag = $self->{betrag};
   my $test_ind = $self->{testind};
   my $ik = $self->{ik}; # IK Nummer der Krankenkasse
 
-  
+
   # 1. FKT Segment erzeugen
   $erg .= $self->SLLA_FKT($self->{kostentraeger},$ik);$lfdnr++;
   # 2. REC Segment erzeugen
@@ -903,7 +900,7 @@ sub SLLA {
 
     # EHB Segmente generieren
     $l->leistungsdaten_such_rechnr("*",$rechnr." and DATUM=$leisttag order by ID");
-    
+
     while (my @leistdat=$l->leistungsdaten_such_rechnr_next()) {
       my $txt_kz=0; # Kennzeichen, ob schon txt Segment generiert wurde
       $leistdat[5]=substr($leistdat[5],0,5); # nur HH:MM aus Ergebniss
@@ -918,7 +915,7 @@ sub SLLA {
       my $anzahl=1; # Default, wenn keine Zeitangabe notwendig
       ($fuerzeit_flag,$fuerzeit)=$d->fuerzeit_check($fuerzeit);
 
-      # prüfen ob Zeitangabe notwendig 
+      # prüfen ob Zeitangabe notwendig
       my $datum_jmt = $leistdat[4];
       my ($zeit_von,$zeit_bis) = $l->timetoblank($leistdat[1],    # posnr
 						 $fuerzeit,       # fuerzeit
@@ -933,15 +930,15 @@ sub SLLA {
 	  $anzahl = sprintf "%2.2u",$anzahl;
 	  $anzahl++ if ($anzahl*$fuerzeit < $dauer);
 	}
-      } 
+      }
       else {
 	# Zeiten ggf. übertragen
 	($leistdat[5],$leistdat[6])=($zeit_von,$zeit_bis);
       }
       $leistdat[4] =~ s/-//g; # Datum in korrektes Format bringen
-      
+
       # EHB Segment ausgeben
-      if($ltyp ne 'M') { 
+      if($ltyp ne 'M') {
 	# keine Materialpauschale
 	if($epreis > 0) { # hier wird nicht prozentual gerechnet
 	  $erg .= $self->SLLA_EHB($leistdat[1], # POSNR
@@ -967,7 +964,7 @@ sub SLLA {
 
 
       } else {
-	# Materialpauschale 
+	# Materialpauschale
 	# Prüfen, welche Positionsnumer genutzt werden muss
 	if ($leistdat[1] =~ /^[A-Z]\d{1,4}$/) {
 	  # es muss zugeordnete Positionsnummer geben, diese steht in $zus1
@@ -976,10 +973,10 @@ sub SLLA {
 			 $leistdat[4] < 20070801);
 	  $zus1 = 800 if (!$zus1 &&
 			  $leistdat[4] >= 20070801 && $leistdat[4] < 20100101);
-	  $zus1 = 8000 if (!$zus1 and 
+	  $zus1 = 8000 if (!$zus1 and
 			  $leistdat[4] >= 20100101);
 
-	  
+
 	  $erg .= $self->SLLA_EHB($zus1,
 				  $leistdat[10],
 				  1,
@@ -1000,26 +997,26 @@ sub SLLA {
 	  $ERROR="Materialpauschale konnte nicht ermittelt werden\n";
 	  return undef;
 	}
-      
+
 	$gesamtsumme += sprintf "%.2f",$h->runden($leistdat[10]);
 	$ges_sum{$ltyp} += sprintf "%.2f",$h->runden($leistdat[10]);
       }
-      
+
       # gesamtsumme muss gerundet werden, weil es sonst bei der Addition zu
       # Rundungsfehlern kommen kann
       $gesamtsumme = $h->runden($gesamtsumme);
       print "Zwischensumme ohne Wegegeld: $gesamtsumme\n" if ($debug>100);
       print "Typ A:",$ges_sum{A},"\tTyp B:",$ges_sum{B},"\tTyp C:",$ges_sum{C},"\tTyp M:",$ges_sum{M},"\n" if ($debug > 50);
-      
-      
+
+
       # b. Begründungstexte ausgeben
       if ($leistdat[3] && !$txt_kz) { # Begründung ausgeben
 	$erg .= $self->SLLA_TXT($leistdat[3]);$lfdnr++;
 	# prüfen ob später DIA Segment ausgegeben werden muss
-	if ($leistdat[3] =~ /Attest/ && 
+	if ($leistdat[3] =~ /Attest/ &&
 	    !$dia_schl && !$dia_text && !$dia_datum &&
 	    ($leistdat[13] || $leistdat[14])) {
-	  ($dia_datum,$dia_schl,$dia_text) = 
+	  ($dia_datum,$dia_schl,$dia_text) =
 	    ($leistdat[4],$leistdat[13],$leistdat[14]);
 	}
       }
@@ -1028,12 +1025,12 @@ sub SLLA {
       my $posnr_wegegeld='';
       $leistdat[7] = sprintf "%.2f",$leistdat[7]; # w/ Rundungsfehlern
       $leistdat[8] = sprintf "%.2f",$leistdat[8]; # w/ Rundungsfehlern
-      
+
       # Unterscheidung alte/neue Positionsnummern
       if ($leistdat[4] < 20070801) {
 	$posnr_wegegeld='91' if ($leistdat[7] > 0 && $leistdat[7] <= 2);# Tag <= 2
 	$posnr_wegegeld='93' if ($leistdat[7] > 0 && $leistdat[7] > 2 ); # Tag > 2
-      } 
+      }
       if ($leistdat[4] < 20100101 && $leistdat[4] >= 20070801) {
 	$posnr_wegegeld='300' if ($leistdat[7] > 0 && $leistdat[7] <= 2);# Tag <= 2
 	$posnr_wegegeld='320' if ($leistdat[7] > 0 && $leistdat[7] > 2 ); # Tag > 2
@@ -1042,7 +1039,7 @@ sub SLLA {
 	$posnr_wegegeld='3000' if ($leistdat[7] > 0 && $leistdat[7] <= 2);# Tag <= 2
 	$posnr_wegegeld='3200' if ($leistdat[7] > 0 && $leistdat[7] > 2 ); # Tag > 2
       }
-      
+
 
 
 
@@ -1051,10 +1048,10 @@ sub SLLA {
 	my $anteilig='';
 	if ($leistdat[9] > 1) {
 	  $anteilig='a' if ($leistdat[4] < 20070801);# ant. Wegegeld alt
-	  $posnr_wegegeld += 1 if ($leistdat[4] >= 20070801 && 
+	  $posnr_wegegeld += 1 if ($leistdat[4] >= 20070801 &&
 				   $leistdat[4] < 20100101);# ant. Wegegeld neu
 	} elsif ($leistdat[4] >= 20100101) {
-	  # besondere Regel ab 2010 letzte Ziffer muss wie letzte Ziffer 
+	  # besondere Regel ab 2010 letzte Ziffer muss wie letzte Ziffer
 	  # bei Abrechnungsposnr sein, falls nicht anteilig
 	  my $letzte_ziffer = $leistdat[1];
 	  $letzte_ziffer =~ /(\d{4})/;
@@ -1062,7 +1059,7 @@ sub SLLA {
 	  $posnr_wegegeld+=$letzte_ziffer;
 	}
 
-	if ($posnr_wegegeld eq '91' || 
+	if ($posnr_wegegeld eq '91' ||
 	    $posnr_wegegeld eq '300' ||
 	    $posnr_wegegeld eq '301' ||
 	    $posnr_wegegeld eq '3000' ||
@@ -1077,7 +1074,7 @@ sub SLLA {
 	  $lfdnr++;
 	  $summe_km+=$epreis;
 	  print "Wegegeld summe: $summe_km, $epreis\n" if ($debug > 1000);
-	} elsif ($posnr_wegegeld eq '93' || 
+	} elsif ($posnr_wegegeld eq '93' ||
 		 $posnr_wegegeld eq '320' ||
 		 $posnr_wegegeld eq '321' ||
 		 $posnr_wegegeld eq '3200' ||
@@ -1094,7 +1091,7 @@ sub SLLA {
 	  my $km_preis = sprintf "%.2f",$h->runden($leistdat[7]*$epreis);
 	  $summe_km+=$km_preis;
 	  print "Wegegeld summe: $summe_km, $km_preis,km: $leistdat[7]\n" if ($debug > 1000);
-	} 
+	}
       }
 
       $posnr_wegegeld='';
@@ -1113,7 +1110,7 @@ sub SLLA {
       }
 
 
-      
+
       if ($posnr_wegegeld) { # es muss wegegeld gerechnet werden
 	($epreis)=$l->leistungsart_such_posnr("EINZELPREIS",$posnr_wegegeld,$leistdat[4]);
 	my $anteilig='';
@@ -1122,7 +1119,7 @@ sub SLLA {
 	  $posnr_wegegeld += 1 if ($leistdat[4] >= 20070801 &&
 				   $leistdat[4] < 20100101);# ant. Wegegeld neu
 	} elsif ($leistdat[4] >= 20100101) {
-          # besondere Regel ab 2010 letzte Ziffer muss wie letzte Ziffer 
+          # besondere Regel ab 2010 letzte Ziffer muss wie letzte Ziffer
           # bei Abrechnungsposnr sein, falls nicht anteilig
           my $letzte_ziffer = $leistdat[1];
           $letzte_ziffer =~ /(\d{4})/;
@@ -1130,8 +1127,8 @@ sub SLLA {
           $posnr_wegegeld+=$letzte_ziffer;
         }
 
-	
-	if ($posnr_wegegeld eq '92' || 
+
+	if ($posnr_wegegeld eq '92' ||
 	    $posnr_wegegeld eq '310' ||
 	    $posnr_wegegeld eq '311' ||
 	    $posnr_wegegeld eq '3100' ||
@@ -1145,7 +1142,7 @@ sub SLLA {
 	  $lfdnr++;
 	  $summe_km+=$epreis;
 	  print "Wegegeld summe: $summe_km, $epreis\n" if ($debug > 1000);
-	} elsif ($posnr_wegegeld eq '94' || 
+	} elsif ($posnr_wegegeld eq '94' ||
 		 $posnr_wegegeld eq '330' ||
 		 $posnr_wegegeld eq '331' ||
 		 $posnr_wegegeld eq '3300' ||
@@ -1169,7 +1166,7 @@ sub SLLA {
 
   # 7 ZHB Segment erzeugen
   $erg .= $self->SLLA_ZHB($dia_datum);$lfdnr++;
-  
+
   # 8 DIA Segment erzeugen
   if ($dia_schl || $dia_text) {
     $erg .= $self->SLLA_DIA($dia_schl,$dia_text);
@@ -1237,7 +1234,7 @@ sub sig {
 
     return ("Kein eigener privater Schlüssel vorhanden, die Rechnung kann nicht signiert werden",0) if (!(-e "$path/privkey/privkey.pem"));
 
-    # 
+    #
     my $cert_opts='';
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg9.pem"! if ($cert_info == 6);
     $cert_opts=qq!-certfile "$cert_path!.qq!certs/itsg8.pem"! if ($cert_info == 5);
@@ -1255,7 +1252,7 @@ sub sig {
     }
     if ($cert_info == 3 && !(-r "$cert_path".'certs/itsg6.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg6.pem) konnte nicht gefunden werden",0);
-    }  
+    }
     if ($cert_info == 4 && !(-r "$cert_path".'certs/itsg7.pem')) {
       return ("Ein Zertifikat der Zertifizierungskette (itsg7.pem) konnte nicht gefunden werden",0);
     }
@@ -1274,8 +1271,8 @@ sub sig {
   }
 
   open AUS, ">$path/tmp/$dateiname.sig" or return ("Konnte Signierte Datei nicht schreiben",0);
-    
- 
+
+
   binmode NUTZ;
   binmode AUS;
  LINE: while (my $zeile=<NUTZ>) {
@@ -1287,7 +1284,7 @@ sub sig {
     return("bitte Passwort prüfen",0); # openssl hat Fehler gemeldet
   }
   close AUS;
- 
+
   # Länge der Datei ermitteln
   my $st=stat($path."/tmp/$dateiname.sig") or return ("konnte Länge der signierten Nutzdaten nicht ermitteln",0);
   return ("$dateiname.sig",$st->size);
@@ -1314,7 +1311,7 @@ sub enc {
   }
   if ($schl_flag == 3) {
     # prüfen, ob Schlüssel noch gültig sind
-    my ($cert_info_text,$cert_info)=$self->get_cert_info("$path/tmp/zik.pem"); 
+    my ($cert_info_text,$cert_info)=$self->get_cert_info("$path/tmp/zik.pem");
     return ("öffentlicher Schlüssel der Datenannahmestelle abgelaufen oder $cert_info_text",0) unless ($cert_info);
 
     # DER verschlüsseln um später base64 encoden zu können
@@ -1323,7 +1320,7 @@ sub enc {
 
   $dateiname =~ s/\.sig//g;
   open AUS,">$path/tmp/$dateiname.enc" or return ("konnte verschlüsselte Nutzdaten nicht schreiben",0);
-    
+
   binmode NUTZ;
   binmode AUS;
  LINE: while (my $zeile=<NUTZ>) {
@@ -1337,7 +1334,7 @@ sub enc {
   }
 
   close AUS;
-  
+
   # Länge der Datei ermitteln
   my $st=stat($path."/tmp/$dateiname.enc") or return ("konnte Länge der verschlüsselten Nutzdaten nicht ermitteln",0);
   return ("$dateiname.enc",$st->size);
@@ -1346,9 +1343,9 @@ sub enc {
 
 
 sub edi_rechnung {
-  # generiert komplette elektronische Rechnung 
+  # generiert komplette elektronische Rechnung
   # Auftrags- und Nutzdatendatei
-  
+
   my $self=shift;
 
   my ($rechnr) = @_;
@@ -1388,7 +1385,7 @@ sub edi_rechnung {
   die "Physikalischer Empfänger konnte für ZIK: $zik nicht ermittelt werden\n" unless (defined($empf_physisch));
 
 
-  
+
 
   my $transref=$h->parm_unique('DTAUS'.$empf_physisch);
   $dateiname .= sprintf "%3.3u",substr((sprintf "%5.5u",$transref),2,3); # Transfernummer
@@ -1418,7 +1415,7 @@ sub edi_rechnung {
   ($dateiname,$laenge_nutz)=$self->enc($dateiname,$schl_flag);
 
 
-  ($erg_auf,$erstell_auf)  = 
+  ($erg_auf,$erstell_auf)  =
     $self->gen_auf($test_ind,$transref,$zik,length($erg_nutz),
 		   $laenge_nutz,
 		   $h->parm_unique('SCHL'.$zik),
@@ -1485,7 +1482,7 @@ sub mail {
   $erg .= 'Content-Transfer-Encoding: quoted-printable'.$crlf;
   $erg .= 'Content-Disposition: inline'.$crlf;
   $erg .= $crlf;
-  
+
   $erg .= encode_qp($dateiname.'.AUF,348,'.$erstell_auf,$crlf).$crlf;
   # Länge der Nutzdatendatei ermitteln
   my $st=stat("$path/tmp/$dateiname_ext") or die "Datei $dateiname_ext für Message Body nicht vorhanden:$!\n";
@@ -1534,7 +1531,7 @@ sub mail {
 
   # prüfen ob Nutzdatendatei noch base64 codiert werden muss
   if ($h->parm_unique('SCHL'.$zik) == 3) {
-    open NUTZ, "mimencode $path/tmp/$dateiname_ext |" or die 
+    open NUTZ, "mimencode $path/tmp/$dateiname_ext |" or die
       "Konnte Nutzdatendatei nicht base64 codieren $!";
     open AUS, ">$path/tmp/$dateiname.base64" or die
       "konnte Nutzdatendatei nicht base64 schreiben $!";
@@ -1559,13 +1556,13 @@ sub mail {
   close NUTZ;
 
   $erg .= $crlf;
-  
+
   return $erg;
-    
+
 }
 
 sub edi_update {
-  # macht update auf Tabelle 
+  # macht update auf Tabelle
   # Rechnung und Leistungsdaten und hinterlegt da den neuen
   # Rechnungsstatus
   my $self=shift;
@@ -1609,7 +1606,7 @@ sub edi_update {
 
 
 sub get_cert_info {
-  # holt Informationen aus einem gegenen Zertifikat 
+  # holt Informationen aus einem gegenen Zertifikat
   # Rückgabe Wert 1 Fehlerwert
   # Rückgabe Wert 2 Ergebnis:
   #  1 == Zertifikat gültig Zertifizierungskette 1
@@ -1644,11 +1641,11 @@ sub get_cert_info {
 
   $guelt_bis=$d->extract_date($guelt_bis);
   $guelt_von=$d->extract_date($guelt_von);
-  
+
 #  warn "Gült von,bis: $guelt_von bis $guelt_bis\n";
   return ("Zertifikat abgelaufen",0) if ($guelt_bis < $TODAY_jmt);
 #  return ("Zertifikat noch nicht gültig",0) if ($guelt_von > $TODAY_jmt);
-  
+
   return ("Zertifikat mit Zertifizierungscert 01",1) if ($guelt_von < 20071213);
   return ("Zertifikat mit Zertifizierungscert 14",2) if ($guelt_von < 20091210);
   return ("Zertifikat mit Zertifizierungscert 56",3) if ($guelt_von < 20111208);

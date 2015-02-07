@@ -1,13 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
-
+#-d:DProf
 
 # Auswahl einer Frau aus den Stammdaten
-
-# $Id: frauenauswahl.pl,v 1.21 2010-04-20 17:34:02 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -214,8 +210,8 @@ if (defined($suchen)) {
     }
 
     if ($sel_status eq 'alle' || # <- alle frauen
-#	($status ne $l->status_text(30) && $sel_status eq 'ungleich erl.') || 
-	($status ne '30' && $sel_status eq 'ungleich erl.') || 
+#	($status ne $l->status_text(30) && $sel_status eq 'ungleich erl.') ||
+	($status ne '30' && $sel_status eq 'ungleich erl.') ||
 	$sel_status eq $status # angegebene status
        ) {
       print '<tr>';

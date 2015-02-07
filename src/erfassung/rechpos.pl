@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Rechnungspositionen erfassen für einzelne Rechnungsposition
-
-# $Id: rechpos.pl,v 1.54 2011-06-19 08:23:13 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -135,7 +132,7 @@ print '<body id="rechpos_window" bgcolor=white>';
 # Formular für eigentliche Erfassung ausgeben
 print '<form name="rechpos" action="rechpos.pl" method="get" target=rechpos onsubmit="return leistung_speicher(this);" bgcolor=white>';
 
-# Leistungspositionen 
+# Leistungspositionen
 # z1 s1
 print '<h3 style="margin-top:1pt;margin-bottom:3pt">Leistungspositionen</h3>';
 print '<table border="0" align="left">';
@@ -317,7 +314,7 @@ sub printbox {
   my ($wahl) = @_;
   #  print "WAHL $wahl\n";
   $l->leistungsart_such($TODAY_jmt,$wahl);
-  while (my @werte = $l->leistungsart_such_next() ) {  
+  while (my @werte = $l->leistungsart_such_next() ) {
     my $fuerzeit_flag='';
     my ($l_posnr,$l_bez,$l_preis,$l_fuerzeit,$l_samstag,$l_nacht,$l_kilometer)=($werte[1],$werte[21],$werte[4],$werte[9],$werte[8],$werte[7],$werte[22]);
     ($fuerzeit_flag,$l_fuerzeit)=$d->fuerzeit_check($l_fuerzeit);
@@ -343,7 +340,7 @@ sub printbox {
 
       # Script um Zeitanzeige abzuschalten
       if (1 ||
-	  $l_fuerzeit || 
+	  $l_fuerzeit ||
 	  $l_samstag ||
 	  $l_nacht ||
 	  $l->leistungsart_pruef_zus($l_posnr,'SAMSTAG') ||
@@ -422,14 +419,14 @@ sub speichern {
   if (my $posnr_neu=$hebgo->ersetze_samstag) {
     $hint .= 'Positionsnummer '.$posnr.' w/ Samstag ersetzt durch '.$posnr_neu.'\n';
     $posnr=$posnr_neu;
-  } 
-  
+  }
+
   # Sonn- oder Feiertag ersetzen?
   elsif ($posnr_neu=$hebgo->ersetze_sonntag) {
 
     $hint .= 'Positionsnummer '.$posnr.' w/ Sonntag oder Feiertag ersetzt durch '.$posnr_neu.'\n';
     $posnr=$posnr_neu;
-  } 
+  }
 
   # Nacht
   elsif($posnr_neu=$hebgo->ersetze_nacht) {
@@ -439,9 +436,9 @@ sub speichern {
     $entfernung_nacht = $entfernung_tag;
     $entfernung_tag = 0;
   }
-  
+
   $zuschlag = $hebgo->zuschlag_samstag if ($hebgo->zuschlag_samstag);
-  $zuschlag = $hebgo->zuschlag_sonntag if ($hebgo->zuschlag_sonntag);   
+  $zuschlag = $hebgo->zuschlag_sonntag if ($hebgo->zuschlag_sonntag);
   $zuschlag=$hebgo->zuschlag_nacht if($hebgo->zuschlag_nacht);
 
   # Zweitesmal
@@ -458,18 +455,18 @@ sub speichern {
 		       zeit_von => $zeit_von,
 		       zeit_bis => $zeit_bis,
 		      );
-  
+
   # Prüfung ob Zuschlag für valides Datum gewählt wurde
   if($hebgo->zuschlag_plausi) {
     $hint .= '\nFEHLER: Positionsnummer '.$posnr.' nur zu bestimmten Tagen und Zeiten, es wurde nichts gespeichert';
     $hscript = 'document.rechpos.datum.select();document.rechpos.datum.focus()';
     return $hint;
   }
-  
+
 
   # Zukunft Plausi
   return $hint .= $hebgo->zukunft_plausi if ($hebgo->zukunft_plausi);
-  
+
   # Leistungstyp Plausi
   return $hint .= $hebgo->ltyp_plausi if ($hebgo->ltyp_plausi);
 
@@ -518,10 +515,10 @@ sub speichern {
   # spezielle Prüfung für PosNr. 0800
   return $hint .= $hebgo->pos0800_plausi if ($hebgo->pos0800_plausi);
 
-  # spezielle Prüfung für PosNr. 40 
+  # spezielle Prüfung für PosNr. 40
   return $hint .= $hebgo->pos40_plausi if ($hebgo->pos40_plausi);
 
-  # spezielle Prüfung für PosNr. 270 
+  # spezielle Prüfung für PosNr. 270
   return $hint .= $hebgo->pos270_plausi if ($hebgo->pos270_plausi);
 
   # spezielle Prüfung für PosNr. 2700
@@ -580,7 +577,7 @@ sub speichern {
   } else {
     $preis = $l_epreis;
   }
-  
+
 
 
   # einfügen in Datenbank
@@ -593,7 +590,7 @@ sub speichern {
     $sieben_spaeter =~ s/-//g;
     while ($i<$anzahl_kurse) {
       $sieben_spaeter=sprintf "%4.4u-%2.2u-%2.2u",Add_Delta_Days(unpack('A4A2A2',$sieben_spaeter),7);
-      
+
       my $datum_l7s=  $sieben_spaeter;
       $sieben_spaeter =~ s/-//g;
       my $hebgo7s = Heb_GO->new(
@@ -604,8 +601,8 @@ sub speichern {
 				zeit_von => $zeit_von,
 				zeit_bis => $zeit_bis,
 			       );
-      
-      if ($hebgo7s->pos7_plausi || 
+
+      if ($hebgo7s->pos7_plausi ||
 	  $hebgo7s->pos070_plausi ||
 	  $hebgo7s->pos0700_plausi) {
 	$hint .= "Es wurden nur $i Kurse gespeichert.";
@@ -627,7 +624,7 @@ sub speichern {
   }
 
   # prüfen ob einmaliger Zuschlag gerechnet werden muss
-  # wird genau dann gemacht, wenn die Positionsnummer 
+  # wird genau dann gemacht, wenn die Positionsnummer
   # noch nicht erfasst ist
   my ($einmal_zus) = $l->leistungsart_such_posnr('EINMALIG',$posnr,$datum_l);
   $einmal_zus = '' unless($einmal_zus);
@@ -642,7 +639,7 @@ sub speichern {
 	$zuschlag=0;
       } else {
 	loeschen($id); # Neues Datum ist kleiner als bisheriges
-      }      
+      }
     }
   }
 
@@ -671,7 +668,7 @@ sub speichern {
   if ($mat_zus2 eq '' && $mat_zus =~ /(\+[A-Z]?)(\d{1,4})(\w*)/ && $2 > 0) {
     my $m_zus=$1.$2.$3;$m_zus =~ s/\+//;
     # Entfernung nicht 2mal rechnen, deshalb im insert statement auf 0 setzen
-    # Begründungen müssen bei automatisch gewählen Auslagen nicht 
+    # Begründungen müssen bei automatisch gewählen Auslagen nicht
     # angegeben werden, hier löschen
     # keine Zeit von,bis
     my ($ze_preis,$kbez) = $l->leistungsart_such_posnr('EINZELPREIS,KBEZ',$m_zus,$datum_l);
@@ -686,7 +683,7 @@ sub speichern {
   $hint .= matpausch($mat_zus,$mat_zus2,$datum_l);
   ($mat_zus,$mat_zus2) = $l->leistungsart_such_posnr('ZUSATZGEBUEHREN3,ZUSATZGEBUEHREN4',$zuschlag,$datum_l);
   $hint .= matpausch($mat_zus,$mat_zus2,$datum_l);
-  
+
 
   $entfernung_tag*=$anzahl_frauen;
   $entfernung_nacht*=$anzahl_frauen;
@@ -702,7 +699,7 @@ sub abh {
   # z.B. Samstag, Sonntag, Nacht (muss übergeben werden)
   # wenn diese existiert wird die ID der entsprechenden Nummer
   # als Ergebnis geliefert, undef sonst
-  
+
   my ($posnr,$abh_posnr,$datum_l) = @_;
   my ($l_posnr) = $l->leistungsart_such_posnr($abh_posnr,$posnr,$datum_l);
   return unless($l_posnr);
@@ -726,7 +723,7 @@ sub abh {
 
 sub matpausch {
   # prüfen, ob Materialpauschale für Zuschlag gerechnet werden muss
-  # wird genau dann gemacht, wenn Zusatzgebühr bei Zuschlag 
+  # wird genau dann gemacht, wenn Zusatzgebühr bei Zuschlag
   # auf Material verweisst und Abhängigkeit zur Zeit besteht
   # der Vergleichswert wird aus Zusatzvermerk ermittelt
   my ($mat_zus,$mat_zus2,$datum_l) = @_;
@@ -738,7 +735,7 @@ sub matpausch {
     my $m_zus=$1.$2;$m_zus=~s/\+//;
     my $comp=0; # Flag ob gespeichert werden muss oder nicht
     # operator für Vergleich ermitteln
-    my ($op,$op_wert,$op_vgltyp) = 
+    my ($op,$op_wert,$op_vgltyp) =
       $mat_zus2 =~ /([>,<,=]{1})(\d{1,4})(\D{1,2})/;
     my $kzetgt=2; # errechneter Termin (default)
     if ($op_vgltyp eq 'GK') { # Geburtsdatum Kind
@@ -757,7 +754,7 @@ sub matpausch {
       $comp = 1 if (abs($days)==$op_wert && $op eq '=');
       $comp = 1 if (abs($days)>$op_wert && $op eq '>');
     }
-    
+
     if ($comp) { # es muss gespeichert werden
       # Entfernung nicht 2mal rechnen bei Materialpauschale, daher
       # mit Entfernung 0 aufrufen und Zeit 0, keine begründung
@@ -785,7 +782,7 @@ sub loeschen {
   my $posnr=$erg[1];
   my $datum_l=$d->convert($erg[4]);
   $l->leistungsdaten_delete($frau_id,$leist_id);
-  
+
   my $leist_id_loe=abh($posnr,'SAMSTAG',$datum_l);
   loeschen($leist_id_loe) if($leist_id_loe);
 

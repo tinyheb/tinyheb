@@ -1,8 +1,5 @@
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: Heb.pm,v 1.19 2012-12-30 12:36:03 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2003 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -168,7 +165,7 @@ sub parm_up {
 sub parm_ins {
   # fügt neuen Parameter in Parms Tabelle ein
   my $self=shift;
-  
+
   # zunächst neue ID für Parameter holen
   my $id=$self->parm_unique('PARM_ID');
   $id++;
@@ -252,7 +249,7 @@ sub parm_get_id {
 sub parm_such_werte {
   # sucht nach kriterien Parameter
   my $self=shift;
-  
+
   $parm_such_werte = $dbh->prepare("select * from Parms ".
 				   "where name like ? and ".
 				   "value like ? and ".
@@ -270,13 +267,13 @@ sub win32_openssl {
   my $openssl='';
   my $pfad="/OpenSSL/bin/openssl";
   return $pfad if (-e "$pfad.exe");
-  
-  
+
+
   # Suche unterhalb /Programme/
   $pfad="/Programme/OpenSSL/bin/openssl";
   return $pfad if (-e "$pfad.exe");
 
-  # zusätzlicher Pfad 
+  # zusätzlicher Pfad
   $pfad="/OpenSSL-Win32/bin/openssl";
   return $pfad if (-e "$pfad.exe");
 
@@ -286,12 +283,12 @@ sub win32_openssl {
 
 sub win32_mysql {
   my $pfad='';
-  
+
   # Suche Server 5.1
   $pfad='/Programme/MySQL/MySQL Server 5.1/bin/';
   return $pfad if (-e $pfad."mysql.exe");
-  
-  
+
+
   # Suche Server 5.0
   $pfad='/Programme/MySQL/MySQL Server 5.0/bin/';
   return $pfad if (-e $pfad."mysql.exe");
@@ -354,7 +351,7 @@ MySQLDBName = PRD_Hebamme
 MySQLServerName = localhost
 MySQLServerPort = 3306
 MySQLServerUser = wwwrun
-MySQLServerPassword = 
-MySQLServerRootPassword = 
+MySQLServerPassword =
+MySQLServerRootPassword =
 
 BackupFilePath = /var/tinyheb/sqlbak

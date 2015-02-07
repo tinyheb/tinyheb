@@ -1,9 +1,6 @@
 
 # globales Package für die Hebammen Verarbeitung
 
-# $Id: string_helpers.pm,v 1.19 2014-06-11 23:36:03 renkljs Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2003 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -35,4 +32,3 @@ sub string2filename
 }
 
 1;
-

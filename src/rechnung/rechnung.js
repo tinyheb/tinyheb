@@ -1,9 +1,6 @@
 /* script für Plausiprüfungen im Rahmen der
 # Rechnungserfassung/ Generierung und Navigation
 
-# $Id: rechnung.js,v 1.23 2009-07-26 07:12:52 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2004 - 2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -90,7 +87,7 @@ function druck_fertig(frau_id,vorname,nachname,geb_frau,geb_kind,plz,ort,strasse
       return false;
     }
   }
-  
+
   if (frau_id > 0) {
     open("ps2html.pl?frau_id="+frau_id+"&speichern=save","rechnung");
     // Knopf entgültig Drucken auf disabled stellen

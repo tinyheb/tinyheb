@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Daten der Datenannahmestellen erfassen, ändern, löschen
-
-# $Id: da_stammdaten.pl,v 1.7 2011-03-13 12:34:19 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -288,4 +285,3 @@ sub hole_da_daten {
   }
   return;
 }
-

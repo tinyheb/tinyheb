@@ -1,8 +1,5 @@
 # Makefile für tinyHeb
 
-# $Id: Makefile,v 1.10 2008-06-21 09:58:29 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 PM=*.pm
 HTML=*.html
 TXT=../*.txt ../README
@@ -38,7 +35,7 @@ install:
 	if [ ! -e $(CONFDIR)/tinyheb.conf ]; then \
 		$(INSTALL) -d $(VERBOSE)  -m +x,+r,u+w,g-w,o-w -p $(CONFDIR); \
 		$(INSTALL) $(VERBOSE) -m -x,+r,u+w,g-w,o-w -p conf/tinyheb.conf $(CONFDIR)/tinyheb.conf; \
-	fi; 
+	fi;
 
 	@echo Installiere nach $(INST_DIR)
 	$(INSTALL) -d $(VERBOSE)  -m +x,+r,u+w,g-w,o-w -p $(INST_DIR)
@@ -99,9 +96,5 @@ install:
 
 # MySQL init
 	@echo jetzt muss noch die Datenbank initialisiert werden
-	cd $(INST_DIR)/DATA; 
+	cd $(INST_DIR)/DATA;
 	@echo  'mysql -u root < init.sql muss noch im Verzeichnis $(INST_DIR)/DATA ausgeführt werden'
-
-
-
-

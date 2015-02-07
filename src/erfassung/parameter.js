@@ -1,8 +1,5 @@
-/* script für Navigation 
+/* script für Navigation
 # im Rahmen der Parametererfassung
-
-# $Id: parameter.js,v 1.5 2008-05-22 17:19:15 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany

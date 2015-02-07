@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Rechnungen bearbeiten für einzelne Rechnungen
-
-# $Id: rechposbear.pl,v 1.22 2013-10-02 19:48:03 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -100,7 +97,7 @@ print '<body bgcolor=white>';
 # Formular für eigentliche Erfassung ausgeben
 print '<form name="rechposbear" action="rechposbear.pl" method="get" target=rechposbear onsubmit="return save_rechposbear(this);" bgcolor=white>';
 
-# Rechnung 
+# Rechnung
 # z1 s1
 print '<h3>Rechnung</h3>';
 print '<table id="haupt" border="0" align="left">';
@@ -212,7 +209,7 @@ sub print_summen {
   $summe_gez_akt = 0 unless($summe_gez_akt);
   $summe_gez_akt = sprintf "%.2f",$summe_gez_akt;
   $summe_gez_akt =~ s/\./,/g;
-  
+
   # offene Rechnungen
   $l->rechnung_such('sum(betrag)-sum(betraggez)','status<30');
   my $summe_offen = $l->rechnung_such_next();
@@ -282,7 +279,7 @@ sub speichern {
     $hint .= "gez. Betrag zu groß, nichts gespeichert";
     return;
   }
-  
+
   my $status=0;
   if ($betraggez_s+$r_betraggez < $r_betrag) {
     # Teilzahlung
@@ -341,4 +338,3 @@ sub stornieren {
   }
   $r_status=80;
 }
-

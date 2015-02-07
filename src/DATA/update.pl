@@ -3,9 +3,6 @@
 
 # Verarbeiten der Datenbankänderungen bei einem Programmupdate
 
-# $Id: update.pl,v 1.13 2013-03-02 14:52:38 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2007 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -151,7 +148,7 @@ LINE:while (my $line=<SQL>) {
   do_create($sql,$tabelle) if (uc $tag eq 'CREATE');
   do_alter($sql,$tabelle,$dep) if (uc $tag eq 'ALTER');
 
-}    
+}
 
 
 write_LOG("Beende update ----------------------------");
@@ -186,7 +183,7 @@ sub do_insert {
   my $sdep = $dbh->prepare("select * from $tabelle where $dep;");
   error("unbekanntes Problem aufgetreten $DBI::errstr\n") unless (defined($sdep));
 
-  
+
   my $erg=$sdep->execute() or error($dbh->errstr());
   write_LOG("insert dep $erg $sdep");
   if (!defined($erg) or $erg == 0) {
@@ -260,7 +257,7 @@ sub get_parm {
 
 sub parm_up {
   # update auf bestimmten Parameter
-  
+
   my ($name,$value,$dbh) = @_;
   $dbh->prepare("update Parms set ".
 		"VALUE=? where ".
@@ -345,7 +342,7 @@ MySQLDBName = PRD_Hebamme
 MySQLServerName = localhost
 MySQLServerPort = 3306
 MySQLServerUser = wwwrun
-MySQLServerPassword = 
-MySQLServerRootPassword = 
+MySQLServerPassword =
+MySQLServerRootPassword =
 
 BackupFilePath = /var/tinyheb/sqlbak

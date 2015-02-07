@@ -1,7 +1,5 @@
 # Updates für tinyHeb
 #
-# $Id: downgrade.sql,v 1.1 2008-07-25 12:00:36 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 #
 # ---------- nach 0.19.0 ----------------
 #

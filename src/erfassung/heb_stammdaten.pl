@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Stammdaten der Hebamme erfassen, ändern, löschen
-
-# $Id: heb_stammdaten.pl,v 1.7 2011-10-10 17:03:51 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006 - 2011 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -264,7 +261,7 @@ sub speichern {
   $h->parm_up('HEB_TEL',$tel);
   $h->parm_up('HEB_EMAIL',$email);
   $h->parm_up('HEB_BUNDESLAND',$bundesland);
-  $h->parm_up('HEB_TARIFKZ',$tarifkz); 
+  $h->parm_up('HEB_TARIFKZ',$tarifkz);
   $h->parm_up('HEB_IK_BELEG_KKH',$ik_beleg_kkh);
   $privat_faktor =~ s/,/\./g;
   $h->parm_up('PRIVAT_FAKTOR',$privat_faktor);
@@ -285,7 +282,7 @@ sub hole_heb_daten {
   $namebank = $h->parm_unique('HEB_NAMEBANK');
   $tel = $h->parm_unique('HEB_TEL');
   $email = $h->parm_unique('HEB_EMAIL');
-  
+
   $bundesland = $h->parm_unique('HEB_BUNDESLAND');
   $h->parm_ins('HEB_BUNDESLAND','NRW','Bundesland aus dem die Hebamme kommt') if(!defined($bundesland));
   $bundesland = $h->parm_unique('HEB_BUNDESLAND');
@@ -293,11 +290,10 @@ sub hole_heb_daten {
   $ik_beleg_kkh = $h->parm_unique('HEB_IK_BELEG_KKH');
   $h->parm_ins('HEB_IK_BELEG_KKH','','IK Nummer des Krankenhaus, falls Beleghebamme') if(!defined($ik_beleg_kkh));
   $ik_beleg_kkh = $h->parm_unique('HEB_IK_BELEG_KKH');
-  
+
   $tarifkz = $h->parm_unique('HEB_TARIFKZ');
   $privat_faktor = $h->parm_unique('PRIVAT_FAKTOR');
   $privat_faktor =~ s/\./,/g;
 
   return;
 }
-

@@ -1,6 +1,3 @@
-# $Id: README_win.txt,v 1.6 2007-07-27 15:39:14 baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 << 0. Was ist tinyHeb >>
 
 tinyHeb ist eine Webapplikation mit der Hebammen die notwendigen Abrechnungen
@@ -14,7 +11,7 @@ Linux Nutzer lesen bitte die Installationshinweise in der Datei README
 
 Für Windows Nutzer steht unter http://home.arcor.de/thomas.baum/tinyheb/source
 eine angepasste Version zur Verfügung. Sollte das hier entpackte Archiv
-von einer anderen Quelle stammen, ist es sinnvoll die Sourcen erneut 
+von einer anderen Quelle stammen, ist es sinnvoll die Sourcen erneut
 herunter zu laden.
 
 Heiner Alferink hat eine sehr ausführliche Dokumentation zur Installation
@@ -22,7 +19,7 @@ von tinyHeb unter Windows XP erstellt. Diese findet sich an folgender Stelle:
 http://home.arcor.de/thomas.baum/tinyheb/Installation_tinyheb_win32.pdf
 
 << Schritt 1 >>
-Um tinyHeb unter Windows benutzen zu können müssen zunächst verschiedene 
+Um tinyHeb unter Windows benutzen zu können müssen zunächst verschiedene
 Programme aus dem Internet heruntergeladen werden. Der Download aus dem
 Internet sollte nur erfolgen, wenn man über einen DSL Anschluss verfügt,
 oder sehr viel Zeit hat, da ca. 30MB heruntergeladen werden müssen.
@@ -114,7 +111,7 @@ g. Acrobat Reader Installieren (nur bei Bedarf)
 << Schritt 3 >>
 	Computer Neu starten
 
-Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 70%	
+Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 70%
 
 << Schritt 4 >>
 	Die Archiv Datei von tinyHeb entpacken
@@ -134,7 +131,7 @@ Wenn es eine Fortschrittsanzeige geben würden, wäre diese jetzt bei 90%
 << Schritt 5 >>
 	ACHTUNG:
 	wenn Ihr den Apache Webserver oder den MySQL Server schon vorher installiert
-	hattet, sind Ihr quasi fertig mit der Installation und solltet die 
+	hattet, sind Ihr quasi fertig mit der Installation und solltet die
 	nächsten in Schritt 5 aufgeführten Schritte nicht durchführen, da
 	die Konfiguration des Webservers und des MySQL Servers ggf.
 	überschrieben werden.
@@ -152,7 +149,7 @@ um elektronische Rechnungen zu verschicken existiert das Programm xauftrag.pl im
 << Schritt 6 >>
         Jetzt ist es noch notwendig die Parameter wie in Kapitel 2.4 des Handbuches beschrieben
         anzupassen, damit z.B. der wirkliche Name der Hebamme auf der Rechnung erscheint.
-	
+
 
 << 2. Änderungshistorie >>
 Die Änderungshistorie befindet sich in der Datei RelNotes.txt
@@ -174,4 +171,3 @@ OpenSSL muss installiert sein, wenn man verschlüsselte Rechnungen erzeugen möcht
 << 5. Fragen >>
 wenn es Probleme bei der Installation geben sollte, schreibt mir einfach eine Mail:
 thomas.baum@arcor.de
-

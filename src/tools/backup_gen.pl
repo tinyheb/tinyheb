@@ -1,12 +1,9 @@
 #!/usr/bin/perl -w
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Backup der tinyHeb Datenbank anlegen
-
-# $Id: backup_gen.pl,v 1.9 2010-07-18 09:37:25 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2006 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -108,4 +105,3 @@ while($zeile=<SICHER>) {
 $gz->gzclose;
 close SICHER;
 die "Achtung: es wurde keine korrekte Sicherung angelegt" if (!defined($byteswritten2));
-

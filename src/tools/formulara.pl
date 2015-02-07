@@ -4,9 +4,6 @@
 
 # Erzeugen Formular Versichertenbestätigung A und Druckoutput (Postscript)
 
-# $Id: formulara.pl,v 1.2 2009-12-31 16:48:40 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2008 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -99,8 +96,8 @@ my $i=1;
 for ($i=1;$i<6;$i+=1) {
   $p->line($x1,18.4-$i*0.55,12,18.4-$i*0.55);
   $p->text({align => 'center'},$x1+6.4,18.6-$i*0.55,$i);
-}     
-$p->text({align => 'center'},$x1+6.4,18.6-$i*0.55,$i);     
+}
+$p->text({align => 'center'},$x1+6.4,18.6-$i*0.55,$i);
 
 # Überschrift
 $p->setfont($font_b,12);
@@ -163,33 +160,33 @@ foreach my $posnr ('0700','2700') {
   $y1=$y2-0.6;
   $p->setfont($font,8);
   $p->text({align => 'center'},$x1+1,$y1,'Datum');
-  
+
   # Senkrechte Querlinie und Uhrzeit von
   $p->line($x1+2.1,$y2,$x1+2.1,1.5);
   $y1=$y2-0.6;
   $p->setfont($font,8);
   $p->text({align => 'center'},$x1+2.9,$y1,'Uhrzeit von');
-  
+
   # Senkrechte Querlinie und Uhrzeit bis
   $p->line($x1+3.7,$y2,$x1+3.7,1.5);
   $y1=$y2-0.6;
   $p->setfont($font,8);
   $p->text({align => 'center'},$x1+4.5,$y1,'Uhrzeit bis');
-  
+
   # fette Linie nach Uhrzeit bis
   $p->setlinewidth(0.05);
-  $p->line($x1+5.3,$y2,$x1+5.3,1.5); 
-  
+  $p->line($x1+5.3,$y2,$x1+5.3,1.5);
+
   # lfd. Heb. Nr.
   $p->setlinewidth(0.02);
   $p->setfont($font,8);
   $p->text({align => 'center'},$x1+5.9,$y1+0.255,'lfd. Heb.');
   $p->text({align => 'center'},$x1+5.9,$y1,'Nr.');
-  
+
   # fette Linie nach lfd. Heb. Nr
   $p->setlinewidth(0.05);
-  $p->line($x1+6.4,$y2,$x1+6.4,1.5); 
-  
+  $p->line($x1+6.4,$y2,$x1+6.4,1.5);
+
   # lfd. Posnr
   $p->setlinewidth(0.02);
   $p->setfont($font_b,8);
@@ -197,8 +194,8 @@ foreach my $posnr ('0700','2700') {
 
   # fette Linie nach lfd. Heb. Nr
   $p->setlinewidth(0.05);
-  $p->line($x1+7.2,$y2,$x1+7.2,1.5); 
-  
+  $p->line($x1+7.2,$y2,$x1+7.2,1.5);
+
   # Unterschrift
   $p->setlinewidth(0.02);
   $p->setfont($font_b,8);
@@ -305,4 +302,3 @@ if ($q->user_agent =~ /Windows/) {
   }
   close AUSGABE;
 }
-

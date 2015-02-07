@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Stammdaten erfassen
-
-# $Id: stammdatenerfassung.pl,v 1.51 2013-10-02 19:29:54 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -117,7 +114,7 @@ if ($ik_krankenkasse) {
       my ($ktr,$zik)=$k->krankenkasse_ktr_da($ik_krankenkasse);
       my ($name_zik)=$k->krankenkasse_sel("KNAME",$zik);
       $status_edi = $name_zik.' '.$status_edi if ($zik);
-    } 
+    }
   }
 } elsif($versichertenstatus ne 'privat') {
   $name_krankenkasse = 'noch keine gültige Krankenkasse gewählt';
@@ -243,7 +240,7 @@ print "<td><input type='text' name='entfernung' value='$entfernung' size='10'></
 print '</tr>';
 print "\n";
 
-# leere Zeile 
+# leere Zeile
 print '<tr><td>&nbsp;</td></tr>';
 # Zeile Krankenversicherungsnummer, Versichertenstatus, IK Krankenkasse
 print '<tr>';
@@ -302,7 +299,7 @@ print '</tr>';
 print '</table>';
 print "\n";
 
-# leere Zeile 
+# leere Zeile
 print '<tr><td>&nbsp;</td></tr>';
 
 # Zeile mit Geburtsdatum,Zeit Kind
@@ -442,9 +439,9 @@ sub speichern {
   $uhr_k = undef if ($uhr_kind eq '');
   my $ent_sp = $entfernung;
   $ent_sp =~ s/,/\./g;
-  my $plz_sp = $plz; 
+  my $plz_sp = $plz;
   $plz_sp = 0 if (!defined($plz_sp) or $plz_sp eq '');
-  my $ik_sp = $ik_krankenkasse; 
+  my $ik_sp = $ik_krankenkasse;
   $ik_sp = 0 if (!defined($ik_sp) or $ik_sp eq '');
   $geb_k = '0000-00-00' if(!defined($geb_k) or $geb_k eq 'error');
   $geb_f = '0000-00-00' if(!defined($geb_f) or $geb_f eq 'error');
@@ -463,7 +460,7 @@ sub speichern {
 
   $s->stammdaten_werte('VORNAME,NACHNAME,GEBURTSDATUM_KIND,GEBURTSDATUM_FRAU',
 		       $select);
- 
+
   my (@stammdaten_werte)=$s->stammdaten_werte_next();
   if (@stammdaten_werte) {
     $stammdaten_werte[2]='' unless ($stammdaten_werte[2]);
@@ -480,7 +477,7 @@ sub speichern {
 
   $s->stammdaten_werte('VORNAME,NACHNAME,GEBURTSDATUM_KIND,GEBURTSDATUM_FRAU',
 		       $select);
- 
+
   (@stammdaten_werte)=$s->stammdaten_werte_next();
   if (@stammdaten_werte) {
     $stammdaten_werte[2]='' unless ($stammdaten_werte[2]);
@@ -525,10 +522,10 @@ sub aendern {
   my $geb_k = $d->convert($geb_kind);
   my $ent_sp = $entfernung;
   $ent_sp =~ s/,/\./g;
-  my $plz_sp = $plz; 
+  my $plz_sp = $plz;
 #  $plz_sp = 0 if (!defined($plz_sp) or $plz_sp eq '');
   $plz_sp = 0 unless($plz_sp);
-  my $ik_sp = $ik_krankenkasse; 
+  my $ik_sp = $ik_krankenkasse;
   $ik_sp = 0 if (!defined($ik_sp) or $ik_sp eq '');
   $geb_k = '0000-00-00' if(!defined($geb_k) or $geb_k eq 'error');
   $geb_f = '0000-00-00' if(!defined($geb_f) or $geb_f eq 'error');
@@ -573,7 +570,7 @@ sub hole_frau_daten {
   $uhr_kind='' if (!($uhr_kind) || $uhr_kind eq '00:00:00');
   $privat_faktor = '' unless($privat_faktor);
   $privat_faktor =~ s/\./,/;
-  
+
   return ($frau_id,$frau_id2,$vorname,$nachname,$geb_frau,$geb_kind,
 	  $plz,$ort,$tel,$strasse,$anz_kinder,$entfernung,$kv_nummer,
 	  $kv_gueltig,$versichertenstatus,$ik_krankenkasse,$naechste_hebamme,

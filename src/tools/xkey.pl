@@ -8,9 +8,6 @@
 # identisch zu key.pl -c
 # aber mit Grafischer Oberfläche
 
-# $Id: xkey.pl,v 1.2 2011-01-24 18:52:55 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2008 - 2011 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -177,7 +174,7 @@ if ($^O =~ /MSWin32/) {
 } else {
   $path .='/.tinyheb';
 }
-		   
+
 my $orig_path = $path;
 
 mkdir "$path" if(!(-d "$path"));
@@ -202,26 +199,26 @@ sub process_file {
 
   # öffnen der Datei mit den Informationen
   open FILE, $file or fehler("Konnte Datei $file nicht zum Lesen öffnen $!\n");
-  
+
   $counter=0;
-  my $line_counter = 0; 
+  my $line_counter = 0;
   my $zeile = '';
-  
+
   # öffnen Datei zum schreiben
   unlink("$path/tmpcert.pem");
   open SCHREIB, ">$path/tmpcert.pem"
     or fehler("Konnte Datei nicht zum schreiben öffnen $!\n");
-  
+
   print SCHREIB "-----BEGIN CERTIFICATE-----\n";
  LINE:while ($zeile=<FILE>) {
     my $ent = chomp($zeile);
     if (length($zeile)>1) {
       print SCHREIB $zeile."\n";
 #      $erg .= $zeile."\n";
-    } else {  
+    } else {
       print SCHREIB "-----END CERTIFICATE-----\n";
       close(SCHREIB);
-      
+
 
       my ($ik,
 	  $organisation,
@@ -235,18 +232,18 @@ sub process_file {
 
       fehler("konnte Seriennummer eines Zertifikates nicht ermittlen") unless ($serial);
       print "Seriennummer $serial\n" if $debug;
-      
+
       $counter++;
 #      my ($pubkey_laenge,$algorithmus)=get_public_key("$path/tmpcert.pem");
       print "public key: $pubkey_laenge, algo: $algorithmus\n" if $debug;
-      
+
       if ($pubkey_laenge < 2000) {
 	fehler("Schlüssel zu kurz für IK: $ik Schlüssellänge: $pubkey_laenge < 2000 entweder die Datei annahme-pkcs.key oder gesamt-pkcs.key einspielen, die Vearbeitung wird abgebrochen\n");
 	die;
       }
-      
-      
-      print "Einlesen Schlüssel für IK: $ik\n" if $debug; 
+
+
+      print "Einlesen Schlüssel für IK: $ik\n" if $debug;
       $erg->insert('end',"Einlesen Schlüssel für IK: $ik\n") if $debug;
 
       if ($ik && $ik eq $ik_hebamme) {
@@ -265,8 +262,8 @@ sub process_file {
 	$mw->update;
       }
 
-      if ($ik && 
-	  $herausgeber !~ /ITSG TrustCenter fuer sonstige Leistungserbringer/ && 
+      if ($ik &&
+	  $herausgeber !~ /ITSG TrustCenter fuer sonstige Leistungserbringer/ &&
 	  $herausgeber !~ /DKTIG TrustCenter fuer Krankenhaeuser und Leistungserbringer PKC/) {
 	print "Herausgeber des Schlüssels/ Zertifikats ist nicht das Trustcenter für sonstige Leistungserbringer, Verarbeitung wird abgebrochen\n";
 	fehler("Herausgeber des Schlüssels/ Zertifikats ist nicht das Trustcenter für sonstige Leistungserbringer, Verarbeitung wird abgebrochen\n");
@@ -300,7 +297,7 @@ $mw->update;
 sub get_all {
   my ($cert_name) = @_;
   system("$openssl x509 -in $cert_name -subject -dates -serial -noout -certopt no_header -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_serial -certopt no_version -certopt no_issuer -certopt no_signame -text") if $debug;
-  open LESNAME,"$openssl x509 -in $cert_name -subject -dates -serial -noout -certopt no_header -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_serial -certopt no_version -certopt no_issuer -certopt no_signame -text |" or 
+  open LESNAME,"$openssl x509 -in $cert_name -subject -dates -serial -noout -certopt no_header -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_serial -certopt no_version -certopt no_issuer -certopt no_signame -text |" or
     fehler("konnte aus Zertifikat keine Organisation ermitteln\n");
 
   my $guelt_von=undef;

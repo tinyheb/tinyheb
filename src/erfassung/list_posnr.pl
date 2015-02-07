@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # erfasste Rechnungsposten ausgeben
-
-# $Id: list_posnr.pl,v 1.17 2010-01-31 12:22:56 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -57,7 +54,7 @@ print '<link href="../Heb.css" rel="stylesheet" type="text/css">';
 print '</head>';
 
 
-# Alle Felder zur Eingabe ausgeben 
+# Alle Felder zur Eingabe ausgeben
 print '<table rules=rows style="table-layout:fixed" border="1" width="870" align="left">';
 
 # jetzt Rechnungsposten ausgeben
@@ -127,5 +124,3 @@ print "\n";
 print "<script>window.scrollBy(0,10000);</script>";
 print "</body>";
 print "</html>";
-
-

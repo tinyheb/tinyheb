@@ -1,8 +1,5 @@
 # Package um Datümer zu verarbeiten
 
-# $Id: Heb_datum.pm,v 1.29 2010-01-31 12:28:56 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2004 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -71,7 +68,7 @@ sub bundeslaender {
 sub convert {
 
 =head2 $d->convert($datum)
-    
+
 konvertiert $datum vom Format tt.mm.jjjj oder tt.mm.jj nach jjj-mm-tt.
 Falls $datum schon das Format jjjj-mm-tt hat, wird dieses als Ergebnis
 geliefert.
@@ -81,7 +78,7 @@ Falls jj > 49 wird Jahrhundert 1900 angenommen, 2000 sonst
 es wird "error" geliefert, falls Datum nicht gültig ist
 
 =cut
-  
+
   my $self=shift; # package namen vom Stack nehmen
 
   my ($eingabe_datum) = @_;
@@ -99,7 +96,7 @@ es wird "error" geliefert, falls Datum nicht gültig ist
 sub convert_tmj {
 
 =head2 $d->convert_tmj($datum)
-    
+
 konvertiert $datum vom Format jjjj-mm-tt oder jj-mm-tt nach tt.mm.jjjj
 Falls $datum schon das Format tt.mm.jjjj hat, wird dieses als Ergebnis
 geliefert.
@@ -109,7 +106,7 @@ Falls jj > 49 wird Jahrhundert 1900 angenommen, 2000 sonst
 es wird "error" geliefert, falls Datum nicht gültig ist
 
 =cut
-  
+
   # konvertiert datum vom Format jjjj-mm-tt nach tt.mm.jjjj
   # es wird "error" geliefert, falls Datum nicht gültig ust
   my $self=shift;
@@ -126,7 +123,7 @@ es wird "error" geliefert, falls Datum nicht gültig ist
 sub jmt {
 
 =head2 $d->jmt($datum)
-    
+
 liefert Tripel Jahr, Monat, Tag
 
 $datum muss Format jjjj-mm-tt oder tt.mm.jjjj haben
@@ -158,7 +155,7 @@ sub ist_saona {
 #  $datum =~ s/-//g;
   my $dow=Day_of_Week($self->jmt($datum));
   return 1 if ($dow == 6 && $self->zeit_h($zeit) >= 12);
-  return 1 if ($dow < 6 && ($self->zeit_h($zeit) >= 20 || 
+  return 1 if ($dow < 6 && ($self->zeit_h($zeit) >= 20 ||
 			    $self->zeit_h($zeit) < 8));
   return undef;
 }
@@ -167,7 +164,7 @@ sub ist_saona {
 sub wotag {
 
 =head2 $d->wotag($datum)
-    
+
 liefert Feiertag, falls es sich um einen Feiertag handelt,
 sonst den Wochentag.
 
@@ -195,11 +192,11 @@ $datum sollte Format jjjj-mm-tt oder tt.mm.jjjj haben
 sub wotagnummer {
 
 =head2 $d->wotagnummer($datum)
-    
+
 liefert die Nummer des Wochentages
 
 8 falls es sich um einen Feiertag handelt
-	
+
 =cut
 
   my $self=shift;
@@ -353,7 +350,7 @@ zurückgeliefert.
 
   my $self=shift;
   my ($id)=@_;
-  
+
   my $feiertag_next_id =
     $dbh->prepare("select ID from Kalender where ".
 		  "ID > ? limit 1;")
@@ -379,7 +376,7 @@ zurückgeliefert.
 
   my $self=shift;
   my ($id)=@_;
-  
+
   my $feiertag_prev_id =
     $dbh->prepare("select ID from Kalender where ".
 		  "ID < ? order by ID desc limit 1;")
@@ -410,7 +407,7 @@ sub extract_date {
   # macht aus OpenSSL Datum einen "vernünftigen" Datumswert
   my $self=shift;
   my ($date_string)=@_;
-  
+
   my ($mm,$dd,$time,$yyyy,$time_zone)=split ' ',$date_string;
   $mm=Decode_Month($mm);
   return sprintf "%4.4u%2.2u%2.2u",$yyyy,$mm,$dd;

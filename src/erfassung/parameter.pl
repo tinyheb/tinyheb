@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-wT
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Parameter erfassen, ändern, löschen
-
-# $Id: parameter.pl,v 1.12 2008-05-22 17:18:15 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -204,7 +201,7 @@ sub loeschen {
 }
 
 sub aendern {
-  # Ändert Datensatz in der Parms Tabelle 
+  # Ändert Datensatz in der Parms Tabelle
   my $erg = $h->parm_update($id2,$pname,$pvalue,$pbeschreibung);
   return $erg;
 }

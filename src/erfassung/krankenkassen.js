@@ -1,8 +1,5 @@
-/* script für Plausiprüfungen und Navigation 
+/* script für Plausiprüfungen und Navigation
 # im Rahmen der Krankenkassenerfassung
-
-# $Id: krankenkassen.js,v 1.10 2008-10-05 13:19:39 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004,2005,2006,2007,2008 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -67,7 +64,7 @@ function kasse_speichern(formular) {
   }
   if(!ik_gueltig_check(formular.zik_krankenkasse)) {
     return false;
-  }  
+  }
   if(!ik_gueltig_check(formular.beleg_ik)) {
     return false;
   }

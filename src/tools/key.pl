@@ -6,9 +6,6 @@
 # extrahiert aus Schlüsseldateien des Trust Center ITSG die einzelnen
 # Schlüssel
 
-# $Id: key.pl,v 1.15 2011-01-24 18:52:28 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2005 - 2011 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -102,7 +99,7 @@ if ($^O =~ /MSWin32/) {
 } else {
   $path .='/.tinyheb';
 }
-		   
+
 my $orig_path = $path;
 
 mkdir "$path" if(!(-d "$path"));
@@ -118,7 +115,7 @@ if (!(-d "$o_pfad") && $save) {
 
 print "<table>" if $html;
 
-		     
+
 
 #$eingabe = 'kostentraeger/'.$eingabe;
 print "Einlesen der Daten von Datei: $eingabe\n" if $debug;
@@ -129,28 +126,28 @@ foreach my $file (@dateien) {
   $file = $pfad.$file;
   # öffnen der Datei mit den Informationen
   open FILE, $file or die "Konnte Datei $file nicht zum Lesen öffnen $!\n";
-  
-  my $line_counter = 0; 
+
+  my $line_counter = 0;
   my $zeile = '';
   my $file_counter = 1; # Zähler für Ausgabe Datei
   my $erg = ''; # ergebnisstring für update auf Datenbank
   my $ik = 0;
-  
+
   # öffnen Datei zum schreiben
   unlink("$path/tmpcert.pem");
   open SCHREIB, ">$path/tmpcert.pem"
     or die "Konnte Datei nicht zum schreiben öffnen $!\n";
-  
+
   print SCHREIB "-----BEGIN CERTIFICATE-----\n";
  LINE:while ($zeile=<FILE>) {
     my $ent = chomp($zeile);
     if (length($zeile)>1) {
       print SCHREIB $zeile."\n";
       $erg .= $zeile."\n";
-    } else {  
+    } else {
       print SCHREIB "-----END CERTIFICATE-----\n";
       close(SCHREIB);
-      
+
 
       my ($ik,
 	  $organisation,
@@ -193,14 +190,14 @@ foreach my $file (@dateien) {
 	print "verarbeitete Zertifikate $counter\r";
       }
 
-      if ($ik && 
-	  $herausgeber !~ /ITSG TrustCenter fuer sonstige Leistungserbringer/ && 
+      if ($ik &&
+	  $herausgeber !~ /ITSG TrustCenter fuer sonstige Leistungserbringer/ &&
 	  $herausgeber !~ /DKTIG TrustCenter fuer Krankenhaeuser und Leistungserbringer PKC/) {
 	print "Herausgeber des Schlüssels/ Zertifikats ist nicht das Trustcenter für sonstige Leistungserbringer, Verarbeitung wird abgebrochen\n";
 	die;
       }
 #      create_parms($ik) if ($ik);
-      print_html($ik,$organisation,$ansprechpartner,$start,$ende,$herausgeber,$serial,$pubkey_laenge,$algorithmus) if ($html && $ik);      
+      print_html($ik,$organisation,$ansprechpartner,$start,$ende,$herausgeber,$serial,$pubkey_laenge,$algorithmus) if ($html && $ik);
 
      if ($ik && $option{u} && $k->krankenkasse_sel('NAME',$ik)) {
 	# kasse existiert update machen
@@ -235,7 +232,7 @@ if ($save_cert || $save) {
 sub get_all {
   my ($cert_name) = @_;
   system("$openssl x509 -in $cert_name -subject -dates -serial -noout -certopt no_header -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_serial -certopt no_version -certopt no_issuer -certopt no_signame -text") if $debug;
-  open LESNAME,"$openssl x509 -in $cert_name -subject -dates -serial -noout -certopt no_header -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_serial -certopt no_version -certopt no_issuer -certopt no_signame -text |" or 
+  open LESNAME,"$openssl x509 -in $cert_name -subject -dates -serial -noout -certopt no_header -certopt no_subject -certopt no_sigdump -certopt no_validity -certopt no_serial -certopt no_version -certopt no_issuer -certopt no_signame -text |" or
     die "konnte aus Zertifikat keine Organisation ermitteln\n";
 
   my $guelt_von=undef;
@@ -394,7 +391,7 @@ sub create_parms {
     print "ist weder Datenannahmestelle noch Krankenkasse\n" if(!$html);
     print "<br/>" if ($html);
   }
-  
+
 }
 
 1;

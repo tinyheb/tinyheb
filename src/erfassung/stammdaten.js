@@ -1,11 +1,8 @@
-/* script für Plausiprüfungen und Navigation 
+/* script für Plausiprüfungen und Navigation
 # im Rahmen der Stammdatenerfassung
 
 # Copyright (C) 2004 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
-
-# $Id: stammdaten.js,v 1.27 2013-10-02 19:29:23 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,7 +37,7 @@ function versichertenstatus_change(element,init) {
     // neues Element für Privat Faktor aufnehmen, wenn noch nicht vorhanden
     var ueberschrift=document.createElement("TD");
     ueberschrift.id='ueberschrift_faktor';
-    
+
     var ikkk_node=document.getElementById("ikkk_node");
     tab.insertBefore(ueberschrift,ikkk_node);
     ueberschrift.innerHTML="<b>Privat Faktor:</b>";
@@ -61,7 +58,7 @@ function versichertenstatus_change(element,init) {
     }
     // else Fall existiert nicht, da Felder nicht vorhanden
   }
-    
+
 }
 
 function loeschen() {
@@ -139,7 +136,7 @@ function frau_speicher(formular) {
   if (!frau_alter_check(formular.geburtsdatum_frau)) {
     return false;
   }
-  
+
   if (!datum_check(formular.geburtsdatum_kind)) {
     return false;
   }
@@ -260,7 +257,7 @@ function quersum (sum) {
   //  alert("Quersumme "+erg);
   return erg;
 }
-    
+
 
 function kvnr_gueltig_check(kvnr_gueltig) {
   //  alert("gueltig"+kvnr_gueltig.value);
@@ -300,7 +297,7 @@ function kvnr_gueltig_check(kvnr_gueltig) {
       return true;
     }
   }
-    
+
 
 function check_begr(wert,formular) {
 // ändert im übergebenen Formular ob Begründung erfasst werden kann oder nicht
@@ -310,7 +307,7 @@ function check_begr(wert,formular) {
 }
 
 function next_satz(formular) {
-	id = formular.frau_id.value;	
+	id = formular.frau_id.value;
 //	alert("naechster Satz"+formular+id);
 	if (formular.auswahl.value == 'Anzeigen') {
 		open("stammdatenerfassung.pl?func=1&frau_id="+id,"_top");
@@ -320,7 +317,7 @@ function next_satz(formular) {
 }
 
 function prev_satz(formular) {
-	id = formular.frau_id.value;	
+	id = formular.frau_id.value;
 //	alert("naechster Satz"+formular+id);
 	if (formular.auswahl.value == 'Anzeigen') {
 		open("stammdatenerfassung.pl?func=2&frau_id="+id,"_top");

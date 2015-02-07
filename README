@@ -1,6 +1,3 @@
-# $Id: README,v 1.4 2007-07-26 20:14:16 baum Exp $ 
-# Tag $Name: not supported by cvs2svn $
-
 << 0. Was ist tinyHeb >>
 
 tinyHeb ist eine Webapplikation mit der Hebammen die notwendigen Abrechnungen
@@ -26,10 +23,10 @@ Wenn die Installation auf Basis des Sources durchgeführt werden soll sind die
 folgenden Schritte notwendig.
 
 << Schritt 1 >>
-	Prüfen, ob die Basiskomponenten vorhanden sind, 
+	Prüfen, ob die Basiskomponenten vorhanden sind,
 	es muss MySQL Server und MySQL Client installiert sein,
 	und der Apache2 Webserver.
-	
+
 	Dann
 
 	su
@@ -38,8 +35,8 @@ folgenden Schritte notwendig.
 	oder bei Debian (Ubuntu, Kubuntu, ...)
 	sudo make install
 
-<< Schritt 2 >> 
-	wechsel in das Verzeichnis DATA 
+<< Schritt 2 >>
+	wechsel in das Verzeichnis DATA
 
 	Befehl mysql -u root < init.sql ausführen
 	damit wird der notwendigen user und die Datenbanktabellen angelegt
@@ -67,12 +64,12 @@ folgenden Schritte notwendig.
 
 fast fertig:
 im Browser kann jetzt über http://localhost/tinyheb/hebamme.html
-tinyHeb gestart werden. Um elektronische Rechnungen zu verschicken 
+tinyHeb gestart werden. Um elektronische Rechnungen zu verschicken
 existiert das Programm xauftrag.pl im Verzeichnis edifact.
 
 
-	Jetzt ist es noch notwendig die Parameter wie in Kapitel 2.4 
-	des Handbuches beschrieben anzupassen, damit z.B. der 
+	Jetzt ist es noch notwendig die Parameter wie in Kapitel 2.4
+	des Handbuches beschrieben anzupassen, damit z.B. der
 	wirkliche Name der Hebamme auf der Rechnung erscheint.
 
 
@@ -90,4 +87,3 @@ thomas.baum@arcor.de
 Falls Ihr keine Probleme hattet, freue ich mich auch auf eine Mail ;-)
 oder wenn Ihr die tinyHeb Mailingliste aboniert:
 http://www.tinyheb.de/mailinglist.html
-

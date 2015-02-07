@@ -1,14 +1,12 @@
 # Updates für tinyHeb
 #
-# $Id: update.sql,v 1.31 2013-03-03 14:18:41 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 #
 #
 # neues Feld Lastupdate in Tabelle Leistungsart einführen
 #
 #ROOT	ALTER	Leistungsart		alter table Leistungsart add LASTUPDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL AFTER NICHT;
 #
-# LASTUPDATE soll immer auf den aktuellsten Wert gesetzt werden, quasi 
+# LASTUPDATE soll immer auf den aktuellsten Wert gesetzt werden, quasi
 # on update current_timestamp
 ROOT	ALTER	Leistungsart		alter table Leistungsart CHANGE COLUMN LASTUPDATE LASTUPDATE TIMESTAMP;
 #
@@ -95,7 +93,7 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2013-12-31' where
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2014-06-30' where POSNR in ('0500', '0501', '0502', '0510', '0511', '0512', '0700', '1800', '1810', '2700') and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31';
 #
 # Positionsnummern mit neuem Betrag und neuer Gültigkeit einfügen
-# 
+#
 # PosNr 0500
 #
 WWWRUN	INSERT	Leistungsart	POSNR='0500' and GUELT_VON='2014-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0500','A','Hilfe bei Beschw.',16.89,'Hilfe bei Schwangerschaftsbeschwerden oder bei Wehen, für jede angefangenen 30 Minuten','2014-07-01','9999-12-31',30,'+3500','0510','0510','0510',180);
@@ -106,7 +104,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='0500' and GUELT_VON='2014-07-01' and GUELT_BIS
 WWWRUN	INSERT	Leistungsart	POSNR='0501' and GUELT_VON='2014-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0501','A','Hilfe bei Beschw. Belegheb.',16.89,'Hilfe bei Schwangerschaftsbeschwerden oder bei Wehen, für jede angefangenen 30 Minuten Beleghebamme','2014-07-01','9999-12-31',30,'+3500','0511','0511','0511',180);
 #
 # PosNr 0502
-# 
+#
 WWWRUN	INSERT	Leistungsart	POSNR='0502' and GUELT_VON='2014-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0502','A','Hilfe bei Beschw. Belegheb. 1:1',16.89,'Hilfe bei Schwangerschaftsbeschwerden oder bei Wehen, für jede angefangenen 30 Minuten Beleghebamme 1:1','2014-07-01','9999-12-31',30,'+3500','0512','0512','0512',180);
 #
 #
@@ -375,7 +373,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='1712' and GUELT_VON='2014-07-01' and GUELT_BIS
 #
 # Leistungen der Mutterschaftsvorsorge und Schwangerenbetreuung
 # Leistungsgruppe A
-# 
+#
 # PosNr 0100
 #
 WWWRUN	INSERT	Leistungsart	POSNR='0100' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS) values (9999,'0100','A','Beratung',6.53,'Beratung der Schwangeren, auch mittels Kommunikationsmedium','2013-01-01','9999-12-31');
@@ -428,7 +426,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='0500' and GUELT_VON='2013-01-01' and GUELT_BIS
 WWWRUN	INSERT	Leistungsart	POSNR='0501' and GUELT_VON='2013-01-01' and GUELT_BIS='2014-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0501','A','Hilfe bei Beschw. Belegheb.',16.85,'Hilfe bei Schwangerschaftsbeschwerden oder bei Wehen, für jede angefangenen 30 Minuten Beleghebamme','2013-01-01','2014-06-30',30,'+3500','0511','0511','0511',180);
 #
 # PosNr 0502
-# 
+#
 WWWRUN	INSERT	Leistungsart	POSNR='0502' and GUELT_VON='2013-01-01' and GUELT_BIS='2014-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0502','A','Hilfe bei Beschw. Belegheb. 1:1',16.85,'Hilfe bei Schwangerschaftsbeschwerden oder bei Wehen, für jede angefangenen 30 Minuten Beleghebamme 1:1','2013-01-01','2014-06-30',30,'+3500','0512','0512','0512',180);
 #
 #
@@ -572,7 +570,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='1501' and GUELT_VON='2013-01-01' and GUELT_BIS
 # PosNr 1502
 #
 WWWRUN	INSERT	Leistungsart	POSNR='1502' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1502','B','Zuschlag Zwillinge Belegheb. 1:1',78.65,'Zuschlag für die Hilfe bei der Geburt von Zwillingen und mehr Kindern, für das zweite und jedes weitere Kind, je Kind Beleghebamme 1:1','2013-01-01','9999-12-31','','','','','',0);
-# 
+#
 #
 # PosNr 1600
 #
@@ -726,7 +724,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='2502' and GUELT_VON='2013-01-01' and GUELT_BIS
 #
 # sonstige Leistungen
 # Leistungsgruppe D
-# 
+#
 # PosNr 2600
 #
 WWWRUN	INSERT	Leistungsart	POSNR='2600' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2600','D','Überwachung',16.85,'Überwachung, je angefangene halbe Stunde','2013-01-01','9999-12-31','30','','2610','2610','2610',0,'');
@@ -826,7 +824,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='4000' and GUELT_VON='2013-01-01' and GUELT_BIS
 #
 # Leistungen der Mutterschaftsvorsorge und Schwangerenbetreuung
 # Leistungsgruppe A
-# 
+#
 # PosNr 0100
 #
 WWWRUN	INSERT	Leistungsart	POSNR='0100' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS) values (9999,'0100','A','Beratung',5.81,'Beratung der Schwangeren, auch mittels Kommunikationsmedium','2010-01-01','2012-12-31');
@@ -879,7 +877,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='0500' and GUELT_VON='2010-01-01' and GUELT_BIS
 WWWRUN	INSERT	Leistungsart	POSNR='0501' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0501','A','Hilfe bei Beschw. Belegheb.',15.00,'Hilfe bei Schwangerschaftsbeschwerden oder bei Wehen, für jede angefangenen 30 Minuten Beleghebamme','2010-01-01','2012-12-31',30,'+3500','0511','0511','0511',180);
 #
 # PosNr 0502
-# 
+#
 WWWRUN	INSERT	Leistungsart	POSNR='0502' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0502','A','Hilfe bei Beschw. Belegheb. 1:1',15.00,'Hilfe bei Schwangerschaftsbeschwerden oder bei Wehen, für jede angefangenen 30 Minuten Beleghebamme 1:1','2010-01-01','2012-12-31',30,'+3500','0512','0512','0512',180);
 #
 #
@@ -1022,7 +1020,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='1501' and GUELT_VON='2010-01-01' and GUELT_BIS
 # PosNr 1502
 #
 WWWRUN	INSERT	Leistungsart	POSNR='1502' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'1502','B','Zuschlag Zwillinge Belegheb. 1:1',70.00,'Zuschlag für die Hilfe bei der Geburt von Zwillingen und mehr Kindern, für das zweite und jedes weitere Kind, je Kind Beleghebamme 1:1','2010-01-01','2012-12-31','','','','','',0);
-# 
+#
 #
 # PosNr 1600
 #
@@ -1194,7 +1192,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='2502' and GUELT_VON='2010-01-01' and GUELT_BIS
 #
 # sonstige Leistungen
 # Leistungsgruppe D
-# 
+#
 # PosNr 2600
 #
 WWWRUN	INSERT	Leistungsart	POSNR='2600' and GUELT_VON='2010-01-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2600','D','Überwachung',15.00,'Überwachung, je angefangene halbe Stunde','2010-01-01','2012-12-31','30','','2610','2610','2610',0,'');
@@ -1644,7 +1642,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='0900' and GUELT_VON='2011-06-27' and GUELT_BIS
 #
 WWWRUN	INSERT	Leistungsart	POSNR='0910' and GUELT_VON='2011-06-27' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'0910','B','Betriebskostenpauschale vollendete Geb. vor QM',500.50,'Betriebskostenpauschale für eine vollendete Geburt in einer von Hebammen geleiteten Einrichtung bis zum Zeitpunkt der Einführung eines QM-Systems','2011-06-27','2012-06-30','','','','','',0,'');
 #
-# 
+#
 # Posnr 0920
 #
 WWWRUN	INSERT	Leistungsart	POSNR='0920' and GUELT_VON='2011-06-27' and GUELT_BIS='2012-06-30'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'0920','B','Betriebskostenpauschale nicht-vollendete Geb. nach QM',412.50,'Betriebskostenpauschale für eine nicht-vollendete Geburt in einer von Hebammen geleiteten Einrichtung bei Verlegung aus der Einrichtung nach weniger als 4 Stunden, sofern die Einrichtung eines QM-System gemäß §7 Abs. 2 und Anlage 1 begonnen oder die Einführung beschlossen hat','2011-06-27','2012-06-30','','','','','',0,'');
@@ -1676,7 +1674,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='9000' and GUELT_VON='2012-07-01' and GUELT_BIS
 #
 WWWRUN	INSERT	Leistungsart	POSNR='9100' and GUELT_VON='2012-07-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'9100','B','Betriebskostenpauschale vollendete Geb. vor QM',637.00,'Betriebskostenpauschale für eine vollendete Geburt in einer von Hebammen geleiteten Einrichtung bis zum Zeitpunkt der Einführung eines QM-Systems','2012-07-01','2012-12-31','','','','','',0,'');
 #
-# 
+#
 # Posnr 9200
 #
 WWWRUN	INSERT	Leistungsart	POSNR='9200' and GUELT_VON='2012-07-01' and GUELT_BIS='2012-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'9200','B','Betriebskostenpauschale nicht-vollendete Geb. nach QM',525.00,'Betriebskostenpauschale für eine nicht-vollendete Geburt in einer von Hebammen geleiteten Einrichtung bei Verlegung aus der Einrichtung nach weniger als 4 Stunden, sofern die Einrichtung eines QM-System gemäß §7 Abs. 2 und Anlage 1 begonnen oder die Einführung beschlossen hat','2012-07-01','2012-12-31','','','','','',0,'');
@@ -1708,7 +1706,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='9000' and GUELT_VON='2013-01-01' and GUELT_BIS
 #
 WWWRUN	INSERT	Leistungsart	POSNR='9100' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'9100','B','Betriebskostenpauschale vollendete Geb. vor QM',637.00,'Betriebskostenpauschale für eine vollendete Geburt in einer von Hebammen geleiteten Einrichtung bis zum Zeitpunkt der Einführung eines QM-Systems','2013-01-01','9999-12-31','','','','','',0,'');
 #
-# 
+#
 # Posnr 9200
 #
 WWWRUN	INSERT	Leistungsart	POSNR='9200' and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'9200','B','Betriebskostenpauschale nicht-vollendete Geb. nach QM',675.00,'Betriebskostenpauschale für eine nicht-vollendete Geburt in einer von Hebammen geleiteten Einrichtung bei Verlegung aus der Einrichtung nach weniger als 4 Stunden, sofern die Einrichtung eines QM-System gemäß §7 Abs. 2 und Anlage 1 begonnen oder die Einführung beschlossen hat','2013-01-01','9999-12-31','','','','','',0,'');
@@ -1796,7 +1794,7 @@ WWWRUN	INSERT	Leistungsart	POSNR='3700' and GUELT_VON='2012-08-01' and GUELT_BIS
 WWWRUN	INSERT	Leistungsart	POSNR='3800' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3800','M','Pauschale Wochenbettbetreuung',25.76,'Materialpauschale Wochenbettbetreuung','2012-08-01','9999-12-31',0);
 #
 #
-# PosNr. 3810 
+# PosNr. 3810
 # ----- neu ab 01.08.2012 -----
 #
 WWWRUN	INSERT	Leistungsart	POSNR='3810' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3810','M','Pauschale Neugeborenen-Screening',2.97,'Materialpauschale Neugeborenen-Screening als ambulante hebammenhilfliche Leistung','2012-08-01','9999-12-31',0);
@@ -1806,12 +1804,12 @@ WWWRUN	INSERT	Leistungsart	POSNR='3810' and GUELT_VON='2012-08-01' and GUELT_BIS
 #
 WWWRUN	INSERT	Leistungsart	POSNR='3900' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3900','M','Pauschale Wochenbettbetreuung nach 4 Tag p.p.',15.96,'Materialpauschale bei Beginn der Betreuung später als vier Tage nach der Geburt','2012-08-01','9999-12-31',0);
 #
-# PosNr. 3910 
+# PosNr. 3910
 # ----- neu ab 01.08.2012 -----
 #
 WWWRUN	INSERT	Leistungsart	POSNR='3910' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3910','M','Pauschale Fäden ziehen Dammnaht',7.09,'Materialpauschale Fäden ziehen Dammnaht als ambulante hebammenhilfliche Leistung','2012-08-01','9999-12-31',0);
 #
-# PosNr. 3920 
+# PosNr. 3920
 # ----- neu ab 01.08.2012 -----
 #
 WWWRUN	INSERT	Leistungsart	POSNR='3920' and GUELT_VON='2012-08-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'3920','M','Pauschale Fäden entfernen Sectionaht',5.54,'Materialpauschale Fäden/Klammern entfernen Sectionaht als ambulante hebammenhilfliche Leistung','2012-08-01','9999-12-31',0);

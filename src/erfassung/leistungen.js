@@ -1,8 +1,5 @@
-/* script für Plausiprüfungen und Navigation 
+/* script für Plausiprüfungen und Navigation
 # im Rahmen der Leistungserfassung
-
-# $Id: leistungen.js,v 1.17 2009-02-23 11:40:26 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2004-2009 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
@@ -111,7 +108,7 @@ function kurs_knopf() {
     var preis_node=document.getElementById("preis_tab_id");
     tab.insertBefore(ueberschrift,preis_node);
     ueberschrift.innerHTML="<b>Anzahl&nbsp;Kurse</b>";
-    
+
     var feld=document.createElement("TD");
     feld.id='anz_kurse';
     var tab2=document.getElementById("zeile2_tab");
@@ -133,7 +130,7 @@ function loesche_kurs_knopf() {
     var feld=document.getElementById("anz_kurse");
     tab2.removeChild(feld);
   }
-  
+
 }
 
 
@@ -177,7 +174,7 @@ function wo_tag(datum,uhrzeit,form) {
   // datum ist im format tt.mm.jjjj
   // 0 ist Sonntag, usw.
   // falls Samstag wird auf 8 gestellt, wenn vor 12:00
-  
+
   if (uhrzeit == '') uhrzeit = '10:00';
   //alert("Hallo2 wo tag"+datum+uhrzeit+form);
   var re =/(\d{1,2})\.(\d{1,2})\.(\d{1,4})/g;
@@ -192,7 +189,7 @@ function wo_tag(datum,uhrzeit,form) {
   var h = new Number(RegExp.$1);
   //alert("h"+h);
   m--;
-  var d = new Date(j,m,t); 
+  var d = new Date(j,m,t);
   var wtag = '';
   if (d.getDay()==0) {wtag = 'Sonntag'};
   if (d.getDay()==1) {wtag = 'Montag'};
@@ -204,7 +201,7 @@ function wo_tag(datum,uhrzeit,form) {
   if (d.getDay()==6 && h >= 12) {wtag = 'Samstag nach 12:00'};
   form.wotag.value = wtag;
   //alert("datum"+d);
-  
+
 }
 
 function zeit_preis(preis,zeit,mass) {

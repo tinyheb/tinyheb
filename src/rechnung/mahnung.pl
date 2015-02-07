@@ -3,9 +3,6 @@
 
 # Erzeugen einer Mahnung und Druckoutput (Postscript)
 
-# $Id: mahnung.pl,v 1.11 2013-03-05 17:47:20 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2006 - 2013 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -199,7 +196,7 @@ if ($q->user_agent =~ /Windows/ || $q->user_agent =~ /Macintosh/) {
   } else {
     die "kein Konvertierungsprogramm ps2pdf gefunden\n";
   }
-  
+
   open AUSGABE,"/tmp/wwwrun/file.pdf" or
     die "konnte Datei nicht konvertieren in pdf\n";
   binmode AUSGABE;
@@ -282,7 +279,7 @@ sub anschrift {
     $p->setfont($font,10);
     $p->text(12.7,$y1-6*$y_font,$plz_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse > 0);
     $p->text(12.7,$y1-6*$y_font,$plz_post_krankenkasse." ".$ort_krankenkasse) if ($plz_krankenkasse ne '' && $plz_krankenkasse == 0);
-    
+
     $p->box($x1,23.8,$x2,24.6);# Kiste für Mitglied y1=23.8 y2=24.6
     $p->setfont($font,8);
     $y1=24.7;
@@ -292,7 +289,7 @@ sub anschrift {
     $p->setfont($font,10);
     $p->text(12.7,$y1-2*$y_font,"geboren am");
     $p->text(15.1,$y1-2*$y_font,$geb_frau);
-    
+
     $p->box($x1,21.7,$x2,23.8);# Anschrift und Versichertenstatus y1=21.7 y2=23.8
     $y1=23.4;
     $p->text(12.7,$y1,$plz." ".$ort);
@@ -309,8 +306,8 @@ sub anschrift {
     $p->setfont($font_b,10);
     my ($m,$j) = unpack("A2A2",$kv_gueltig);
     $p->text(15.1,$y1-4*$y_font,"$m/$j");
-    
-    
+
+
     $p->box($x1,20.8,$x2,21.3);# Kiste für Kind y1=20.8 y2=21.3
     $p->setfont($font,8);
     $y1=21.35;
@@ -342,7 +339,7 @@ sub anschrift {
       $p->text(12.7,$y1-$y_font,"unbekannt");
     }
   }
-  
+
   # Anschrift der Hebamme
   $p->setfont($font,10);
   $x1=2; $y1=27.8;
@@ -355,17 +352,17 @@ sub anschrift {
   $p->text($x1,$y1,$h->parm_unique('HEB_TEL'));
   $y1 -= $y_font;
   $p->text($x1,$y1,'IK: '.$h->parm_unique('HEB_IK'));
-  
-  # Absender 
+
+  # Absender
   $p->line($x1,24.6,$x1+9,24.6);
   $p->setfont($font,8);
   my $absender=$h->parm_unique('HEB_VORNAME').' '.$h->parm_unique('HEB_NACHNAME').', '.$h->parm_unique('HEB_STRASSE').', '.$h->parm_unique('HEB_PLZ').' '.$h->parm_unique('HEB_ORT');
   $p->text($x1,24.7,$absender);
-  
+
   # Empfänger
   # zunächst richtige Annahmestelle für Belege holen
   # und zu dieser Anschrift holen,
-  
+
   my ($beleg_ik,$beleg_typ)=$k->krankenkasse_beleg_ik($ik_krankenkasse);
   my $beleg_parm = $h->parm_unique('BELEGE');
   $beleg_ik=$ik_krankenkasse if(!(defined($beleg_parm)) || $beleg_parm != 1);
@@ -376,18 +373,18 @@ sub anschrift {
        $ort_krankenkasse_beleg,
        $strasse_krankenkasse_beleg,
        $postfach_krankenkasse_beleg) = $k->krankenkasse_sel('NAME,KNAME,PLZ_HAUS,PLZ_POST,ORT,STRASSE,POSTFACH',$beleg_ik);
-  
+
   $name_krankenkasse_beleg = '' unless (defined($name_krankenkasse_beleg));
   $kname_krankenkasse_beleg = '' unless (defined($kname_krankenkasse_beleg));
   $plz_krankenkasse_beleg = 0 unless (defined($plz_krankenkasse_beleg));
   $plz_post_krankenkasse_beleg = 0 unless (defined($plz_post_krankenkasse_beleg));
   $strasse_krankenkasse_beleg = '' unless (defined($strasse_krankenkasse_beleg));
   $postfach_krankenkasse_beleg = '' unless (defined($postfach_krankenkasse_beleg));
-  
+
   $plz_krankenkasse_beleg = sprintf "%5.5u",$plz_krankenkasse_beleg;
   $plz_post_krankenkasse_beleg = sprintf "%5.5u",$plz_post_krankenkasse_beleg;
-  
-  
+
+
   # nur dann, wenn keine privat Rechnung
   if ($versichertenstatus ne 'privat') {
     $p->setfont($font,10);
@@ -398,7 +395,7 @@ sub anschrift {
     $p->text($x1,$y1-3*$y_font,$plz_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg == 0);
     $p->text($x1,$y1-3*$y_font,$plz_post_krankenkasse_beleg." ".$ort_krankenkasse_beleg) if ($plz_post_krankenkasse_beleg ne '' && $plz_post_krankenkasse_beleg > 0);
   }
-  
+
   if ($versichertenstatus eq 'privat') {
     $p->setfont($font,10);
     $y1=23.8;

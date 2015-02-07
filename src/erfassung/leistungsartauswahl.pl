@@ -1,12 +1,9 @@
 #!/usr/bin/perl -wT
 #-w
 #-d:ptkdb
-#-d:DProf  
+#-d:DProf
 
 # Auswahl von Leistungsarten
-
-# $Id: leistungsartauswahl.pl,v 1.8 2009-11-15 06:35:36 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
 
 # Copyright (C) 2005,2006,2007 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany

@@ -4,9 +4,6 @@
 
 # extrahiert aus Kostenträger Dateien die benötigten Daten
 
-# $Id: kostentraeger.pl,v 1.18 2010-01-31 12:06:39 thomas_baum Exp $
-# Tag $Name: not supported by cvs2svn $
-
 # Copyright (C) 2005 - 2010 Thomas Baum <thomas.baum@arcor.de>
 # Thomas Baum, 42719 Solingen, Germany
 
@@ -92,8 +89,8 @@ foreach my $file (@dateien) {
   $file = $pfad.$file;
   # öffnen der Datei mit den Informationen
   open (FILE, "<:raw",$file) or die "Konnte Datei $file nicht zum Lesen öffnen $!\n";
- 
-my $line_counter = 0; 
+
+my $line_counter = 0;
 my $zeile = '';
 
 LINE:while ($zeile=<FILE>) {
@@ -101,7 +98,7 @@ LINE:while ($zeile=<FILE>) {
   $zeile =~ s/\'\x0a$//g;
 
   next LINE if ($zeile =~ /\AUNA/); # Beginn überspringen
-  
+
   if ($zeile =~ /\AUNB/) {
     my @erg = split '\+',$zeile;
     $k_typ = substr($erg[7],0,2);
@@ -155,24 +152,24 @@ LINE:while ($zeile=<FILE>) {
 	# und Abrechnungscode 50 = Hebamme, 00 = alle Leistungsarten
 	# 99 für nicht aufgeführte Gruppen
 	$erg[9]=-1 unless(defined($erg[9]));
-	if ($erg[1]==3 && $erg[5]==7 && 
-	    ($erg[9]==00 || $erg[9]==50 || 
+	if ($erg[1]==3 && $erg[5]==7 &&
+	    ($erg[9]==00 || $erg[9]==50 ||
 	     ($erg[9]==99 && $zik_typ < 3))) {
 	  print "VKG Segment @erg, zik_typ: $zik_typ idk:$idk zentral_idk:$zentral_idk erg9:$erg9\n" if ($debug);
 	  # aok haben ring geschlossen über typ 2 Verbindungen, die dürfen
 	  # hier nicht berücksichtigt werden
 	  if ((uc $k_typ eq 'AO' && $zik_typ < 3) ||
-	      (uc $k_typ eq 'AO' && $erg9==99 && 
+	      (uc $k_typ eq 'AO' && $erg9==99 &&
 	       ($erg[9] == 50 || $erg[9] == 00))  ||
 	      # wenn keine aok und es ist schon kostenträger vorhanden,
 	      # darf nur mit datenannahmestelle überschrieben werden
 	      # wenn kostenträger die gleiche kasse ist,
 	      # das bedeutet dann ZIK ist DA und IK ist KTR
 	      ((uc $k_typ ne 'AO') && # keine AOK
-	       $idk != $erg[2] && # 
+	       $idk != $erg[2] && #
 	       (($zentral_idk==$idk || $zentral_idk==0)
 		# alte DA wurde via 99 ermittelt, neues Ergebnis ist besser
-		|| ($zentral_idk!=$idk && $erg9==99) 
+		|| ($zentral_idk!=$idk && $erg9==99)
 	       )
 	      )
 	     )
@@ -216,11 +213,11 @@ LINE:while ($zeile=<FILE>) {
 	# Verweis ist nicht auf sich selbst
 	# Abrechnungscode 50=Hebamme oder 99 für nicht aufgeführte Gruppen
 	# Abrechnungscode 00=für alle Leistungsarten
-	# Art der Datenanlieferung ist 21=Rechnung Papier oder 
+	# Art der Datenanlieferung ist 21=Rechnung Papier oder
 	# Art der Datenanlieferung ist 28 beinhaltet 21
 	#
-	if ($erg[1]==9 && 
-	    ($erg[9]==50 || $erg[9]==99 || $erg[9]==0) && 
+	if ($erg[1]==9 &&
+	    ($erg[9]==50 || $erg[9]==99 || $erg[9]==0) &&
 	    ($erg[5]==28 || $erg[5]==21) &&
 	    $erg[2] != $idk) {
 	  $beleg_ik=$erg[2];
@@ -229,9 +226,9 @@ LINE:while ($zeile=<FILE>) {
 	#	print "--> @erg\n";
       }
       $bemerkung =~ s/'//g;
-      
+
       # DatenFernUebertragung
-      if ($zeile =~ /\ADFU\+/) { 
+      if ($zeile =~ /\ADFU\+/) {
 	my @erg = split '\+',$zeile;
 	$email=$erg[7] if ($erg[2] == 70);
 	$email =~ s/'//g;
@@ -330,8 +327,8 @@ LINE:while ($zeile=<FILE>) {
 	$k->krankenkassen_ins($idk,$kname_n,$name_n,$strasse_n,$plz_haus_n,$plz_post_n,$ort_n,$postfach_n,$asp_name_n,$asp_tel_n,$zik_n,$bemerkung_n,$zik_typ_n,$beleg_ik_n,$email_n) if ($update);
       }
       if (defined($k_ik)) {
-	if ($k_kname eq $kname_n && 
-	    $k_name eq $name_n && 
+	if ($k_kname eq $kname_n &&
+	    $k_name eq $name_n &&
 	    $k_strasse eq $strasse_n &&
 	    $k_plz_haus == $plz_haus_n &&
 	    $k_plz_post == $plz_post_n &&
