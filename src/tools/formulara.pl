@@ -267,14 +267,14 @@ $p->text($x1,13.7,'Bogennummer:');
 my $all_rech=$p->get();
 $all_rech =~ s/Portrait/Landscape/;
 if ($q->user_agent !~ /Windows/) {
-  my $filename = string2filename("Versichertenbestaetigung_Hilfe_${nachname}.ps");
+  my $filename = tiny_string_helpers::string2filename("Versichertenbestaetigung_Hilfe_${nachname}.ps");
   print $q->header ( -type => "application/postscript", -expires => "-1d", -content_disposition => "inline; filename=$filename");
   $all_rech =~ s/PostScript::Simple generated page/${nachname}_${vorname}/g;
   print $all_rech;
 }
 
 if ($q->user_agent =~ /Windows/) {
-  my $filename = string2filename("Versichertenbestaetigung_Hilfe_${nachname}.pdf");
+  my $filename = tiny_string_helpers::string2filename("Versichertenbestaetigung_Hilfe_${nachname}.pdf");
   print $q->header ( -type => "application/pdf", -expires => "-1d", -content_disposition => "inline; filename=$filename");
   if (!(-d "/tmp/wwwrun")) {
     mkdir "/tmp" if (!(-d "/tmp"));
