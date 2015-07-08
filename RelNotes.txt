@@ -1,3 +1,6 @@
+Release 1.7.1
+  * new fee schedule (see update.sql)
+
 Release 1.7.0
   * updated to new fee schedule (see update.sql)
   * adapted config files for apache 2.4
@@ -6,6 +9,7 @@ Release 1.7.0
   * pass ps- and pdf-files with the right suffix and meaningful names
   * electronic data exchange version 9
   * distinguish between sha1 and sha256 signed certificate chains
+  * switched from des3 to aes256 for data encryption
 
 
 Release 1.6.3

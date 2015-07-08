@@ -76,10 +76,92 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2012-07-31' where
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2009-12-31' where GUELT_VON = '2007-08-01' and GUELT_BIS = '9999-12-31';
 #
 #
-# Verfallsdatum für einige Positionen die seit dem 01.01.2013 galten
+# Verfallsdatum für einige Positionen (mit Geburtshilfe) die seit dem 01.01.2013 galten
 #
 WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2013-12-31' where GUELT_VON = '2013-01-01' and GUELT_BIS = '9999-12-31' and POSNR in ('0901','0902','0911','0912','1000','1010','1100','1110','1200','1210','1600','1601','1602','1610','1611','1612','1700','1701','1702','1710','1711','1712');
 #
+# Verfallsdatum für einige Positionen (ohne Geburtshilfe) die seit dem 1.1.2013 galten 
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2014-06-30' where POSNR in ('0500', '0501', '0502', '0510', '0511', '0512', '0700', '1800', '1810', '2700') and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31';
+#
+#
+#
+## Verfallsdatum für Positionen (ohne Geburtshilfe) die zum 1.7.2015 erhöht wurden
+#
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2015-06-30' where POSNR in ('0700', '1800', '1810', '2700') and GUELT_VON='2014-07-01' and GUELT_BIS='9999-12-31';
+WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2015-06-30' where POSNR in ('0300') and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31';
+#
+#
+## Anhebung der Vergütung der Positionen 300, 700, 1800, 1810 sowie 2700 zum 1.7.2015
+#
+# PosNr 0300
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0300' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1) values (9999,'0300','A','Vorsorgeuntersuchung',25.23,'Vorsorgeuntersuchung der Schwangeren nach Maßgabe der Richtlinien des Gemeinsamen Bundesausschusses über die ärztliche Betreuung während der Schwangerschaft und nach der Entbindung in der jeweils geltenden Fassung','2015-07-01','9999-12-31',0,'+3400');
+#
+# Posnr 0700
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0700' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER) values (9999,'0700','A','Geburtsvorbereitung in der Gruppe',6.49,'Geburtsvorbereitung bei Unterweisung in der Gruppe, bis zu zehn Schwangere je Gruppe und höchsten 14 Stunden, für jede Schwangere je Unterrichtsstunden (60 Minuten)','2015-07-01','9999-12-31','E60','','','','',0);
+#
+# PosNr. 1800
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1800' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1800','C','Wochenbettbetreuung',31.38,'aufsuchende Wochenbettbetreuung nach der Geburt','2015-07-01','9999-12-31',0,'','1810','1810','1810',0,'+1900');
+#
+# PosNr. 1810
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1810' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'1810','C','Wochenbettbetreuung Nacht,Sa,So',37.61,'aufsuchende Wochenbettbetreuung nach der Geburt mit Zuschlag gemäß §5 Abs. 1','2015-07-01','9999-12-31',0,'','','','',0,'+1900');
+#
+# PosNr 2700
+#
+WWWRUN	INSERT	Leistungsart	POSNR='2700' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT,ZUSATZGEBUEHREN1,SAMSTAG,SONNTAG,NACHT,DAUER,EINMALIG) values (9999,'2700','D','Rückbildungsgymnastik Gruppe',6.49,'Rückbildungsgymnastik bei Unterweisung in der Gruppe, bis zu zehn Teilnehmerinnen je Gruppe und höchstens zehn Stunden, für jede Teilnehmerin je Unterrichtsstunde (60 Minute)','2015-07-01','9999-12-31','E60','','','','',0,'');
+#
+#
+## die bis zum 30.6.2015 befristeten Haftpflichtzulagen mit kleineren Werten unbefristet fortführen...
+#
+# PosNr 0991
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0991' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'0991','B','Haftpflichtzulage Geburt im Krankenhaus Belegheb.',8.81,'Haftpflichtzulage für eine Geburt ab dem 01.07.2015 im Krankenhaus als Beleghebamme','2015-07-01','9999-12-31',0);
+#
+# PosNr 0992
+#
+WWWRUN	INSERT	Leistungsart	POSNR='0992' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'0992','B','Haftpflichtzulage Geburt im Krankenhaus Belegheb. 1:1',20.00,'Haftpflichtzulage für eine Geburt ab dem 01.07.2015 im Krankenhaus als Beleghebamme 1:1','2015-07-01','9999-12-31',0);
+#
+# PosNr 1090
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1090' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'1090','B','Haftpflichtzulage Geburt außerkl. ärztl. Leitung',10.00,'Haftpflichtzulage für eine außerklinische Geburt ab dem 01.07.2015 in einer Einrichtung unter ärztlicher Leitung','2015-07-01','9999-12-31',0);
+#
+# PosNr 1190
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1190' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'1190','B','Haftpflichtzulage Geburt außerkl. Leitung Hebammen',32.00,'Haftpflichtzulage für eine außerklinische Geburt ab dem 01.07.2015 in einer von Hebammen geleiteten Einrichtung','2015-07-01','9999-12-31',0);
+#
+# PosNr 1290
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1290' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'1290','B','Haftpflichtzulage Hausgeburt',100.00,'Haftpflichtzulage für eine Hausgeburt ab dem 01.07.2015','2015-07-01','9999-12-31',0);
+#
+# PosNr 1690
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1690' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'1690','B','Haftpflichtzulage unvollendete Geburt',10.00,'Haftpflichtzulage für Hilfe bei einer nicht vollendeten Geburt ab dem 01.07.2015 als ambulante Leistung','2015-07-01','9999-12-31',0);
+#
+# PosNr 1691
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1691' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'1691','B','Haftpflichtzulage unvollendete Geburt Beleghebamme',10.00,'Haftpflichtzulage für Hilfe bei einer nicht vollendeten Geburt ab dem 01.07.2015 als Beleghebamme','2015-07-01','9999-12-31',0);
+#
+# PosNr 1692
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1692' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'1692','B','Haftpflichtzulage unvollendete Geburt Beleghebamme 1:1',10.00,'Haftpflichtzulage für Hilfe bei einer nicht vollendeten Geburt ab dem 01.07.2015 als Beleghebamme in einer 1:1 Betreuung','2015-07-01','9999-12-31',0);
+#
+# PosNr 1790
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1790' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'1790','B','Haftpflichtzulage 2. Hebamme',3.00,'Haftpflichtzulage für Hilfe bei einer außerklinischen Geburt oder Fehlgeburt ab dem 01.07.2015 durch eine zweite Hebamme, für jede angefangene halbe Stunde als ambulante Leistung','2015-07-01','9999-12-31',0);
+#
+# PosNr 1791
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1791' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'1791','B','Haftpflichtzulage 2. Hebamme Beleghebamme',3.00,'Haftpflichtzulage für Hilfe bei einer klinischen Geburt oder Fehlgeburt ab dem 01.07.2015 durch eine zweite Hebamme, für jede angefangene halbe Stunde als Beleghebamme','2015-07-01','9999-12-31',0);
+#
+# PosNr 1792
+#
+WWWRUN	INSERT	Leistungsart	POSNR='1792' and GUELT_VON='2015-07-01' and GUELT_BIS='9999-12-31'	insert into Leistungsart (ID,POSNR,LEISTUNGSTYP,KBEZ,EINZELPREIS,BEZEICHNUNG,GUELT_VON,GUELT_BIS,FUERZEIT) values (9999,'1792','B','Haftpflichtzulage 2. Hebamme Belegheb. 1:1',3.00,'Haftpflichtzulage für Hilfe bei einer klinischen Geburt oder Fehlgeburt ab dem 01.07.2015 durch eine zweite Hebamme, für jede angefangene halbe Stunde als Beleghebamme in einer 1:1 Betreuung','2015-07-01','9999-12-31',0);
+#
+##
 #
 # Ausgleich der Haftpflichtkostensteigerung (ohne Geburtshilfe) ab 1.7.2014
 # Für folgende Positionen erhöht sich die Vergütung auf unbestimmte Zeit:
@@ -87,10 +169,6 @@ WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2013-12-31' where
 # - Geburtsvorbereitung     (0700)
 # - Wochenbettbetreuung     (1800/1810)
 # - Rückbildungsgymnastik   (2700)
-#
-# Verfallsdatum für Positionsnummern mit altem Betrag setzen:
-#
-WWWRUN	UPDATE	Leistungsart		update Leistungsart set GUELT_BIS='2014-06-30' where POSNR in ('0500', '0501', '0502', '0510', '0511', '0512', '0700', '1800', '1810', '2700') and GUELT_VON='2013-01-01' and GUELT_BIS='9999-12-31';
 #
 # Positionsnummern mit neuem Betrag und neuer Gültigkeit einfügen
 #
