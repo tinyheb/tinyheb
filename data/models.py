@@ -3,9 +3,12 @@
 from sqlobject import SQLObject, StringCol, IntCol
 
 class Stammdatum(SQLObject):
-    name = StringCol()
-    vorname = StringCol()
-    strasse = StringCol()
-    plz = IntCol()
-    ort = StringCol()
-    krankenkasse = StringCol()
+    # TODO: add missing cols
+    # TODO: especially how to do the id?
+    name = StringCol(default="")
+    vorname = StringCol(default="")
+    strasse = StringCol(default="")
+    plz = IntCol(default=0)
+    ort = StringCol(default="")
+    krankenkasse = StringCol(default="")
+

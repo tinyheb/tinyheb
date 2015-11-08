@@ -3,7 +3,7 @@
 
 import wx
 
-from StammdatenListCtrl import StammdatenListCtrl
+from TinyhebStammdatenPanel import TinyhebStammdatenPanel
 
 # begin wxGlade: dependencies
 # end wxGlade
@@ -18,7 +18,7 @@ class TinyhebFrame(wx.Frame):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
         self.main_notebook = wx.Notebook(self, -1, style=0)
-        self.main_notebook_pane_stammdaten = wx.Panel(self.main_notebook, -1)
+        self.main_notebook_pane_stammdaten = TinyhebStammdatenPanel(self.main_notebook, wx.ID_ANY)
 
         # Menu Bar
         self.tinyheb_frame_menubar = wx.MenuBar()
@@ -66,14 +66,10 @@ class TinyhebFrame(wx.Frame):
         # end wxGlade
 
         self.SetTitle("tinyHeb")
-        self.stammdaten_list_ctrl = StammdatenListCtrl(
-            self.main_notebook_pane_stammdaten)
 
     def __do_layout(self):
         # begin wxGlade: TinyhebFrame.__do_layout
         main_sizer = wx.BoxSizer(wx.VERTICAL)
-        stammdaten_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.main_notebook_pane_stammdaten.SetSizer(stammdaten_sizer)
         self.main_notebook.AddPage(self.main_notebook_pane_stammdaten, "Stammdaten")
         self.main_notebook.AddPage(self.main_notebook_pane_abrechnung, "Abrechnung")
         self.main_notebook.AddPage(self.main_notebook_pane_einstellungen, "Einstellungen")
@@ -82,8 +78,6 @@ class TinyhebFrame(wx.Frame):
         main_sizer.Fit(self)
         self.Layout()
         # end wxGlade
-
-        stammdaten_sizer.Add(self.stammdaten_list_ctrl, 1, wx.EXPAND, 0)
 
     def onExit(self, event): # wxGlade: TinyhebFrame.<event_handler>
         self.Close()

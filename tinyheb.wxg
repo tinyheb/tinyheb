@@ -109,7 +109,7 @@
                         <tab window="main_notebook_pane_abrechnung">Abrechnung</tab>
                         <tab window="main_notebook_pane_einstellungen">Einstellungen</tab>
                     </tabs>
-                    <object class="wxPanel" name="main_notebook_pane_stammdaten" base="EditPanel">
+                    <object class="TinyhebStammdatenPanel" name="main_notebook_pane_stammdaten" base="EditPanel">
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxBoxSizer" name="stammdaten_sizer" base="EditBoxSizer">
                             <orient>wxHORIZONTAL</orient>
