@@ -1,5 +1,10 @@
+Release 1.7.2
+  * new fee schedule (see update*.sql)
+
+
 Release 1.7.1
   * new fee schedule (see update.sql)
+
 
 Release 1.7.0
   * updated to new fee schedule (see update.sql)

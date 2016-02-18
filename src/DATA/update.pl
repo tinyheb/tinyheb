@@ -123,33 +123,22 @@ if ($purge) {
   exit(0);
 }
 
-my $filename='update.sql';
-$filename=$other_file if($other_file);
-$filename='downgrade.sql' if ($downgrade);
-
-write_LOG("oeffne $filename");
-open SQL, "$filename" or error("konnte Datei $filename nicht öffnen $!\n");
-
-# alle Zeile der Update Datei Verarbeiten
-LINE:while (my $line=<SQL>) {
-  chomp $line;
-  next LINE if ($line eq '' or $line =~ /^#/);
-  my ($muser,$tag,$tabelle,$dep,$sql) = split '\t',$line;
-  write_LOG("$filename gelesen",$muser,$tag,$tabelle,$dep,$sql);
-  if ($debug) {
-    print "\n","muser\t$muser\n";
-    print "tag\t$tag\n";
-    print "tabelle\t$tabelle\n";
-    print "dep\t$dep\n";
-    print "sql\t$sql\n";
-  }
-  do_update($sql) if (uc $tag eq 'UPDATE');
-  do_insert($sql,$tabelle,$dep) if (uc $tag eq 'INSERT');
-  do_create($sql,$tabelle) if (uc $tag eq 'CREATE');
-  do_alter($sql,$tabelle,$dep) if (uc $tag eq 'ALTER');
-
+if($other_file) {
+  process_SQL($other_file);
 }
-
+elsif($downgrade) {
+  process_SQL('downgrade.sql');
+}
+else {
+  process_SQL('updateBegin.sql');
+  process_SQL('updateA.sql');
+  process_SQL('updateB.sql');
+  process_SQL('updateC.sql');
+  process_SQL('updateD.sql');
+  process_SQL('updateE.sql');
+  process_SQL('updateF.sql');
+  process_SQL('updateEnd.sql');
+}
 
 write_LOG("Beende update ----------------------------");
 
@@ -157,6 +146,34 @@ unless($rpm) {
   print "Update erfolgreich durchgefuehrt,\nBitte die ENTER Taste zum Beenden des Update druecken\n";
   my $eingabe=<STDIN>;
 }
+
+
+sub process_SQL {
+  my ($filename)=@_;
+
+  write_LOG("oeffne $filename");
+  open SQL, "$filename" or error("konnte Datei $filename nicht öffnen $!\n");
+
+  # alle Zeile der Update Datei Verarbeiten
+  LINE:while (my $line=<SQL>) {
+    chomp $line;
+    next LINE if ($line eq '' or $line =~ /^#/);
+    my ($muser,$tag,$tabelle,$dep,$sql) = split '\t',$line;
+    write_LOG("$filename gelesen",$muser,$tag,$tabelle,$dep,$sql);
+    if ($debug) {
+      print "\n","muser\t$muser\n";
+      print "tag\t$tag\n";
+      print "tabelle\t$tabelle\n";
+      print "dep\t$dep\n";
+      print "sql\t$sql\n";
+    }
+    do_update($sql) if (uc $tag eq 'UPDATE');
+    do_insert($sql,$tabelle,$dep) if (uc $tag eq 'INSERT');
+    do_create($sql,$tabelle) if (uc $tag eq 'CREATE');
+    do_alter($sql,$tabelle,$dep) if (uc $tag eq 'ALTER');
+  }
+}
+
 
 sub do_update {
   my ($sql)=@_;
