@@ -523,16 +523,8 @@ sub print_wegegeld {
       $posnr = 3100 if ($tn eq 'NK');
     }
 
-    # Falls Privatrechnung und Baden-Württemberg andere Posnr benutzen
-    if (uc $heb_bundesland eq 'BADEN-WüRTTEMBERG' &&
-	$versichertenstatus eq 'privat') {
-      $posnr = 'BW330' if ($tn eq 'N');
-      $posnr = 'BW320' if ($tn eq 'T');
-      $posnr = 'BW300' if ($tn eq 'TK');
-      $posnr = 'BW310' if ($tn eq 'NK');
-    }
+    # remark: removed old Privat-BW-Wegelder
     ($preis)=$l->leistungsart_such_posnr("EINZELPREIS","$posnr",$erg[4]);
-
 
     if ($versichertenstatus eq 'privat') {
       if (uc $heb_bundesland eq 'NIEDERSACHSEN' ||
