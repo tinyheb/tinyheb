@@ -330,7 +330,7 @@ sub stornieren {
     return;
   }
 
-  $l->rechnung_up($r_rechnr,'0000-00-00',0,80);
+  $l->rechnung_up($r_rechnr,'0',0,80);
   # update auf einzelne Leistungspositionen muss noch erfolgen
   $l->leistungsdaten_such_rechnr("ID",$r_rechnr);
   while (my ($id)=$l->leistungsdaten_such_rechnr_next()) {
