@@ -30,9 +30,6 @@ use Tk::ItemStyle;
 use Tk::DialogBox;
 
 #use Data::Dumper;
-use Mozilla::CA;
-use IO::Socket::SSL;
-IO::Socket::SSL::set_ctx_defaults( SSL_ca_file => Mozilla::CA::SSL_ca_file(), );
 
 use Mail::Sender;
 use File::stat;
