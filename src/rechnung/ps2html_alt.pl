@@ -42,42 +42,36 @@ $l->rechnung_such("RECH,EDI_AUFTRAG,EDI_NUTZ","RECHNUNGSNR='$rech_id'");
 my ($rech,$edi_auf,$edi_nutz)=$l->rechnung_such_next();
 
 if ($rechtyp == 1) {
-  if ($q->user_agent =~ /Windows/) {
-    my $filename = tiny_string_helpers::string2filename("Rechnung_${rech_id}_alt.pdf");
-    print $q->header ( -type => "application/pdf", -expires => "-1d", -content_disposition => "inline; filename=$filename");
-    if (!(-d "/tmp/wwwrun")) {
-      mkdir "/tmp" if (!(-d "/tmp"));
-      mkdir "/tmp/wwwrun";
-    }
-    unlink('/tmp/wwwrun/file.ps');
-    open AUSGABE,">/tmp/wwwrun/file.ps" or
-      die "konnte Datei nicht in pdf konvertieren, Schreibfehler für file.ps\n";
-    print AUSGABE $rech;
-    close AUSGABE;
-    if ($^O =~ /linux/) {
-      system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
-    } elsif ($^O =~ /MSWin32/) {
-      unlink('/tmp/wwwrun/file.pdf');
-      my $gswin=$h->suche_gswin32();
-      $gswin='"'.$gswin.'"';
-      system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
-    } else {
-      die "kein Konvertierungsprogramm ps2pdf gefunden\n";
-    }
-
-    open AUSGABE,"/tmp/wwwrun/file.pdf" or
-      die "konnte Datei nicht konvertieren in pdf\n";
-    binmode AUSGABE;
-    binmode STDOUT;
-    while (my $zeile=<AUSGABE>) {
-      print $zeile;
-    }
-    close AUSGABE;
-  } else {
-    my $filename = tiny_string_helpers::string2filename("Rechnung_${rech_id}_alt.ps");
-    print $q->header ( -type => "application/postscript", -expires => "-1d", -content_disposition => "inline; filename=$filename");
-    print $rech;
+  my $filename = tiny_string_helpers::string2filename("Rechnung_${rech_id}_alt.pdf");
+  print $q->header ( -type => "application/pdf", -expires => "-1d", -content_disposition => "inline; filename=$filename");
+  if (!(-d "/tmp/wwwrun")) {
+    mkdir "/tmp" if (!(-d "/tmp"));
+    mkdir "/tmp/wwwrun";
   }
+  unlink('/tmp/wwwrun/file.ps');
+  open AUSGABE,">/tmp/wwwrun/file.ps" or
+    die "konnte Datei nicht in pdf konvertieren, Schreibfehler für file.ps\n";
+  print AUSGABE $rech;
+  close AUSGABE;
+  if ($^O =~ /linux/) {
+    system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
+  } elsif ($^O =~ /MSWin32/) {
+    unlink('/tmp/wwwrun/file.pdf');
+    my $gswin=$h->suche_gswin32();
+    $gswin='"'.$gswin.'"';
+    system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
+  } else {
+    die "kein Konvertierungsprogramm ps2pdf gefunden\n";
+  }
+
+  open AUSGABE,"/tmp/wwwrun/file.pdf" or
+    die "konnte Datei nicht konvertieren in pdf\n";
+  binmode AUSGABE;
+  binmode STDOUT;
+  while (my $zeile=<AUSGABE>) {
+    print $zeile;
+  }
+  close AUSGABE;
 }
 
 if ($rechtyp == 2) {

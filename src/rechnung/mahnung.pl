@@ -171,41 +171,34 @@ if ($versichertenstatus ne 'privat') {
 $y1-=$y_font;$y1-=$y_font;$y1-=$y_font;
 $p->text($x1,$y1,"Mit freundlichen Grüßen");
 
-# in Browser schreiben, falls Windows wird PDF erzeugt, sonst Postscript
+# in Browser schreiben als PDF
 my $all_rech=$p->get();
-if ($q->user_agent !~ /Windows/ && $q->user_agent !~ /Macintosh/) {
-  print $q->header ( -type => "application/postscript", -expires => "-1d");
-  $all_rech =~ s/PostScript::Simple generated page/${nachname}_${vorname}/g;
-  print $all_rech;
+
+print $q->header ( -type => "application/pdf", -expires => "-1d");
+mkdir "/tmp" if (!(-d "/tmp"));
+mkdir "/tmp/wwwrun" if(!(-d "/tmp/wwwrun"));
+unlink('/tmp/wwwrun/file.ps');
+$p->output('/tmp/wwwrun/file.ps');
+
+if ($^O =~ /linux/ || $^O =~ /darwin/) {
+  system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
+} elsif ($^O =~ /MSWin32/) {
+  unlink('/tmp/wwwrun/file.pdf');
+  my $gswin=$h->suche_gswin32();
+  $gswin='"'.$gswin.'"';
+  system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
+} else {
+  die "kein Konvertierungsprogramm ps2pdf gefunden\n";
 }
 
-if ($q->user_agent =~ /Windows/ || $q->user_agent =~ /Macintosh/) {
-  print $q->header ( -type => "application/pdf", -expires => "-1d");
-  mkdir "/tmp" if (!(-d "/tmp"));
-  mkdir "/tmp/wwwrun" if(!(-d "/tmp/wwwrun"));
-  unlink('/tmp/wwwrun/file.ps');
-  $p->output('/tmp/wwwrun/file.ps');
-
-  if ($^O =~ /linux/ || $^O =~ /darwin/) {
-    system('ps2pdf /tmp/wwwrun/file.ps /tmp/wwwrun/file.pdf');
-  } elsif ($^O =~ /MSWin32/) {
-    unlink('/tmp/wwwrun/file.pdf');
-    my $gswin=$h->suche_gswin32();
-    $gswin='"'.$gswin.'"';
-    system("$gswin -q -dCompatibilityLevel=1.2 -dSAFER -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=/tmp/wwwrun/file.pdf -c .setpdfwrite -f /tmp/wwwrun/file.ps");
-  } else {
-    die "kein Konvertierungsprogramm ps2pdf gefunden\n";
-  }
-
-  open AUSGABE,"/tmp/wwwrun/file.pdf" or
-    die "konnte Datei nicht konvertieren in pdf\n";
-  binmode AUSGABE;
-  binmode STDOUT;
-  while (my $zeile=<AUSGABE>) {
-    print $zeile;
-  }
-  close AUSGABE;
+open AUSGABE,"/tmp/wwwrun/file.pdf" or
+  die "konnte Datei nicht konvertieren in pdf\n";
+binmode AUSGABE;
+binmode STDOUT;
+while (my $zeile=<AUSGABE>) {
+  print $zeile;
 }
+close AUSGABE;
 
 if ($speichern eq 'save') {
   # setzt alle Daten in der Datenbank auf Mahnung und speichert die Rechnung
