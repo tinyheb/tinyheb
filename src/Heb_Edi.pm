@@ -741,8 +741,10 @@ sub UNH {
   # Nachrichtenkennung ab 01.04.2012 Version 07
   # ab 01.01.2013 Version 08, Übergangsregelung bis 31.03.2013
   # ab 01.10.2013 Version 09
+  # ab 01.10.2017 Version 10
+  # FIXME: ab 01.01.2018 Version 11, Übergangsregelung bis 31.03.2018
 
-  $erg .= ':09:0:0';
+  $erg .= ':10:0:0';
   $erg .= $delim;
 
   return $erg;
