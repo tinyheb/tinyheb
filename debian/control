@@ -4,10 +4,14 @@ Priority: optional
 Maintainer: Johannes Renkl <hummlbach@web.de>
 Build-Depends: debhelper (>= 4.0.0), po-debconf
 Standards-Version: 3.6.2
+Homepage: https://tinyheb.de/
+Bugs: https://github.com/tinyheb/tinyheb/issues
+Vcs-Git: https://github.com/tinyheb/tinyheb.git
+Vcs-Browser: https://github.com/tinyheb/tinyheb
  
 Package: tinyheb
 Architecture: all
-Depends: ${shlibs:Depends}, gs | ghostscript, perl, openssl, libdbi-perl, libdbd-mysql-perl, libdate-calc-perl, libemail-mime-encodings-perl, perl-tk, libmail-sender-perl (>=0.8.22), libpostscript-simple-perl (>=0.07), mysql-server, apache2 | httpd, libcompress-zlib-perl, libio-socket-ssl-perl (>=1.53), libnet-ssleay-perl (>=1.42)
+Depends: ${shlibs:Depends}, gs | ghostscript, perl, openssl, libdbi-perl, libdbd-mysql-perl, libdate-calc-perl, libemail-mime-encodings-perl, perl-tk, libmail-sender-perl (>=0.8.22), libpostscript-simple-perl (>=0.07), mysql-server | default-mysql-server | mariadb-server, apache2 | httpd, libcompress-zlib-perl, libio-socket-ssl-perl (>=1.53), libnet-ssleay-perl (>=1.42)
 Recommends: apache2, ntp
 Description: Billingsoftware for German midwives
  tinyHeb is a Web application for midwives in Germany to do the legal 
