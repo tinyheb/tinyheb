@@ -40,7 +40,7 @@ Benötigte Perl-Module installieren, das sind:
 - PostScript::Simple
 - Net::SSLeay
 
-die gibt es als DEB- oder RPM-Pakete, was zu empfehlen ist, oder bei www.cpan.org.
+	die gibt es als DEB- oder RPM-Pakete, was zu empfehlen ist, oder bei www.cpan.org.
 
 ## Fast fertig
 Im Browser kann jetzt über http://localhost/tinyheb/hebamme.html tinyHeb gestart werden. Um elektronische Rechnungen zu verschicken existiert das Programm [xauftrag.pl](src/edifact/xauftrag.pl) im Verzeichnis [edifact](src/edifact/).
