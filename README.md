@@ -39,9 +39,10 @@ Benötigte Perl-Module installieren, das sind:
 - Mail::Sender,
 - PostScript::Simple
 - Net::SSLeay
+
 die gibt es als DEB- oder RPM-Pakete, was zu empfehlen ist, oder bei www.cpan.org.
 
-# Fast fertig
+## Fast fertig
 Im Browser kann jetzt über http://localhost/tinyheb/hebamme.html tinyHeb gestart werden. Um elektronische Rechnungen zu verschicken existiert das Programm [xauftrag.pl](src/edifact/xauftrag.pl) im Verzeichnis [edifact](src/edifact/).
 Jetzt ist es noch notwendig die Parameter wie in Kapitel 2.4 des [Handbuches](https://tinyheb.de/assets/tinyheb-handbuch.pdf) beschrieben anzupassen, damit z.B. der wirkliche Name der Hebamme auf der Rechnung erscheint.
 
